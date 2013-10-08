@@ -19,13 +19,8 @@ except ImportError:
     android = None
 
 
-WRAP_BACKGROUND = None
-WRAP_BORDERS = None
 INPUT_CURSOR = None
 SMALLFONT = None
-
-TEX_WIDTH = 32
-BORDER_WIDTH = 16
 
 INIT_DONE = False
 
@@ -61,42 +56,71 @@ def wait_event():
     return ev
 
 
-def draw_border( screen,dest ):
-    # We're gonna draw a decorative border to surround the provided area.
-    # Step one: Determine the size of our box. Both dimensions should be 
-    # a multiple of TEX_WIDTH. 
-    # W32 and H32 will store the number of columns/rows. 
-    W32 = ( dest.width + BORDER_WIDTH ) / TEX_WIDTH + 1
-    H32 = ( dest.height + BORDER_WIDTH ) / TEX_WIDTH + 1
+class Border( object ):
+    def __init__( self , border_width=16, tex_width=32, border_name="", tex_name="", tl=0, tr=0, bl=0, br=0, t=1, b=1, l=2, r=2 ):
+        # tl,tr,bl,br are the top left, top right, bottom left, and bottom right frames
+        self.border_width = border_width
+        self.tex_width = tex_width
+        self.border_name = border_name
+        self.tex_name = tex_name
+        self.border = None
+        self.tex = None
+        self.tl = tl
+        self.tr = tr
+        self.bl = bl
+        self.br = br
+        self.t = t
+        self.b = b
+        self.l = l
+        self.r = r
 
-    # X0 and Y0 will store the upper left corner of the box.
-    X0 = dest.left - ( ( ( W32 * TEX_WIDTH ) - dest.width ) / 2 )
-    Y0 = dest.top - ( ( ( H32 * TEX_WIDTH ) - dest.height ) / 2 )
+    def render( self, screen, dest ):
+        """Draw this decorative border at dest on screen."""
+        # We're gonna draw a decorative border to surround the provided area.
+        # Step one: Determine the size of our box. Both dimensions should be 
+        # a multiple of TEX_WIDTH. 
 
-    # Draw the backdrop.
-    for X in range( W32 ):
-        Dest_X = X0 + X * TEX_WIDTH
-        for Y in range( H32 ):
-            Dest_Y = Y0 + Y * TEX_WIDTH
-            WRAP_BACKGROUND.render( screen , ( Dest_X , Dest_Y ) )
+        if self.border == None:
+            self.border = image.Image( self.border_name, self.border_width, self.border_width )
+        if self.tex == None:
+            self.tex = image.Image( self.tex_name, self.tex_width, self.tex_width )
 
-    WRAP_BORDERS.render( screen , ( X0 - BORDER_WIDTH / 2 , Y0 - BORDER_WIDTH / 2 ) , 0 )
-    WRAP_BORDERS.render( screen , ( X0 - BORDER_WIDTH / 2 , Y0 - BORDER_WIDTH / 2 + H32 * TEX_WIDTH ) , 0 )
-    WRAP_BORDERS.render( screen , ( X0 - BORDER_WIDTH / 2 + W32 * TEX_WIDTH , Y0 - BORDER_WIDTH / 2 ) , 0 )
-    WRAP_BORDERS.render( screen , ( X0 - BORDER_WIDTH / 2 + W32 * TEX_WIDTH , Y0 - BORDER_WIDTH / 2 + H32 * TEX_WIDTH ) , 0 )
+        # W32 and H32 will store the number of columns/rows. 
+        W32 = ( dest.width + self.border_width ) / self.tex_width + 1
+        H32 = ( dest.height + self.border_width ) / self.tex_width + 1
 
-    for X in range( 1 , W32 * 2 ):
-        Dest_X = X0 + X * BORDER_WIDTH - BORDER_WIDTH / 2
-        Dest_Y = Y0 - BORDER_WIDTH / 2
-        WRAP_BORDERS.render( screen , ( Dest_X , Dest_Y ) , 1 )
-        Dest_Y = Y0 + H32 * TEX_WIDTH - BORDER_WIDTH / 2
-        WRAP_BORDERS.render( screen , ( Dest_X , Dest_Y ) , 1 )
-    for Y in range( 1 ,H32 * 2 ):
-        Dest_Y = Y0 + Y * BORDER_WIDTH - BORDER_WIDTH / 2
-        Dest_X = X0 - BORDER_WIDTH / 2
-        WRAP_BORDERS.render( screen , ( Dest_X , Dest_Y ) , 2 )
-        Dest_X = X0 + W32 * TEX_WIDTH - BORDER_WIDTH / 2
-        WRAP_BORDERS.render( screen , ( Dest_X , Dest_Y ) , 2 )
+        # X0 and Y0 will store the upper left corner of the box.
+        X0 = dest.left - ( ( ( W32 * self.tex_width ) - dest.width ) / 2 )
+        Y0 = dest.top - ( ( ( H32 * self.tex_width ) - dest.height ) / 2 )
+
+        # Draw the backdrop.
+        for X in range( W32 ):
+            Dest_X = X0 + X * self.tex_width
+            for Y in range( H32 ):
+                Dest_Y = Y0 + Y * self.tex_width
+                self.tex.render( screen , ( Dest_X , Dest_Y ) )
+
+        self.border.render( screen , ( X0 - self.border_width / 2 , Y0 - self.border_width / 2 ) , self.tl )
+        self.border.render( screen , ( X0 - self.border_width / 2 , Y0 - self.border_width / 2 + H32 * self.tex_width ) , self.bl )
+        self.border.render( screen , ( X0 - self.border_width / 2 + W32 * self.tex_width , Y0 - self.border_width / 2 ) , self.tr )
+        self.border.render( screen , ( X0 - self.border_width / 2 + W32 * self.tex_width , Y0 - self.border_width / 2 + H32 * self.tex_width ) , self.br )
+
+        for X in range( 1 , W32 * 2 ):
+            Dest_X = X0 + X * self.border_width - self.border_width / 2
+            Dest_Y = Y0 - self.border_width / 2
+            self.border.render( screen , ( Dest_X , Dest_Y ) , self.t )
+            Dest_Y = Y0 + H32 * self.tex_width - self.border_width / 2
+            self.border.render( screen , ( Dest_X , Dest_Y ) , self.b )
+        for Y in range( 1 ,H32 * 2 ):
+            Dest_Y = Y0 + Y * self.border_width - self.border_width / 2
+            Dest_X = X0 - self.border_width / 2
+            self.border.render( screen , ( Dest_X , Dest_Y ) , self.l )
+            Dest_X = X0 + W32 * self.tex_width - self.border_width / 2
+            self.border.render( screen , ( Dest_X , Dest_Y ) , self.r )
+
+default_border = Border( border_name="sys_defborder.png", tex_name="sys_defbackground.png" )
+map_border = Border( border_name="sys_mapborder.png", tex_name="sys_maptexture.png", tl=0, tr=1, bl=2, br=3, t=4, b=6, l=7, r=5 )
+
 
 def truncline(text, font, maxwidth):
         real=len(text)       
@@ -170,7 +194,7 @@ def draw_text( screen , font , text , rect , color = (255,255,255), do_center= F
 
 ALLOWABLE_CHARACTERS = u'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890()-=_+,.?"'
 
-def input_string( screen , font , redrawer = None, prompt = "Enter text below", prompt_color = (255,255,255), input_color = (240,240,50) ):
+def input_string( screen , font , redrawer = None, prompt = "Enter text below", prompt_color = (255,255,255), input_color = (240,240,50), border=default_border ):
     # Input a string from the user.
     it = []
     keep_going = True
@@ -185,7 +209,7 @@ def input_string( screen , font , redrawer = None, prompt = "Enter text below", 
         if ev.type == TIMEREVENT:
             if redrawer != None:
                 redrawer( screen )
-            draw_border( screen , myrect )
+            border.render( screen , myrect )
             mystring = "".join( it )
             myimage = font.render( mystring, True, input_color )
             screen.blit( prompt_image , ( screen.get_width() / 2 - prompt_image.get_width() / 2 , screen.get_height() / 2 - prompt_image.get_height() - 2 ) )
@@ -212,9 +236,7 @@ def input_string( screen , font , redrawer = None, prompt = "Enter text below", 
 def init():
     global INIT_DONE
     if not INIT_DONE:
-        global WRAP_BACKGROUND, WRAP_BORDERS, INPUT_CURSOR
-        WRAP_BACKGROUND = image.Image( "sys_defbackground.png" , TEX_WIDTH , TEX_WIDTH )
-        WRAP_BORDERS = image.Image( "sys_defborder.png" , BORDER_WIDTH , BORDER_WIDTH )
+        global INPUT_CURSOR
         INPUT_CURSOR = image.Image( "sys_textcursor.png" , 8 , 16 )
 
         global SMALLFONT
@@ -232,11 +254,11 @@ def init():
 if __name__ == "__main__":
     pygame.init()
 
-    myfont = pygame.font.Font( "image/VeraBd.ttf" , 24 )
+    myfont = pygame.font.Font( "image/VeraBd.ttf" , 16 )
 
     # Set the screen size.
     screen = pygame.display.set_mode((640,640))
-    text = render_text( myfont , "This is an example of an overly long line that will probably need to be split into multiple lines. I used to use song lyrics for this, but have decided against it as I didn't think of it at the time." , 500 , color = (125,250,180) )
+    text = render_text( myfont , "This is an example of an overly long line that will probably need to be split into multiple lines. I used to use song lyrics for this, but have decided against it as I didn't think of it at the time." , 300 , color = (125,250,180) )
 
     init()
 
@@ -245,8 +267,9 @@ if __name__ == "__main__":
     init()
 
     screen.fill((0,0,0))
-    draw_border( screen , pygame.rect.Rect(20,10,500,500) )
-    screen.blit( text , (20,10) )
+
+    default_border.render(screen , pygame.rect.Rect(50,50,300,300))
+    screen.blit( text , (50,50) )
     pygame.display.flip()
 
     while True:

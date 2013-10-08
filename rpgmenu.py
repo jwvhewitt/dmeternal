@@ -19,12 +19,13 @@ class MenuItem( object ):
 
 class DescBox( pygame.Rect ):
     # The DescBox inherits from Rect, since that's basically what it is.
-    def __init__(self,menu,x,y,w=300,h=100):
+    def __init__(self,menu,x,y,w=300,h=100,border=pygwrap.default_border):
         self.menu = menu
+        self.border = border
         super(DescBox, self).__init__(x,y,w,h)
 
     def render(self):
-        pygwrap.draw_border( self.menu.screen , self )
+        self.border.render( self.menu.screen , self )
         if self.menu.items[self.menu.selected_item].desc != None:
             img = pygwrap.render_text( MENUFONT , self.menu.items[self.menu.selected_item].desc , self.w )
             self.menu.screen.blit( img , self )
@@ -33,11 +34,12 @@ class DescBox( pygame.Rect ):
 
 class Menu( pygame.Rect ):
 
-    def __init__(self,screen,x,y,w=30,h=10,menuitem=(150,145,130),menuselect=(250,250,125)):
+    def __init__(self,screen,x,y,w=30,h=10,menuitem=(150,145,130),menuselect=(250,250,125),border=pygwrap.default_border):
         super(Menu, self).__init__(x,y,w,h)
         self.screen = screen
         self.menuitem = menuitem
         self.menuselect = menuselect
+        self.border = border
 
         self.items = []
         self.top_item = 0
@@ -61,7 +63,7 @@ class Menu( pygame.Rect ):
         if self.predraw != None:
             self.predraw( self.screen )
 
-        pygwrap.draw_border( self.screen , self )
+        self.border.render( self.screen , self )
         self.screen.set_clip(self)
 
         item_num = self.top_item
