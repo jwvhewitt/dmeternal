@@ -59,6 +59,7 @@ def wait_event():
 class Border( object ):
     def __init__( self , border_width=16, tex_width=32, border_name="", tex_name="", tl=0, tr=0, bl=0, br=0, t=1, b=1, l=2, r=2 ):
         # tl,tr,bl,br are the top left, top right, bottom left, and bottom right frames
+        # Bug: The border must be exactly half as wide as the texture.
         self.border_width = border_width
         self.tex_width = tex_width
         self.border_name = border_name
@@ -120,6 +121,7 @@ class Border( object ):
 
 default_border = Border( border_name="sys_defborder.png", tex_name="sys_defbackground.png" )
 map_border = Border( border_name="sys_mapborder.png", tex_name="sys_maptexture.png", tl=0, tr=1, bl=2, br=3, t=4, b=6, l=7, r=5 )
+gold_border = Border( border_width=8, tex_width=16, border_name="sys_rixsborder.png", tex_name="sys_rixstexture.png", tl=0, tr=3, bl=4, br=5, t=1, b=1, l=2, r=2 )
 
 
 def truncline(text, font, maxwidth):
