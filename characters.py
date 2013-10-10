@@ -1,5 +1,5 @@
 
-
+import stats
 
 class Level( object ):
     # Or, as we would say in a PnP RPG, a "class".
@@ -10,10 +10,23 @@ class Level( object ):
         self.rank = rank
     def get_stat_bonus( self, stat ):
         """Typical stat bonus is base bonus x rank"""
-        if stat in self.statline:
-            return self.statline[ stat ] * self.rank
-        else:
-            return 0
+        return self.statline.get( stat , 0 ) * self.rank
+
+class Warrior( Level ):
+    name = 'Warrior'
+    desc = 'Highly trained fighters who can dish out- and take- a whole lot of physical damage.'
+    requirements = { stats.STRENGTH: 11 }
+    statline = { stats.PHYSICAL_ATTACK: 5, stats.MAGIC_ATTACK: 2, stats.MAGIC_DEFENSE: 3, \
+        stats.AWARENESS: 3 }
+
+class Thief( Level ):
+    name = 'Thief'
+    desc = 'Highly skilled at stealth and disarming traps.'
+    requirements = { stats.REFLEXES: 11 }
+    statline = { stats.PHYSICAL_ATTACK: 4, stats.MAGIC_ATTACK: 3, stats.MAGIC_DEFENSE: 4, \
+        stats.DISARM_TRAPS: 6, stats.STEALTH: 5, stats.AWARENESS: 4 }
+
+
 
 class Character(object):
     def __init__( self ):
