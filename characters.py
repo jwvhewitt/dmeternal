@@ -137,6 +137,56 @@ class Ninja( Level ):
     HP_DIE = 8
     MP_DIE = 4
 
+# Player Character Species
+class Human( object ):
+    name = "Human"
+    desc = "I will assume that you know what a human is. They have no particular strengths or weaknesses."
+    statline = {}
+
+class Dwarf( object ):
+    name = "Dwarf"
+    desc = "They are tough, but lack reflexes"
+    statline = { stats.TOUGHNESS: 2, stats.REFLEXES: -2 }
+
+class Elf( object ):
+    name = "Elf"
+    desc = "They are graceful and intelligent, but somewhat frail."
+    statline = { stats.STRENGTH: -1, stats.TOUGHNESS: -1, stats.REFLEXES: 1, \
+        stats.INTELLIGENCE: 1 }
+
+class Gnome( object ):
+    name = "Gnome"
+    desc = "They are very pious but lack physical strength."
+    statline = { stats.STRENGTH: -2, stats.PIETY: 2, stats.STEALTH: 5 }
+
+class Orc( object ):
+    name = "Orc"
+    desc = "They are very strong, but lack intelligence."
+    statline = { stats.STRENGTH: 2, stats.INTELLIGENCE: -2 }
+
+class Hurthling( object ):
+    name = "Hurthling"
+    desc = "Hurthlings are small humanoids who live in burrows. They have good reflexes and luck, but aren't very strong or tough."
+    statline = { stats.STRENGTH: -3, stats.TOUGHNESS: -2, stats.REFLEXES: 4, \
+        stats.STEALTH: 10 }
+
+class Fuzzy( object ):
+    name = "Fuzzy"
+    desc = "Fuzzies are humanoids with animal features. They are known for their exceptional luck."
+    statline = { stats.INTELLIGENCE: -1, stats.PIETY: -1, stats.CHARISMA: 2 }
+
+class Reptal( object ):
+    name = "Reptal"
+    desc = "Reptals are an ancient race of lizard people. They are extremely strong and tough, but quite limited in all other respects."
+    statline = { stats.STRENGTH: 4, stats.TOUGHNESS: 3, stats.REFLEXES: -2, \
+        stats.INTELLIGENCE: -4, stats.PIETY: -3, stats.CHARISMA: -3, \
+        stats.RESIST_FIRE: 25, stats.RESIST_COLD: -25 }
+
+class Centaur( object ):
+    name = "Centaur"
+    desc = "Centaurs resemble humans above the waist and horses below the neck. They can move fast in combat but cannot wear shoes."
+    statline = { stats.STRENGTH: 1, stats.PIETY: -1, stats.STEALTH: -10 }
+
 
 class Character(object):
     def __init__( self ):
