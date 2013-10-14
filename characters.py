@@ -1,6 +1,12 @@
 
 import stats
+import spells
 import random
+
+# Gender tags
+MALE, FEMALE, NEUTER = range( 3 )
+
+
 
 class Level( object ):
     # Or, as we would say in a PnP RPG, a "class".
@@ -11,8 +17,8 @@ class Level( object ):
         self.rank = 0
         self.hp = 0
         self.mp = 0
+        self.spell_gems = dict()
         self.advance( rank )
-        self.applied_rank = 0
     def get_stat_bonus( self, stat ):
         """Typical stat bonus is base bonus x rank"""
         return self.statline.get( stat , 0 ) * self.rank
@@ -23,9 +29,13 @@ class Level( object ):
             if self.rank == 1:
                 self.hp = self.HP_DIE
                 self.mp = self.MP_DIE
+                for c in self.spell_circles:
+                    self.spell_gems[ c ] = 1
             else:
                 self.hp += random.randint( 1, self.HP_DIE )
                 self.mp += random.randint( 1, self.MP_DIE )
+                if ( self.LEVELS_PER_GEM > 0 ) and ( self.rank % self.LEVELS_PER_GEM == 0 ) and self.spell_circles:
+                    self.spell_gems[ random.choice( self.spell_circles ) ] += 1
 
 class Warrior( Level ):
     name = 'Warrior'
@@ -33,8 +43,10 @@ class Warrior( Level ):
     requirements = { stats.STRENGTH: 11 }
     statline = { stats.PHYSICAL_ATTACK: 5, stats.MAGIC_ATTACK: 2, stats.MAGIC_DEFENSE: 3, \
         stats.AWARENESS: 3 }
+    spell_circles = ()
     HP_DIE = 12
     MP_DIE = 4
+    LEVELS_PER_GEM = 0
 
 class Thief( Level ):
     name = 'Thief'
@@ -42,8 +54,10 @@ class Thief( Level ):
     requirements = { stats.REFLEXES: 11 }
     statline = { stats.PHYSICAL_ATTACK: 4, stats.MAGIC_ATTACK: 4, stats.MAGIC_DEFENSE: 4, \
         stats.DISARM_TRAPS: 6, stats.STEALTH: 5, stats.AWARENESS: 5 }
+    spell_circles = ()
     HP_DIE = 6
     MP_DIE = 6
+    LEVELS_PER_GEM = 0
 
 class Bard( Level ):
     name = 'Bard'
@@ -51,8 +65,10 @@ class Bard( Level ):
     requirements = { stats.REFLEXES: 13, stats.INTELLIGENCE: 11, stats.CHARISMA: 13 }
     statline = { stats.PHYSICAL_ATTACK: 4, stats.MAGIC_ATTACK: 4, stats.MAGIC_DEFENSE: 3, \
         stats.DISARM_TRAPS: 4, stats.AWARENESS: 4 }
+    spell_circles = ( spells.AIR, )
     HP_DIE = 8
     MP_DIE = 6
+    LEVELS_PER_GEM = 2
 
 class Priest( Level ):
     name = 'Priest'
@@ -60,8 +76,10 @@ class Priest( Level ):
     requirements = { stats.PIETY: 11 }
     statline = { stats.PHYSICAL_ATTACK: 4, stats.MAGIC_ATTACK: 4, stats.MAGIC_DEFENSE: 4, \
         stats.HOLY_SIGN: 5, stats.AWARENESS: 3 }
+    spell_circles = ( spells.WATER, spells.SOLAR, spells.AIR )
     HP_DIE = 8
     MP_DIE = 8
+    LEVELS_PER_GEM = 1
 
 class Mage( Level ):
     name = 'Mage'
@@ -69,8 +87,10 @@ class Mage( Level ):
     requirements = { stats.INTELLIGENCE: 11 }
     statline = { stats.PHYSICAL_ATTACK: 3, stats.MAGIC_ATTACK: 5, stats.MAGIC_DEFENSE: 4, \
         stats.AWARENESS: 3 }
+    spell_circles = ( spells.LUNAR, spells.FIRE, spells.AIR )
     HP_DIE = 4
     MP_DIE = 10
+    LEVELS_PER_GEM = 1
 
 class Druid( Level ):
     name = 'Druid'
@@ -78,8 +98,10 @@ class Druid( Level ):
     requirements = { stats.TOUGHNESS: 9, stats.INTELLIGENCE: 11 }
     statline = { stats.PHYSICAL_ATTACK: 3, stats.MAGIC_ATTACK: 5, stats.MAGIC_DEFENSE: 3, \
         stats.AWARENESS: 4 }
+    spell_circles = ( spells.EARTH, spells.SOLAR, spells.FIRE )
     HP_DIE = 6
     MP_DIE = 10
+    LEVELS_PER_GEM = 1
 
 class Knight( Level ):
     name = 'Knight'
@@ -87,8 +109,10 @@ class Knight( Level ):
     requirements = { stats.STRENGTH: 11, stats.TOUGHNESS: 11, stats.PIETY: 17, stats.CHARISMA: 13 }
     statline = { stats.PHYSICAL_ATTACK: 5, stats.MAGIC_ATTACK: 2, stats.MAGIC_DEFENSE: 5, \
         stats.RESIST_LUNAR: 5, stats.AWARENESS: 2 }
+    spell_circles = ( spells.SOLAR, )
     HP_DIE = 10
     MP_DIE = 4
+    LEVELS_PER_GEM = 3
 
 class Ranger( Level ):
     name = 'Ranger'
@@ -96,8 +120,10 @@ class Ranger( Level ):
     requirements = { stats.STRENGTH: 11, stats.REFLEXES: 13, stats.INTELLIGENCE: 11 }
     statline = { stats.PHYSICAL_ATTACK: 5, stats.MAGIC_ATTACK: 3, stats.MAGIC_DEFENSE: 3, \
         stats.DISARM_TRAPS: 3, stats.STEALTH: 5, stats.AWARENESS: 5 }
+    spell_circles = ( spells.EARTH, )
     HP_DIE = 8
     MP_DIE = 6
+    LEVELS_PER_GEM = 3
 
 class Necromancer( Level ):
     name = 'Necromancer'
@@ -105,8 +131,10 @@ class Necromancer( Level ):
     requirements = { stats.INTELLIGENCE: 13, stats.PIETY: 13 }
     statline = { stats.PHYSICAL_ATTACK: 3, stats.MAGIC_ATTACK: 5, stats.MAGIC_DEFENSE: 4, \
         stats.AWARENESS: 3 }
+    spell_circles = ( spells.LUNAR, spells.EARTH, spells.WATER )
     HP_DIE = 4
     MP_DIE = 12
+    LEVELS_PER_GEM = 1
 
 class Samurai( Level ):
     name = 'Samurai'
@@ -114,8 +142,10 @@ class Samurai( Level ):
     requirements = { stats.STRENGTH: 15, stats.REFLEXES: 11, stats.INTELLIGENCE: 13, stats.PIETY: 11 }
     statline = { stats.PHYSICAL_ATTACK: 5, stats.MAGIC_ATTACK: 4, stats.MAGIC_DEFENSE: 3, \
         stats.KUNG_FU: 2, stats.AWARENESS: 3 }
+    spell_circles = ( spells.LUNAR, )
     HP_DIE = 10
     MP_DIE = 6
+    LEVELS_PER_GEM = 2
 
 class Monk( Level ):
     name = 'Monk'
@@ -123,8 +153,10 @@ class Monk( Level ):
     requirements = { stats.TOUGHNESS: 15, stats.REFLEXES: 13, stats.PIETY: 13 }
     statline = { stats.PHYSICAL_ATTACK: 5, stats.MAGIC_ATTACK: 3, stats.MAGIC_DEFENSE: 4, \
         stats.KUNG_FU: 5, stats.NATURAL_DEFENSE: 4, stats.AWARENESS: 3 }
+    spell_circles = ()
     HP_DIE = 8
     MP_DIE = 6
+    LEVELS_PER_GEM = 0
 
 class Ninja( Level ):
     name = 'Ninja'
@@ -134,8 +166,10 @@ class Ninja( Level ):
     statline = { stats.PHYSICAL_ATTACK: 4, stats.MAGIC_ATTACK: 2, stats.MAGIC_DEFENSE: 3, \
         stats.DISARM_TRAPS: 4, stats.STEALTH: 5, \
         stats.NATURAL_DEFENSE: 4, stats.CRITICAL_HIT: 5, stats.AWARENESS: 4 }
+    spell_circles = ()
     HP_DIE = 8
     MP_DIE = 4
+    LEVELS_PER_GEM = 0
 
 # Player Character Species
 class Human( object ):
@@ -189,19 +223,29 @@ class Centaur( object ):
 
 
 class Character(object):
-    def __init__( self ):
+    def __init__( self, species = None, gender = NEUTER ):
         self.statline = dict()
         self.levels = []
+        self.species = species
+        self.gender = gender
 
     def get_stat( self , stat ):
         # Start with the basic stat value. This will probably be 0.
         it = self.statline.get( stat , 0 )
+        # Add bonus from species...
+        if self.species != None:
+            it += self.species.statline.get( stat , 0 )
+
         # Add bonuses from any earned classes...
         for l in self.levels:
             it += l.get_stat_bonus( stat )
         # Add bonuses from any equipment...
 
         return it
+
+    def get_stat_bonus( self , stat ):
+        statval = max( self.get_stat( stat ) , 1 )
+        return statval * 3 - 36
 
     def rank( self ):
         """Return the total ranks of this character's levels."""
@@ -224,6 +268,7 @@ class Character(object):
 if __name__ == '__main__':
     pc = Character()
     pc.levels.append( Ninja(3) )
+    pc.levels.append( Druid(3) )
 
     print pc.rank()
     print pc.get_stat( stats.PHYSICAL_ATTACK )
@@ -232,5 +277,6 @@ if __name__ == '__main__':
     print "HP at 17:" , pc.max_hp()
     pc.statline[ stats.TOUGHNESS ] = 10
     print "HP at 10:" , pc.max_hp()
+
 
 
