@@ -41,8 +41,8 @@ class Warrior( Level ):
     name = 'Warrior'
     desc = 'Highly trained fighters who can dish out- and take- a whole lot of physical damage.'
     requirements = { stats.STRENGTH: 11 }
-    statline = { stats.PHYSICAL_ATTACK: 5, stats.MAGIC_ATTACK: 2, stats.MAGIC_DEFENSE: 3, \
-        stats.AWARENESS: 3 }
+    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 5, stats.MAGIC_ATTACK: 3, stats.MAGIC_DEFENSE: 3, \
+        stats.AWARENESS: 4 } )
     spell_circles = ()
     HP_DIE = 12
     MP_DIE = 4
@@ -52,8 +52,8 @@ class Thief( Level ):
     name = 'Thief'
     desc = 'Highly skilled at stealth and disarming traps.'
     requirements = { stats.REFLEXES: 11 }
-    statline = { stats.PHYSICAL_ATTACK: 4, stats.MAGIC_ATTACK: 4, stats.MAGIC_DEFENSE: 4, \
-        stats.DISARM_TRAPS: 6, stats.STEALTH: 5, stats.AWARENESS: 5 }
+    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 4, stats.MAGIC_ATTACK: 3, stats.MAGIC_DEFENSE: 4, \
+        stats.DISARM_TRAPS: 6, stats.STEALTH: 5, stats.AWARENESS: 5 } )
     spell_circles = ()
     HP_DIE = 6
     MP_DIE = 6
@@ -63,8 +63,8 @@ class Bard( Level ):
     name = 'Bard'
     desc = 'Jacks of all trades, bards know a bit of fighting, thievery, and magic.'
     requirements = { stats.REFLEXES: 13, stats.INTELLIGENCE: 11, stats.CHARISMA: 13 }
-    statline = { stats.PHYSICAL_ATTACK: 4, stats.MAGIC_ATTACK: 4, stats.MAGIC_DEFENSE: 3, \
-        stats.DISARM_TRAPS: 4, stats.AWARENESS: 4 }
+    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 5, stats.MAGIC_ATTACK: 4, stats.MAGIC_DEFENSE: 3, \
+        stats.DISARM_TRAPS: 4, stats.AWARENESS: 4 } )
     spell_circles = ( spells.AIR, )
     HP_DIE = 8
     MP_DIE = 6
@@ -74,8 +74,8 @@ class Priest( Level ):
     name = 'Priest'
     desc = 'Priests learn water, solar, and air magic. They can also use a holy sign against undead.'
     requirements = { stats.PIETY: 11 }
-    statline = { stats.PHYSICAL_ATTACK: 4, stats.MAGIC_ATTACK: 4, stats.MAGIC_DEFENSE: 4, \
-        stats.HOLY_SIGN: 5, stats.AWARENESS: 3 }
+    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 4, stats.MAGIC_ATTACK: 4, stats.MAGIC_DEFENSE: 4, \
+        stats.HOLY_SIGN: 5, stats.AWARENESS: 3 } )
     spell_circles = ( spells.WATER, spells.SOLAR, spells.AIR )
     HP_DIE = 8
     MP_DIE = 8
@@ -85,8 +85,8 @@ class Mage( Level ):
     name = 'Mage'
     desc = 'Spellcasters who learn lunar, fire, and air magic.'
     requirements = { stats.INTELLIGENCE: 11 }
-    statline = { stats.PHYSICAL_ATTACK: 3, stats.MAGIC_ATTACK: 5, stats.MAGIC_DEFENSE: 4, \
-        stats.AWARENESS: 3 }
+    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 3, stats.MAGIC_ATTACK: 5, stats.MAGIC_DEFENSE: 4, \
+        stats.AWARENESS: 3 } )
     spell_circles = ( spells.LUNAR, spells.FIRE, spells.AIR )
     HP_DIE = 4
     MP_DIE = 10
@@ -96,8 +96,8 @@ class Druid( Level ):
     name = 'Druid'
     desc = 'A natural spellcaster who learns earth, solar, and fire magic.'
     requirements = { stats.TOUGHNESS: 9, stats.INTELLIGENCE: 11 }
-    statline = { stats.PHYSICAL_ATTACK: 3, stats.MAGIC_ATTACK: 5, stats.MAGIC_DEFENSE: 3, \
-        stats.AWARENESS: 4 }
+    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 3, stats.MAGIC_ATTACK: 5, stats.MAGIC_DEFENSE: 3, \
+        stats.AWARENESS: 4 } )
     spell_circles = ( spells.EARTH, spells.SOLAR, spells.FIRE )
     HP_DIE = 6
     MP_DIE = 10
@@ -107,8 +107,8 @@ class Knight( Level ):
     name = 'Knight'
     desc = 'Blessed warrior with limited healing magic.'
     requirements = { stats.STRENGTH: 11, stats.TOUGHNESS: 11, stats.PIETY: 17, stats.CHARISMA: 13 }
-    statline = { stats.PHYSICAL_ATTACK: 5, stats.MAGIC_ATTACK: 2, stats.MAGIC_DEFENSE: 5, \
-        stats.RESIST_LUNAR: 5, stats.AWARENESS: 2 }
+    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 5, stats.MAGIC_ATTACK: 3, stats.MAGIC_DEFENSE: 5, \
+        stats.RESIST_LUNAR: 5, stats.AWARENESS: 2 } )
     spell_circles = ( spells.SOLAR, )
     HP_DIE = 10
     MP_DIE = 4
@@ -118,8 +118,8 @@ class Ranger( Level ):
     name = 'Ranger'
     desc = 'Stealthy warriors with limited earth magic.'
     requirements = { stats.STRENGTH: 11, stats.REFLEXES: 13, stats.INTELLIGENCE: 11 }
-    statline = { stats.PHYSICAL_ATTACK: 5, stats.MAGIC_ATTACK: 3, stats.MAGIC_DEFENSE: 3, \
-        stats.DISARM_TRAPS: 3, stats.STEALTH: 5, stats.AWARENESS: 5 }
+    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 5, stats.MAGIC_ATTACK: 3, stats.MAGIC_DEFENSE: 3, \
+        stats.DISARM_TRAPS: 3, stats.STEALTH: 5, stats.AWARENESS: 5 } )
     spell_circles = ( spells.EARTH, )
     HP_DIE = 8
     MP_DIE = 6
@@ -129,8 +129,8 @@ class Necromancer( Level ):
     name = 'Necromancer'
     desc = 'Wizards who explore the secrets of life and death. They learn lunar, earth, and water magic.'
     requirements = { stats.INTELLIGENCE: 13, stats.PIETY: 13 }
-    statline = { stats.PHYSICAL_ATTACK: 3, stats.MAGIC_ATTACK: 5, stats.MAGIC_DEFENSE: 4, \
-        stats.AWARENESS: 3 }
+    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 3, stats.MAGIC_ATTACK: 5, stats.MAGIC_DEFENSE: 4, \
+        stats.AWARENESS: 3 } )
     spell_circles = ( spells.LUNAR, spells.EARTH, spells.WATER )
     HP_DIE = 4
     MP_DIE = 12
@@ -140,8 +140,8 @@ class Samurai( Level ):
     name = 'Samurai'
     desc = "Mystic warriors. They gain lunar magic but can't use heavy armor or missile weapons."
     requirements = { stats.STRENGTH: 15, stats.REFLEXES: 11, stats.INTELLIGENCE: 13, stats.PIETY: 11 }
-    statline = { stats.PHYSICAL_ATTACK: 5, stats.MAGIC_ATTACK: 4, stats.MAGIC_DEFENSE: 3, \
-        stats.KUNG_FU: 2, stats.AWARENESS: 3 }
+    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 5, stats.MAGIC_ATTACK: 4, stats.MAGIC_DEFENSE: 3, \
+        stats.KUNG_FU: 2, stats.AWARENESS: 3 } )
     spell_circles = ( spells.LUNAR, )
     HP_DIE = 10
     MP_DIE = 6
@@ -151,8 +151,8 @@ class Monk( Level ):
     name = 'Monk'
     desc = 'Experts at unarmed fighting.'
     requirements = { stats.TOUGHNESS: 15, stats.REFLEXES: 13, stats.PIETY: 13 }
-    statline = { stats.PHYSICAL_ATTACK: 5, stats.MAGIC_ATTACK: 3, stats.MAGIC_DEFENSE: 4, \
-        stats.KUNG_FU: 5, stats.NATURAL_DEFENSE: 4, stats.AWARENESS: 3 }
+    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 5, stats.MAGIC_ATTACK: 3, stats.MAGIC_DEFENSE: 4, \
+        stats.KUNG_FU: 5, stats.NATURAL_DEFENSE: 4, stats.AWARENESS: 3 } )
     spell_circles = ()
     HP_DIE = 8
     MP_DIE = 6
@@ -163,13 +163,15 @@ class Ninja( Level ):
     desc = 'They have a chance to slay living targets in a single hit.'
     requirements = { stats.STRENGTH: 13, stats.TOUGHNESS: 13, stats.REFLEXES: 13, \
         stats.INTELLIGENCE: 13, stats.PIETY: 13, stats.CHARISMA: 13 }
-    statline = { stats.PHYSICAL_ATTACK: 4, stats.MAGIC_ATTACK: 2, stats.MAGIC_DEFENSE: 3, \
-        stats.DISARM_TRAPS: 4, stats.STEALTH: 5, \
-        stats.NATURAL_DEFENSE: 4, stats.CRITICAL_HIT: 5, stats.AWARENESS: 4 }
+    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 4, stats.MAGIC_ATTACK: 2, \
+        stats.MAGIC_DEFENSE: 3, stats.DISARM_TRAPS: 4, stats.STEALTH: 5, \
+        stats.NATURAL_DEFENSE: 4, stats.CRITICAL_HIT: 5, stats.AWARENESS: 4 } )
     spell_circles = ()
     HP_DIE = 8
     MP_DIE = 4
     LEVELS_PER_GEM = 0
+
+PC_CLASSES = (Warrior,Thief,Bard,Priest,Mage,Druid,Knight,Ranger,Necromancer,Samurai,Monk,Ninja)
 
 # Player Character Species
 class Human( object ):
@@ -278,5 +280,7 @@ if __name__ == '__main__':
     pc.statline[ stats.TOUGHNESS ] = 10
     print "HP at 10:" , pc.max_hp()
 
-
+    print "\n***Level Stats***"
+    for c in PC_CLASSES:
+        print c.name + ': ' + str( c.statline.cost() )
 
