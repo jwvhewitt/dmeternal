@@ -25,7 +25,7 @@ NAMES = ( "Strength", "Toughness", "Reflexes", "Intelligence", "Piety", "Charism
 
 class StatMod( dict ):
     """A dictionary of stat bonuses, with cost() method for items, etc"""
-    COM_SCORE_COST_MOD = ( 500, 500, 500, 500, 500, 500, \
+    COM_SCORE_COST_MOD = ( 1500, 1500, 1500, 1500, 1500, 1500, \
         25, 7, 25, 15, 20, \
         25, 10, 10, 10, 5, \
         5, 5, 20, 20, 20, \
@@ -46,7 +46,7 @@ class StatMod( dict ):
 if __name__ == '__main__':
 
     armor = StatMod()
-    armor[ PHYSICAL_DEFENSE ] = 5
-    armor[ RESIST_COLD ] = 25
+    armor[ STRENGTH ] = 2
+    armor[ PHYSICAL_DEFENSE ] = 40
 
     print armor.cost()

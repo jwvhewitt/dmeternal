@@ -152,7 +152,7 @@ class Monk( Level ):
     desc = 'Experts at unarmed fighting.'
     requirements = { stats.TOUGHNESS: 15, stats.REFLEXES: 13, stats.PIETY: 13 }
     statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 5, stats.MAGIC_ATTACK: 3, stats.MAGIC_DEFENSE: 4, \
-        stats.KUNG_FU: 5, stats.NATURAL_DEFENSE: 4, stats.AWARENESS: 3 } )
+        stats.KUNG_FU: 5, stats.NATURAL_DEFENSE: 4, stats.AWARENESS: 4 } )
     spell_circles = ()
     HP_DIE = 8
     MP_DIE = 6
