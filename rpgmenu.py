@@ -218,7 +218,7 @@ if __name__=='__main__':
     pygame.init()
 
     # Set the screen size.
-    screen = pygame.display.set_mode((540, 960))
+    screen = pygame.display.set_mode( (640,400) )
 
     init()
 

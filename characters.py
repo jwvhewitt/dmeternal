@@ -78,7 +78,7 @@ class Priest( Level ):
         stats.HOLY_SIGN: 5, stats.AWARENESS: 3 } )
     spell_circles = ( spells.WATER, spells.SOLAR, spells.AIR )
     HP_DIE = 8
-    MP_DIE = 8
+    MP_DIE = 10
     LEVELS_PER_GEM = 1
 
 class Mage( Level ):
@@ -89,7 +89,7 @@ class Mage( Level ):
         stats.AWARENESS: 3 } )
     spell_circles = ( spells.LUNAR, spells.FIRE, spells.AIR )
     HP_DIE = 4
-    MP_DIE = 10
+    MP_DIE = 14
     LEVELS_PER_GEM = 1
 
 class Druid( Level ):
@@ -100,7 +100,7 @@ class Druid( Level ):
         stats.AWARENESS: 4 } )
     spell_circles = ( spells.EARTH, spells.SOLAR, spells.FIRE )
     HP_DIE = 6
-    MP_DIE = 10
+    MP_DIE = 12
     LEVELS_PER_GEM = 1
 
 class Knight( Level ):
@@ -133,7 +133,7 @@ class Necromancer( Level ):
         stats.AWARENESS: 3 } )
     spell_circles = ( spells.LUNAR, spells.EARTH, spells.WATER )
     HP_DIE = 4
-    MP_DIE = 12
+    MP_DIE = 14
     LEVELS_PER_GEM = 1
 
 class Samurai( Level ):
