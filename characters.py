@@ -2,9 +2,10 @@
 import stats
 import spells
 import random
+import image
 
 # Gender tags
-MALE, FEMALE, NEUTER = range( 3 )
+FEMALE, MALE, NEUTER = range( 3 )
 
 
 
@@ -32,8 +33,8 @@ class Level( object ):
                 for c in self.spell_circles:
                     self.spell_gems[ c ] = 1
             else:
-                self.hp += random.randint( 1, self.HP_DIE )
-                self.mp += random.randint( 1, self.MP_DIE )
+                self.hp += max( random.randint( 1, self.HP_DIE ) , random.randint( 1, self.HP_DIE ) )
+                self.mp += max( random.randint( 1, self.MP_DIE ) , random.randint( 1, self.MP_DIE ) )
                 if ( self.LEVELS_PER_GEM > 0 ) and ( self.rank % self.LEVELS_PER_GEM == 0 ) and self.spell_circles:
                     self.spell_gems[ random.choice( self.spell_circles ) ] += 1
 
@@ -177,51 +178,70 @@ PC_CLASSES = (Warrior,Thief,Bard,Priest,Mage,Druid,Knight,Ranger,Necromancer,Sam
 class Human( object ):
     name = "Human"
     desc = "I will assume that you know what a human is. They have no particular strengths or weaknesses."
+    sprite_name = "avatar_base.png"
+    NUM_COLORS = 3
+    FIRST_IMAGE = 0
+    skin_color = 0
     statline = {}
 
-class Dwarf( object ):
+    def get_sprite( self , gender = NEUTER ):
+        """Return a tuple with the image, framenum for this species."""
+        img = image.Image( self.sprite_name , 54 , 54 )
+        return img, self.FIRST_IMAGE + self.skin_color + self.NUM_COLORS * min( gender , 1 )
+
+    def alter_skin_color( self ):
+        """Change to the next possible skin color."""
+        self.skin_color = ( self.skin_color + 1 ) % self.NUM_COLORS
+
+class Dwarf( Human ):
     name = "Dwarf"
     desc = "They are tough, but lack reflexes"
-    statline = { stats.TOUGHNESS: 2, stats.REFLEXES: -2 }
+    statline = { stats.TOUGHNESS: 2, stats.REFLEXES: -2, stats.DETECT_TRAPS: 5, stats.STEALTH: -5 }
 
-class Elf( object ):
+class Elf( Human ):
     name = "Elf"
     desc = "They are graceful and intelligent, but somewhat frail."
     statline = { stats.STRENGTH: -1, stats.TOUGHNESS: -1, stats.REFLEXES: 1, \
         stats.INTELLIGENCE: 1 }
+    FIRST_IMAGE = 6
 
-class Gnome( object ):
+class Gnome( Human ):
     name = "Gnome"
     desc = "They are very pious but lack physical strength."
     statline = { stats.STRENGTH: -2, stats.PIETY: 2, stats.STEALTH: 5 }
 
-class Orc( object ):
+class Orc( Human ):
     name = "Orc"
     desc = "They are very strong, but lack intelligence."
     statline = { stats.STRENGTH: 2, stats.INTELLIGENCE: -2 }
+    FIRST_IMAGE = 12
 
-class Hurthling( object ):
+class Hurthling( Human ):
     name = "Hurthling"
     desc = "Hurthlings are small humanoids who live in burrows. They have good reflexes and luck, but aren't very strong or tough."
     statline = { stats.STRENGTH: -3, stats.TOUGHNESS: -2, stats.REFLEXES: 4, \
         stats.STEALTH: 10 }
 
-class Fuzzy( object ):
+class Fuzzy( Human ):
     name = "Fuzzy"
     desc = "Fuzzies are humanoids with animal features. They are known for their exceptional luck."
     statline = { stats.INTELLIGENCE: -1, stats.PIETY: -1, stats.CHARISMA: 2 }
+    FIRST_IMAGE = 18
 
-class Reptal( object ):
+class Reptal( Human ):
     name = "Reptal"
     desc = "Reptals are an ancient race of lizard people. They are extremely strong and tough, but quite limited in all other respects."
     statline = { stats.STRENGTH: 4, stats.TOUGHNESS: 3, stats.REFLEXES: -2, \
         stats.INTELLIGENCE: -4, stats.PIETY: -3, stats.CHARISMA: -3, \
         stats.RESIST_FIRE: 25, stats.RESIST_COLD: -25 }
+    FIRST_IMAGE = 24
+    NUM_COLORS = 6
 
-class Centaur( object ):
+class Centaur( Human ):
     name = "Centaur"
     desc = "Centaurs resemble humans above the waist and horses below the neck. They can move fast in combat but cannot wear shoes."
     statline = { stats.STRENGTH: 1, stats.PIETY: -1, stats.STEALTH: -10 }
+    FIRST_IMAGE = 36
 
 
 class Character(object):
@@ -266,6 +286,20 @@ class Character(object):
         if bonus < 0:
             bonus = 0
         return sum( l.mp for l in self.levels ) + int( bonus * self.rank() / 2 )
+
+    def generate_avatar( self ):
+        # Generate an image for this character.
+        avatar = image.Image( frame_width = 54, frame_height = 54 )
+        # Add each layer in turn.
+        if self.species:
+            # Add the species layer.
+            img,frame = self.species.get_sprite( gender = self.gender )
+            img.render( avatar , frame = frame )
+
+        # Add the equipment layers in order.
+
+        return avatar
+
 
 if __name__ == '__main__':
     pc = Character()

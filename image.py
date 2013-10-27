@@ -8,13 +8,19 @@ import weakref
 pre_loaded_images = weakref.WeakValueDictionary()
 
 class Image( object ):
-    def __init__(self,fname,frame_width=0,frame_height=0):
-        if fname in pre_loaded_images:
-            self.bitmap = pre_loaded_images[fname]
+    def __init__(self,fname=None,frame_width=0,frame_height=0):
+        """Load image file, or create blank image, at frame size"""
+        if fname:
+            if fname in pre_loaded_images:
+                self.bitmap = pre_loaded_images[fname]
+            else:
+                self.bitmap = pygame.image.load( "image/" + fname ).convert()
+                self.bitmap.set_colorkey((0,0,255),pygame.RLEACCEL)
+                pre_loaded_images[fname] = self.bitmap
         else:
-            self.bitmap = pygame.image.load( "image/" + fname ).convert()
+            self.bitmap = pygame.Surface( (frame_width , frame_height) )
+            self.bitmap.fill((0,0,255))
             self.bitmap.set_colorkey((0,0,255),pygame.RLEACCEL)
-            pre_loaded_images[fname] = self.bitmap
 
         if frame_width == 0:
             frame_width = self.bitmap.get_width()
@@ -27,7 +33,7 @@ class Image( object ):
         self.frame_width = frame_width
         self.frame_height = frame_height
 
-    def render( self , screen , dest , frame = 0 ):
+    def render( self , screen , dest = None , frame = 0 ):
         # Render this Image onto the provided surface.
         # Start by determining the correct sub-area of the image.
         frames_per_row = self.bitmap.get_width() / self.frame_width
@@ -61,7 +67,7 @@ if __name__ == '__main__':
     pygame.init()
 
     # Set the screen size.
-    screen = pygame.display.set_mode((540, 960))
+    screen = pygame.display.set_mode((640, 480))
 
     myimg = Image( "sys_defborder.png" , 16 , 16 )
 
@@ -74,6 +80,9 @@ if __name__ == '__main__':
     myimg.render( screen , ( 10 , 42 ) , 0 )
     myimg.render( screen , ( 26 , 42 ) , 1 )
     myimg.render( screen , ( 42 , 42 ) , 0 )
+
+    myimg2 = Image( frame_width = 32 , frame_height = 32 )
+    myimg2.render( screen , ( 100, 100 ) )
 
     pygame.display.flip()
 
