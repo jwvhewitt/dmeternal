@@ -3,6 +3,7 @@ import stats
 import spells
 import random
 import image
+import items
 
 # Gender tags
 FEMALE, MALE, NEUTER = range( 3 )
@@ -196,7 +197,7 @@ class Human( object ):
 class Dwarf( Human ):
     name = "Dwarf"
     desc = "They are tough, but lack reflexes"
-    statline = { stats.TOUGHNESS: 2, stats.REFLEXES: -2, stats.DETECT_TRAPS: 5, stats.STEALTH: -5 }
+    statline = { stats.TOUGHNESS: 2, stats.REFLEXES: -2, stats.DISARM_TRAPS: 5, stats.STEALTH: -5 }
 
 class Elf( Human ):
     name = "Elf"
@@ -250,6 +251,7 @@ class Character(object):
         self.levels = []
         self.species = species
         self.gender = gender
+        self.inventory = items.Backpack()
 
     def get_stat( self , stat ):
         # Start with the basic stat value. This will probably be 0.
@@ -291,12 +293,28 @@ class Character(object):
         # Generate an image for this character.
         avatar = image.Image( frame_width = 54, frame_height = 54 )
         # Add each layer in turn.
+        item = self.inventory.get_equip( items.BACK )
+        if item:
+            item.stamp_avatar( avatar , self )
+
         if self.species:
             # Add the species layer.
             img,frame = self.species.get_sprite( gender = self.gender )
             img.render( avatar , frame = frame )
 
-        # Add the equipment layers in order.
+        # Add the equipment layers in order, feet to just before head.
+        for es in range( items.FEET, items.HEAD ):
+            item = self.inventory.get_equip( es )
+            if item:
+                item.stamp_avatar( avatar , self )
+
+        # Add hair and beard.
+
+        # Now finally add the head equipment.
+        item = self.inventory.get_equip( items.HEAD )
+        if item:
+            item.stamp_avatar( avatar , self )
+
 
         return avatar
 

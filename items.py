@@ -8,12 +8,12 @@ GENERIC, SWORD, AXE, MACE, DAGGER, STAFF, BOW, POLEARM, ARROW, SHIELD, SLING, \
 
 # Enumerated constants for the item slots.
 # Note that these are defined in the order in which they're applied to avatar.
-NOSLOT, BACK, FEET, BODY, HANDS, RIGHT_HAND, LEFT_HAND, HEAD = range( 100, 108 )
+NOSLOT, BACK, FEET, BODY, HANDS, HAND1, HAND2, HEAD = range( 100, 108 )
 
 # List of slots by item type.
-SLOT_FOR_TYPE = ( NOSLOT, RIGHT_HAND, RIGHT_HAND, RIGHT_HAND, RIGHT_HAND, \
-    RIGHT_HAND, RIGHT_HAND, RIGHT_HAND, LEFT_HAND, LEFT_HAND, RIGHT_HAND, \
-    LEFT_HAND, BODY, BODY, BODY, HEAD, HEAD, HANDS, HANDS, FEET, FEET, \
+SLOT_FOR_TYPE = ( NOSLOT, HAND1, HAND1, HAND1, HAND1, \
+    HAND1, HAND1, HAND1, HAND2, HAND2, HAND1, \
+    HAND2, BODY, BODY, BODY, HEAD, HEAD, HANDS, HANDS, FEET, FEET, \
     FEET, BACK )
 
 class Item( object ):
@@ -27,17 +27,21 @@ class Item( object ):
     avatar_image = None
     avatar_frame = 0
     mass = 1
+    equipped = False
     def cost( self ):
         it = 1
         if self.statline != None:
             it += self.statline.cost()
         return it
-    def stamp_avatar( self , avatar ):
+    def stamp_avatar( self, avatar, pc ):
         """Apply this item's sprite to the avatar."""
         if self.avatar_image:
             img = image.Image( self.avatar_image , 54 , 54 )
             img.render( avatar , frame = self.avatar_frame )
 
+    @property
+    def slot( self ):
+        return SLOT_FOR_TYPE[ self.itemtype ]
 
 class NormalCloak( Item ):
     true_name = "Cloak"
@@ -80,6 +84,24 @@ class ChainmailArmor( Item ):
     statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 20, stats.MAGIC_ATTACK: -20, stats.STEALTH: -10 })
     mass = 250
 
+class Backpack( list ):
+    def get_equip( self , slot ):
+        requested_item = None
+        for i in self:
+            if i.equipped and ( i.slot == slot ):
+                requested_item = i
+                break
+        return requested_item
+    def equip( self, item ):
+        if ( item in self ) and ( item.slot != NOSLOT ):
+            # Unequip the currently equipped item
+            old_item = self.get_equip( item.slot )
+            if old_item:
+                old_item.equipped = False
+            # If dealing with a two handed weapon, unequip whatever's in hand 2.
+            # Likewise, if equipping a hand2 item and hand1 has a two handed weapon,
+            #  unequip the contents of hand1.
+            item.equipped = True
 
 if __name__ == '__main__':
     tc = ThiefCloak()
