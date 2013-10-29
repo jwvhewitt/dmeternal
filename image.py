@@ -33,7 +33,7 @@ class Image( object ):
         self.frame_width = frame_width
         self.frame_height = frame_height
 
-    def render( self , screen , dest = None , frame = 0 ):
+    def render( self , screen , dest = (0,0) , frame = 0 ):
         # Render this Image onto the provided surface.
         # Start by determining the correct sub-area of the image.
         frames_per_row = self.bitmap.get_width() / self.frame_width

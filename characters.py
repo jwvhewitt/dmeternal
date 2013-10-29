@@ -300,7 +300,7 @@ class Character(object):
         if self.species:
             # Add the species layer.
             img,frame = self.species.get_sprite( gender = self.gender )
-            img.render( avatar , frame = frame )
+            img.render( avatar.bitmap , frame = frame )
 
         # Add the equipment layers in order, feet to just before head.
         for es in range( items.FEET, items.HEAD ):
@@ -314,7 +314,6 @@ class Character(object):
         item = self.inventory.get_equip( items.HEAD )
         if item:
             item.stamp_avatar( avatar , self )
-
 
         return avatar
 
