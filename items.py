@@ -17,6 +17,28 @@ SLOT_FOR_TYPE = ( NOSLOT, HAND1, HAND1, HAND1, HAND1, \
     HAND2, BODY, BODY, BODY, HEAD, HEAD, HANDS, HANDS, FEET, FEET, \
     FEET, BACK )
 
+class Attack( object ):
+    REACH_MODIFIER = 2
+    def __init__( self, damage = (1,6,0), skill_mod = stats.STRENGTH, damage_mod = stats.STRENGTH, \
+         double_handed = False, element = stats.RESIST_SLASHING, reach = 1 ):
+        self.damage = damage
+        self.skill_mod = skill_mod
+        self.damage_mod = damage_mod
+        self.double_handed = double_handed
+        self.element = element
+        self.reach = reach
+    def cost( self ):
+        """Return the GP value of this attack."""
+        # Calculate the maximum damage that can be rolled.
+        D = self.damage[0] * self.damage[1] + self.damage[2]
+        # Base price is this amount squared, plus number of dice squared.
+        it = D ** 2 + self.damage[0] ** 2
+        # Modify for range; each point increases cost by a third.
+        if self.reach > 1:
+            it = ( it * self.reach + 3 ) * self.REACH_MODIFIER // 6
+        return it
+
+
 class Item( object ):
     true_name = "Item"
     true_desc = ""
@@ -28,12 +50,13 @@ class Item( object ):
     avatar_image = None
     avatar_frame = 0
     mass = 1
-    double_handed = False
     equipped = False
     def cost( self ):
         it = 1
         if self.statline != None:
             it += self.statline.cost()
+        if self.attackdata != None:
+            it += self.attackdata.cost()
         return it
     def stamp_avatar( self, avatar, pc ):
         """Apply this item's sprite to the avatar."""
@@ -151,7 +174,7 @@ class LeatherArmor( NormalClothes ):
     statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 10 })
     mass = 90
 
-class ChainmailArmor( Item ):
+class ChainmailArmor( NormalClothes ):
     true_name = "Chainmail Armor"
     true_desc = ""
     itemtype = HEAVY_ARMOR
@@ -159,6 +182,24 @@ class ChainmailArmor( Item ):
     avatar_frame = 0
     statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 20, stats.MAGIC_ATTACK: -20, stats.STEALTH: -10 })
     mass = 250
+
+class Shortsword( Item ):
+    true_name = "Shortsword"
+    true_desc = ""
+    itemtype = SWORD
+    avatar_image = "avatar_cloak.png"
+    avatar_frame = 0
+    mass = 15
+    attackdata = Attack( (1,6,0) )
+
+class Longsword( Item ):
+    true_name = "Longsword"
+    true_desc = ""
+    itemtype = SWORD
+    avatar_image = "avatar_cloak.png"
+    avatar_frame = 0
+    mass = 40
+    attackdata = Attack( (1,8,0) )
 
 class Backpack( list ):
     def get_equip( self , slot ):
@@ -175,7 +216,7 @@ class Backpack( list ):
             if old_item:
                 old_item.equipped = False
 
-            if (item.slot == HAND1) and item.double_handed:
+            if (item.slot == HAND1) and item.attackdata.double_handed:
                 # If dealing with a two handed weapon, unequip whatever's in hand 2.
                 old_item = self.get_equip( HAND2 )
                 if old_item:
@@ -184,7 +225,7 @@ class Backpack( list ):
                 # Likewise, if equipping a hand2 item and hand1 has a two handed weapon,
                 #  unequip the contents of hand1.
                 old_item = self.get_equip( HAND1 )
-                if old_item and old_item.double_handed:
+                if old_item and old_item.attackdata.double_handed:
                     old_item.equipped = False
             item.equipped = True
 
@@ -193,10 +234,15 @@ if __name__ == '__main__':
     nc = NormalCloak()
     la = LeatherArmor()
     ca = ChainmailArmor()
+    ss = Shortsword()
+    ls = Longsword()
 
     print tc.cost()
     print nc.cost()
     print la.cost()
     print ca.cost()
+    print ss.cost()
+    print ls.cost()
+
 
 
