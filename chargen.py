@@ -10,12 +10,11 @@ if __name__=='__main__':
     screen = pygame.display.set_mode( (640,400) )
     screen.fill((0,250,250))
 
-    pc = characters.Character( species = characters.Human() )
-    pc.species.alter_skin_color()
+    pc = characters.Character( gender = characters.FEMALE, species = characters.Human() )
 
     pc.levels.append( characters.Ninja(3) )
 
-    la = items.LeatherArmor()
+    la = items.PeasantGarb()
     pc.inventory.append( la )
     pc.inventory.equip( la )
 

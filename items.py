@@ -1,5 +1,6 @@
 import stats
 import image
+import characters
 
 # Enumerated constants for the item types.
 GENERIC, SWORD, AXE, MACE, DAGGER, STAFF, BOW, POLEARM, ARROW, SHIELD, SLING, \
@@ -60,24 +61,85 @@ class ThiefCloak( NormalCloak ):
     statline = stats.StatMod({ stats.STEALTH: 5, stats.RESIST_COLD: 5 })
 
 class NormalClothes( Item ):
-    true_name = "Peasant Garb"
+    true_name = "Travelers Garb"
     true_desc = ""
     itemtype = CLOTHES
-    avatar_image = "avatar_cloak.png"
-    avatar_frame = 0
+    avatar_image = "avatar_clothing.png"
+    avatar_frame = 3
+    male_frame = None
     pants_image = "avatar_legs.png"
     pants_frame = 3
+    male_pants = None
     statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 5 })
     mass = 20
     def stamp_avatar( self, avatar, pc ):
         """Apply this item's sprite to the avatar."""
         if self.pants_image:
             img = image.Image( self.pants_image , 54 , 54 )
-            img.render( avatar.bitmap , frame = self.pants_frame )
+            if ( pc.gender == characters.MALE ) and self.male_pants:
+                frame = self.male_pants
+            else:
+                frame = self.pants_frame
+            img.render( avatar.bitmap , frame = frame )
         if self.avatar_image:
             img = image.Image( self.avatar_image , 54 , 54 )
-            img.render( avatar.bitmap , frame = self.avatar_frame )
+            if ( pc.gender == characters.MALE ) and self.male_frame:
+                frame = self.male_frame
+            else:
+                frame = self.avatar_frame
+            img.render( avatar.bitmap , frame = frame )
 
+class PeasantGarb( NormalClothes ):
+    true_name = "Peasant Garb"
+    true_desc = ""
+    avatar_frame = 0
+    pants_frame = 8
+    male_pants = 18
+    mass = 20
+
+class MerchantGarb( NormalClothes ):
+    true_name = "Merchant Garb"
+    true_desc = ""
+    avatar_frame = 2
+    male_frame = 1
+    pants_frame = 6
+    mass = 20
+
+class MageRobe( NormalClothes ):
+    true_name = "Mage Robe"
+    true_desc = ""
+    avatar_frame = 4
+    pants_image = None
+    mass = 20
+
+class DruidRobe( NormalClothes ):
+    true_name = "Druid Robe"
+    true_desc = ""
+    avatar_frame = 5
+    male_frame = 6
+    pants_image = None
+    mass = 20
+
+class NecromancerRobe( NormalClothes ):
+    true_name = "Necromancer Robe"
+    true_desc = ""
+    avatar_frame = 7
+    pants_image = None
+    mass = 20
+
+class MonkRobe( NormalClothes ):
+    true_name = "Monk Robe"
+    true_desc = ""
+    avatar_frame = 8
+    pants_image = None
+    mass = 20
+
+class NinjaGear( NormalClothes ):
+    true_name = "Ninja Garb"
+    true_desc = ""
+    avatar_frame = 9
+    pants_image = None
+    mass = 20
 
 class LeatherArmor( NormalClothes ):
     true_name = "Leather Armor"
