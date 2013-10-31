@@ -15,16 +15,17 @@ class Level( object ):
     # Keeping as much info as possible in the class attributes, so after pickling
     # a character the values can be changed here and the PC will automatically
     # use the new values.
-    def __init__( self, rank=1 ):
+    starting_equipment = ()
+    def __init__( self, rank=1, pc=None ):
         self.rank = 0
         self.hp = 0
         self.mp = 0
         self.spell_gems = dict()
-        self.advance( rank )
+        self.advance( rank , pc )
     def get_stat_bonus( self, stat ):
         """Typical stat bonus is base bonus x rank"""
         return self.statline.get( stat , 0 ) * self.rank
-    def advance( self, ranks=1 ):
+    def advance( self, ranks=1, pc=None ):
         """Advance this level by the requested number of ranks."""
         for r in range( ranks ):
             self.rank += 1
@@ -38,6 +39,9 @@ class Level( object ):
                 self.mp += max( random.randint( 1, self.MP_DIE ) , random.randint( 1, self.MP_DIE ) )
                 if ( self.LEVELS_PER_GEM > 0 ) and ( self.rank % self.LEVELS_PER_GEM == 0 ) and self.spell_circles:
                     self.spell_gems[ random.choice( self.spell_circles ) ] += 1
+        if pc:
+            # If we've been passed a character, record the most recent level.
+            pc.mr_level = self
 
 class Warrior( Level ):
     name = 'Warrior'
@@ -49,6 +53,13 @@ class Warrior( Level ):
     HP_DIE = 12
     MP_DIE = 4
     LEVELS_PER_GEM = 0
+    legal_equipment = ( items.SWORD, items.AXE, items.MACE, items.DAGGER, items.STAFF, \
+        items.BOW, items.POLEARM, items.ARROW, items.SHIELD, items.SLING, \
+        items.BULLET, items.CLOTHES, items.LIGHT_ARMOR, items.HEAVY_ARMOR, items.HAT, \
+        items.HELM, items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES, \
+        items.BOOTS, items.CLOAK )
+    starting_equipment = ()
+
 
 class Thief( Level ):
     name = 'Thief'
@@ -60,6 +71,12 @@ class Thief( Level ):
     HP_DIE = 6
     MP_DIE = 6
     LEVELS_PER_GEM = 0
+    legal_equipment = ( items.DAGGER, items.STAFF, \
+        items.BOW, items.ARROW, items.SLING, \
+        items.BULLET, items.CLOTHES, items.LIGHT_ARMOR, \
+        items.HAT, items.GLOVE, items.SANDALS, \
+        items.SHOES, items.BOOTS, items.CLOAK )
+
 
 class Bard( Level ):
     name = 'Bard'
@@ -71,6 +88,11 @@ class Bard( Level ):
     HP_DIE = 8
     MP_DIE = 6
     LEVELS_PER_GEM = 2
+    legal_equipment = ( items.SWORD, items.MACE, items.DAGGER, items.STAFF, \
+        items.BOW, items.ARROW, items.SLING, \
+        items.BULLET, items.CLOTHES, items.LIGHT_ARMOR, items.HAT, \
+        items.GLOVE, items.SANDALS, items.SHOES, \
+        items.BOOTS, items.CLOAK )
 
 class Priest( Level ):
     name = 'Priest'
@@ -82,6 +104,11 @@ class Priest( Level ):
     HP_DIE = 8
     MP_DIE = 10
     LEVELS_PER_GEM = 1
+    legal_equipment = ( items.MACE, items.STAFF, \
+        items.SHIELD, items.SLING, \
+        items.BULLET, items.CLOTHES, items.LIGHT_ARMOR, items.HEAVY_ARMOR, items.HAT, \
+        items.HELM, items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES, \
+        items.BOOTS, items.CLOAK )
 
 class Mage( Level ):
     name = 'Mage'
@@ -93,6 +120,10 @@ class Mage( Level ):
     HP_DIE = 4
     MP_DIE = 14
     LEVELS_PER_GEM = 1
+    legal_equipment = ( items.DAGGER, items.STAFF, items.SLING, \
+        items.BULLET, items.CLOTHES, items.HAT, \
+        items.GLOVE, items.SANDALS, items.SHOES, \
+        items.BOOTS, items.CLOAK )
 
 class Druid( Level ):
     name = 'Druid'
@@ -104,6 +135,11 @@ class Druid( Level ):
     HP_DIE = 6
     MP_DIE = 12
     LEVELS_PER_GEM = 1
+    legal_equipment = ( items.DAGGER, items.STAFF, \
+        items.BOW, items.POLEARM, items.ARROW, items.SLING, \
+        items.BULLET, items.CLOTHES, items.HAT, \
+        items.GLOVE, items.SANDALS, items.SHOES, \
+        items.BOOTS, items.CLOAK )
 
 class Knight( Level ):
     name = 'Knight'
@@ -115,6 +151,11 @@ class Knight( Level ):
     HP_DIE = 10
     MP_DIE = 4
     LEVELS_PER_GEM = 3
+    legal_equipment = ( items.SWORD, items.MACE, \
+        items.POLEARM, items.SHIELD, \
+        items.CLOTHES, items.LIGHT_ARMOR, items.HEAVY_ARMOR, items.HAT, \
+        items.HELM, items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES, \
+        items.BOOTS, items.CLOAK )
 
 class Ranger( Level ):
     name = 'Ranger'
@@ -126,6 +167,11 @@ class Ranger( Level ):
     HP_DIE = 8
     MP_DIE = 6
     LEVELS_PER_GEM = 3
+    legal_equipment = ( items.SWORD, items.AXE, items.MACE, items.DAGGER, items.STAFF, \
+        items.BOW, items.POLEARM, items.ARROW, items.SHIELD, items.SLING, \
+        items.BULLET, items.CLOTHES, items.LIGHT_ARMOR, items.HAT, \
+        items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES, \
+        items.BOOTS, items.CLOAK )
 
 class Necromancer( Level ):
     name = 'Necromancer'
@@ -137,6 +183,10 @@ class Necromancer( Level ):
     HP_DIE = 4
     MP_DIE = 14
     LEVELS_PER_GEM = 1
+    legal_equipment = ( items.DAGGER, items.STAFF, items.SLING, \
+        items.BULLET, items.CLOTHES, items.HAT, \
+        items.GLOVE, items.SANDALS, items.SHOES, \
+        items.BOOTS, items.CLOAK )
 
 class Samurai( Level ):
     name = 'Samurai'
@@ -148,6 +198,12 @@ class Samurai( Level ):
     HP_DIE = 10
     MP_DIE = 6
     LEVELS_PER_GEM = 2
+    legal_equipment = ( items.SWORD, items.AXE, items.MACE, items.DAGGER, items.STAFF, \
+        items.POLEARM, items.SHIELD, \
+        items.CLOTHES, items.LIGHT_ARMOR, items.HAT, \
+        items.HELM, items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES, \
+        items.BOOTS, items.CLOAK )
+    starting_equipment = (items.Wakizashi,)
 
 class Monk( Level ):
     name = 'Monk'
@@ -159,6 +215,12 @@ class Monk( Level ):
     HP_DIE = 8
     MP_DIE = 6
     LEVELS_PER_GEM = 0
+    legal_equipment = ( items.DAGGER, items.STAFF, \
+        items.BOW, items.ARROW, items.SLING, \
+        items.BULLET, items.CLOTHES, items.HAT, \
+        items.GLOVE, items.SANDALS, items.SHOES, \
+        items.BOOTS, items.CLOAK )
+    starting_equipment = (items.MonkRobe, items.Headband, items.Quarterstaff)
 
 class Ninja( Level ):
     name = 'Ninja'
@@ -172,6 +234,12 @@ class Ninja( Level ):
     HP_DIE = 8
     MP_DIE = 4
     LEVELS_PER_GEM = 0
+    legal_equipment = ( items.SWORD, items.DAGGER, items.STAFF, \
+        items.BOW, items.ARROW, items.SLING, \
+        items.BULLET, items.CLOTHES, items.HAT, \
+        items.GLOVE, items.SANDALS, items.SHOES, \
+        items.BOOTS, items.CLOAK )
+    starting_equipment = (items.NinjaGear,items.Wakizashi,items.NinjaMask)
 
 PC_CLASSES = (Warrior,Thief,Bard,Priest,Mage,Druid,Knight,Ranger,Necromancer,Samurai,Monk,Ninja)
 
@@ -184,6 +252,8 @@ class Human( object ):
     FIRST_IMAGE = 0
     skin_color = 0
     statline = {}
+    slots = ( items.BACK, items.FEET, items.BODY, items.HANDS, items.HAND1, items.HAND2, items.HEAD )
+    starting_equipment = ()
 
     def get_sprite( self , gender = NEUTER ):
         """Return a tuple with the image, framenum for this species."""
@@ -243,12 +313,14 @@ class Centaur( Human ):
     desc = "Centaurs resemble humans above the waist and horses below the neck. They can move fast in combat but cannot wear shoes."
     statline = { stats.STRENGTH: 1, stats.PIETY: -1, stats.STEALTH: -10 }
     FIRST_IMAGE = 36
+    slots = ( items.BACK, items.BODY, items.HANDS, items.HAND1, items.HAND2, items.HEAD )
 
 
 class Character(object):
     def __init__( self, species = None, gender = NEUTER ):
         self.statline = dict()
         self.levels = []
+        self.mr_level = Level
         self.species = species
         self.gender = gender
         self.inventory = items.Backpack()
@@ -316,6 +388,13 @@ class Character(object):
             item.stamp_avatar( avatar , self )
 
         return avatar
+
+    def can_equip( self , item ):
+        """Check if the provided item can be equipped by this character."""
+        if self.mr_level and self.species:
+            return ( item.itemtype in self.mr_level.legal_equipment ) and ( item.slot in self.species.slots )
+        else:
+            return False
 
 
 if __name__ == '__main__':

@@ -97,7 +97,7 @@ class NormalClothes( Item ):
     mass = 20
     def stamp_avatar( self, avatar, pc ):
         """Apply this item's sprite to the avatar."""
-        if self.pants_image:
+        if self.pants_image and pc.species and ( FEET in pc.species.slots ):
             img = image.Image( self.pants_image , 54 , 54 )
             if ( pc.gender == characters.MALE ) and self.male_pants:
                 frame = self.male_pants
@@ -161,7 +161,7 @@ class NinjaGear( NormalClothes ):
     true_name = "Ninja Garb"
     true_desc = ""
     avatar_frame = 9
-    pants_image = None
+    pants_frame = 3
     mass = 20
 
 class LeatherArmor( NormalClothes ):
@@ -187,7 +187,7 @@ class Shortsword( Item ):
     true_name = "Shortsword"
     true_desc = ""
     itemtype = SWORD
-    avatar_image = "avatar_cloak.png"
+    avatar_image = "avatar_sword.png"
     avatar_frame = 0
     mass = 15
     attackdata = Attack( (1,6,0) )
@@ -196,10 +196,83 @@ class Longsword( Item ):
     true_name = "Longsword"
     true_desc = ""
     itemtype = SWORD
-    avatar_image = "avatar_cloak.png"
-    avatar_frame = 0
+    avatar_image = "avatar_sword.png"
+    avatar_frame = 1
     mass = 40
     attackdata = Attack( (1,8,0) )
+
+class Broadsword( Longsword ):
+    true_name = "Broadsword"
+    true_desc = ""
+    avatar_frame = 2
+    mass = 45
+
+class Wakizashi( Longsword ):
+    true_name = "Wakizashi"
+    true_desc = ""
+    avatar_frame = 18
+    mass = 35
+
+class Quarterstaff( Item ):
+    true_name = "Quarterstaff"
+    true_desc = ""
+    itemtype = STAFF
+    avatar_image = "avatar_staff.png"
+    avatar_frame = 0
+    attackdata = Attack( (1,4,0) )
+    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 5 })
+    mass = 20
+
+class MageHat( Item ):
+    true_name = "Mage Hat"
+    true_desc = ""
+    itemtype = HAT
+    avatar_image = "avatar_hat.png"
+    avatar_frame = 0
+    mass = 6
+
+class NecromancerHat( MageHat ):
+    true_name = "Necromancer Hat"
+    true_desc = ""
+    avatar_frame = 1
+
+class NinjaMask( Item ):
+    true_name = "Ninja Mask"
+    true_desc = ""
+    itemtype = HAT
+    avatar_image = "avatar_hat.png"
+    avatar_frame = 2
+    mass = 1
+
+class Headband( NinjaMask ):
+    true_name = "Headband"
+    true_desc = ""
+    avatar_frame = 3
+
+class Bandana( NinjaMask ):
+    true_name = "Bandana"
+    true_desc = ""
+    avatar_frame = 4
+
+class JauntyHat( MageHat ):
+    true_name = "Jaunty Hat"
+    true_desc = ""
+    avatar_frame = 5
+
+class WoodsmansHat( MageHat ):
+    true_name = "Woodsman's Hat"
+    true_desc = ""
+    avatar_frame = 6
+
+
+class NormalShoes( Item ):
+    true_name = "Shoes"
+    true_desc = ""
+    itemtype = SHOES
+    avatar_image = "avatar_boot.png"
+    avatar_frame = 2
+    mass = 4
+
 
 class Backpack( list ):
     def get_equip( self , slot ):
