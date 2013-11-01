@@ -276,6 +276,7 @@ class Dwarf( Human ):
     name = "Dwarf"
     desc = "They are tough, but lack reflexes"
     statline = { stats.TOUGHNESS: 2, stats.REFLEXES: -2, stats.DISARM_TRAPS: 5, stats.STEALTH: -5 }
+    starting_equipment = ( items.Warhammer, items.WarAxe )
 
 class Elf( Human ):
     name = "Elf"
@@ -283,17 +284,20 @@ class Elf( Human ):
     statline = { stats.STRENGTH: -1, stats.TOUGHNESS: -1, stats.REFLEXES: 1, \
         stats.INTELLIGENCE: 1 }
     FIRST_IMAGE = 6
+    starting_equipment = ( items.Longsword, )
 
 class Gnome( Human ):
     name = "Gnome"
     desc = "They are very pious but lack physical strength."
     statline = { stats.STRENGTH: -2, stats.PIETY: 2, stats.STEALTH: 5 }
+    starting_equipment = ( items.GnomeHat, items.Pickaxe )
 
 class Orc( Human ):
     name = "Orc"
     desc = "They are very strong, but lack intelligence."
     statline = { stats.STRENGTH: 2, stats.INTELLIGENCE: -2 }
     FIRST_IMAGE = 12
+    starting_equipment = ( items.Morningstar, items.BattleAxe )
 
 class Hurthling( Human ):
     name = "Hurthling"
@@ -315,6 +319,7 @@ class Reptal( Human ):
         stats.RESIST_FIRE: 25, stats.RESIST_COLD: -25 }
     FIRST_IMAGE = 24
     NUM_COLORS = 6
+    starting_equipment = ( items.Club, )
 
 class Centaur( Human ):
     name = "Centaur"
@@ -322,6 +327,7 @@ class Centaur( Human ):
     statline = { stats.STRENGTH: 1, stats.PIETY: -1, stats.STEALTH: -10 }
     FIRST_IMAGE = 36
     slots = ( items.BACK, items.BODY, items.HANDS, items.HAND1, items.HAND2, items.HEAD )
+    starting_equipment = ( items.Spear, )
 
 
 class Character(object):
@@ -343,7 +349,11 @@ class Character(object):
         # Add bonuses from any earned classes...
         for l in self.levels:
             it += l.get_stat_bonus( stat )
+
         # Add bonuses from any equipment...
+        for item in self.inventory:
+            if item.equipped:
+                it += item.statline[ stat ]
 
         return it
 

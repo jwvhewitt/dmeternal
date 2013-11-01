@@ -272,6 +272,33 @@ class HandAxe( Item ):
     mass = 50
     attackdata = Attack( (1,6,0) )
 
+class WarAxe( Item ):
+    true_name = "War Axe"
+    true_desc = ""
+    itemtype = AXE
+    avatar_image = "avatar_axe.png"
+    avatar_frame = 4
+    mass = 70
+    attackdata = Attack( (1,8,0) )
+
+class BattleAxe( Item ):
+    true_name = "Battle Axe"
+    true_desc = ""
+    itemtype = AXE
+    avatar_image = "avatar_axe.png"
+    avatar_frame = 7
+    mass = 110
+    attackdata = Attack( (1,8,0), double_handed = True )
+
+class Pickaxe( Item ):
+    true_name = "Pickaxe"
+    true_desc = ""
+    itemtype = AXE
+    avatar_image = "avatar_axe.png"
+    avatar_frame = 8
+    mass = 60
+    attackdata = Attack( (1,6,1) )
+
 class FlangedMace( Item ):
     true_name = "Flanged Mace"
     true_desc = ""
@@ -280,6 +307,34 @@ class FlangedMace( Item ):
     avatar_frame = 8
     mass = 40
     attackdata = Attack( (1,6,0), element = stats.RESIST_CRUSHING )
+
+class Club( Item ):
+    true_name = "Club"
+    true_desc = ""
+    itemtype = MACE
+    avatar_image = "avatar_mace.png"
+    avatar_frame = 0
+    mass = 30
+    attackdata = Attack( (1,6,0), element = stats.RESIST_CRUSHING )
+
+class Warhammer( Item ):
+    true_name = "Warhammer"
+    true_desc = ""
+    itemtype = MACE
+    avatar_image = "avatar_mace.png"
+    avatar_frame = 7
+    mass = 80
+    attackdata = Attack( (1,8,0), element = stats.RESIST_CRUSHING )
+
+class Morningstar( Item ):
+    true_name = "Morningstar"
+    true_desc = ""
+    itemtype = MACE
+    avatar_image = "avatar_mace.png"
+    avatar_frame = 12
+    mass = 70
+    attackdata = Attack( (1,8,0), element = stats.RESIST_CRUSHING )
+
 
 class Dagger( Item ):
     true_name = "Dagger"
@@ -306,6 +361,16 @@ class Quarterstaff( Item ):
     attackdata = Attack( (1,4,0), double_handed = True, element = stats.RESIST_CRUSHING )
     statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 5 })
     mass = 20
+
+class Spear( Item ):
+    true_name = "Spear"
+    true_desc = ""
+    itemtype = POLEARM
+    avatar_image = "avatar_polearm.png"
+    avatar_frame = 0
+    attackdata = Attack( (1,8,0), double_handed = True, element = stats.RESIST_PIERCING )
+    mass = 90
+
 
 class MageHat( Item ):
     true_name = "Mage Hat"
@@ -347,6 +412,11 @@ class WoodsmansHat( MageHat ):
     true_name = "Woodsman's Hat"
     true_desc = ""
     avatar_frame = 6
+
+class GnomeHat( MageHat ):
+    true_name = "Gnome Hat"
+    true_desc = ""
+    avatar_frame = 7
 
 
 class NormalShoes( Item ):
