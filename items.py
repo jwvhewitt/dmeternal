@@ -174,6 +174,47 @@ class LeatherArmor( NormalClothes ):
     statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 10 })
     mass = 90
 
+class GladiatorArmor( NormalClothes ):
+    true_name = "Gladiator Armor"
+    true_desc = ""
+    itemtype = LIGHT_ARMOR
+    avatar_image = "avatar_lightarmor.png"
+    avatar_frame = 4
+    male_frame = 3
+    pants_frame = 2
+    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 10 })
+    mass = 86
+
+class RangerArmor( NormalClothes ):
+    true_name = "Ranger Armor"
+    true_desc = ""
+    itemtype = LIGHT_ARMOR
+    avatar_image = "avatar_lightarmor.png"
+    avatar_frame = 5
+    pants_frame = 6
+    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 10 })
+    mass = 90
+
+class PaddedArmor( NormalClothes ):
+    true_name = "Padded Armor"
+    true_desc = ""
+    itemtype = LIGHT_ARMOR
+    avatar_image = "avatar_lightarmor.png"
+    avatar_frame = 6
+    pants_frame = 3
+    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 10 })
+    mass = 80
+
+class HideArmor( NormalClothes ):
+    true_name = "Hide Armor"
+    true_desc = ""
+    itemtype = LIGHT_ARMOR
+    avatar_image = "avatar_lightarmor.png"
+    avatar_frame = 0
+    pants_frame = 5
+    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 10 })
+    mass = 95
+
 class ChainmailArmor( NormalClothes ):
     true_name = "Chainmail Armor"
     true_desc = ""
@@ -191,6 +232,15 @@ class Shortsword( Item ):
     avatar_frame = 0
     mass = 15
     attackdata = Attack( (1,6,0) )
+
+class Rapier( Item ):
+    true_name = "Rapier"
+    true_desc = ""
+    itemtype = SWORD
+    avatar_image = "avatar_sword.png"
+    avatar_frame = 28
+    mass = 12
+    attackdata = Attack( (1,6,0), element = stats.RESIST_PIERCING )
 
 class Longsword( Item ):
     true_name = "Longsword"
@@ -213,13 +263,47 @@ class Wakizashi( Longsword ):
     avatar_frame = 18
     mass = 35
 
+class HandAxe( Item ):
+    true_name = "Hand Axe"
+    true_desc = ""
+    itemtype = AXE
+    avatar_image = "avatar_axe.png"
+    avatar_frame = 1
+    mass = 50
+    attackdata = Attack( (1,6,0) )
+
+class FlangedMace( Item ):
+    true_name = "Flanged Mace"
+    true_desc = ""
+    itemtype = MACE
+    avatar_image = "avatar_mace.png"
+    avatar_frame = 8
+    mass = 40
+    attackdata = Attack( (1,6,0), element = stats.RESIST_CRUSHING )
+
+class Dagger( Item ):
+    true_name = "Dagger"
+    true_desc = ""
+    itemtype = DAGGER
+    avatar_image = "avatar_dagger.png"
+    avatar_frame = 0
+    mass = 12
+    attackdata = Attack( (1,4,0), element = stats.RESIST_PIERCING )
+
+class Sickle( Dagger ):
+    true_name = "Sickle"
+    true_desc = ""
+    avatar_frame = 4
+    mass = 15
+    attackdata = Attack( (1,6,0) )
+
 class Quarterstaff( Item ):
     true_name = "Quarterstaff"
     true_desc = ""
     itemtype = STAFF
     avatar_image = "avatar_staff.png"
     avatar_frame = 0
-    attackdata = Attack( (1,4,0) )
+    attackdata = Attack( (1,4,0), double_handed = True, element = stats.RESIST_CRUSHING )
     statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 5 })
     mass = 20
 
@@ -273,6 +357,19 @@ class NormalShoes( Item ):
     avatar_frame = 2
     mass = 4
 
+class NormalBoots( NormalShoes ):
+    true_name = "Boots"
+    true_desc = ""
+    itemtype = BOOTS
+    avatar_frame = 8
+    mass = 7
+
+class NormalSandals( NormalShoes ):
+    true_name = "Sandals"
+    true_desc = ""
+    itemtype = SANDALS
+    avatar_frame = 16
+    mass = 3
 
 class Backpack( list ):
     def get_equip( self , slot ):

@@ -30,7 +30,7 @@ if __name__=='__main__':
     screen = pygame.display.set_mode( (640,400) )
     screen.fill((0,250,250))
 
-    pc = characters.Character( gender = characters.FEMALE, species = characters.Reptal() )
+    pc = characters.Character( gender = characters.MALE, species = characters.Human() )
 
     pc.levels.append( characters.Samurai(3,pc) )
 

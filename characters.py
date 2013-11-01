@@ -58,7 +58,7 @@ class Warrior( Level ):
         items.BULLET, items.CLOTHES, items.LIGHT_ARMOR, items.HEAVY_ARMOR, items.HAT, \
         items.HELM, items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK )
-    starting_equipment = ()
+    starting_equipment = ( items.GladiatorArmor, items.Broadsword, items.NormalBoots )
 
 
 class Thief( Level ):
@@ -76,6 +76,7 @@ class Thief( Level ):
         items.BULLET, items.CLOTHES, items.LIGHT_ARMOR, \
         items.HAT, items.GLOVE, items.SANDALS, \
         items.SHOES, items.BOOTS, items.CLOAK )
+    starting_equipment = ( items.Bandana, items.Dagger, items.PaddedArmor )
 
 
 class Bard( Level ):
@@ -93,6 +94,7 @@ class Bard( Level ):
         items.BULLET, items.CLOTHES, items.LIGHT_ARMOR, items.HAT, \
         items.GLOVE, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK )
+    starting_equipment = ( items.Rapier, items.JauntyHat, items.LeatherArmor )
 
 class Priest( Level ):
     name = 'Priest'
@@ -109,6 +111,7 @@ class Priest( Level ):
         items.BULLET, items.CLOTHES, items.LIGHT_ARMOR, items.HEAVY_ARMOR, items.HAT, \
         items.HELM, items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK )
+    starting_equipment = ( items.FlangedMace, items.LeatherArmor )
 
 class Mage( Level ):
     name = 'Mage'
@@ -124,6 +127,7 @@ class Mage( Level ):
         items.BULLET, items.CLOTHES, items.HAT, \
         items.GLOVE, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK )
+    starting_equipment = ( items.Quarterstaff, items.MageRobe, items.MageHat )
 
 class Druid( Level ):
     name = 'Druid'
@@ -140,6 +144,7 @@ class Druid( Level ):
         items.BULLET, items.CLOTHES, items.HAT, \
         items.GLOVE, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK )
+    starting_equipment = ( items.Sickle, items.DruidRobe, items.NormalCloak )
 
 class Knight( Level ):
     name = 'Knight'
@@ -156,6 +161,7 @@ class Knight( Level ):
         items.CLOTHES, items.LIGHT_ARMOR, items.HEAVY_ARMOR, items.HAT, \
         items.HELM, items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK )
+    starting_equipment = ( items.Longsword, items.LeatherArmor )
 
 class Ranger( Level ):
     name = 'Ranger'
@@ -172,6 +178,7 @@ class Ranger( Level ):
         items.BULLET, items.CLOTHES, items.LIGHT_ARMOR, items.HAT, \
         items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK )
+    starting_equipment = ( items.HandAxe, items.RangerArmor, items.WoodsmansHat )
 
 class Necromancer( Level ):
     name = 'Necromancer'
@@ -187,6 +194,7 @@ class Necromancer( Level ):
         items.BULLET, items.CLOTHES, items.HAT, \
         items.GLOVE, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK )
+    starting_equipment = ( items.Quarterstaff, items.NecromancerRobe, items.NecromancerHat )
 
 class Samurai( Level ):
     name = 'Samurai'
@@ -203,7 +211,7 @@ class Samurai( Level ):
         items.CLOTHES, items.LIGHT_ARMOR, items.HAT, \
         items.HELM, items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK )
-    starting_equipment = (items.Wakizashi,)
+    starting_equipment = ( items.Wakizashi, items.HideArmor )
 
 class Monk( Level ):
     name = 'Monk'
@@ -220,7 +228,7 @@ class Monk( Level ):
         items.BULLET, items.CLOTHES, items.HAT, \
         items.GLOVE, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK )
-    starting_equipment = (items.MonkRobe, items.Headband, items.Quarterstaff)
+    starting_equipment = (items.MonkRobe, items.Headband, items.Quarterstaff, items.NormalSandals)
 
 class Ninja( Level ):
     name = 'Ninja'
