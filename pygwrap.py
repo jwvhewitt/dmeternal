@@ -163,7 +163,7 @@ def wrap_multi_line(text, font, maxwidth):
     return list(lines)
 
 
-def render_text(font, text, width, color = (255,255,255), do_center= False ):
+def render_text(font, text, width, color = (240,240,50), justify = -1 ):
     # Return an image with prettyprinted text.
     lines = wrap_multi_line( text , font , width )
 
@@ -173,8 +173,10 @@ def render_text(font, text, width, color = (255,255,255), do_center= False ):
     s.fill((0,0,0))
     o = 0
     for i in imgs:
-        if do_center:
-            x = width/2 - i.get_width()/2
+        if justify == 0:
+            x = width//2 - i.get_width()//2
+        elif justify > 0:
+            x = width - i.get_width()
         else:
             x = 0
         s.blit(i,(x,o))
@@ -182,11 +184,13 @@ def render_text(font, text, width, color = (255,255,255), do_center= False ):
     s.set_colorkey((0,0,0),pygame.RLEACCEL)
     return s
 
-def draw_text( screen , font , text , rect , color = (255,255,255), do_center= False ):
+def draw_text( screen , font , text , rect , color = (240,240,50), justify=-1 ):
     # Draw some text to the screen with the provided options.
-    myimage = render_text( font , text , rect.width , color , do_center )
-    if do_center:
-        myrect = myimage.get_rect( center = rect.center )
+    myimage = render_text( font , text , rect.width , color , justify )
+    if justify == 0:
+        myrect = myimage.get_rect( midtop = rect.midtop )
+    elif justify > 0:
+        myrect = myimage.get_rect( topleft = rect.topleft )
     else:
         myrect = rect
     screen.set_clip( rect )
@@ -242,7 +246,7 @@ def init():
         INPUT_CURSOR = image.Image( "sys_textcursor.png" , 8 , 16 )
 
         global SMALLFONT
-        SMALLFONT = pygame.font.Font( "image/VeraBd.ttf" , 16 )
+        SMALLFONT = pygame.font.Font( "image/VeraBd.ttf" , 12 )
 
         if android:
             android.init()
@@ -256,7 +260,7 @@ def init():
 if __name__ == "__main__":
     pygame.init()
 
-    myfont = pygame.font.Font( "image/VeraBd.ttf" , 16 )
+    myfont = pygame.font.Font( "image/VeraBd.ttf" , 12 )
 
     # Set the screen size.
     screen = pygame.display.set_mode((640,640))

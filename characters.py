@@ -7,6 +7,7 @@ import items
 
 # Gender tags
 FEMALE, MALE, NEUTER = range( 3 )
+GENDER = ( "Female", "Male", "Neuter" )
 
 
 
@@ -43,6 +44,9 @@ class Level( object ):
             # If we've been passed a character, record the most recent level.
             pc.mr_level = self
 
+    def __str__( self ):
+        return self.name
+
 class Warrior( Level ):
     name = 'Warrior'
     desc = 'Highly trained fighters who can dish out- and take- a whole lot of physical damage.'
@@ -76,7 +80,7 @@ class Thief( Level ):
         items.BULLET, items.CLOTHES, items.LIGHT_ARMOR, \
         items.HAT, items.GLOVE, items.SANDALS, \
         items.SHOES, items.BOOTS, items.CLOAK )
-    starting_equipment = ( items.Bandana, items.Dagger, items.PaddedArmor )
+    starting_equipment = ( items.Bandana, items.Dagger, items.PaddedArmor, items.ThiefCloak )
 
 
 class Bard( Level ):
@@ -110,8 +114,8 @@ class Priest( Level ):
         items.SHIELD, items.SLING, \
         items.BULLET, items.CLOTHES, items.LIGHT_ARMOR, items.HEAVY_ARMOR, items.HAT, \
         items.HELM, items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES, \
-        items.BOOTS, items.CLOAK )
-    starting_equipment = ( items.FlangedMace, items.LeatherArmor )
+        items.BOOTS, items.CLOAK, items.HOLYSYMBOL )
+    starting_equipment = ( items.FlangedMace, items.PaddedRobe, items.NormalBoots, items.WoodSymbol )
 
 class Mage( Level ):
     name = 'Mage'
@@ -161,7 +165,7 @@ class Knight( Level ):
         items.CLOTHES, items.LIGHT_ARMOR, items.HEAVY_ARMOR, items.HAT, \
         items.HELM, items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK )
-    starting_equipment = ( items.Longsword, items.LeatherArmor )
+    starting_equipment = ( items.Longsword, items.BrigandineArmor, items.NormalBoots )
 
 class Ranger( Level ):
     name = 'Ranger'
@@ -178,7 +182,7 @@ class Ranger( Level ):
         items.BULLET, items.CLOTHES, items.LIGHT_ARMOR, items.HAT, \
         items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK )
-    starting_equipment = ( items.HandAxe, items.RangerArmor, items.WoodsmansHat )
+    starting_equipment = ( items.HandAxe, items.RangerArmor, items.WoodsmansHat, items.NormalBoots )
 
 class Necromancer( Level ):
     name = 'Necromancer'
@@ -211,7 +215,7 @@ class Samurai( Level ):
         items.CLOTHES, items.LIGHT_ARMOR, items.HAT, \
         items.HELM, items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK )
-    starting_equipment = ( items.Wakizashi, items.HideArmor )
+    starting_equipment = ( items.Wakizashi, items.LeatherCuirass, items.NormalBoots )
 
 class Monk( Level ):
     name = 'Monk'
@@ -272,6 +276,9 @@ class Human( object ):
         """Change to the next possible skin color."""
         self.skin_color = ( self.skin_color + 1 ) % self.NUM_COLORS
 
+    def __str__( self ):
+        return self.name
+
 class Dwarf( Human ):
     name = "Dwarf"
     desc = "They are tough, but lack reflexes"
@@ -319,7 +326,7 @@ class Reptal( Human ):
         stats.RESIST_FIRE: 25, stats.RESIST_COLD: -25 }
     FIRST_IMAGE = 24
     NUM_COLORS = 6
-    starting_equipment = ( items.Club, )
+    starting_equipment = ( items.Club, items.AnimalSkin )
 
 class Centaur( Human ):
     name = "Centaur"
@@ -327,11 +334,12 @@ class Centaur( Human ):
     statline = { stats.STRENGTH: 1, stats.PIETY: -1, stats.STEALTH: -10 }
     FIRST_IMAGE = 36
     slots = ( items.BACK, items.BODY, items.HANDS, items.HAND1, items.HAND2, items.HEAD )
-    starting_equipment = ( items.Spear, )
+    starting_equipment = ( items.Spear, items.LeatherJacket )
 
 
 class Character(object):
-    def __init__( self, species = None, gender = NEUTER ):
+    def __init__( self, name = "", species = None, gender = NEUTER ):
+        self.name = name
         self.statline = dict()
         self.levels = []
         self.mr_level = Level
@@ -353,13 +361,18 @@ class Character(object):
         # Add bonuses from any equipment...
         for item in self.inventory:
             if item.equipped:
-                it += item.statline[ stat ]
+                it += item.statline.get( stat , 0 )
 
         return it
 
     def get_stat_bonus( self , stat ):
         statval = max( self.get_stat( stat ) , 1 )
         return statval * 3 - 36
+
+    def get_defense( self ):
+        """Return higher of physical, natural defense plus reflexes bonus"""
+        statval = max( self.get_stat( stats.PHYSICAL_DEFENSE ) , self.get_stat( stats.NATURAL_DEFENSE ) )
+        return statval + self.get_stat_bonus( stats.REFLEXES )
 
     def rank( self ):
         """Return the total ranks of this character's levels."""
@@ -413,6 +426,16 @@ class Character(object):
             return ( item.itemtype in self.mr_level.legal_equipment ) and ( item.slot in self.species.slots )
         else:
             return False
+
+    def roll_stats( self ):
+        for stat in range( stats.STRENGTH, stats.CHARISMA + 1 ):
+            self.statline[ stat ] = 0
+            while self.statline[ stat ] < 5:
+                # Roll 4d6, throw away the smallest, and sum the rest.
+                rolls = [ random.randint( 1 , 6 ) for x in range( 4 ) ]
+                rolls.sort()
+                del rolls[0]
+                self.statline[ stat ] = sum( rolls )
 
 
 if __name__ == '__main__':

@@ -5,17 +5,17 @@ import characters
 # Enumerated constants for the item types.
 GENERIC, SWORD, AXE, MACE, DAGGER, STAFF, BOW, POLEARM, ARROW, SHIELD, SLING, \
     BULLET, CLOTHES, LIGHT_ARMOR, HEAVY_ARMOR, HAT, HELM, GLOVE, GAUNTLET, \
-    SANDALS, SHOES, BOOTS, CLOAK = range( 23 )
+    SANDALS, SHOES, BOOTS, CLOAK, HOLYSYMBOL = range( 24 )
 
 # Enumerated constants for the item slots.
 # Note that these are defined in the order in which they're applied to avatar.
-NOSLOT, BACK, FEET, BODY, HANDS, HAND1, HAND2, HEAD = range( 100, 108 )
+NOSLOT, BACK, FEET, BODY, HANDS, HAND2, HAND1, HEAD = range( 100, 108 )
 
 # List of slots by item type.
 SLOT_FOR_TYPE = ( NOSLOT, HAND1, HAND1, HAND1, HAND1, \
     HAND1, HAND1, HAND1, HAND2, HAND2, HAND1, \
     HAND2, BODY, BODY, BODY, HEAD, HEAD, HANDS, HANDS, FEET, FEET, \
-    FEET, BACK )
+    FEET, BACK, HAND2 )
 
 class Attack( object ):
     REACH_MODIFIER = 2
@@ -63,6 +63,12 @@ class Item( object ):
         if self.avatar_image:
             img = image.Image( self.avatar_image , 54 , 54 )
             img.render( avatar.bitmap , frame = self.avatar_frame )
+    def __cmp__( self, other ):
+        """Item comparisons based on monetary value."""
+        if not other:
+            return 1
+        else:
+            return self.cost() - other.cost()
 
     @property
     def slot( self ):
@@ -131,7 +137,8 @@ class MerchantGarb( NormalClothes ):
 class MageRobe( NormalClothes ):
     true_name = "Mage Robe"
     true_desc = ""
-    avatar_frame = 4
+    avatar_frame = 12
+    male_frame = 4
     pants_image = None
     mass = 20
 
@@ -146,7 +153,8 @@ class DruidRobe( NormalClothes ):
 class NecromancerRobe( NormalClothes ):
     true_name = "Necromancer Robe"
     true_desc = ""
-    avatar_frame = 7
+    avatar_frame = 13
+    male_frame = 7
     pants_image = None
     mass = 20
 
@@ -163,6 +171,21 @@ class NinjaGear( NormalClothes ):
     avatar_frame = 9
     pants_frame = 3
     mass = 20
+
+class AnimalSkin( NormalClothes ):
+    true_name = "Animal Skin"
+    true_desc = ""
+    avatar_frame = 10
+    pants_image = None
+    mass = 50
+
+class LeatherJacket( NormalClothes ):
+    true_name = "Leather Jacket"
+    true_desc = ""
+    avatar_frame = 11
+    pants_frame = 3
+    mass = 25
+
 
 class LeatherArmor( NormalClothes ):
     true_name = "Leather Armor"
@@ -205,6 +228,36 @@ class PaddedArmor( NormalClothes ):
     statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 10 })
     mass = 80
 
+class BrigandineArmor( NormalClothes ):
+    true_name = "Brigandine Armor"
+    true_desc = ""
+    itemtype = LIGHT_ARMOR
+    avatar_image = "avatar_lightarmor.png"
+    avatar_frame = 7
+    pants_frame = 6
+    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 10 })
+    mass = 95
+
+class LeatherCuirass( NormalClothes ):
+    true_name = "Leather Cuirass"
+    true_desc = ""
+    itemtype = LIGHT_ARMOR
+    avatar_image = "avatar_lightarmor.png"
+    avatar_frame = 8
+    pants_frame = 5
+    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 10 })
+    mass = 100
+
+class PaddedRobe( NormalClothes ):
+    true_name = "Padded Robe"
+    true_desc = ""
+    itemtype = LIGHT_ARMOR
+    avatar_image = "avatar_lightarmor.png"
+    avatar_frame = 9
+    pants_sprite = None
+    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 10 })
+    mass = 85
+
 class HideArmor( NormalClothes ):
     true_name = "Hide Armor"
     true_desc = ""
@@ -212,8 +265,9 @@ class HideArmor( NormalClothes ):
     avatar_image = "avatar_lightarmor.png"
     avatar_frame = 0
     pants_frame = 5
-    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 10 })
+    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 15 })
     mass = 95
+
 
 class ChainmailArmor( NormalClothes ):
     true_name = "Chainmail Armor"
@@ -414,7 +468,7 @@ class WoodsmansHat( MageHat ):
     avatar_frame = 6
 
 class GnomeHat( MageHat ):
-    true_name = "Gnome Hat"
+    true_name = "Pointy Hat"
     true_desc = ""
     avatar_frame = 7
 
@@ -440,6 +494,34 @@ class NormalSandals( NormalShoes ):
     itemtype = SANDALS
     avatar_frame = 16
     mass = 3
+
+class WoodSymbol( Item ):
+    true_name = "Wooden Holy Symbol"
+    true_desc = ""
+    itemtype = HOLYSYMBOL
+    avatar_image = "avatar_tool.png"
+    avatar_frame = 0
+    statline = stats.StatMod({ stats.HOLY_SIGN: 5 })
+    mass = 7
+
+class SilverSymbol( Item ):
+    true_name = "Silver Holy Symbol"
+    true_desc = ""
+    itemtype = HOLYSYMBOL
+    avatar_image = "avatar_tool.png"
+    avatar_frame = 3
+    statline = stats.StatMod({ stats.HOLY_SIGN: 10, stats.MAGIC_ATTACK: 5, stats.RESIST_LUNAR: 10 })
+    mass = 14
+
+class GoldSymbol( Item ):
+    true_name = "Gold Holy Symbol"
+    true_desc = ""
+    itemtype = HOLYSYMBOL
+    avatar_image = "avatar_tool.png"
+    avatar_frame = 4
+    statline = stats.StatMod({ stats.HOLY_SIGN: 15, stats.MAGIC_ATTACK: 10, stats.MAGIC_DEFENSE: 10, stats.RESIST_LUNAR: 25 })
+    mass = 21
+
 
 class Backpack( list ):
     def get_equip( self , slot ):
@@ -470,19 +552,13 @@ class Backpack( list ):
             item.equipped = True
 
 if __name__ == '__main__':
-    tc = ThiefCloak()
-    nc = NormalCloak()
-    la = LeatherArmor()
-    ca = ChainmailArmor()
-    ss = Shortsword()
-    ls = Longsword()
+    ws = HandAxe()
+    ss = Pickaxe()
+    gs = WarAxe()
 
-    print tc.cost()
-    print nc.cost()
-    print la.cost()
-    print ca.cost()
+    print ws.cost()
     print ss.cost()
-    print ls.cost()
+    print gs.cost()
 
 
 
