@@ -32,16 +32,20 @@ class CharacterSheet( pygame.Rect ):
             self.screen.blit(self.img , (self.x-20,self.y-20) )
 
         # Header info- name and level/gender/race/class
-        y = self.y
+        y = self.y + 10
         pygwrap.draw_text( self.screen, pygwrap.SMALLFONT, self.pc.name, pygame.Rect( self.x+64, y, self.width-64, pygwrap.SMALLFONT.get_linesize() ), justify = 0 )
         y += pygwrap.SMALLFONT.get_linesize()
         pygwrap.draw_text( self.screen, pygwrap.SMALLFONT, "L"+str( self.pc.rank())+" "+characters.GENDER[self.pc.gender]+" "+str(self.pc.species)+" "+str(self.pc.mr_level), pygame.Rect( self.x+64, y, self.width-64, pygwrap.SMALLFONT.get_linesize() ), justify = 0 )
+        y += pygwrap.SMALLFONT.get_linesize()
+        pygwrap.draw_text( self.screen, pygwrap.SMALLFONT, "XP: "+str(self.pc.xp)+"/"+str(self.pc.xp_for_next_level()), pygame.Rect( self.x+64, y, self.width-64, pygwrap.SMALLFONT.get_linesize() ), justify = 0 )
 
         # Column 1 - Basic info
         y = self.y + self.BODY_Y
         for s in range( stats.STRENGTH, stats.CHARISMA + 1 ):
             self.just_print( self.x, y, stats.NAMES[s]+":", str( max( self.pc.get_stat(s) , 1 ) ) )
             y += pygwrap.SMALLFONT.get_linesize()
+
+        y += pygwrap.SMALLFONT.get_linesize()
 
 
         # Column 2 - skills
@@ -94,9 +98,9 @@ if __name__=='__main__':
 
     pygwrap.init()
 
-    pc = characters.Character( gender = characters.MALE, species = characters.Orc() )
+    pc = characters.Character( gender = characters.MALE, species = characters.Human() )
 
-    pc.levels.append( characters.Warrior(3,pc) )
+    pc.levels.append( characters.Warrior(1,pc) )
     pc.name = "Bentley"
 
     pc.roll_stats()

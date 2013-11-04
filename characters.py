@@ -346,6 +346,7 @@ class Character(object):
         self.species = species
         self.gender = gender
         self.inventory = items.Backpack()
+        self.xp = 0
 
     def get_stat( self , stat ):
         # Start with the basic stat value. This will probably be 0.
@@ -391,6 +392,12 @@ class Character(object):
         if bonus < 0:
             bonus = 0
         return sum( l.mp for l in self.levels ) + int( bonus * self.rank() / 2 )
+
+    def xp_for_next_level( self ):
+        """Return the XP needed for next level."""
+        cr = self.rank()
+        return cr * ( cr + 1 ) * 500
+
 
     def generate_avatar( self ):
         # Generate an image for this character.
