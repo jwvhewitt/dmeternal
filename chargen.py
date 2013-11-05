@@ -3,6 +3,7 @@ import pygame
 import pygwrap
 import items
 import stats
+import image
 
 class CharacterSheet( pygame.Rect ):
     # Note that the display will be larger than this, because the border is
@@ -73,6 +74,24 @@ class CharacterSheet( pygame.Rect ):
                 self.just_print( self.x+self.RIGHT_COLUMN, y, stats.NAMES[s]+":", str(sv)+"%", width=160 )
                 y += pygwrap.SMALLFONT.get_linesize()
 
+class MenuRedrawer( object ):
+    def __init__( self , caption = None, backdrop = "bg_wests_stonewall5.png", charsheet = None ):
+        self.caption = caption
+        self.backdrop = image.Image( backdrop )
+        self.counter = 0
+        self.charsheet = charsheet
+
+        self.rect = pygame.Rect( screen.get_width()/2 - 200 , screen.get_height()/2 - 220, 400, 64 )
+
+    def __call__( self , screen ):
+        self.backdrop.tile( screen , ( self.counter * 5 , self.counter ) )
+        if self.charsheet != None:
+            self.charsheet.render()
+        if self.caption:
+            pygwrap.default_border.render( screen , self.rect )
+            pygwrap.draw_text( screen , pygwrap.SMALLFONT , self.caption , self.rect , justify = 0 )
+        self.counter += 3
+
 
 def give_starting_equipment( pc ):
     """Based on level and species, give and equip starting equipment."""
@@ -95,18 +114,23 @@ def give_starting_equipment( pc ):
             pc.inventory.append( item )
             pc.inventory.equip( item )
 
+def generate_character( screen ):
+    """Generate and return a new player character."""
+    pass
+
+
 if __name__=='__main__':
     pygame.init()
 
     # Set the screen size.
-    screen = pygame.display.set_mode( (640,600) )
+    screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
     screen.fill((0,250,250))
 
     pygwrap.init()
 
-    pc = characters.Character( gender = characters.MALE, species = characters.Human() )
+    pc = characters.Character( gender = characters.MALE, species = characters.Gnome() )
 
-    pc.levels.append( characters.Thief(20,pc) )
+    pc.levels.append( characters.Ninja(1,pc) )
     pc.name = "Bentley"
 
     pc.roll_stats()
@@ -115,17 +139,19 @@ if __name__=='__main__':
 
     myimg = pc.generate_avatar()
 
-    myimg.render( screen , ( 10 , 10 ) , 0 )
-
     cs = CharacterSheet( pc , screen , 200, 30 )
-    cs.render()
-    pygame.display.flip()
+
+    rd = MenuRedrawer( caption = "TESTINg TIME!!!" )
+    rd.charsheet = cs
 
     while True:
         ev = pygame.event.wait()
         if ( ev.type == pygame.MOUSEBUTTONDOWN ) or ( ev.type == pygame.QUIT ) or (ev.type == pygame.KEYDOWN):
             break
-
+        elif ev.type == pygwrap.TIMEREVENT:
+            rd( screen )
+            myimg.render( screen , ( 10 , 10 ) , 0 )
+            pygame.display.flip()
 
 
 

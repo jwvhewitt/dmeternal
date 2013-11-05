@@ -17,12 +17,13 @@ class Level( object ):
     # a character the values can be changed here and the PC will automatically
     # use the new values.
     starting_equipment = ()
-    def __init__( self, rank=1, pc=None ):
+    def __init__( self, rank=0, pc=None ):
         self.rank = 0
         self.hp = 0
         self.mp = 0
         self.spell_gems = dict()
-        self.advance( rank , pc )
+        if rank > 0:
+            self.advance( rank , pc )
     def get_stat_bonus( self, stat ):
         """Typical stat bonus is base bonus x rank"""
         return self.statline.get( stat , 0 ) * self.rank
@@ -449,6 +450,29 @@ class Character(object):
                 rolls.sort()
                 del rolls[0]
                 self.statline[ stat ] = sum( rolls )
+
+    def advance( self, level_class ):
+        """Give this character one level in the provided class."""
+        # Try to find any previous training...
+        level = None
+        for l in self.levels:
+            if isinstance( l , level_class ):
+                level = l
+        if not level:
+            level = level_class()
+            self.levels.append( level )
+
+        # If advancing same level, get stat bonus.
+        if level is self.mr_level:
+            self.statline[ random.randint( 0,5 ) ] += 1
+        else:
+            # If adding a new level, unequip items.
+            self.mr_level = level
+            for i in self.inventory:
+                if not self.can_equip( i ):
+                    self.inventory.unequip( i )
+
+        level.advance( pc = self )
 
 
 if __name__ == '__main__':

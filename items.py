@@ -550,6 +550,8 @@ class Backpack( list ):
                 if old_item and old_item.attackdata.double_handed:
                     old_item.equipped = False
             item.equipped = True
+    def unequip( self, item ):
+        item.equipped = False
 
 if __name__ == '__main__':
     ws = HandAxe()
