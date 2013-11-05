@@ -22,6 +22,12 @@ NAMES = ( "Strength", "Toughness", "Reflexes", "Intelligence", "Piety", "Charism
     "Wind Resistance", "Water Resistance", "Atomic Resistance", "Poison Resistance", "Holy Sign", \
     "Kung Fu", "Natural Defense", "Critical Hit", "Awareness" )
 
+DEFAULT_BONUS = ( None, None, None, None, None, None, \
+    None, REFLEXES, INTELLIGENCE, PIETY, INTELLIGENCE, \
+    REFLEXES, None, None, None, None, \
+    None, None, None, None, None, \
+    None, None, None, None, None, \
+    None, REFLEXES, None, INTELLIGENCE )
 
 class StatMod( dict ):
     """A dictionary of stat bonuses, with cost() method for items, etc"""

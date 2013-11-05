@@ -69,7 +69,7 @@ class Thief( Level ):
     name = 'Thief'
     desc = 'Highly skilled at stealth and disarming traps.'
     requirements = { stats.REFLEXES: 11 }
-    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 4, stats.MAGIC_ATTACK: 3, stats.MAGIC_DEFENSE: 4, \
+    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 4, stats.MAGIC_ATTACK: 3, stats.MAGIC_DEFENSE: 5, \
         stats.DISARM_TRAPS: 6, stats.STEALTH: 5, stats.AWARENESS: 5 } )
     spell_circles = ()
     HP_DIE = 6
@@ -155,7 +155,7 @@ class Knight( Level ):
     desc = 'Blessed warrior with limited healing magic.'
     requirements = { stats.STRENGTH: 11, stats.TOUGHNESS: 11, stats.PIETY: 17, stats.CHARISMA: 13 }
     statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 5, stats.MAGIC_ATTACK: 3, stats.MAGIC_DEFENSE: 5, \
-        stats.RESIST_LUNAR: 5, stats.AWARENESS: 2 } )
+        stats.RESIST_LUNAR: 3, stats.AWARENESS: 2 } )
     spell_circles = ( spells.SOLAR, )
     HP_DIE = 10
     MP_DIE = 4
@@ -172,7 +172,7 @@ class Ranger( Level ):
     desc = 'Stealthy warriors with limited earth magic.'
     requirements = { stats.STRENGTH: 11, stats.REFLEXES: 13, stats.INTELLIGENCE: 11 }
     statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 5, stats.MAGIC_ATTACK: 3, stats.MAGIC_DEFENSE: 3, \
-        stats.DISARM_TRAPS: 3, stats.STEALTH: 5, stats.AWARENESS: 5 } )
+        stats.DISARM_TRAPS: 3, stats.STEALTH: 4, stats.AWARENESS: 5 } )
     spell_circles = ( spells.EARTH, )
     HP_DIE = 8
     MP_DIE = 6
@@ -386,12 +386,18 @@ class Character(object):
             bonus = 0
         return sum( l.hp for l in self.levels ) + int( bonus * self.rank() / 2 )
 
+    def current_hp( self ):
+        return self.max_hp()
+
     def max_mp( self ):
         # Bonus is the number of extra points per two levels.
         bonus = self.get_stat( stats.PIETY ) - 10
         if bonus < 0:
             bonus = 0
         return sum( l.mp for l in self.levels ) + int( bonus * self.rank() / 2 )
+
+    def current_mp( self ):
+        return self.max_mp()
 
     def xp_for_next_level( self ):
         """Return the XP needed for next level."""

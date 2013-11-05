@@ -10,7 +10,7 @@ class CharacterSheet( pygame.Rect ):
     WIDTH = 320
     HEIGHT = 450
     BODY_Y = 70
-    RIGHT_COLUMN = 175
+    RIGHT_COLUMN = 155
     def __init__( self, pc, screen, x=0, y=0 ):
         super(CharacterSheet, self).__init__(x,y,self.WIDTH,self.HEIGHT)
         self.pc = pc
@@ -19,10 +19,10 @@ class CharacterSheet( pygame.Rect ):
     def regenerate_avatar( self ):
         myimg = pc.generate_avatar()
         self.img = pygame.transform.scale2x( myimg.bitmap )
-    def just_print( self, x, y, text1, text2 ):
+    def just_print( self, x, y, text1, text2, width=120 ):
         """Do proper justification for stat line at x,y."""
-        pygwrap.draw_text( self.screen, pygwrap.SMALLFONT, text1, pygame.Rect( x, y, 140, 20 ), justify = -1 )
-        pygwrap.draw_text( self.screen, pygwrap.SMALLFONT, text2, pygame.Rect( x, y, 140, 20 ), justify = 1 )
+        pygwrap.draw_text( self.screen, pygwrap.SMALLFONT, text1, pygame.Rect( x, y, width, 20 ), justify = -1 )
+        pygwrap.draw_text( self.screen, pygwrap.SMALLFONT, text2, pygame.Rect( x, y, width, 20 ), justify = 1 )
 
     def render( self ):
         pygwrap.default_border.render( self.screen , self )
@@ -47,6 +47,10 @@ class CharacterSheet( pygame.Rect ):
 
         y += pygwrap.SMALLFONT.get_linesize()
 
+        self.just_print( self.x, y, "HP:", str( self.pc.current_hp() ) + "/" + str( self.pc.max_hp() ) )
+        y += pygwrap.SMALLFONT.get_linesize()
+        self.just_print( self.x, y, "MP:", str( self.pc.current_mp() ) + "/" + str( self.pc.max_mp() ) )
+        y += pygwrap.SMALLFONT.get_linesize()
 
         # Column 2 - skills
         y = self.y + self.BODY_Y
@@ -64,7 +68,9 @@ class CharacterSheet( pygame.Rect ):
         for s in range( stats.DISARM_TRAPS, stats.AWARENESS + 1 ):
             sv = self.pc.get_stat(s)
             if sv != 0:
-                self.just_print( self.x+self.RIGHT_COLUMN, y, stats.NAMES[s]+":", str(sv)+"%" )
+                if stats.DEFAULT_BONUS[s]:
+                    sv += self.pc.get_stat_bonus( stats.DEFAULT_BONUS[s] )
+                self.just_print( self.x+self.RIGHT_COLUMN, y, stats.NAMES[s]+":", str(sv)+"%", width=160 )
                 y += pygwrap.SMALLFONT.get_linesize()
 
 
@@ -100,7 +106,7 @@ if __name__=='__main__':
 
     pc = characters.Character( gender = characters.MALE, species = characters.Human() )
 
-    pc.levels.append( characters.Warrior(1,pc) )
+    pc.levels.append( characters.Thief(20,pc) )
     pc.name = "Bentley"
 
     pc.roll_stats()
