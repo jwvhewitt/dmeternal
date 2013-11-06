@@ -24,7 +24,7 @@ class CharacterSheet( pygame.Rect ):
     def __init__( self, pc, x=0, y=0, screen = None ):
         if screen:
             x = screen.get_width() // 2 - self.WIDTH
-            y = screen.get_height() // 2 - self.HEIGHT // 2
+            y = screen.get_height() // 2 - self.HEIGHT // 2 + 32
         super(CharacterSheet, self).__init__(x,y,self.WIDTH,self.HEIGHT)
         self.pc = pc
         self.regenerate_avatar()
@@ -87,13 +87,18 @@ class CharacterSheet( pygame.Rect ):
                 y += pygwrap.SMALLFONT.get_linesize()
 
 class MenuRedrawer( object ):
-    def __init__( self , border_rect = None, backdrop = "bg_wests_stonewall5.png", charsheet = None, screen = None ):
+    def __init__( self , border_rect = None, backdrop = "bg_wests_stonewall5.png", charsheet = None, screen = None, caption = None ):
         self.backdrop = image.Image( backdrop )
         self.counter = 0
         self.charsheet = charsheet
         if screen and not border_rect:
-            border_rect = pygame.Rect( screen.get_width()//2 + 64, screen.get_height()//2 - CharacterSheet.HEIGHT//2, CharacterSheet.WIDTH - 64, CharacterSheet.HEIGHT )
+            border_rect = pygame.Rect( screen.get_width()//2 + 64, screen.get_height()//2 - CharacterSheet.HEIGHT//2 + 32, CharacterSheet.WIDTH - 64, CharacterSheet.HEIGHT )
         self.rect = border_rect
+        if screen:
+            self.caption_rect = pygame.Rect( screen.get_width()//2 - 200, screen.get_height()//2 - CharacterSheet.HEIGHT//2 - 42, 400, pygwrap.BIGFONT.get_linesize() )
+        else:
+            self.caption_rect = None
+        self.caption = caption
 
     def __call__( self , screen ):
         self.backdrop.tile( screen , ( self.counter * 5 , self.counter ) )
@@ -101,13 +106,16 @@ class MenuRedrawer( object ):
             self.charsheet.render( screen )
         if self.rect:
             pygwrap.default_border.render( screen , self.rect )
+        if self.caption and self.caption_rect:
+            pygwrap.default_border.render( screen , self.caption_rect )
+            pygwrap.draw_text( screen, pygwrap.BIGFONT, self.caption, self.caption_rect, justify = 0 )
         self.counter += 4
 
 class RightMenu( rpgmenu.Menu ):
     # This is, obviously, the menu that appears to the right of the character sheet.
     def __init__( self, screen, charsheet = None, predraw = None ):
         x = screen.get_width()//2 + 64
-        y = screen.get_height()//2 - CharacterSheet.HEIGHT//2 + 200
+        y = screen.get_height()//2 - CharacterSheet.HEIGHT//2 + 232
         w = CharacterSheet.WIDTH - 64
         h = CharacterSheet.HEIGHT - 200
         super(RightMenu, self).__init__(screen,x,y,w,h,border=None)
@@ -144,6 +152,7 @@ def choose_gender( screen, redraw ):
     for g in range( 3 ):
         rpm.add_item( stats.GENDER[g], g, "Select this character's gender." )
     rpm.add_alpha_keys()
+    redraw.caption = "Select this character's gender."
     return rpm.query()
 
 def choose_species( screen, redraw ):
@@ -153,6 +162,7 @@ def choose_species( screen, redraw ):
         rpm.add_item( s.name, s, s.desc )
     rpm.sort()
     rpm.add_alpha_keys()
+    redraw.caption = "Select this character's species."
     return rpm.query()
 
 def get_possible_levels( pc ):
@@ -170,6 +180,7 @@ def get_possible_levels( pc ):
 def choose_level( screen, redraw, pc ):
     """Roll stats, return the level chosen by the player."""
     level = None
+    redraw.caption = "Roll your stats and choose a profession."
     while not level:
         possible_levels = []
         while not possible_levels:
@@ -230,8 +241,8 @@ if __name__=='__main__':
     pygame.init()
 
     # Set the screen size.
-    screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
-    screen.fill((0,250,250))
+#    screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
+    screen = pygame.display.set_mode( (800,600) )
 
     pygwrap.init()
     rpgmenu.init()

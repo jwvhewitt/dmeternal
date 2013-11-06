@@ -1,20 +1,49 @@
 import stats
 import image
-
-# Enumerated constants for the item types.
-GENERIC, SWORD, AXE, MACE, DAGGER, STAFF, BOW, POLEARM, ARROW, SHIELD, SLING, \
-    BULLET, CLOTHES, LIGHT_ARMOR, HEAVY_ARMOR, HAT, HELM, GLOVE, GAUNTLET, \
-    SANDALS, SHOES, BOOTS, CLOAK, HOLYSYMBOL = range( 24 )
+import inspect
 
 # Enumerated constants for the item slots.
 # Note that these are defined in the order in which they're applied to avatar.
 NOSLOT, BACK, FEET, BODY, HANDS, HAND2, HAND1, HEAD = range( 100, 108 )
 
-# List of slots by item type.
-SLOT_FOR_TYPE = ( NOSLOT, HAND1, HAND1, HAND1, HAND1, \
-    HAND1, HAND1, HAND1, HAND2, HAND2, HAND1, \
-    HAND2, BODY, BODY, BODY, HEAD, HEAD, HANDS, HANDS, FEET, FEET, \
-    FEET, BACK, HAND2 )
+class SingType( object ):
+    # A singleton itemtype class; use these objects as tokens to indicate
+    # the type of items.
+    # Also includes misc information related to the itemtype in question.
+    def __init__( self, ident, name, slot = NOSLOT ):
+        # ident should be the module-level name of this object.
+        self.ident = ident
+        self.name = name
+        self.slot = slot
+    def __str__( self ):
+        return self.name
+    def __reduce__( self ):
+        return self.ident
+
+GENERIC = SingType( "GENERIC", "Item" )
+SWORD = SingType( "SWORD", "Sword", slot = HAND1 )
+AXE = SingType( "AXE", "Axe", slot = HAND1 )
+MACE = SingType( "MACE", "Mace", slot = HAND1 )
+DAGGER = SingType( "DAGGER", "Dagger", slot = HAND1 )
+STAFF = SingType( "STAFF", "Staff", slot = HAND1 )
+BOW = SingType( "BOW", "Bow", slot = HAND1 )
+POLEARM = SingType( "POLEARM", "Polearm", slot = HAND1 )
+ARROW = SingType( "ARROW", "Arrow", slot = HAND2 )
+SHIELD = SingType( "SHIELD", "Shield", slot = HAND2 )
+SLING = SingType( "SLING", "Sling", slot = HAND1 )
+BULLET = SingType( "BULLET", "Bullet", slot = HAND2 )
+CLOTHES = SingType( "CLOTHES", "Clothes", slot = BODY )
+LIGHT_ARMOR = SingType( "LIGHT_ARMOR", "Light Armor", slot = BODY )
+HEAVY_ARMOR = SingType( "HEAVY_ARMOR", "Heavy Armor", slot = BODY )
+HAT = SingType( "HAT", "Hat", slot = HEAD )
+HELM = SingType( "HELM", "Helm", slot = HEAD )
+GLOVE = SingType( "GLOVE", "Gloves", slot = HANDS )
+GAUNTLET = SingType( "GAUNTLET", "Gauntlets", slot = HANDS )
+SANDALS = SingType( "SANDALS", "Sandals", slot = FEET )
+SHOES = SingType( "SHOES", "Shoes", slot = FEET )
+BOOTS = SingType( "BOOTS", "Boots", slot = FEET )
+CLOAK = SingType( "CLOAK", "Cloak", slot = BACK )
+HOLYSYMBOL = SingType( "HOLYSYMBOL", "Symbol", slot = HAND2 )
 
 class Attack( object ):
     REACH_MODIFIER = 2
@@ -71,7 +100,7 @@ class Item( object ):
 
     @property
     def slot( self ):
-        return SLOT_FOR_TYPE[ self.itemtype ]
+        return self.itemtype.slot
 
 class NormalCloak( Item ):
     true_name = "Cloak"
@@ -521,6 +550,14 @@ class GoldSymbol( Item ):
     statline = stats.StatMod({ stats.HOLY_SIGN: 15, stats.MAGIC_ATTACK: 10, stats.MAGIC_DEFENSE: 10, stats.RESIST_LUNAR: 25 })
     mass = 21
 
+# Compile the items into a useful list.
+ITEM_LIST = []
+g = globals()
+for name in dir():
+    o = g[ name ]
+    if inspect.isclass( o ) and issubclass( o , Item ) and o is not Item:
+        ITEM_LIST.append( o )
+
 
 class Backpack( list ):
     def get_equip( self , slot ):
@@ -551,6 +588,8 @@ class Backpack( list ):
             item.equipped = True
     def unequip( self, item ):
         item.equipped = False
+
+
 
 if __name__ == '__main__':
     ws = HandAxe()

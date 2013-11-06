@@ -109,7 +109,7 @@ class Menu( pygame.Rect ):
         no_choice_made = True
         choice = False
 
-        menu_height = self.height / MENUFONT.get_linesize()
+        menu_height = self.menu_height()
 
         mouse_button_down = False
         first_mouse_selection = None
@@ -209,10 +209,20 @@ class Menu( pygame.Rect ):
             self.add_item( f , f )
         self.sort()
 
+    def menu_height( self ):
+        return self.height // MENUFONT.get_linesize()
+
+    def reposition( self ):
+        if self.selected_item < self.top_item:
+            self.top_item = self.selected_item
+        elif self.selected_item > ( self.top_item + self.menu_height() - 1 ):
+            self.top_item = max( self.selected_item - self.menu_height() + 1 , 0 )
+
     def set_item_by_value( self , v ):
         for n,i in enumerate( self.items ):
             if i.value == v:
                 self.selected_item = n
+        self.reposition()
 
 def init():
     # Don't call init until after the display has been set.
