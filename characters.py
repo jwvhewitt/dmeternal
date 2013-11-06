@@ -5,10 +5,6 @@ import random
 import image
 import items
 
-# Gender tags
-FEMALE, MALE, NEUTER = range( 3 )
-GENDER = ( "Female", "Male", "Neuter" )
-
 
 
 class Level( object ):
@@ -269,7 +265,10 @@ class Human( object ):
     slots = ( items.BACK, items.FEET, items.BODY, items.HANDS, items.HAND1, items.HAND2, items.HEAD )
     starting_equipment = ()
 
-    def get_sprite( self , gender = NEUTER ):
+    def __init__( self ):
+        self.skin_color = random.randint( 0 , self.NUM_COLORS - 1 )
+
+    def get_sprite( self , gender = stats.NEUTER ):
         """Return a tuple with the image, framenum for this species."""
         img = image.Image( self.sprite_name , 54 , 54 )
         return img, self.FIRST_IMAGE + self.skin_color + self.NUM_COLORS * min( gender , 1 )
@@ -341,7 +340,7 @@ class Centaur( Human ):
 PC_SPECIES = (Human, Dwarf, Elf, Gnome, Orc, Hurthling, Fuzzy, Reptal, Centaur )
 
 class Character(object):
-    def __init__( self, name = "", species = None, gender = NEUTER ):
+    def __init__( self, name = "", species = None, gender = stats.NEUTER ):
         self.name = name
         self.statline = dict()
         self.levels = []
@@ -444,7 +443,7 @@ class Character(object):
             return False
 
     def roll_stats( self ):
-        for stat in range( stats.STRENGTH, stats.CHARISMA + 1 ):
+        for stat in stats.PRIMARY_STATS:
             self.statline[ stat ] = 0
             while self.statline[ stat ] < 5:
                 # Roll 4d6, throw away the smallest, and sum the rest.

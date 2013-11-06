@@ -1,6 +1,5 @@
 import stats
 import image
-import characters
 
 # Enumerated constants for the item types.
 GENERIC, SWORD, AXE, MACE, DAGGER, STAFF, BOW, POLEARM, ARROW, SHIELD, SLING, \
@@ -105,14 +104,14 @@ class NormalClothes( Item ):
         """Apply this item's sprite to the avatar."""
         if self.pants_image and pc.species and ( FEET in pc.species.slots ):
             img = image.Image( self.pants_image , 54 , 54 )
-            if ( pc.gender == characters.MALE ) and self.male_pants:
+            if ( pc.gender == stats.MALE ) and self.male_pants:
                 frame = self.male_pants
             else:
                 frame = self.pants_frame
             img.render( avatar.bitmap , frame = frame )
         if self.avatar_image:
             img = image.Image( self.avatar_image , 54 , 54 )
-            if ( pc.gender == characters.MALE ) and self.male_frame:
+            if ( pc.gender == stats.MALE ) and self.male_frame:
                 frame = self.male_frame
             else:
                 frame = self.avatar_frame

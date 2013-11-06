@@ -53,6 +53,8 @@ def wait_event():
     if ev.type == pygame.QUIT:
         global GOT_QUIT
         GOT_QUIT = True
+    elif ev.type == TIMEREVENT:
+        pygame.event.clear( TIMEREVENT )
 
     return ev
 

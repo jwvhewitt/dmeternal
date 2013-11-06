@@ -13,6 +13,14 @@ class CharacterSheet( pygame.Rect ):
     HEIGHT = 450
     BODY_Y = 70
     RIGHT_COLUMN = 155
+
+    MISC_STATS = ( stats.AWARENESS, stats.CRITICAL_HIT, stats.DISARM_TRAPS, \
+        stats.HOLY_SIGN, stats.KUNG_FU, stats.NATURAL_DEFENSE, stats.STEALTH, \
+        stats.RESIST_SLASHING, stats.RESIST_PIERCING, stats.RESIST_CRUSHING, \
+        stats.RESIST_ACID, stats.RESIST_COLD, stats.RESIST_FIRE, stats.RESIST_LIGHTNING, \
+        stats.RESIST_POISON, stats.RESIST_WATER, stats.RESIST_WIND, \
+        stats.RESIST_LUNAR, stats.RESIST_SOLAR, stats.RESIST_ATOMIC )
+
     def __init__( self, pc, x=0, y=0, screen = None ):
         if screen:
             x = screen.get_width() // 2 - self.WIDTH
@@ -40,14 +48,14 @@ class CharacterSheet( pygame.Rect ):
         y = self.y + 6
         pygwrap.draw_text( screen, pygwrap.BIGFONT, self.pc.name, pygame.Rect( self.x+64, y, self.width-64, pygwrap.BIGFONT.get_linesize() ), justify = 0 )
         y += pygwrap.BIGFONT.get_linesize()
-        pygwrap.draw_text( screen, pygwrap.SMALLFONT, "L"+str( self.pc.rank())+" "+characters.GENDER[self.pc.gender]+" "+str(self.pc.species)+" "+str(self.pc.mr_level), pygame.Rect( self.x+64, y, self.width-64, pygwrap.SMALLFONT.get_linesize() ), justify = 0 )
+        pygwrap.draw_text( screen, pygwrap.SMALLFONT, "L"+str( self.pc.rank())+" "+stats.GENDER[self.pc.gender]+" "+str(self.pc.species)+" "+str(self.pc.mr_level), pygame.Rect( self.x+64, y, self.width-64, pygwrap.SMALLFONT.get_linesize() ), justify = 0 )
         y += pygwrap.SMALLFONT.get_linesize()
         pygwrap.draw_text( screen, pygwrap.SMALLFONT, "XP: "+str(self.pc.xp)+"/"+str(self.pc.xp_for_next_level()), pygame.Rect( self.x+64, y, self.width-64, pygwrap.SMALLFONT.get_linesize() ), justify = 0 )
 
         # Column 1 - Basic info
         y = self.y + self.BODY_Y
-        for s in range( stats.STRENGTH, stats.CHARISMA + 1 ):
-            self.just_print( screen, self.x, y, stats.NAMES[s]+":", str( max( self.pc.get_stat(s) , 1 ) ) )
+        for s in stats.PRIMARY_STATS:
+            self.just_print( screen, self.x, y, s.name+":", str( max( self.pc.get_stat(s) , 1 ) ) )
             y += pygwrap.SMALLFONT.get_linesize()
 
         y += pygwrap.SMALLFONT.get_linesize()
@@ -70,12 +78,12 @@ class CharacterSheet( pygame.Rect ):
         self.just_print( screen, self.x+self.RIGHT_COLUMN, y, "Aura:", str(self.pc.get_stat(stats.MAGIC_DEFENSE)+self.pc.get_stat_bonus(stats.PIETY))+"%" )
         y += pygwrap.SMALLFONT.get_linesize() * 2
 
-        for s in range( stats.DISARM_TRAPS, stats.AWARENESS + 1 ):
+        for s in self.MISC_STATS:
             sv = self.pc.get_stat(s)
             if sv != 0:
-                if stats.DEFAULT_BONUS[s]:
-                    sv += self.pc.get_stat_bonus( stats.DEFAULT_BONUS[s] )
-                self.just_print( screen, self.x+self.RIGHT_COLUMN, y, stats.NAMES[s]+":", str(sv)+"%", width=160 )
+                if s.default_bonus:
+                    sv += self.pc.get_stat_bonus( s.default_bonus )
+                self.just_print( screen, self.x+self.RIGHT_COLUMN, y, s.name+":", str(sv)+"%", width=160 )
                 y += pygwrap.SMALLFONT.get_linesize()
 
 class MenuRedrawer( object ):
@@ -134,7 +142,7 @@ def choose_gender( screen, redraw ):
     """Return the gender chosen by the player."""
     rpm = RightMenu( screen , predraw = redraw )
     for g in range( 3 ):
-        rpm.add_item( characters.GENDER[g], g, "Select this character's gender." )
+        rpm.add_item( stats.GENDER[g], g, "Select this character's gender." )
     rpm.add_alpha_keys()
     return rpm.query()
 
@@ -143,6 +151,7 @@ def choose_species( screen, redraw ):
     rpm = RightMenu( screen , predraw = redraw )
     for s in characters.PC_SPECIES:
         rpm.add_item( s.name, s, s.desc )
+    rpm.sort()
     rpm.add_alpha_keys()
     return rpm.query()
 
@@ -170,6 +179,7 @@ def choose_level( screen, redraw, pc ):
         rpm = RightMenu( screen , predraw = redraw )
         for l in possible_levels:
             rpm.add_item( l.name, l, l.desc )
+        rpm.sort()
         rpm.add_alpha_keys()
         rpm.add_item( "Reroll Stats", -1 )
         rpm.set_item_by_value( -1 )
