@@ -17,6 +17,7 @@ class Level( object ):
     # a character the values can be changed here and the PC will automatically
     # use the new values.
     starting_equipment = ()
+    name = "???"
     def __init__( self, rank=0, pc=None ):
         self.rank = 0
         self.hp = 0
@@ -337,13 +338,14 @@ class Centaur( Human ):
     slots = ( items.BACK, items.BODY, items.HANDS, items.HAND1, items.HAND2, items.HEAD )
     starting_equipment = ( items.Spear, items.LeatherJacket )
 
+PC_SPECIES = (Human, Dwarf, Elf, Gnome, Orc, Hurthling, Fuzzy, Reptal, Centaur )
 
 class Character(object):
     def __init__( self, name = "", species = None, gender = NEUTER ):
         self.name = name
         self.statline = dict()
         self.levels = []
-        self.mr_level = Level
+        self.mr_level = Level()
         self.species = species
         self.gender = gender
         self.inventory = items.Backpack()

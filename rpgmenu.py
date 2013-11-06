@@ -19,15 +19,17 @@ class MenuItem( object ):
 
 class DescBox( pygame.Rect ):
     # The DescBox inherits from Rect, since that's basically what it is.
-    def __init__(self,menu,x,y,w=300,h=100,border=pygwrap.default_border):
+    def __init__(self,menu,x,y,w=300,h=100,border=pygwrap.default_border,justify=-1):
         self.menu = menu
         self.border = border
+        self.justify = justify
         super(DescBox, self).__init__(x,y,w,h)
 
     def render(self):
-        self.border.render( self.menu.screen , self )
+        if self.border:
+            self.border.render( self.menu.screen , self )
         if self.menu.items[self.menu.selected_item].desc != None:
-            img = pygwrap.render_text( MENUFONT , self.menu.items[self.menu.selected_item].desc , self.w )
+            img = pygwrap.render_text( MENUFONT , self.menu.items[self.menu.selected_item].desc , self.w, justify = self.justify )
             self.menu.screen.blit( img , self )
 
 
@@ -56,14 +58,16 @@ class Menu( pygame.Rect ):
         item = MenuItem( msg , value , desc )
         self.items.append( item )
 
-    def add_desc(self,x,y,w=30,h=10):
-        self.descbox = DescBox( self, x , y , w , h )
+    def add_desc(self,x,y,w=30,h=10,justify=-1):
+        self.descbox = DescBox( self, x , y , w , h, self.border, justify )
 
     def render(self):
-        if self.predraw != None:
+        if self.predraw:
             self.predraw( self.screen )
 
-        self.border.render( self.screen , self )
+        if self.border:
+            self.border.render( self.screen , self )
+
         self.screen.set_clip(self)
 
         item_num = self.top_item
@@ -205,6 +209,11 @@ class Menu( pygame.Rect ):
             self.add_item( f , f )
         self.sort()
 
+    def set_item_by_value( self , v ):
+        for n,i in enumerate( self.items ):
+            if i.value == v:
+                self.selected_item = n
+
 def init():
     # Don't call init until after the display has been set.
     global INIT_DONE
@@ -212,7 +221,7 @@ def init():
         INIT_DONE = True
         pygwrap.init()
         global MENUFONT
-        MENUFONT = pygame.font.Font( "image/VeraBd.ttf" , 24 )
+        MENUFONT = pygame.font.Font( "image/VeraBd.ttf" , 16 )
 
 if __name__=='__main__':
     pygame.init()

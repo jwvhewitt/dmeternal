@@ -21,6 +21,7 @@ except ImportError:
 
 INPUT_CURSOR = None
 SMALLFONT = None
+BIGFONT = None
 
 INIT_DONE = False
 
@@ -200,11 +201,14 @@ def draw_text( screen , font , text , rect , color = (240,240,50), justify=-1 ):
 
 ALLOWABLE_CHARACTERS = u'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890()-=_+,.?"'
 
-def input_string( screen , font , redrawer = None, prompt = "Enter text below", prompt_color = (255,255,255), input_color = (240,240,50), border=default_border ):
+def input_string( screen , font = None, redrawer = None, prompt = "Enter text below", prompt_color = (255,255,255), input_color = (240,240,50), border=default_border ):
     # Input a string from the user.
     it = []
     keep_going = True
     cursor_frame = 1
+
+    if not font:
+        font = BIGFONT
 
     myrect = pygame.Rect( screen.get_width() / 2 - 200 , screen.get_height() / 2 - 32 , 400 , 64 )
     prompt_image = font.render( prompt, True, prompt_color )
@@ -247,6 +251,9 @@ def init():
 
         global SMALLFONT
         SMALLFONT = pygame.font.Font( "image/VeraBd.ttf" , 12 )
+
+        global BIGFONT
+        BIGFONT = pygame.font.Font( "image/VeraBd.ttf" , 16 )
 
         if android:
             android.init()
