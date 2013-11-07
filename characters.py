@@ -260,6 +260,7 @@ class Human( object ):
     sprite_name = "avatar_base.png"
     NUM_COLORS = 3
     FIRST_IMAGE = 0
+    HAS_HAIR = True
     skin_color = 0
     statline = {}
     slots = ( items.BACK, items.FEET, items.BODY, items.HANDS, items.HAND1, items.HAND2, items.HEAD )
@@ -327,6 +328,7 @@ class Reptal( Human ):
         stats.RESIST_FIRE: 25, stats.RESIST_COLD: -25 }
     FIRST_IMAGE = 24
     NUM_COLORS = 6
+    HAS_HAIR = False
     starting_equipment = ( items.Club, items.AnimalSkin )
 
 class Centaur( Human ):
@@ -346,9 +348,14 @@ class Character(object):
         self.levels = []
         self.mr_level = Level()
         self.species = species
+        if species and species.HAS_HAIR:
+            self.hair = random.randint( 0 , 24 )
+        else:
+            self.hair = 0
         self.gender = gender
         self.inventory = items.Backpack()
         self.xp = 0
+        self.beard = 0
 
     def get_stat( self , stat ):
         # Start with the basic stat value. This will probably be 0.
@@ -427,6 +434,12 @@ class Character(object):
                 item.stamp_avatar( avatar , self )
 
         # Add hair and beard.
+        if self.hair:
+            img = image.Image( "avatar_hair.png" , 54, 54 )
+            img.render( avatar.bitmap , frame = self.hair - 1 )
+        if self.beard:
+            img = image.Image( "avatar_beard.png" , 54, 54 )
+            img.render( avatar.bitmap , frame = self.beard - 1 )
 
         # Now finally add the head equipment.
         item = self.inventory.get_equip( items.HEAD )
@@ -474,6 +487,12 @@ class Character(object):
                     self.inventory.unequip( i )
 
         level.advance( pc = self )
+
+    def alter_hair( self ):
+        self.hair = ( self.hair + 1 ) % 25
+
+    def alter_beard( self ):
+        self.beard = ( self.beard + 1 ) % 10
 
 
 if __name__ == '__main__':

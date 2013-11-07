@@ -204,6 +204,38 @@ def choose_level( screen, redraw, pc ):
 
     return level
 
+def choose_appearance( screen, redraw, pc ):
+    """Alter the appearance of the character."""
+    done = False
+    redraw.caption = "Customize your appearance."
+    rpm = RightMenu( screen , predraw = redraw )
+
+    rpm.add_item( "Change skin color" , 1 )
+
+    if pc.species.HAS_HAIR:
+        rpm.add_item( "Change hair" , 2 )
+        if ( pc.gender != stats.FEMALE ) or isinstance( pc.species, characters.Dwarf ):
+            rpm.add_item( "Change beard" , 3 )
+
+    rpm.add_item( "Finished" , False )
+
+    while not done:
+        l = rpm.query()
+
+        if l is False:
+            done = True
+        elif l == 1:
+            pc.species.alter_skin_color()
+            redraw.charsheet.regenerate_avatar()
+        elif l == 2:
+            pc.alter_hair()
+            redraw.charsheet.regenerate_avatar()
+        elif l == 3:
+            pc.alter_beard()
+            redraw.charsheet.regenerate_avatar()
+
+
+
 def generate_character( screen ):
     """Generate and return a new player character."""
     # We're gonna use the same redrawer for this entire process.
@@ -232,10 +264,16 @@ def generate_character( screen ):
     redraw.charsheet.regenerate_avatar()
 
     # Customize appearance.
+    choose_appearance( screen, redraw, pc )
 
     # Choose a name.
-
-    return pc
+    redraw.caption = "Done!"
+    name = pygwrap.input_string( screen, redrawer=redraw, prompt="Enter character name" )
+    if name:
+        pc.name = name
+        return pc
+    else:
+        return None
 
 if __name__=='__main__':
     pygame.init()
