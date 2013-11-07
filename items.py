@@ -600,5 +600,7 @@ if __name__ == '__main__':
     print ss.cost()
     print gs.cost()
 
+    print hasattr( ws, "statline" )
+
 
 

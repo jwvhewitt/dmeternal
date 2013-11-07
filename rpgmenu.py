@@ -1,6 +1,7 @@
 import pygame
 import pygwrap
 import glob
+import util
 
 
 MENUFONT = None
@@ -205,6 +206,7 @@ class Menu( pygame.Rect ):
 
     def add_files( self , filepat ):
         file_list = glob.glob( filepat )
+
         for f in file_list:
             self.add_item( f , f )
         self.sort()
@@ -231,7 +233,7 @@ def init():
         INIT_DONE = True
         pygwrap.init()
         global MENUFONT
-        MENUFONT = pygame.font.Font( "image/VeraBd.ttf" , 16 )
+        MENUFONT = pygame.font.Font( util.image_dir( "VeraBd.ttf" ) , 14 )
 
 if __name__=='__main__':
     pygame.init()

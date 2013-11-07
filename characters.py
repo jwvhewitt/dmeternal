@@ -21,7 +21,7 @@ class Level( object ):
         self.spell_gems = dict()
         if rank > 0:
             self.advance( rank , pc )
-    def get_stat_bonus( self, stat ):
+    def get_stat( self, stat ):
         """Typical stat bonus is base bonus x rank"""
         return self.statline.get( stat , 0 ) * self.rank
     def advance( self, ranks=1, pc=None ):
@@ -341,6 +341,19 @@ class Centaur( Human ):
 
 PC_SPECIES = (Human, Dwarf, Elf, Gnome, Orc, Hurthling, Fuzzy, Reptal, Centaur )
 
+class CappedModifierList( list ):
+    """Stat bonus from list items capped to max positive - max negative"""
+    def get_stat( self , stat ):
+        p_max,n_max = 0,0
+        for thing in self:
+            if hasattr( thing, "statline" ):
+                v = thing.statline.get( stat )
+                if v > 0:
+                    p_max = max( v , p_max )
+                elif v < 0:
+                    n_max = min( v , n_max )
+        return p_max + n_max
+
 class Character(object):
     def __init__( self, name = "", species = None, gender = stats.NEUTER ):
         self.name = name
@@ -356,6 +369,11 @@ class Character(object):
         self.inventory = items.Backpack()
         self.xp = 0
         self.beard = 0
+        self.hp_damage = 0
+        self.mp_damage = 0
+        self.stat_damage = dict()
+        self.techniques = CappedModifierList()
+        self.condition = CappedModifierList()
 
     def get_stat( self , stat ):
         # Start with the basic stat value. This will probably be 0.
@@ -366,12 +384,21 @@ class Character(object):
 
         # Add bonuses from any earned classes...
         for l in self.levels:
-            it += l.get_stat_bonus( stat )
+            it += l.get_stat( stat )
 
         # Add bonuses from any equipment...
         for item in self.inventory:
             if item.equipped:
                 it += item.statline.get( stat , 0 )
+
+        # Add penalties from stat damage.
+        it -= self.stat_damage.get( stat , 0 )
+
+        # Add bonuses/penalties from conditions.
+        it += self.condition.get_stat( stat )
+
+        # Add bonuses from currently prepared techniques.
+        it += self.techniques.get_stat( stat )
 
         return it
 
@@ -396,7 +423,7 @@ class Character(object):
         return sum( l.hp for l in self.levels ) + int( bonus * self.rank() / 2 )
 
     def current_hp( self ):
-        return self.max_hp()
+        return self.max_hp() - self.hp_damage
 
     def max_mp( self ):
         # Bonus is the number of extra points per two levels.
@@ -406,7 +433,7 @@ class Character(object):
         return sum( l.mp for l in self.levels ) + int( bonus * self.rank() / 2 )
 
     def current_mp( self ):
-        return self.max_mp()
+        return self.max_mp() - self.mp_damage
 
     def xp_for_next_level( self ):
         """Return the XP needed for next level."""

@@ -2,6 +2,7 @@
 
 import pygame
 import weakref
+import util
 
 # Keep a list of already-loaded images, to save memory when multiple objects
 # need to use the same image file.
@@ -14,7 +15,7 @@ class Image( object ):
             if fname in pre_loaded_images:
                 self.bitmap = pre_loaded_images[fname]
             else:
-                self.bitmap = pygame.image.load( "image/" + fname ).convert()
+                self.bitmap = pygame.image.load( util.image_dir( fname ) ).convert()
                 self.bitmap.set_colorkey((0,0,255),pygame.RLEACCEL)
                 pre_loaded_images[fname] = self.bitmap
         else:

@@ -5,6 +5,8 @@ import items
 import stats
 import image
 import rpgmenu
+import util
+import pickle
 
 class CharacterSheet( pygame.Rect ):
     # Note that the display will be larger than this, because the border is
@@ -236,7 +238,7 @@ def choose_appearance( screen, redraw, pc ):
 
 
 
-def generate_character( screen ):
+def make_character( screen ):
     """Generate and return a new player character."""
     # We're gonna use the same redrawer for this entire process.
     redraw = MenuRedrawer( screen = screen )
@@ -275,6 +277,14 @@ def generate_character( screen ):
     else:
         return None
 
+def make_and_save_character( screen ):
+    pc = make_character( screen )
+    if pc:
+        f = open( util.user_dir( "c_" + pc.name + ".sav" ) , "wb" )
+        pickle.dump( pc , f, -1 )
+        f.close()
+    return pc
+
 if __name__=='__main__':
     pygame.init()
 
@@ -285,7 +295,7 @@ if __name__=='__main__':
     pygwrap.init()
     rpgmenu.init()
 
-    pc = generate_character( screen )
+    pc = make_and_save_character( screen )
 
     if pc:
         myimg = pc.generate_avatar()

@@ -9,6 +9,7 @@
 import pygame
 from itertools import chain
 import image
+import util
 
 # Import the android module. If we can't import it, set it to None - this
 # lets us test it, and check to see if we want android-specific behavior.
@@ -252,10 +253,10 @@ def init():
         INPUT_CURSOR = image.Image( "sys_textcursor.png" , 8 , 16 )
 
         global SMALLFONT
-        SMALLFONT = pygame.font.Font( "image/VeraBd.ttf" , 12 )
+        SMALLFONT = pygame.font.Font( util.image_dir( "VeraBd.ttf" ) , 12 )
 
         global BIGFONT
-        BIGFONT = pygame.font.Font( "image/VeraBd.ttf" , 16 )
+        BIGFONT = pygame.font.Font( util.image_dir( "VeraBd.ttf" ) , 16 )
 
         if android:
             android.init()
@@ -269,17 +270,11 @@ def init():
 if __name__ == "__main__":
     pygame.init()
 
-    myfont = pygame.font.Font( "image/VeraBd.ttf" , 12 )
-
     # Set the screen size.
     screen = pygame.display.set_mode((640,640))
-    text = render_text( myfont , "This is an example of an overly long line that will probably need to be split into multiple lines. I used to use song lyrics for this, but have decided against it as I didn't think of it at the time." , 300 , color = (125,250,180) )
-
     init()
+    text = render_text( SMALLFONT , "This is an example of an overly long line that will probably need to be split into multiple lines. I used to use song lyrics for this, but have decided against it as I didn't think of it at the time." , 300 , color = (125,250,180) )
 
-    init()
-
-    init()
 
     screen.fill((0,0,0))
 
