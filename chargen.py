@@ -310,8 +310,8 @@ if __name__=='__main__':
     pygame.init()
 
     # Set the screen size.
-#    screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
-    screen = pygame.display.set_mode( (800,600) )
+    screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
+#    screen = pygame.display.set_mode( (800,600) )
 
     pygwrap.init()
     rpgmenu.init()
