@@ -55,7 +55,8 @@ if __name__=='__main__':
                 sx = ( x * 27 ) - ( y * 27 ) + 550
                 sy = ( y * 13 ) + ( x * 13 ) + 50
                 seed = ( 73 * seed + 101 ) % 1024
-                myimg.render( screen, (sx,sy), 28 + seed % 7 )
+                myimg.render( screen, (sx,sy), 0 + seed % 7 )
+#                myimg.render( screen, (sx,sy), 28 )
         pygame.display.flip()
         WaitAMinit()
         pygame.image.save( screen , util.image_dir( "sample.png" ) )
