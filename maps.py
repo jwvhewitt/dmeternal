@@ -29,6 +29,7 @@ class GroundTerrain( SingTerrain ):
         self.spritesheet = spritesheet
         self.frame = frame
         self.edge = edge
+
     def render( self, screen, dest, view, data ):
         view.sprites[ self.spritesheet ].render( screen, dest, self.frame + data )
     def get_data( self, view, x, y ):
@@ -38,6 +39,7 @@ class GroundTerrain( SingTerrain ):
             n += 6
         else:
             n = view.get_pseudo_random() % 7
+#            n = ( x + y * 3 ) % 7
         return n
 
 class WaterTerrain( SingTerrain ):
@@ -119,6 +121,10 @@ class SceneView( object ):
 
                 if scene.map[x][y].floor:
                     self.map[x][y].floor = scene.map[x][y].floor.get_data( self, x, y )
+                if scene.map[x][y].wall:
+                    self.map[x][y].wall = scene.map[x][y].wall.get_data( self, x, y )
+                if scene.map[x][y].decor:
+                    self.map[x][y].decor = scene.map[x][y].decor.get_data( self, x, y )
 
 
     def calc_floor_score( self, x, y, terr ):
@@ -186,7 +192,7 @@ if __name__=='__main__':
 #                myimg.render( screen, (sx,sy), 28 )
         pygame.display.flip()
         WaitAMinit()
-        pygame.image.save( screen , util.image_dir( "sample.png" ) )
+#        pygame.image.save( screen , util.image_dir( "sample.png" ) )
 
 
         frame = 0
