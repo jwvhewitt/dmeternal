@@ -27,7 +27,7 @@ BIGFONT = None
 INIT_DONE = False
 
 # The FPS the game runs at.
-FPS = 30
+FPS = 16
 
 # Use a timer to control FPS.
 TIMEREVENT = pygame.USEREVENT

@@ -64,7 +64,7 @@ class WaterTerrain( SingTerrain ):
         """Pre-generate display data for this tile- phase offset."""
         return ( x + y ) % 2
     def render( self, screen, dest, view, data ):
-        view.sprites[ self.spritesheet ].render( screen, dest, self.frame + ( view.phase // 10 + data ) % 2 )
+        view.sprites[ self.spritesheet ].render( screen, dest, self.frame + ( view.phase // 5 + data ) % 2 )
 
 class WallTerrain( SingTerrain ):
     # A singleton terrain class; use these objects as tokens for maps.
@@ -147,9 +147,17 @@ OPEN_DOOR = DoorTerrain( "OPEN_DOOR", block_vision = False, block_walk = False, 
 FAKE_OPEN_DOOR = DoorTerrain( "FAKE_OPEN_DOOR", frame = 17 )
 STAIRS_UP = DoorTerrain( "STAIRS_UP", frame = 19 )
 STAIRS_DOWN = DoorTerrain( "STAIRS_DOWN", frame = 21 )
+MOUNTAIN_TOP = SingTerrain( "MOUNTAIN_TOP", block_walk = True, frame = 59 )
+MOUNTAIN_LEFT = SingTerrain( "MOUNTAIN_LEFT", block_walk = True, frame = 60 )
+MOUNTAIN_RIGHT = SingTerrain( "MOUNTAIN_RIGHT", block_walk = True, frame = 61 )
+MOUNTAIN_BOTTOM = SingTerrain( "MOUNTAIN_BOTTOM", block_walk = True, frame = 62 )
 
 BOOKSHELF = OnTheWallTerrain( "BOOKSHELF", frame = 13 )
-
+PUDDLE = SingTerrain( "PUDDLE", frame = 58 )
+SKULL = SingTerrain( "SKULL", spritesheet = SPRITE_DECOR, frame = 0 )
+BONE = SingTerrain( "BONE", spritesheet = SPRITE_DECOR, frame = 1 )
+SKELETON = SingTerrain( "SKELETON", spritesheet = SPRITE_DECOR, frame = 2 )
+HANGING_SKELETON = OnTheWallTerrain( "HANGING_SKELETON", frame = 3 )
 
 class Tile( object ):
     def __init__(self, floor=LOGROUND, wall=None, decor=None, visible=False):
@@ -223,8 +231,8 @@ class SceneView( object ):
 
         self.scene = scene
         self.seed = 1
-        self.x_off = 550
-        self.y_off = 50
+        self.x_off = 600
+        self.y_off = -200
         self.phase = 0
 
         self.map = []
@@ -311,22 +319,48 @@ class SceneView( object ):
         self.seed = ( 73 * self.seed + 101 ) % 1024
         return self.seed
 
+    # Half tile width and half tile height
+    HTW = 27
+    HTH = 13
+
+    def map_x( self, sx, sy ):
+        """Return the map x column for the given screen coordinates."""
+        return ( ( sx - self.x_off ) / self.HTW + ( sy - self.y_off ) / self.HTH ) // 2
+
+    def map_y( self, sx, sy ):
+        """Return the map y row for the given screen coordinates."""
+        return ( ( sy - self.y_off ) / self.HTH - ( sx - self.x_off ) / self.HTW ) // 2
+
     def __call__( self , screen ):
-        for x in range( self.scene.width ):
-            for y in range( self.scene.height ):
-                sx = ( x * 27 ) - ( y * 27 ) + self.x_off
-                sy = ( y * 13 ) + ( x * 13 ) + self.y_off
-                dest = pygame.Rect( sx, sy, 54, 54 )
+        screen_area = screen.get_rect()
 
-                if self.scene.map[x][y].floor:
-                    self.scene.map[x][y].floor.render( screen, dest, self, self.map[x][y].floor )
+        x_min = self.map_x( *screen_area.topleft ) - 1
+        x_max = self.map_x( *screen_area.bottomright )
+        y_min = self.map_y( *screen_area.topright ) - 1
+        y_max = self.map_y( *screen_area.bottomleft )
 
-                if self.scene.map[x][y].wall:
-                    self.scene.map[x][y].wall.prerender( screen, dest, self, self.map[x][y].wall )
-                    self.scene.map[x][y].wall.render( screen, dest, self, self.map[x][y].wall )
+        # Manhattan Diamond stuff. Not most dangerous.
+        mdx = ( x_min + x_max ) // 2
+        mdy = ( y_min + y_max ) // 2
+        mdr = max( ( x_max - x_min ) // 2 , ( y_max - y_min ) // 2 ) + 4
 
-                if self.scene.map[x][y].decor:
-                    self.scene.map[x][y].decor.render( screen, dest, self, self.map[x][y].decor )
+        dest = pygame.Rect( 0, 0, 54, 54 )
+
+        for x in range( x_min, x_max + 1 ):
+            for y in range( y_min, y_max + 1 ):
+                sx = ( x * self.HTW ) - ( y * self.HTW ) + self.x_off
+                sy = ( y * self.HTH ) + ( x * self.HTH ) + self.y_off
+                dest.topleft = (sx,sy)
+                if self.scene.on_the_map( x , y ) and screen_area.colliderect( dest ):
+                    if self.scene.map[x][y].floor:
+                        self.scene.map[x][y].floor.render( screen, dest, self, self.map[x][y].floor )
+
+                    if self.scene.map[x][y].wall:
+                        self.scene.map[x][y].wall.prerender( screen, dest, self, self.map[x][y].wall )
+                        self.scene.map[x][y].wall.render( screen, dest, self, self.map[x][y].wall )
+
+                    if self.scene.map[x][y].decor:
+                        self.scene.map[x][y].decor.render( screen, dest, self, self.map[x][y].decor )
 
         self.phase = ( self.phase + 1 ) % 600
 
@@ -340,6 +374,7 @@ if __name__=='__main__':
 
     # Set the screen size.
     screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
+#    screen = pygame.display.set_mode( (800,600) )
 
     myimg = image.Image( "terrain_ground_forest.png", 54, 54 )
 
@@ -349,35 +384,7 @@ if __name__=='__main__':
             if ( ev.type == pygame.MOUSEBUTTONDOWN ) or ( ev.type == pygame.QUIT ) or (ev.type == pygame.KEYDOWN):
                 break
 
-    def OldDemo():
-        seed = 1
-        for x in range( 0, 20 ):
-            for y in range( 0, 20 ):
-                sx = ( x * 27 ) - ( y * 27 ) + 550
-                sy = ( y * 13 ) + ( x * 13 ) + 50
-                seed = ( 73 * seed + 101 ) % 1024
-                myimg.render( screen, (sx,sy), 0 + seed % 7 )
-#                myimg.render( screen, (sx,sy), 28 )
-        pygame.display.flip()
-        WaitAMinit()
-#        pygame.image.save( screen , util.image_dir( "sample.png" ) )
-
-
-        frame = 0
-        while True:
-            ev = pygwrap.wait_event()
-            if ev.type == pygwrap.TIMEREVENT:
-                for x in range( 0, 20 ):
-                    for y in range( 0, 20 ):
-                        sx = ( x * 27 ) - ( y * 27 ) + 550
-                        sy = ( y * 13 ) + ( x * 13 ) + 50
-                        myimg.render( screen, (sx,sy), 56 + frame // 10 )
-                frame = ( frame + 1 ) % 20
-                pygame.display.flip()
-            elif ( ev.type == pygame.MOUSEBUTTONDOWN ) or ( ev.type == pygame.QUIT ) or (ev.type == pygame.KEYDOWN):
-                break
-
-    myscene = Scene( 50 , 50 )
+    myscene = Scene( 300 , 300 )
     terrain_list = (HIGROUND, HIGROUND, HIGROUND, HIGROUND, HIGROUND, HIGROUND, HIGROUND, HIGROUND, HIGROUND, HIGROUND, HIGROUND, HIGROUND, LOGROUND, LOGROUND, WATER )
     for x in range( myscene.width ):
         for y in range( myscene.height ):
@@ -391,13 +398,26 @@ if __name__=='__main__':
             myscene.map[x+14][y+10].wall = BASIC_WALL
     myscene.map[21][16].wall = CLOSED_DOOR
     myscene.map[16][21].wall = FAKE_OPEN_DOOR
-    myscene.map[21][15].decor = BOOKSHELF
+    myscene.map[15][21].decor = HANGING_SKELETON
+    myscene.map[23][23].decor = PUDDLE
+
+    myscene.map[25][10].wall = MOUNTAIN_TOP
+    myscene.map[25][11].wall = MOUNTAIN_LEFT
+    myscene.map[26][10].wall = MOUNTAIN_RIGHT
+    myscene.map[26][11].wall = MOUNTAIN_BOTTOM
+
 
     for x in range( 5 ):
         myscene.map[x][0].wall = BASIC_WALL
 
     mysceneview = SceneView( myscene )
 
+    mysceneview( screen )
+    t0 = pygame.time.get_ticks()
+    mysceneview( screen )
+    pygame.display.flip()
+    t1 = pygame.time.get_ticks()
+    print t1 - t0
 
     while True:
         ev = pygwrap.wait_event()
