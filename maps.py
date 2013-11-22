@@ -397,7 +397,7 @@ if __name__=='__main__':
         for y in range( 12 ):
             myscene.map[x+14][y+10].wall = BASIC_WALL
     myscene.map[21][16].wall = CLOSED_DOOR
-    myscene.map[16][21].wall = FAKE_OPEN_DOOR
+    myscene.map[16][21].wall = STAIRS_UP
     myscene.map[15][21].decor = HANGING_SKELETON
     myscene.map[23][23].decor = PUDDLE
 
