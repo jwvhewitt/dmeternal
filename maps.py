@@ -137,10 +137,12 @@ class OnTheWallTerrain( SingTerrain ):
         else:
             return 0
 
+# GROUND TYPES
 WATER = WaterTerrain( "WATER", frame = 56 )
 LOGROUND = GroundTerrain( "LOGROUND", frame = 28, edge = WATER )
 HIGROUND = GroundTerrain( "HIGROUND", edge = LOGROUND )
 
+# WALL TYPES
 BASIC_WALL = WallTerrain( "BASIC_WALL" )
 CLOSED_DOOR = DoorTerrain( "CLOSED_DOOR", frame = 15 )
 OPEN_DOOR = DoorTerrain( "OPEN_DOOR", block_vision = False, block_walk = False, block_fly = False, frame = 17 )
@@ -152,12 +154,15 @@ MOUNTAIN_LEFT = SingTerrain( "MOUNTAIN_LEFT", block_walk = True, frame = 60 )
 MOUNTAIN_RIGHT = SingTerrain( "MOUNTAIN_RIGHT", block_walk = True, frame = 61 )
 MOUNTAIN_BOTTOM = SingTerrain( "MOUNTAIN_BOTTOM", block_walk = True, frame = 62 )
 
+# DECOR TYPES
 BOOKSHELF = OnTheWallTerrain( "BOOKSHELF", frame = 13 )
 PUDDLE = SingTerrain( "PUDDLE", frame = 58 )
 SKULL = SingTerrain( "SKULL", spritesheet = SPRITE_DECOR, frame = 0 )
 BONE = SingTerrain( "BONE", spritesheet = SPRITE_DECOR, frame = 1 )
 SKELETON = SingTerrain( "SKELETON", spritesheet = SPRITE_DECOR, frame = 2 )
 HANGING_SKELETON = OnTheWallTerrain( "HANGING_SKELETON", frame = 3 )
+
+
 
 class Tile( object ):
     def __init__(self, floor=LOGROUND, wall=None, decor=None, visible=False):
@@ -223,17 +228,28 @@ class Scene( object ):
                             self.map[x][y].floor = LOGROUND
                             break
 
+OVERLAY_CURSOR = 1
+OVERLAY_ATTACK = 2
+OVERLAY_MOVETILE = 3
+OVERLAY_AOE = 4
+
+SCROLL_STEP = 12
+
 class SceneView( object ):
     def __init__( self, scene ):
         self.sprites = dict()
         for k,v in scene.sprites.iteritems():
             self.sprites[k] = image.Image( v, 54, 54 )
+        self.extrasprite = image.Image( "sceneview_extras.png", 54, 54 )
+        self.overlays = dict()
 
         self.scene = scene
         self.seed = 1
         self.x_off = 600
         self.y_off = -200
         self.phase = 0
+
+        self.mouse_tile = (-1,-1)
 
         self.map = []
         for x in range( scene.width ):
@@ -323,6 +339,14 @@ class SceneView( object ):
     HTW = 27
     HTH = 13
 
+    def relative_x( self, x, y ):
+        """Return the relative x position of this tile, ignoring offset."""
+        return ( x * self.HTW ) - ( y * self.HTW )
+
+    def relative_y( self, x, y ):
+        """Return the relative y position of this tile, ignoring offset."""
+        return ( y * self.HTH ) + ( x * self.HTH )
+
     def map_x( self, sx, sy ):
         """Return the map x column for the given screen coordinates."""
         return ( ( sx - self.x_off ) / self.HTW + ( sy - self.y_off ) / self.HTH ) // 2
@@ -331,39 +355,92 @@ class SceneView( object ):
         """Return the map y row for the given screen coordinates."""
         return ( ( sy - self.y_off ) / self.HTH - ( sx - self.x_off ) / self.HTW ) // 2
 
+    def check_origin( self ):
+        """Make sure the offset point is within map boundaries."""
+        if -self.x_off < self.relative_x( 0 , self.scene.height-1 ):
+            self.x_off = -self.relative_x( 0 , self.scene.height-1 )
+        elif -self.x_off > self.relative_x( self.scene.width-1 , 0 ):
+            self.x_off = -self.relative_x( self.scene.width-1 , 0 )
+        if -self.y_off < self.relative_y( 0 , 0 ):
+            self.y_off = -self.relative_y( 0 , 0 )
+        elif -self.y_off > self.relative_y( self.scene.width-1 , self.scene.height-1 ):
+            self.y_off = -self.relative_y(  self.scene.width-1 , self.scene.height-1  )
+
+    def focus( self, screen, x, y ):
+        self.x_off = screen.get_width()//2 - self.relative_x( x,y )
+        self.y_off = screen.get_height()//2 - self.relative_y( x,y )
+        self.check_origin()
+
     def __call__( self , screen ):
+        """Draws this mapview to the provided screen."""
         screen_area = screen.get_rect()
+        mouse_x,mouse_y = pygame.mouse.get_pos()
+        screen.fill( (0,0,0) )
+
+        # Check for map scrolling, depending on mouse position.
+        if mouse_x < 20:
+            self.x_off += SCROLL_STEP
+            self.check_origin()
+        elif mouse_x > ( screen_area.right - 20 ):
+            self.x_off -= SCROLL_STEP
+            self.check_origin()
+        if mouse_y < 20:
+            self.y_off += SCROLL_STEP
+            self.check_origin()
+        elif mouse_y > ( screen_area.bottom - 20 ):
+            self.y_off -= SCROLL_STEP
+            self.check_origin()
+
 
         x_min = self.map_x( *screen_area.topleft ) - 1
         x_max = self.map_x( *screen_area.bottomright )
         y_min = self.map_y( *screen_area.topright ) - 1
         y_max = self.map_y( *screen_area.bottomleft )
 
-        # Manhattan Diamond stuff. Not most dangerous.
-        mdx = ( x_min + x_max ) // 2
-        mdy = ( y_min + y_max ) // 2
-        mdr = max( ( x_max - x_min ) // 2 , ( y_max - y_min ) // 2 ) + 4
+        tile_x,tile_y = self.mouse_tile
 
         dest = pygame.Rect( 0, 0, 54, 54 )
 
         for x in range( x_min, x_max + 1 ):
             for y in range( y_min, y_max + 1 ):
-                sx = ( x * self.HTW ) - ( y * self.HTW ) + self.x_off
-                sy = ( y * self.HTH ) + ( x * self.HTH ) + self.y_off
+                sx = self.relative_x( x, y ) + self.x_off
+                sy = self.relative_y( x, y ) + self.y_off
                 dest.topleft = (sx,sy)
+
+                # Check the mouse position.
+                if ( mouse_x >= sx ) and ( mouse_x < ( sx + 54 ) ) and ( mouse_y >= ( sy + 41 ) ) and ( mouse_y < ( sy + 54 ) ):
+                    # If it's in the lower left triangle, it's one tile south.
+                    # If it's in the lower right triangle, it's one tile east.
+                    # Otherwise it's right here.
+                    if mouse_y > ( sy + 41 + ( mouse_x - sx ) // 2 ):
+                        tile_x = x
+                        tile_y = y+1
+                    elif mouse_y > ( sy + 67 - ( mouse_x - sx ) // 2 ):
+                        tile_x = x + 1
+                        tile_y = y
+                    else:
+                        tile_x = x
+                        tile_y = y
+
                 if self.scene.on_the_map( x , y ) and screen_area.colliderect( dest ):
                     if self.scene.map[x][y].floor:
                         self.scene.map[x][y].floor.render( screen, dest, self, self.map[x][y].floor )
 
                     if self.scene.map[x][y].wall:
                         self.scene.map[x][y].wall.prerender( screen, dest, self, self.map[x][y].wall )
+
+                    # Print overlay in between the wall border and the wall proper.
+                    if self.overlays.get( (x,y) , None ):
+                        self.extrasprite.render( screen, dest, self.overlays[(x,y)] )
+
+                    if self.scene.map[x][y].wall:
                         self.scene.map[x][y].wall.render( screen, dest, self, self.map[x][y].wall )
 
                     if self.scene.map[x][y].decor:
                         self.scene.map[x][y].decor.render( screen, dest, self, self.map[x][y].decor )
 
         self.phase = ( self.phase + 1 ) % 600
-
+        self.mouse_tile = ( tile_x, tile_y )
 
 if __name__=='__main__':
     import random
@@ -374,17 +451,9 @@ if __name__=='__main__':
 
     # Set the screen size.
     screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
-#    screen = pygame.display.set_mode( (800,600) )
+#    screen = pygame.display.set_mode( (640,480) )
 
-    myimg = image.Image( "terrain_ground_forest.png", 54, 54 )
-
-    def WaitAMinit():
-        while True:
-            ev = pygame.event.wait()
-            if ( ev.type == pygame.MOUSEBUTTONDOWN ) or ( ev.type == pygame.QUIT ) or (ev.type == pygame.KEYDOWN):
-                break
-
-    myscene = Scene( 300 , 300 )
+    myscene = Scene( 50 , 50, sprites={SPRITE_WALL: "terrain_wall_rocks.png"} )
     terrain_list = (HIGROUND, HIGROUND, HIGROUND, HIGROUND, HIGROUND, HIGROUND, HIGROUND, HIGROUND, HIGROUND, HIGROUND, HIGROUND, HIGROUND, LOGROUND, LOGROUND, WATER )
     for x in range( myscene.width ):
         for y in range( myscene.height ):
@@ -411,6 +480,7 @@ if __name__=='__main__':
         myscene.map[x][0].wall = BASIC_WALL
 
     mysceneview = SceneView( myscene )
+    mysceneview.focus( screen, 25, 10 )
 
     mysceneview( screen )
     t0 = pygame.time.get_ticks()
@@ -419,10 +489,22 @@ if __name__=='__main__':
     t1 = pygame.time.get_ticks()
     print t1 - t0
 
+    count = 0
+
     while True:
         ev = pygwrap.wait_event()
         if ev.type == pygwrap.TIMEREVENT:
+            mysceneview.overlays.clear()
+            mysceneview.overlays[ mysceneview.mouse_tile ] = OVERLAY_CURSOR
             mysceneview( screen )
+#            if count < 150:
+#                if count < 10:
+#                    pygame.image.save( screen, "frame_00" + str( count ) + ".png" )
+#                elif count < 100:
+#                    pygame.image.save( screen, "frame_0" + str( count ) + ".png" )
+#                else:
+#                    pygame.image.save( screen, "frame_" + str( count ) + ".png" )
+#                count += 1
             pygame.display.flip()
         elif ( ev.type == pygame.MOUSEBUTTONDOWN ) or ( ev.type == pygame.QUIT ) or (ev.type == pygame.KEYDOWN):
             break
