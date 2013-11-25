@@ -1,5 +1,7 @@
 import pygame
 import image
+import weakref
+import characters
 
 # Enumerated constants for sprite sheets.
 SPRITE_GROUND, SPRITE_WALL, SPRITE_BORDER, SPRITE_MISC, SPRITE_DECOR = range( 5 )
@@ -228,6 +230,7 @@ class Scene( object ):
                             self.map[x][y].floor = LOGROUND
                             break
 
+OVERLAY_ITEM = 0
 OVERLAY_CURSOR = 1
 OVERLAY_ATTACK = 2
 OVERLAY_MOVETILE = 3
@@ -242,6 +245,9 @@ class SceneView( object ):
             self.sprites[k] = image.Image( v, 54, 54 )
         self.extrasprite = image.Image( "sceneview_extras.png", 54, 54 )
         self.overlays = dict()
+
+        self.modelmap = dict()
+        self.modelsprite = weakref.WeakKeyDictionary()
 
         self.scene = scene
         self.seed = 1
@@ -392,6 +398,15 @@ class SceneView( object ):
             self.check_origin()
 
 
+        # Fill the modelmap and itemmap.
+        self.modelmap.clear()
+        itemmap = dict()
+        for m in self.scene.contents:
+            if isinstance( m , characters.Character ):
+                self.modelmap[ tuple( m.pos ) ] = m
+            else:
+                itemmap[ tuple( m.pos ) ] = True
+
         x_min = self.map_x( *screen_area.topleft ) - 1
         x_max = self.map_x( *screen_area.bottomright )
         y_min = self.map_y( *screen_area.topright ) - 1
@@ -439,6 +454,19 @@ class SceneView( object ):
                     if self.scene.map[x][y].decor:
                         self.scene.map[x][y].decor.render( screen, dest, self, self.map[x][y].decor )
 
+                    if itemmap.get( (x,y), False ):
+                        self.extrasprite.render( screen, dest, OVERLAY_ITEM )
+
+
+                    m = self.modelmap.get( (x,y) , None )
+                    if m:
+                        msprite = self.modelsprite.get( m , None )
+                        if not msprite:
+                            msprite = m.generate_avatar()
+                            self.modelsprite[ m ] = msprite
+                        msprite.render( screen, dest, m.FRAME )
+
+
         self.phase = ( self.phase + 1 ) % 600
         self.mouse_tile = ( tile_x, tile_y )
 
@@ -446,12 +474,20 @@ if __name__=='__main__':
     import random
     import pygwrap
     import util
+    import chargen
+    import rpgmenu
+    import items
+    import pickle
 
-    pygame.init()
 
     # Set the screen size.
     screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
 #    screen = pygame.display.set_mode( (640,480) )
+
+    pygame.init()
+    pygwrap.init()
+    rpgmenu.init()
+
 
     myscene = Scene( 50 , 50, sprites={SPRITE_WALL: "terrain_wall_rocks.png"} )
     terrain_list = (HIGROUND, HIGROUND, HIGROUND, HIGROUND, HIGROUND, HIGROUND, HIGROUND, HIGROUND, HIGROUND, HIGROUND, HIGROUND, HIGROUND, LOGROUND, LOGROUND, WATER )
@@ -470,6 +506,10 @@ if __name__=='__main__':
     myscene.map[15][21].decor = HANGING_SKELETON
     myscene.map[23][23].decor = PUDDLE
 
+    i = items.WarAxe()
+    i.pos = [17,22]
+    myscene.contents.append( i )
+
     myscene.map[25][10].wall = MOUNTAIN_TOP
     myscene.map[25][11].wall = MOUNTAIN_LEFT
     myscene.map[26][10].wall = MOUNTAIN_RIGHT
@@ -477,10 +517,23 @@ if __name__=='__main__':
 
 
     for x in range( 5 ):
-        myscene.map[x][0].wall = BASIC_WALL
+        myscene.map[x+2][1].wall = BASIC_WALL
+
 
     mysceneview = SceneView( myscene )
     mysceneview.focus( screen, 25, 10 )
+
+    rpm = chargen.RightMenu( screen, predraw = mysceneview, border=pygwrap.default_border )
+    rpm.add_files( util.user_dir( "C_*.sav" ) )
+    pcf = rpm.query()
+    if pcf:
+        f = open( pcf, "rb" )
+        pc = pickle.load( f )
+        f.close()
+        if pc:
+            pc.pos = [24,10]
+            myscene.contents.append( pc )
+
 
     mysceneview( screen )
     t0 = pygame.time.get_ticks()
@@ -489,7 +542,8 @@ if __name__=='__main__':
     t1 = pygame.time.get_ticks()
     print t1 - t0
 
-    count = 0
+#    count = 0
+
 
     while True:
         ev = pygwrap.wait_event()

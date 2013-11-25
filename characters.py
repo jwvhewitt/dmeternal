@@ -355,6 +355,8 @@ class CappedModifierList( list ):
         return p_max + n_max
 
 class Character(object):
+    FRAME = 0
+
     def __init__( self, name = "", species = None, gender = stats.NEUTER ):
         self.name = name
         self.statline = dict()
