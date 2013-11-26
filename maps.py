@@ -176,6 +176,9 @@ class Tile( object ):
     def blocks_vision( self ):
         return ( self.floor and self.floor.block_vision ) or (self.wall and self.wall.block_vision ) or ( self.decor and self.decor.block_vision )
 
+    def blocks_walking( self ):
+        return ( self.floor and self.floor.block_walk ) or (self.wall and self.wall.block_walk ) or ( self.decor and self.decor.block_walk )
+
 DEFAULT_SPRITES = { SPRITE_GROUND: "terrain_ground_forest.png", \
     SPRITE_WALL: "terrain_wall_lightbrick.png", \
     SPRITE_BORDER: "terrain_border.png", \

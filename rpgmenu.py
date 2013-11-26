@@ -207,7 +207,6 @@ class Menu( pygame.Rect ):
                 break
 
     def add_files( self , filepat ):
-        print filepat
         file_list = glob.glob( filepat )
 
         for f in file_list:
