@@ -437,7 +437,7 @@ class SceneView( object ):
                         tile_x = x
                         tile_y = y
 
-                if self.scene.on_the_map( x , y ) and screen_area.colliderect( dest ):
+                if self.scene.on_the_map( x , y ) and self.scene.map[x][y].visible and screen_area.colliderect( dest ):
                     if self.scene.map[x][y].floor:
                         self.scene.map[x][y].floor.render( screen, dest, self, self.map[x][y].floor )
 
@@ -478,6 +478,7 @@ if __name__=='__main__':
     import rpgmenu
     import items
     import pickle
+    import pfov
 
 
     # Set the screen size.
@@ -524,7 +525,7 @@ if __name__=='__main__':
     mysceneview.focus( screen, 25, 10 )
 
     rpm = chargen.RightMenu( screen, predraw = mysceneview, border=pygwrap.default_border )
-    rpm.add_files( util.user_dir( "C_*.sav" ) )
+    rpm.add_files( util.user_dir( "c_*.sav" ) )
     pcf = rpm.query()
     if pcf:
         f = open( pcf, "rb" )
@@ -533,6 +534,7 @@ if __name__=='__main__':
         if pc:
             pc.pos = [24,10]
             myscene.contents.append( pc )
+            pcpov = pfov.PCPointOfView( myscene, 24, 10, 15 )
 
 
     mysceneview( screen )

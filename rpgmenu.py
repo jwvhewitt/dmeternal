@@ -105,7 +105,9 @@ class Menu( pygame.Rect ):
 
     def query(self):
         # A return of False means selection was cancelled. 
-        if self.selected_item >= len( self.items ):
+        if not self.items :
+            return False
+        elif self.selected_item >= len( self.items ):
             self.selected_item = 0
         no_choice_made = True
         choice = False
@@ -205,6 +207,7 @@ class Menu( pygame.Rect ):
                 break
 
     def add_files( self , filepat ):
+        print filepat
         file_list = glob.glob( filepat )
 
         for f in file_list:
