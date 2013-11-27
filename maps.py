@@ -233,6 +233,16 @@ class Scene( object ):
                             self.map[x][y].floor = LOGROUND
                             break
 
+    def get_character_at_spot( self, pos ):
+        """Find and return first character at given position."""
+        npc = None
+        for m in self.contents:
+            if isinstance( m , characters.Character ) and m.pos == pos and m.is_alive():
+                npc = m
+                break
+        return npc
+
+
 OVERLAY_ITEM = 0
 OVERLAY_CURSOR = 1
 OVERLAY_ATTACK = 2
@@ -405,7 +415,7 @@ class SceneView( object ):
         self.modelmap.clear()
         itemmap = dict()
         for m in self.scene.contents:
-            if isinstance( m , characters.Character ):
+            if isinstance( m , characters.Character ) and m.is_alive():
                 self.modelmap[ tuple( m.pos ) ] = m
             else:
                 itemmap[ tuple( m.pos ) ] = True

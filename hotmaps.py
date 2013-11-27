@@ -66,38 +66,42 @@ class PointMap( HotMap ):
         myset.add( dest )
         super( PointMap, self ).__init__( scene, myset )
 
+
+
 if __name__=='__main__':
     import timeit
+    import maps
+    import random
 
-    class MakeTiles( object ):
+
+    myscene = maps.Scene( 30 , 30 )
+    for x in range( 5, myscene.width ):
+        for y in range( 5, myscene.height ):
+            if random.randint(1,3) == 1:
+                myscene.map[x][y].wall = maps.BASIC_WALL
+
+    myset = set()
+    myset.add( (3,3) )
+
+
+    class OldWay( object ):
+        def __init__( self, m ):
+            self.m = m
         def __call__(self):
-            a = [[ HotTile()
-                for y in range(150) ]
-                    for x in range(150) ]
+            HotMap( self.m, myset )
 
-    class MakeInts( object ):
+    class NewWay( object ):
+        def __init__( self, m ):
+            self.m = m
         def __call__(self):
-            a = [[ int(9999)
-                for y in range(150) ]
-                    for x in range(150) ]
+            NuHotMap( self.m, myset )
 
-    gar = [[ HotTile()
-                for y in range(150) ]
-                    for x in range(150) ]
 
-    class JustClear( object ):
-        def __call__( self ):
-            for x in range( 150 ):
-                for y in range( 150 ):
-                    gar[x][y].heat = 9999
+    t1 = timeit.Timer( OldWay( myscene ) )
+    t2 = timeit.Timer( NewWay( myscene ) )
 
-    t1 = timeit.Timer( MakeTiles() )
-    t2 = timeit.Timer( MakeInts() )
-    t3 = timeit.Timer( JustClear() )
-
-    print t1.timeit(1000)
-    print t2.timeit(1000)
-    print t3.timeit(1000)
+    print t1.timeit(10)
+    print t2.timeit(10)
 
 
 

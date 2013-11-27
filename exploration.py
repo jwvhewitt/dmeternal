@@ -14,6 +14,32 @@ class MoveTo( object ):
         self.dest = pos
         self.tries = 300
         self.hmap = hotmaps.PointMap( scene, pos )
+
+    def is_later_model( self, party, pc, npc ):
+        return ( pc in party ) and ( npc in party ) \
+            and party.index( pc ) < party.index( npc )
+
+    def smart_downhill_dir( self, exp, pc ):
+        """Return the best direction for the PC to move in."""
+        best_d = None
+        heat = self.hmap.map[pc.pos[0]][pc.pos[1]]
+        for d in self.hmap.DELTA8:
+            x2 = d[0] + pc.pos[0]
+            y2 = d[1] + pc.pos[1]
+            if exp.scene.on_the_map(x2,y2) and ( self.hmap.map[x2][y2] < heat ):
+                target = exp.scene.get_character_at_spot( (x2,y2) )
+                if not target:
+                    heat = self.hmap.map[x2][y2]
+                    best_d = d
+                elif ( x2 == self.dest[0] ) and ( y2 == self.dest[1] ):
+                    heat = 0
+                    best_d = d
+                elif self.is_later_model( exp.camp.party, pc, target ):
+                    heat = self.hmap.map[x2][y2]
+                    best_d = d
+        return best_d
+
+
     def __call__( self, exp ):
         pc = exp.camp.first_living_pc()
         self.tries += -1
@@ -21,18 +47,42 @@ class MoveTo( object ):
             return False
         else:
             first = True
+            keep_going = True
             for pc in exp.camp.party:
                 if pc.is_alive() and exp.scene.on_the_map( *pc.pos ):
-                    d = self.hmap.downhill_dir( pc.pos )
+                    d = self.smart_downhill_dir( exp, pc )
+                    if d:
+                        p2 = ( pc.pos[0] + d[0] , pc.pos[1] + d[1] )
+                        target = exp.scene.get_character_at_spot( p2 )
 
+                        if exp.scene.map[p2[0]][p2[1]].blocks_walking():
+                            # There's an obstacle in the way.
+                            if first:
+                                exp.bump_tile( p2 )
+                                keep_going = False
+                        elif ( not target ) or self.is_later_model( exp.camp.party, pc, target ):
+                            if target:
+                                target.pos = pc.pos
+                            pc.pos = p2
+                            pfov.PCPointOfView( exp.scene, pc.pos[0], pc.pos[1], 10 )
+                        else:
+                            exp.bump_model( target )
+                            keep_going = False
+                    elif first:
+                        keep_going = False
+                    first = False
+            return keep_going
 
-            d = self.hmap.downhill_dir( pc.pos )
-            if d:
-                pc.pos = ( pc.pos[0] + d[0] , pc.pos[1] + d[1] )
-                pfov.PCPointOfView( exp.scene, pc.pos[0], pc.pos[1], 10 )
-                return True
-            else:
-                return False
+class InvExchange( object ):
+    # The party will exchange inventory with a list.
+    def __init__( self, party, stuff, redraw ):
+        self.party = party
+        self.stuff = stuff
+        self.redraw = redraw
+
+    def __call__( self, screen ):
+        """Perform the required inventory exchanges."""
+        pass
 
 class Explorer( object ):
     # The object which is exploration of a scene. OO just got existential.
@@ -52,6 +102,15 @@ class Explorer( object ):
         x,y = camp.first_living_pc().pos
         self.view.focus( screen, x, y )
 
+    def bump_tile( self, pos ):
+        pass
+
+    def bump_model( self, target ):
+        pass
+
+    def pick_up( self, loc ):
+        """Party will pick up items at this location."""
+        pass
 
     def go( self ):
         keep_going = True
@@ -79,13 +138,21 @@ class Explorer( object ):
                 self.view.overlays.clear()
                 self.view.overlays[ self.view.mouse_tile ] = maps.OVERLAY_CURSOR
 
-                if ( gdi.type == pygame.KEYDOWN ) or ( gdi.type == pygame.QUIT ):
+                if gdi.type == pygame.KEYDOWN:
+                    if gdi.unicode == u"1":
+                        pass
+                    elif gdi.unicode == u"Q":
+                        keep_going = False
+                elif gdi.type == pygame.QUIT:
                     keep_going = False
                 elif gdi.type == pygame.MOUSEBUTTONUP:
                     if gdi.button == 1:
                         # Left mouse button.
-                        self.order = MoveTo( self.scene, self.view.mouse_tile )
-                        self.view.overlays.clear()
+                        if self.view.mouse_tile != self.camp.first_living_pc().pos:
+                            self.order = MoveTo( self.scene, self.view.mouse_tile )
+                            self.view.overlays.clear()
+                        else:
+                            self.pick_up( self.view.mouse_tile )
 
 
 
@@ -134,20 +201,20 @@ if __name__=='__main__':
 
     camp = campaign.Campaign()
 
-    rpm = chargen.RightMenu( screen )
-    rpm.add_files( util.user_dir( "c_*.sav" ) )
-    pcf = rpm.query()
-    x = 23
-    if pcf:
-        f = open( pcf, "rb" )
-        pc = pickle.load( f )
-        f.close()
-        if pc:
-            pc.pos = [x,13]
-            x += 1
-            myscene.contents.append( pc )
-            pcpov = pfov.PCPointOfView( myscene, 24, 10, 15 )
-            camp.party.append( pc )
+    for t in range( 4 ):
+        rpm = chargen.RightMenu( screen )
+        rpm.add_files( util.user_dir( "c_*.sav" ) )
+        pcf = rpm.query()
+        if pcf:
+            f = open( pcf, "rb" )
+            pc = pickle.load( f )
+            f.close()
+            if pc:
+                pc.pos = [23 + t,13]
+                x += 1
+                myscene.contents.append( pc )
+                pcpov = pfov.PCPointOfView( myscene, 24, 10, 15 )
+                camp.party.append( pc )
 
 
     exp = Explorer( screen, camp, myscene )
