@@ -15,11 +15,17 @@ class MoveTo( object ):
         self.tries = 300
         self.hmap = hotmaps.PointMap( scene, pos )
     def __call__( self, exp ):
-        pc = exp.camp.party[0]
+        pc = exp.camp.first_living_pc()
         self.tries += -1
-        if ( self.dest == pc.pos ) or ( self.tries < 1 ) or not exp.scene.on_the_map( *self.dest ):
+        if (not pc) or ( self.dest == pc.pos ) or ( self.tries < 1 ) or not exp.scene.on_the_map( *self.dest ):
             return False
         else:
+            first = True
+            for pc in exp.camp.party:
+                if pc.is_alive() and exp.scene.on_the_map( *pc.pos ):
+                    d = self.hmap.downhill_dir( pc.pos )
+
+
             d = self.hmap.downhill_dir( pc.pos )
             if d:
                 pc.pos = ( pc.pos[0] + d[0] , pc.pos[1] + d[1] )
@@ -43,13 +49,17 @@ class Explorer( object ):
             pfov.PCPointOfView( scene, x, y, 10 )
 
         # Focus on the first PC.
-        x,y = camp.party[0].pos
-        self.view.focus( screen , x, y )
+        x,y = camp.first_living_pc().pos
+        self.view.focus( screen, x, y )
 
 
     def go( self ):
         keep_going = True
         self.order = None
+
+        # Do one view first, just to prep the model map and mouse tile.
+        self.view( self.screen )
+        pygame.display.flip()
 
         while keep_going:
             # Get input and process it.
@@ -75,6 +85,7 @@ class Explorer( object ):
                     if gdi.button == 1:
                         # Left mouse button.
                         self.order = MoveTo( self.scene, self.view.mouse_tile )
+                        self.view.overlays.clear()
 
 
 
@@ -96,7 +107,7 @@ if __name__=='__main__':
     rpgmenu.init()
 
 
-    myscene = maps.Scene( 100 , 100 )
+    myscene = maps.Scene( 150 , 150 )
     for x in range( myscene.width ):
         for y in range( myscene.height ):
             if random.randint(1,3) != 1:

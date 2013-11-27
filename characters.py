@@ -427,6 +427,9 @@ class Character(object):
     def current_hp( self ):
         return self.max_hp() - self.hp_damage
 
+    def is_alive( self ):
+        return self.current_hp() > 0
+
     def max_mp( self ):
         # Bonus is the number of extra points per two levels.
         bonus = self.get_stat( stats.PIETY ) - 10
