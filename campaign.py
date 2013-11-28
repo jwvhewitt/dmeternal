@@ -1,5 +1,5 @@
 import util
-import chargen
+import charsheet
 import glob
 import util
 import pickle
@@ -28,31 +28,7 @@ class Campaign( object ):
         pickle.dump( self , f, -1 )
         f.close()
 
-class PartySelectRedrawer( object ):
-    def __init__( self , border_rect = None, backdrop = "bg_wests_stonewall5.png", menu=None, charsheets=None, screen = None, caption=None ):
-        self.backdrop = image.Image( backdrop )
-        self.counter = 0
-        self.menu = menu
-        self.charsheets = charsheets
-        if screen and not border_rect:
-            border_rect = pygame.Rect( screen.get_width()//2 + 64, screen.get_height()//2 - chargen.CharacterSheet.HEIGHT//2 + 32, chargen.CharacterSheet.WIDTH - 64, chargen.CharacterSheet.HEIGHT )
-        self.rect = border_rect
-        if screen:
-            self.caption_rect = pygame.Rect( screen.get_width()//2 - 200, screen.get_height()//2 - chargen.CharacterSheet.HEIGHT//2 - 42, 400, pygwrap.BIGFONT.get_linesize() )
-        else:
-            self.caption_rect = None
-        self.caption = caption
 
-    def __call__( self , screen ):
-        self.backdrop.tile( screen , ( self.counter * 5 , self.counter ) )
-        if self.menu and self.charsheets:
-            self.charsheets[ self.menu.items[ self.menu.selected_item ].value ].render( screen )
-        if self.rect:
-            pygwrap.default_border.render( screen , self.rect )
-        if self.caption and self.caption_rect:
-            pygwrap.default_border.render( screen , self.caption_rect )
-            pygwrap.draw_text( screen, pygwrap.BIGFONT, self.caption, self.caption_rect, justify = 0 )
-        self.counter += 4
 
 
 def load_party( screen ):
@@ -68,7 +44,7 @@ def load_party( screen ):
         f.close()
         if pc:
             pc_list.append( pc )
-            charsheets[ pc ] = chargen.CharacterSheet( pc , screen=screen )
+            charsheets[ pc ] = charsheet.CharacterSheet( pc , screen=screen )
 
     psr = PartySelectRedrawer( charsheets=charsheets, screen=screen, caption="Select Party Members" )
     for t in range( 4 ):

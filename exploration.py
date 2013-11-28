@@ -159,7 +159,6 @@ class Explorer( object ):
 if __name__=='__main__':
     import random
     import util
-    import chargen
     import rpgmenu
     import items
     import pickle
