@@ -329,20 +329,20 @@ class SceneView( object ):
             it = 14
         return it
 
+    def is_border_wall( self, x, y ):
+        """Return True if this loc is a wall or off the map."""
+        return isinstance(self.scene.get_wall( x , y ),WallTerrain ) or not self.scene.on_the_map( x,y )
+
     def calc_border_score( self, x, y ):
         """Return the wall border frame for this tile."""
         it = -1
-        if ( isinstance(self.scene.get_wall( x-1 , y-1 ),WallTerrain) and isinstance(self.scene.get_wall( x-1 , y ),WallTerrain) \
-         and isinstance(self.scene.get_wall( x , y-1 ),WallTerrain) ) or not self.scene.on_the_map( x-1, y-1 ):
+        if self.is_border_wall( x-1 , y-1 ) and self.is_border_wall( x-1 , y ) and self.is_border_wall( x , y-1 ):
             it += 1
-        if ( isinstance(self.scene.get_wall( x+1 , y-1 ),WallTerrain) and isinstance(self.scene.get_wall( x+1 , y ),WallTerrain) \
-         and isinstance(self.scene.get_wall( x , y-1 ),WallTerrain) ) or not self.scene.on_the_map( x+1, y-1 ):
+        if self.is_border_wall( x+1 , y-1 ) and self.is_border_wall( x+1 , y ) and self.is_border_wall( x , y-1 ):
             it += 2
-        if ( isinstance(self.scene.get_wall( x+1 , y+1 ),WallTerrain) and isinstance(self.scene.get_wall( x+1 , y ),WallTerrain) \
-         and isinstance(self.scene.get_wall( x , y+1 ),WallTerrain) ) or not self.scene.on_the_map( x-1, y+1 ):
+        if self.is_border_wall( x+1 , y+1 ) and self.is_border_wall( x+1 , y ) and self.is_border_wall( x , y+1 ):
             it += 4
-        if ( isinstance(self.scene.get_wall( x-1 , y+1 ),WallTerrain) and isinstance(self.scene.get_wall( x-1 , y ),WallTerrain) \
-         and isinstance(self.scene.get_wall( x , y+1 ),WallTerrain) ) or not self.scene.on_the_map( x-1, y+1 ):
+        if self.is_border_wall( x-1 , y+1 ) and self.is_border_wall( x-1 , y ) and self.is_border_wall( x , y+1 ):
             it += 8
         return it
 

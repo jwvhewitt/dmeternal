@@ -174,7 +174,7 @@ if __name__=='__main__':
     rpgmenu.init()
 
 
-    myscene = maps.Scene( 150 , 150 )
+    myscene = maps.Scene( 100 , 100, sprites={maps.SPRITE_WALL: "terrain_wall_red.png"} )
     for x in range( myscene.width ):
         for y in range( myscene.height ):
             if random.randint(1,3) != 1:
@@ -190,6 +190,10 @@ if __name__=='__main__':
     myscene.map[15][21].decor = maps.HANGING_SKELETON
     myscene.map[23][23].decor = maps.PUDDLE
 
+    myscene.map[0][0].wall = maps.BASIC_WALL
+    myscene.map[1][0].wall = maps.BASIC_WALL
+    myscene.map[0][1].wall = maps.BASIC_WALL
+
     i = items.WarAxe()
     i.pos = [17,22]
     myscene.contents.append( i )
@@ -201,22 +205,15 @@ if __name__=='__main__':
 
     camp = campaign.Campaign()
 
-    for t in range( 4 ):
-        rpm = chargen.RightMenu( screen )
-        rpm.add_files( util.user_dir( "c_*.sav" ) )
-        pcf = rpm.query()
-        if pcf:
-            f = open( pcf, "rb" )
-            pc = pickle.load( f )
-            f.close()
-            if pc:
-                pc.pos = [23 + t,13]
-                x += 1
-                myscene.contents.append( pc )
-                pcpov = pfov.PCPointOfView( myscene, 24, 10, 15 )
-                camp.party.append( pc )
+    camp.party = campaign.load_party( screen )
+    x = 23
+    for pc in camp.party:
+        pc.pos = [x,13]
+        x += 1
+        myscene.contents.append( pc )
+        pcpov = pfov.PCPointOfView( myscene, 24, 10, 15 )
 
-
-    exp = Explorer( screen, camp, myscene )
-    exp.go()
+    if camp.party:
+        exp = Explorer( screen, camp, myscene )
+        exp.go()
 

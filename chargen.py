@@ -136,13 +136,17 @@ class MenuRedrawer( object ):
 
 class RightMenu( rpgmenu.Menu ):
     # This is, obviously, the menu that appears to the right of the character sheet.
-    def __init__( self, screen, charsheet = None, predraw = None, border=None ):
+    def __init__( self, screen, charsheet = None, predraw = None, border=None, add_desc=True ):
         x = screen.get_width()//2 + 64
         y = screen.get_height()//2 - CharacterSheet.HEIGHT//2 + 232
         w = CharacterSheet.WIDTH - 64
         h = CharacterSheet.HEIGHT - 200
+        if not add_desc:
+            y += -200
+            h += 200
         super(RightMenu, self).__init__(screen,x,y,w,h,border=border)
-        self.add_desc( x, y-200, w, 180, justify=0 )
+        if add_desc:
+            self.add_desc( x, y-200, w, 180, justify=0 )
         if not predraw:
             predraw = MenuRedrawer( border_rect = pygame.Rect( x , y-200, w, CharacterSheet.HEIGHT ), charsheet = charsheet )
         self.predraw = predraw
