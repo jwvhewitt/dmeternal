@@ -103,7 +103,10 @@ class Item( object ):
         if not other:
             return 1
         else:
-            return self.cost() - other.cost()
+            try:
+                return self.cost() - other.cost()
+            except AttributeError:
+                return -1
     def __str__( self ):
         return self.true_name
 

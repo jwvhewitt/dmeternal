@@ -62,12 +62,12 @@ class Menu( pygame.Rect ):
     def add_desc(self,x,y,w=30,h=10,justify=-1):
         self.descbox = DescBox( self, x , y , w , h, self.border, justify )
 
-    def render(self):
-        if self.predraw:
-            self.predraw( self.screen )
-
-        if self.border:
-            self.border.render( self.screen , self )
+    def render(self,do_extras=True):
+        if do_extras:
+            if self.predraw:
+                self.predraw( self.screen )
+            if self.border:
+                self.border.render( self.screen , self )
 
         self.screen.set_clip(self)
 
@@ -76,7 +76,7 @@ class Menu( pygame.Rect ):
         while y < self.bottom:
             if item_num < len( self.items ):
                 # The color of this item depends on whether or not it's the selected one.
-                if item_num == self.selected_item:
+                if ( item_num == self.selected_item ) and do_extras:
                     color = self.menuselect
                 else:
                     color = self.menuitem
@@ -166,6 +166,10 @@ class Menu( pygame.Rect ):
                 elif pc_input.key >= 0 and pc_input.key < 256 and chr( pc_input.key ) in self.quick_keys:
                     choice = self.quick_keys[ chr(pc_input.key) ]
                     no_choice_made = False
+                elif pc_input.key > 255 and pc_input.key in self.quick_keys:
+                    choice = self.quick_keys[ pc_input.key ]
+                    no_choice_made = False
+
             elif pc_input.type == pygame.MOUSEBUTTONDOWN and not mouse_button_down:
                 # Mouse down does nothing but set the first mouse selection, and a
                 # counter telling that the button is down.

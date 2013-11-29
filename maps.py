@@ -390,6 +390,11 @@ class SceneView( object ):
         self.y_off = screen.get_height()//2 - self.relative_y( x,y )
         self.check_origin()
 
+    def regenerate_avatars( self, models ):
+        """Regenerate the avatars for the listed models."""
+        for m in models:
+            self.modelsprite[ m ] = m.generate_avatar()
+
     def __call__( self , screen ):
         """Draws this mapview to the provided screen."""
         screen_area = screen.get_rect()

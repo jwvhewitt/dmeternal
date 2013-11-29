@@ -137,6 +137,29 @@ class PartySelectRedrawer( object ):
             pygwrap.draw_text( screen, pygwrap.BIGFONT, self.caption, self.caption_rect, justify = 0 )
         self.counter += 4
 
+def display_item_info( screen, it, myrect ):
+    """Use the screen to display "it" in myrect."""
+    y = myrect.y
+    pygwrap.draw_text( screen, pygwrap.BIGFONT, str( it ), pygame.Rect( myrect.x, y, myrect.width, pygwrap.BIGFONT.get_linesize() ), justify = 0, color=(240,240,240) )
+    y += pygwrap.BIGFONT.get_linesize()
+    myrect = pygame.Rect( myrect.x, y, myrect.width, pygwrap.SMALLFONT.get_linesize() )
+    pygwrap.draw_text( screen, pygwrap.SMALLFONT, str( it.cost() ) + " GP", myrect, justify = -1 )
+    pygwrap.draw_text( screen, pygwrap.SMALLFONT, str( it.mass // 10 ) + "." + str( it.mass % 10 ) + "lbs", myrect, justify = 1 )
+    y += pygwrap.BIGFONT.get_linesize()
+
+    if it.true_desc:
+        myimg = pygwrap.render_text(pygwrap.SMALLFONT, it.true_desc, myrect.width, justify = -1 )
+        myrect = myimg.get_rect( topleft = ( myrect.x, y ) )
+        screen.blit( myimg , myrect )
+        y += myrect.height + 6
+
+    msg = it.stat_desc()
+    if msg:
+        myimg = pygwrap.render_text(pygwrap.ITALICFONT, msg, myrect.width, justify = 0 )
+        myrect = myimg.get_rect( topleft = ( myrect.x, y ) )
+        screen.blit( myimg , myrect )
+
+
 class CharacterViewRedrawer( object ):
     # A redrawer for the status/inventory screen.
     def __init__( self , border_rect=None, backdrop="bg_wests_stonewall5.png", menu=None, csheet=None, screen=None, caption=None, predraw=None ):
@@ -153,28 +176,6 @@ class CharacterViewRedrawer( object ):
         self.caption = caption
         self.menu = menu
         self.predraw = predraw
-    def display_item_info( self, screen, it ):
-        y = self.rect.y
-        pygwrap.draw_text( screen, pygwrap.BIGFONT, str( it ), pygame.Rect( self.rect.x, y, self.rect.width, pygwrap.BIGFONT.get_linesize() ), justify = 0, color=(240,240,240) )
-        y += pygwrap.BIGFONT.get_linesize()
-        myrect = pygame.Rect( self.rect.x, y, self.rect.width, pygwrap.SMALLFONT.get_linesize() )
-        pygwrap.draw_text( screen, pygwrap.SMALLFONT, str( it.cost() ) + " GP", myrect, justify = -1 )
-        pygwrap.draw_text( screen, pygwrap.SMALLFONT, str( it.mass // 10 ) + "." + str( it.mass % 10 ) + "lbs", myrect, justify = 1 )
-        y += pygwrap.BIGFONT.get_linesize()
-
-        if it.true_desc:
-            myimg = pygwrap.render_text(pygwrap.SMALLFONT, it.true_desc, self.rect.width, justify = -1 )
-            myrect = myimg.get_rect( topleft = ( self.rect.x, y ) )
-            screen.blit( myimg , myrect )
-            y += myrect.height + 6
-
-        msg = it.stat_desc()
-        if msg:
-            myimg = pygwrap.render_text(pygwrap.ITALICFONT, msg, self.rect.width, justify = 0 )
-            myrect = myimg.get_rect( topleft = ( self.rect.x, y ) )
-            screen.blit( myimg , myrect )
-
-
 
     def __call__( self , screen ):
         if self.predraw:
@@ -189,11 +190,64 @@ class CharacterViewRedrawer( object ):
                 # Display the item info in the upper display rect.
                 it = self.menu.items[ self.menu.selected_item ].value
                 if isinstance( it, items.Item ):
-                    self.display_item_info( screen, it )
+                    display_item_info( screen, it, self.rect )
         if self.caption and self.caption_rect:
             pygwrap.default_border.render( screen , self.caption_rect )
             pygwrap.draw_text( screen, pygwrap.BIGFONT, self.caption, self.caption_rect, justify = 0 )
         self.counter += 4
+
+class InvExchangeRedrawer( object ):
+    # A redrawer for the picking up items/getting items from container screen.
+    def __init__( self , backdrop="bg_wests_stonewall5.png", menu=None, off_menu=None, screen=None, caption=None, predraw=None, pc=None ):
+        self.backdrop = image.Image( backdrop )
+        self.counter = 0
+        if screen:
+            self.rect1 = pygame.Rect( screen.get_width() // 2 - CharacterSheet.WIDTH, screen.get_height() // 2 - CharacterSheet.HEIGHT // 2 + 32, CharacterSheet.WIDTH, CharacterSheet.HEIGHT )
+            self.rect2 = pygame.Rect( screen.get_width()//2 + 64, screen.get_height()//2 - CharacterSheet.HEIGHT//2 + 32, CharacterSheet.WIDTH - 64, CharacterSheet.HEIGHT )
+            self.caption_rect = pygame.Rect( screen.get_width()//2 - 240, screen.get_height()//2 - CharacterSheet.HEIGHT//2 - 46, 480, pygwrap.BIGFONT.get_linesize() )
+        else:
+            self.rect1 = None
+            self.rect2 = None
+            self.caption_rect = None
+        self.caption = caption
+        self.menu = menu
+        self.off_menu = off_menu
+        self.predraw = predraw
+        self.pc = pc
+    def __call__( self , screen ):
+        if self.predraw:
+            self.predraw( screen )
+        else:
+            self.backdrop.tile( screen , ( self.counter * 5 , self.counter ) )
+        if self.rect1:
+            pygwrap.default_border.render( screen , self.rect1 )
+            if self.pc:
+                pygwrap.draw_text( screen, pygwrap.BIGFONT, str( self.pc ), self.rect1, justify=0, color=(240,240,240) )
+        if self.rect2:
+            pygwrap.default_border.render( screen , self.rect2 )
+            if self.menu:
+                # Display the item info in the upper display rect.
+                it = self.menu.items[ self.menu.selected_item ].value
+                if isinstance( it, items.Item ):
+                    display_item_info( screen, it, self.rect2 )
+        if self.caption and self.caption_rect:
+            pygwrap.default_border.render( screen , self.caption_rect )
+            pygwrap.draw_text( screen, pygwrap.BIGFONT, self.caption, self.caption_rect, justify = 0 )
+        if self.off_menu:
+            self.off_menu.render( do_extras=False )
+        self.counter += 4
+
+
+
+class LeftMenu( rpgmenu.Menu ):
+    # This menu appears in what is normally the character sheet area.
+    def __init__( self, screen, predraw = None, border=None ):
+        x = screen.get_width() // 2 - CharacterSheet.WIDTH
+        y = screen.get_height() // 2 - CharacterSheet.HEIGHT // 2 + 40 + pygwrap.BIGFONT.get_linesize()
+        super(LeftMenu, self).__init__(screen,x,y,CharacterSheet.WIDTH,CharacterSheet.HEIGHT - 8 - pygwrap.BIGFONT.get_linesize(), border=border)
+        self.predraw = predraw
+
+
 
 
 class RightMenu( rpgmenu.Menu ):

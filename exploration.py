@@ -76,14 +76,77 @@ class MoveTo( object ):
 
 class InvExchange( object ):
     # The party will exchange inventory with a list.
-    def __init__( self, party, stuff, redraw ):
+    def __init__( self, party, ilist, predraw, caption="/ to switch menus" ):
         self.party = party
-        self.stuff = stuff
-        self.redraw = redraw
+        self.predraw = predraw
+        self.ilist = ilist
+        self.caption = caption
 
     def __call__( self, screen ):
         """Perform the required inventory exchanges."""
-        pass
+        pcn = 0
+        use_left_menu = False
+        myredraw = charsheet.InvExchangeRedrawer( screen=screen, caption=self.caption, predraw=self.predraw )
+        keep_going = True
+
+        while keep_going:
+            lmenu = charsheet.LeftMenu( screen )
+            rmenu = charsheet.RightMenu( screen )
+            pc = self.party[ pcn ]
+
+            myredraw.menu = rmenu
+            myredraw.pc = pc
+            if use_left_menu:
+                myredraw.off_menu = rmenu
+            else:
+                myredraw.off_menu = lmenu
+
+            lmenu.predraw = myredraw
+            lmenu.quick_keys[ pygame.K_LEFT ] = -1
+            lmenu.quick_keys[ pygame.K_RIGHT ] = 1
+            lmenu.quick_keys[ "/" ] = 2
+
+            rmenu.predraw = myredraw
+            rmenu.quick_keys[ pygame.K_LEFT ] = -1
+            rmenu.quick_keys[ pygame.K_RIGHT ] = 1
+            rmenu.quick_keys[ "/" ] = 2
+
+            for it in pc.inventory:
+                lmenu.add_item( str( it ), it )
+            for it in self.ilist:
+                rmenu.add_item( str( it ), it )
+            lmenu.sort()
+            rmenu.sort()
+            lmenu.add_alpha_keys()
+            rmenu.add_alpha_keys()
+            lmenu.add_item( "Cancel", False )
+            rmenu.add_item( "Cancel", False )
+
+            if use_left_menu:
+                it = lmenu.query()
+            else:
+                it = rmenu.query()
+
+            if it is -1:
+                pcn = ( pcn + len( self.party ) - 1 ) % len( self.party )
+            elif it is 1:
+                pcn = ( pcn + 1 ) % len( self.party )
+            elif it is 2:
+                use_left_menu = not use_left_menu
+            elif it:
+                # An item was selected. Transfer.
+                if use_left_menu:
+                    pc.inventory.unequip( it )
+                    if not it.equipped:
+                        pc.inventory.remove( it )
+                        self.ilist.append( it )
+                else:
+                    self.ilist.remove( it )
+                    pc.inventory.append( it )
+            else:
+                keep_going = False
+        return self.ilist
+
 
 class Explorer( object ):
     # The object which is exploration of a scene. OO just got existential.
@@ -111,15 +174,78 @@ class Explorer( object ):
 
     def pick_up( self, loc ):
         """Party will pick up items at this location."""
-        pass
+        ilist = []
+        for it in self.scene.contents[:]:
+            if isinstance( it , items.Item ) and ( it.pos == loc ):
+                self.scene.contents.remove( it )
+                ilist.append( it )
+        if ilist:
+            ie = InvExchange( self.camp.party, ilist, self.view )
+            ilist = ie( screen )
+            for it in ilist:
+                it.pos = loc
+                self.scene.contents.append( it )
+            self.view.regenerate_avatars( self.camp.party )
 
-    def view_party( self, n ):
+    def equip_item( self, it, pc, redraw ):
+        pc.inventory.equip( it )
+
+    def unequip_item( self, it, pc, redraw ):
+        pc.inventory.unequip( it )
+
+    def drop_item( self, it, pc, redraw ):
+        pc.inventory.unequip( it )
+        if not it.equipped:
+            pc.inventory.remove( it )
+            it.pos = pc.pos
+            self.scene.contents.append( it )
+
+    def trade_item( self, it, pc, redraw ):
+        """Trade this item to another character."""
+        mymenu = charsheet.RightMenu( self.screen, predraw = redraw )
+        for opc in self.camp.party:
+            if opc != pc:
+                mymenu.add_item( str( opc ) , opc )
+        mymenu.add_item( "Cancel" , False )
+        mymenu.add_alpha_keys()
+
+        opc = mymenu.query()
+        if opc:
+            pc.inventory.unequip( it )
+            if not it.equipped:
+                pc.inventory.remove( it )
+                opc.inventory.append( it )
+
+
+    def equip_or_whatevs( self, it, pc, myredraw ):
+        """Equip, trade, drop, or whatever this item."""
+        mymenu = charsheet.RightMenu( self.screen, predraw = myredraw )
+        if it.equipped:
+            mymenu.add_item( "Unequip Item", self.unequip_item )
+        elif pc.can_equip( it ):
+            mymenu.add_item( "Equip Item", self.equip_item )
+        mymenu.add_item( "Trade Item", self.trade_item )
+        mymenu.add_item( "Drop Item", self.drop_item )
+        mymenu.add_item( "Exit", False )
+        mymenu.add_alpha_keys()
+
+        n = mymenu.query()
+
+        if n:
+            n( it, pc, myredraw )
+            myredraw.csheet.regenerate_avatar()
+            self.view.regenerate_avatars( self.camp.party )
+
+
+    def view_party( self, n, can_switch=True ):
+        if n > self.camp.party:
+            n = 0
         pc = self.camp.party[ n ]
         keep_going = True
         myredraw = charsheet.CharacterViewRedrawer( csheet=charsheet.CharacterSheet(pc, screen=self.screen), screen=self.screen, predraw=self.view, caption="View Party" )
 
         while keep_going:
-            mymenu = charsheet.RightMenu( screen, predraw = myredraw )
+            mymenu = charsheet.RightMenu( self.screen, predraw = myredraw )
             for i in pc.inventory:
                 if i.equipped:
                     mymenu.add_item( "*" + str( i ) , i )
@@ -128,9 +254,26 @@ class Explorer( object ):
             mymenu.sort()
             mymenu.add_alpha_keys()
             myredraw.menu = mymenu
+            if can_switch:
+                mymenu.quick_keys[ pygame.K_LEFT ] = -1
+                mymenu.quick_keys[ pygame.K_RIGHT ] = 1
 
-            n = mymenu.query()
-            break
+            it = mymenu.query()
+            if it is -1:
+                n = ( n + len( self.camp.party ) - 1 ) % len( self.camp.party )
+                pc = self.camp.party[n]
+                myredraw.csheet = charsheet.CharacterSheet(pc, screen=self.screen)
+            elif it is 1:
+                n = ( n + 1 ) % len( self.camp.party )
+                pc = self.camp.party[n]
+                myredraw.csheet = charsheet.CharacterSheet(pc, screen=self.screen)
+
+            elif it:
+                # An item was selected. Deal with it.
+                self.equip_or_whatevs( it, pc, myredraw )
+
+            else:
+                keep_going = False
 
     def go( self ):
         keep_going = True
@@ -193,7 +336,6 @@ if __name__=='__main__':
     pygwrap.init()
     rpgmenu.init()
 
-
     myscene = maps.Scene( 100 , 100, sprites={maps.SPRITE_WALL: "terrain_wall_red.png"} )
     for x in range( myscene.width ):
         for y in range( myscene.height ):
@@ -215,7 +357,7 @@ if __name__=='__main__':
     myscene.map[0][1].wall = maps.BASIC_WALL
 
     i = items.WarAxe()
-    i.pos = [17,22]
+    i.pos = (17,22)
     myscene.contents.append( i )
 
     myscene.map[25][10].wall = maps.MOUNTAIN_TOP
@@ -228,7 +370,7 @@ if __name__=='__main__':
     camp.party = campaign.load_party( screen )
     x = 23
     for pc in camp.party:
-        pc.pos = [x,13]
+        pc.pos = (x,13)
         x += 1
         myscene.contents.append( pc )
         pcpov = pfov.PCPointOfView( myscene, 24, 10, 15 )
