@@ -22,6 +22,7 @@ except ImportError:
 
 INPUT_CURSOR = None
 SMALLFONT = None
+ITALICFONT = None
 BIGFONT = None
 
 INIT_DONE = False
@@ -255,8 +256,11 @@ def init():
         global SMALLFONT
         SMALLFONT = pygame.font.Font( util.image_dir( "VeraBd.ttf" ) , 12 )
 
+        global ITALICFONT
+        ITALICFONT = pygame.font.Font( util.image_dir( "VeraBI.ttf" ) , 12 )
+
         global BIGFONT
-        BIGFONT = pygame.font.Font( util.image_dir( "VeraBd.ttf" ) , 16 )
+        BIGFONT = pygame.font.Font( util.image_dir( "Gamaliel.otf" ) , 23 )
 
         if android:
             android.init()

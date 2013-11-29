@@ -65,7 +65,14 @@ class Attack( object ):
         if self.reach > 1:
             it = ( it * self.reach + 3 ) * self.REACH_MODIFIER // 6
         return it
-
+    def stat_desc( self ):
+        """Return a string describing this attack."""
+        it = "{0}d{1}{2:+} {3} damage".format(self.damage[0],self.damage[1],self.damage[2], self.element.element_name )
+        if self.double_handed:
+            it = "2H " + it
+        if self.reach > 1:
+            it = it + ", Range:{0}".format( self.reach )
+        return it
 
 class Item( object ):
     true_name = "Item"
@@ -97,6 +104,17 @@ class Item( object ):
             return 1
         else:
             return self.cost() - other.cost()
+    def __str__( self ):
+        return self.true_name
+
+    def stat_desc( self ):
+        """Return descriptions of all stat modifiers provided."""
+        smod = []
+        if self.attackdata:
+            smod.append( self.attackdata.stat_desc() )
+        for k,v in self.statline.iteritems():
+            smod.append( str(k) + ":" + "{0:+}".format( v ) )
+        return ", ".join( smod )
 
     @property
     def slot( self ):
@@ -356,7 +374,7 @@ class HandAxe( Item ):
 
 class WarAxe( Item ):
     true_name = "War Axe"
-    true_desc = ""
+    true_desc = "A sturdy single-handed axe."
     itemtype = AXE
     avatar_image = "avatar_axe.png"
     avatar_frame = 4
@@ -365,7 +383,7 @@ class WarAxe( Item ):
 
 class BattleAxe( Item ):
     true_name = "Battle Axe"
-    true_desc = ""
+    true_desc = "A sturdy double-handed axe."
     itemtype = AXE
     avatar_image = "avatar_axe.png"
     avatar_frame = 7
@@ -374,7 +392,7 @@ class BattleAxe( Item ):
 
 class Pickaxe( Item ):
     true_name = "Pickaxe"
-    true_desc = ""
+    true_desc = "Generally used for mining, this tool can also be used as a weapon."
     itemtype = AXE
     avatar_image = "avatar_axe.png"
     avatar_frame = 8
@@ -392,7 +410,7 @@ class FlangedMace( Item ):
 
 class Club( Item ):
     true_name = "Club"
-    true_desc = ""
+    true_desc = "A big piece of wood."
     itemtype = MACE
     avatar_image = "avatar_mace.png"
     avatar_frame = 0
@@ -497,13 +515,13 @@ class WoodsmansHat( MageHat ):
 
 class GnomeHat( MageHat ):
     true_name = "Pointy Hat"
-    true_desc = ""
+    true_desc = "What all the fashionable gnomes are wearing this year."
     avatar_frame = 7
 
 
 class NormalShoes( Item ):
     true_name = "Shoes"
-    true_desc = ""
+    true_desc = "Sturdy leather shoes."
     itemtype = SHOES
     avatar_image = "avatar_boot.png"
     avatar_frame = 2
@@ -511,14 +529,14 @@ class NormalShoes( Item ):
 
 class NormalBoots( NormalShoes ):
     true_name = "Boots"
-    true_desc = ""
+    true_desc = "Sturdy leather boots."
     itemtype = BOOTS
     avatar_frame = 8
     mass = 7
 
 class NormalSandals( NormalShoes ):
     true_name = "Sandals"
-    true_desc = ""
+    true_desc = "Plain sandals."
     itemtype = SANDALS
     avatar_frame = 16
     mass = 3

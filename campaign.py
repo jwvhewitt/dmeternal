@@ -46,9 +46,9 @@ def load_party( screen ):
             pc_list.append( pc )
             charsheets[ pc ] = charsheet.CharacterSheet( pc , screen=screen )
 
-    psr = PartySelectRedrawer( charsheets=charsheets, screen=screen, caption="Select Party Members" )
+    psr = charsheet.PartySelectRedrawer( charsheets=charsheets, screen=screen, caption="Select Party Members" )
     for t in range( 4 ):
-        rpm = chargen.RightMenu( screen, predraw=psr, add_desc=False )
+        rpm = charsheet.RightMenu( screen, predraw=psr, add_desc=False )
         psr.menu = rpm
         for pc in pc_list:
             rpm.add_item( str( pc ), pc )

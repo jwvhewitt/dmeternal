@@ -3,6 +3,7 @@ import pfov
 import pygwrap
 import pygame
 import hotmaps
+import charsheet
 
 # Commands should be callable objects which take the explorer and return a value.
 # If untrue, the command stops.
@@ -112,6 +113,25 @@ class Explorer( object ):
         """Party will pick up items at this location."""
         pass
 
+    def view_party( self, n ):
+        pc = self.camp.party[ n ]
+        keep_going = True
+        myredraw = charsheet.CharacterViewRedrawer( csheet=charsheet.CharacterSheet(pc, screen=self.screen), screen=self.screen, predraw=self.view, caption="View Party" )
+
+        while keep_going:
+            mymenu = charsheet.RightMenu( screen, predraw = myredraw )
+            for i in pc.inventory:
+                if i.equipped:
+                    mymenu.add_item( "*" + str( i ) , i )
+                else:
+                    mymenu.add_item( str( i ) , i )
+            mymenu.sort()
+            mymenu.add_alpha_keys()
+            myredraw.menu = mymenu
+
+            n = mymenu.query()
+            break
+
     def go( self ):
         keep_going = True
         self.order = None
@@ -140,7 +160,7 @@ class Explorer( object ):
 
                 if gdi.type == pygame.KEYDOWN:
                     if gdi.unicode == u"1":
-                        pass
+                        self.view_party(0)
                     elif gdi.unicode == u"Q":
                         keep_going = False
                 elif gdi.type == pygame.QUIT:
@@ -167,6 +187,7 @@ if __name__=='__main__':
 
     # Set the screen size.
     screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
+#    screen = pygame.display.set_mode( (800,600) )
 
     pygame.init()
     pygwrap.init()
