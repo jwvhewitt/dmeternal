@@ -60,7 +60,7 @@ class Warrior( Level ):
         items.BULLET, items.CLOTHES, items.LIGHT_ARMOR, items.HEAVY_ARMOR, items.HAT, \
         items.HELM, items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK )
-    starting_equipment = ( items.GladiatorArmor, items.Broadsword, items.NormalBoots )
+    starting_equipment = ( items.lightarmor.GladiatorArmor, items.swords.Broadsword, items.shoes.NormalBoots )
 
 
 class Thief( Level ):
@@ -78,7 +78,7 @@ class Thief( Level ):
         items.BULLET, items.CLOTHES, items.LIGHT_ARMOR, \
         items.HAT, items.GLOVE, items.SANDALS, \
         items.SHOES, items.BOOTS, items.CLOAK )
-    starting_equipment = ( items.Bandana, items.Dagger, items.PaddedArmor, items.ThiefCloak )
+    starting_equipment = ( items.hats.Bandana, items.daggers.Dagger, items.lightarmor.PaddedArmor, items.cloaks.ThiefCloak )
 
 
 class Bard( Level ):
@@ -96,7 +96,7 @@ class Bard( Level ):
         items.BULLET, items.CLOTHES, items.LIGHT_ARMOR, items.HAT, \
         items.GLOVE, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK )
-    starting_equipment = ( items.Rapier, items.JauntyHat, items.LeatherArmor )
+    starting_equipment = ( items.swords.Rapier, items.hats.JauntyHat, items.lightarmor.LeatherArmor )
 
 class Priest( Level ):
     name = 'Priest'
@@ -113,7 +113,7 @@ class Priest( Level ):
         items.BULLET, items.CLOTHES, items.LIGHT_ARMOR, items.HEAVY_ARMOR, items.HAT, \
         items.HELM, items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK, items.HOLYSYMBOL )
-    starting_equipment = ( items.FlangedMace, items.PaddedRobe, items.NormalBoots, items.WoodSymbol )
+    starting_equipment = ( items.maces.FlangedMace, items.lightarmor.PaddedRobe, items.shoes.NormalBoots, items.holysymbols.WoodSymbol )
 
 class Mage( Level ):
     name = 'Mage'
@@ -129,7 +129,7 @@ class Mage( Level ):
         items.BULLET, items.CLOTHES, items.HAT, \
         items.GLOVE, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK )
-    starting_equipment = ( items.Quarterstaff, items.MageRobe, items.MageHat )
+    starting_equipment = ( items.staves.Quarterstaff, items.clothes.MageRobe, items.hats.MageHat )
 
 class Druid( Level ):
     name = 'Druid'
@@ -146,7 +146,7 @@ class Druid( Level ):
         items.BULLET, items.CLOTHES, items.HAT, \
         items.GLOVE, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK )
-    starting_equipment = ( items.Sickle, items.DruidRobe, items.NormalCloak )
+    starting_equipment = ( items.daggers.Sickle, items.clothes.DruidRobe, items.cloaks.NormalCloak )
 
 class Knight( Level ):
     name = 'Knight'
@@ -163,7 +163,7 @@ class Knight( Level ):
         items.CLOTHES, items.LIGHT_ARMOR, items.HEAVY_ARMOR, items.HAT, \
         items.HELM, items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK )
-    starting_equipment = ( items.Longsword, items.BrigandineArmor, items.NormalBoots )
+    starting_equipment = ( items.swords.Longsword, items.lightarmor.BrigandineArmor, items.shoes.NormalBoots )
 
 class Ranger( Level ):
     name = 'Ranger'
@@ -180,7 +180,7 @@ class Ranger( Level ):
         items.BULLET, items.CLOTHES, items.LIGHT_ARMOR, items.HAT, \
         items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK )
-    starting_equipment = ( items.HandAxe, items.RangerArmor, items.WoodsmansHat, items.NormalBoots )
+    starting_equipment = ( items.axes.HandAxe, items.lightarmor.RangerArmor, items.hats.WoodsmansHat, items.shoes.NormalBoots )
 
 class Necromancer( Level ):
     name = 'Necromancer'
@@ -196,7 +196,7 @@ class Necromancer( Level ):
         items.BULLET, items.CLOTHES, items.HAT, \
         items.GLOVE, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK )
-    starting_equipment = ( items.Quarterstaff, items.NecromancerRobe, items.NecromancerHat )
+    starting_equipment = ( items.staves.Quarterstaff, items.clothes.NecromancerRobe, items.hats.NecromancerHat )
 
 class Samurai( Level ):
     name = 'Samurai'
@@ -213,7 +213,7 @@ class Samurai( Level ):
         items.CLOTHES, items.LIGHT_ARMOR, items.HAT, \
         items.HELM, items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK )
-    starting_equipment = ( items.Wakizashi, items.LeatherCuirass, items.NormalBoots )
+    starting_equipment = ( items.swords.Wakizashi, items.lightarmor.LeatherCuirass, items.shoes.NormalBoots )
 
 class Monk( Level ):
     name = 'Monk'
@@ -230,7 +230,7 @@ class Monk( Level ):
         items.BULLET, items.CLOTHES, items.HAT, \
         items.GLOVE, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK )
-    starting_equipment = (items.MonkRobe, items.Headband, items.Quarterstaff, items.NormalSandals)
+    starting_equipment = (items.clothes.MonkRobe, items.hats.Headband, items.staves.Quarterstaff, items.shoes.NormalSandals)
 
 class Ninja( Level ):
     name = 'Ninja'
@@ -249,7 +249,7 @@ class Ninja( Level ):
         items.BULLET, items.CLOTHES, items.HAT, \
         items.GLOVE, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK )
-    starting_equipment = (items.NinjaGear,items.Wakizashi,items.NinjaMask)
+    starting_equipment = (items.clothes.NinjaGear,items.swords.Wakizashi,items.hats.NinjaMask)
 
 PC_CLASSES = (Warrior,Thief,Bard,Priest,Mage,Druid,Knight,Ranger,Necromancer,Samurai,Monk,Ninja)
 
@@ -285,7 +285,7 @@ class Dwarf( Human ):
     name = "Dwarf"
     desc = "They are tough, but lack reflexes"
     statline = { stats.TOUGHNESS: 2, stats.REFLEXES: -2, stats.DISARM_TRAPS: 5, stats.STEALTH: -5 }
-    starting_equipment = ( items.Warhammer, items.WarAxe )
+    starting_equipment = ( items.maces.Warhammer, items.axes.WarAxe )
 
 class Elf( Human ):
     name = "Elf"
@@ -293,20 +293,20 @@ class Elf( Human ):
     statline = { stats.STRENGTH: -1, stats.TOUGHNESS: -1, stats.REFLEXES: 1, \
         stats.INTELLIGENCE: 1 }
     FIRST_IMAGE = 6
-    starting_equipment = ( items.Longsword, )
+    starting_equipment = ( items.swords.Longsword, )
 
 class Gnome( Human ):
     name = "Gnome"
     desc = "They are very pious but lack physical strength."
     statline = { stats.STRENGTH: -2, stats.PIETY: 2, stats.STEALTH: 5 }
-    starting_equipment = ( items.GnomeHat, items.Pickaxe )
+    starting_equipment = ( items.hats.GnomeHat, items.axes.Pickaxe )
 
 class Orc( Human ):
     name = "Orc"
     desc = "They are very strong, but lack intelligence."
     statline = { stats.STRENGTH: 2, stats.INTELLIGENCE: -2 }
     FIRST_IMAGE = 12
-    starting_equipment = ( items.Morningstar, items.BattleAxe )
+    starting_equipment = ( items.maces.Morningstar, items.axes.BattleAxe )
 
 class Hurthling( Human ):
     name = "Hurthling"
@@ -329,7 +329,7 @@ class Reptal( Human ):
     FIRST_IMAGE = 24
     NUM_COLORS = 6
     HAS_HAIR = False
-    starting_equipment = ( items.Club, items.AnimalSkin )
+    starting_equipment = ( items.maces.Club, items.clothes.AnimalSkin )
 
 class Centaur( Human ):
     name = "Centaur"
@@ -337,7 +337,7 @@ class Centaur( Human ):
     statline = { stats.STRENGTH: 1, stats.PIETY: -1, stats.STEALTH: -10 }
     FIRST_IMAGE = 36
     slots = ( items.BACK, items.BODY, items.HANDS, items.HAND1, items.HAND2, items.HEAD )
-    starting_equipment = ( items.Spear, items.LeatherJacket )
+    starting_equipment = ( items.polearms.Spear, items.clothes.LeatherJacket )
 
 PC_SPECIES = (Human, Dwarf, Elf, Gnome, Orc, Hurthling, Fuzzy, Reptal, Centaur )
 

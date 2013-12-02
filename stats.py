@@ -13,13 +13,14 @@
 class SingStat( object ):
     # A singleton stat class; use these objects as tokens for whatever.
     # Also includes misc information related to the stat in question.
-    def __init__( self, ident, name, default_bonus = None, cost_mod = 25, element_name="" ):
+    def __init__( self, ident, name, default_bonus = None, cost_mod = 25, element_name="", element_cost_mod=1 ):
         # ident should be the module-level name of this stat.
         self.ident = ident
         self.name = name
         self.default_bonus = default_bonus
         self.cost_mod = cost_mod
         self.element_name = element_name
+        self.element_cost_mod = element_cost_mod
     def __str__( self ):
         return self.name
     def __reduce__( self ):
@@ -53,18 +54,18 @@ RESIST_FIRE = SingStat( "RESIST_FIRE", "Fire Resistance", cost_mod = 5, element_
 RESIST_COLD = SingStat( "RESIST_COLD", "Cold Resistance", cost_mod = 5, element_name="Frost" )
 RESIST_LIGHTNING = SingStat( "RESIST_LIGHTNING", "Lightning Resistance", cost_mod = 5, element_name="Lightning" )
 RESIST_ACID = SingStat( "RESIST_ACID", "Acid Resistance", cost_mod = 5, element_name="Acid" )
-RESIST_LUNAR = SingStat( "RESIST_LUNAR", "Dark Resistance", cost_mod = 20, element_name="Dark" )
-RESIST_SOLAR = SingStat( "RESIST_SOLAR", "Holy Resistance", cost_mod = 20, element_name="Holy" )
+RESIST_LUNAR = SingStat( "RESIST_LUNAR", "Dark Resistance", cost_mod = 20, element_name="Dark", element_cost_mod=3 )
+RESIST_SOLAR = SingStat( "RESIST_SOLAR", "Holy Resistance", cost_mod = 20, element_name="Holy", element_cost_mod=3 )
 
-RESIST_WIND = SingStat( "RESIST_WIND", "Wind Resistance", cost_mod = 15, element_name="Wind" )
-RESIST_WATER = SingStat( "RESIST_WATER", "Water Resistance", cost_mod = 15, element_name="Water" )
-RESIST_ATOMIC = SingStat( "RESIST_ATOMIC", "Atomic Resistance", cost_mod = 30, element_name="Atomic" )
-RESIST_POISON = SingStat( "RESIST_POISON", "Poison Resistance", cost_mod = 15, element_name="Poison" )
+RESIST_WIND = SingStat( "RESIST_WIND", "Wind Resistance", cost_mod = 15, element_name="Wind", element_cost_mod=2 )
+RESIST_WATER = SingStat( "RESIST_WATER", "Water Resistance", cost_mod = 15, element_name="Water", element_cost_mod=2 )
+RESIST_ATOMIC = SingStat( "RESIST_ATOMIC", "Atomic Resistance", cost_mod = 30, element_name="Atomic", element_cost_mod=5 )
+RESIST_POISON = SingStat( "RESIST_POISON", "Poison Resistance", cost_mod = 15, element_name="Poison", element_cost_mod=2 )
 HOLY_SIGN = SingStat( "HOLY_SIGN", "Holy Sign", default_bonus = CHARISMA, cost_mod = 25 )
 
-KUNG_FU = SingStat( "KUNG_FU", "Kung Fu", cost_mod = 25 )
-NATURAL_DEFENSE = SingStat( "NATURAL_DEFENSE", "Natural Defense", default_bonus = REFLEXES, cost_mod = 25 )
-CRITICAL_HIT = SingStat( "CRITICAL_HIT", "Critical Hit", cost_mod = 35 )
+KUNG_FU = SingStat( "KUNG_FU", "Kung Fu", cost_mod = 55 )
+NATURAL_DEFENSE = SingStat( "NATURAL_DEFENSE", "Natural Defense", default_bonus = REFLEXES, cost_mod = 35 )
+CRITICAL_HIT = SingStat( "CRITICAL_HIT", "Critical Hit", cost_mod = 85 )
 AWARENESS = SingStat( "AWARENESS", "Awareness", default_bonus = INTELLIGENCE, cost_mod = 15 )
 
 PRIMARY_STATS = ( STRENGTH, TOUGHNESS, REFLEXES, INTELLIGENCE, PIETY, CHARISMA )

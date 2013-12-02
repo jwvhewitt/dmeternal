@@ -4,6 +4,7 @@ import pygwrap
 import pygame
 import hotmaps
 import charsheet
+import items
 
 # Commands should be callable objects which take the explorer and return a value.
 # If untrue, the command stops.
@@ -181,7 +182,7 @@ class Explorer( object ):
                 ilist.append( it )
         if ilist:
             ie = InvExchange( self.camp.party, ilist, self.view )
-            ilist = ie( screen )
+            ilist = ie( self.screen )
             for it in ilist:
                 it.pos = loc
                 self.scene.contents.append( it )
@@ -253,6 +254,7 @@ class Explorer( object ):
                     mymenu.add_item( str( i ) , i )
             mymenu.sort()
             mymenu.add_alpha_keys()
+            mymenu.add_item( "Exit", False )
             myredraw.menu = mymenu
             if can_switch:
                 mymenu.quick_keys[ pygame.K_LEFT ] = -1
@@ -304,6 +306,12 @@ class Explorer( object ):
                 if gdi.type == pygame.KEYDOWN:
                     if gdi.unicode == u"1":
                         self.view_party(0)
+                    if gdi.unicode == u"2":
+                        self.view_party(1)
+                    if gdi.unicode == u"3":
+                        self.view_party(2)
+                    if gdi.unicode == u"4":
+                        self.view_party(3)
                     elif gdi.unicode == u"Q":
                         keep_going = False
                 elif gdi.type == pygame.QUIT:
@@ -319,63 +327,4 @@ class Explorer( object ):
 
 
 
-if __name__=='__main__':
-    import random
-    import util
-    import rpgmenu
-    import items
-    import pickle
-    import campaign
-
-
-    # Set the screen size.
-    screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
-#    screen = pygame.display.set_mode( (800,600) )
-
-    pygame.init()
-    pygwrap.init()
-    rpgmenu.init()
-
-    myscene = maps.Scene( 100 , 100, sprites={maps.SPRITE_WALL: "terrain_wall_red.png"} )
-    for x in range( myscene.width ):
-        for y in range( myscene.height ):
-            if random.randint(1,3) != 1:
-                myscene.map[x][y].floor = maps.HIGROUND
-    for x in range( 12 ):
-        for y in range( 5 ):
-            myscene.map[x+10][y+14].wall = maps.BASIC_WALL
-    for x in range( 5 ):
-        for y in range( 12 ):
-            myscene.map[x+14][y+10].wall = maps.BASIC_WALL
-    myscene.map[21][16].wall = maps.CLOSED_DOOR
-    myscene.map[16][21].wall = maps.STAIRS_UP
-    myscene.map[15][21].decor = maps.HANGING_SKELETON
-    myscene.map[23][23].decor = maps.PUDDLE
-
-    myscene.map[0][0].wall = maps.BASIC_WALL
-    myscene.map[1][0].wall = maps.BASIC_WALL
-    myscene.map[0][1].wall = maps.BASIC_WALL
-
-    i = items.WarAxe()
-    i.pos = (17,22)
-    myscene.contents.append( i )
-
-    myscene.map[25][10].wall = maps.MOUNTAIN_TOP
-    myscene.map[25][11].wall = maps.MOUNTAIN_LEFT
-    myscene.map[26][10].wall = maps.MOUNTAIN_RIGHT
-    myscene.map[26][11].wall = maps.MOUNTAIN_BOTTOM
-
-    camp = campaign.Campaign()
-
-    camp.party = campaign.load_party( screen )
-    x = 23
-    for pc in camp.party:
-        pc.pos = (x,13)
-        x += 1
-        myscene.contents.append( pc )
-        pcpov = pfov.PCPointOfView( myscene, 24, 10, 15 )
-
-    if camp.party:
-        exp = Explorer( screen, camp, myscene )
-        exp.go()
 

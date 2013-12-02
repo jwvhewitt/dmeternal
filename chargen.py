@@ -33,17 +33,17 @@ import charsheet
 def give_starting_equipment( pc ):
     """Based on level and species, give and equip starting equipment."""
     # Start with the basic equipment that every character is eligible for.
-    default = { items.BODY: items.NormalClothes(), items.FEET: items.NormalShoes() }
+    default = { items.BODY: items.clothes.NormalClothes(), items.FEET: items.shoes.NormalShoes() }
 
     if pc.mr_level:
         for v in pc.mr_level.starting_equipment:
             item = v()
-            if pc.can_equip( item ) and ( item >= default.get( item.slot , None ) ):
+            if pc.can_equip( item ) and item.is_better( default.get( item.slot , None ) ):
                 default[ item.slot ] = item
     if pc.species:
         for v in pc.species.starting_equipment:
             item = v()
-            if pc.can_equip( item ) and ( item >= default.get( item.slot , None ) ):
+            if pc.can_equip( item ) and item.is_better( default.get( item.slot , None ) ):
                 default[ item.slot ] = item
 
     for k,item in default.iteritems():

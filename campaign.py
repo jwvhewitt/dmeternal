@@ -1,11 +1,7 @@
 import util
 import charsheet
 import glob
-import util
 import pickle
-import image
-import pygame
-import pygwrap
 
 class Campaign( object ):
     """A general holder for all the stuff that goes into a DME campaign."""
@@ -65,18 +61,66 @@ def load_party( screen ):
     return party
 
 if __name__=='__main__':
+    import pygame
+    import pygwrap
     import rpgmenu
+    import maps
+    import pfov
+    import exploration
+    import random
+    import items
 
     # Set the screen size.
-    screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
+#    screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
+    screen = pygame.display.set_mode( (800,600) )
 
     pygame.init()
     pygwrap.init()
     rpgmenu.init()
 
-    party = load_party( screen )
+    myscene = maps.Scene( 100 , 100, sprites={maps.SPRITE_WALL: "terrain_wall_lightstone.png"} )
+    for x in range( myscene.width ):
+        for y in range( myscene.height ):
+            if random.randint(1,3) != 1:
+                myscene.map[x][y].floor = maps.HIGROUND
+    for x in range( 12 ):
+        for y in range( 5 ):
+            myscene.map[x+10][y+14].wall = maps.BASIC_WALL
+    for x in range( 5 ):
+        for y in range( 12 ):
+            myscene.map[x+14][y+10].wall = maps.BASIC_WALL
+    myscene.map[21][16].wall = maps.CLOSED_DOOR
+    myscene.map[16][21].wall = maps.STAIRS_UP
 
-    for pc in party:
-        print str( pc )
+    for y in range( 16 ):
+        myscene.map[34][y+5].floor = maps.WATER
+        myscene.map[33][y+20].floor = maps.WATER
 
+    myscene.validate_terrain()
+
+    i = items.polearms.Halbard()
+    i.pos = (17,22)
+    myscene.contents.append( i )
+    i = items.polearms.Trident()
+    i.pos = (17,22)
+    myscene.contents.append( i )
+
+    myscene.map[25][10].wall = maps.MOUNTAIN_TOP
+    myscene.map[25][11].wall = maps.MOUNTAIN_LEFT
+    myscene.map[26][10].wall = maps.MOUNTAIN_RIGHT
+    myscene.map[26][11].wall = maps.MOUNTAIN_BOTTOM
+
+    camp = Campaign()
+
+    camp.party = load_party( screen )
+    x = 23
+    for pc in camp.party:
+        pc.pos = (x,13)
+        x += 1
+        myscene.contents.append( pc )
+        pcpov = pfov.PCPointOfView( myscene, 24, 10, 15 )
+
+    if camp.party:
+        exp = exploration.Explorer( screen, camp, myscene )
+        exp.go()
 
