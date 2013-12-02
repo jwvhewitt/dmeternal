@@ -43,8 +43,8 @@ class Pike( Item ):
     itemtype = POLEARM
     avatar_image = "avatar_polearm.png"
     avatar_frame = 11
-    attackdata = Attack( (1,10,0), double_handed=True, element=stats.RESIST_PIERCING, reach=2 )
-    mass = 110
+    attackdata = Attack( (1,8,0), double_handed=True, element=stats.RESIST_PIERCING, reach=2 )
+    mass = 100
 
 class Halbard( Item ):
     true_name = "Halbard"
