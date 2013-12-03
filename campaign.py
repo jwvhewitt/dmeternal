@@ -71,8 +71,8 @@ if __name__=='__main__':
     import items
 
     # Set the screen size.
-#    screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
-    screen = pygame.display.set_mode( (800,600) )
+    screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
+#    screen = pygame.display.set_mode( (800,600) )
 
     pygame.init()
     pygwrap.init()
@@ -98,12 +98,10 @@ if __name__=='__main__':
 
     myscene.validate_terrain()
 
-    i = items.polearms.Halbard()
-    i.pos = (17,22)
-    myscene.contents.append( i )
-    i = items.polearms.Trident()
-    i.pos = (17,22)
-    myscene.contents.append( i )
+    for y in range( 10 ):
+        i = random.choice( items.ITEM_LIST )()
+        i.pos = (17,22)
+        myscene.contents.append( i )
 
     myscene.map[25][10].wall = maps.MOUNTAIN_TOP
     myscene.map[25][11].wall = maps.MOUNTAIN_LEFT
