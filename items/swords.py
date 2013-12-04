@@ -16,7 +16,7 @@ class Rapier( Item ):
     true_desc = "This light, flexible sword relies on reflexes rather than brute strength."
     itemtype = SWORD
     avatar_image = "avatar_sword.png"
-    avatar_frame = 28
+    avatar_frame = 14
     mass = 12
     attackdata = Attack( (1,8,0), element = stats.RESIST_PIERCING, skill_mod=stats.REFLEXES )
 
