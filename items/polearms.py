@@ -30,7 +30,7 @@ class Trident( Item ):
 
 class Pike( Item ):
     true_name = "Pike"
-    true_desc = ""
+    true_desc = "Longer than the average spear, this weapon is used to keep foes at a distance."
     itemtype = POLEARM
     avatar_image = "avatar_polearm.png"
     avatar_frame = 11

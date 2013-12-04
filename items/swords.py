@@ -4,7 +4,7 @@ from . import Item,Attack,SWORD
 
 class Shortsword( Item ):
     true_name = "Shortsword"
-    true_desc = ""
+    true_desc = "This light sword favors reflexes over brute strength."
     itemtype = SWORD
     avatar_image = "avatar_sword.png"
     avatar_frame = 0
@@ -13,7 +13,7 @@ class Shortsword( Item ):
 
 class Rapier( Item ):
     true_name = "Rapier"
-    true_desc = "This light, flexible sword relies on dexterity rather than brute strength."
+    true_desc = "This light, flexible sword relies on reflexes rather than brute strength."
     itemtype = SWORD
     avatar_image = "avatar_sword.png"
     avatar_frame = 28
@@ -47,7 +47,7 @@ class BastardSword( Item ):
     itemtype = SWORD
     avatar_image = "avatar_sword.png"
     avatar_frame = 7
-    mass = 55
+    mass = 85
     attackdata = Attack( (1,10,0) )
 
 class Katana( Item ):
@@ -59,9 +59,38 @@ class Katana( Item ):
     mass = 45
     attackdata = Attack( (1,10,0) )
 
+class Claymore( Item ):
+    true_name = "Claymore"
+    true_desc = ""
+    itemtype = SWORD
+    avatar_image = "avatar_sword.png"
+    avatar_frame = 16
+    mass = 62
+    attackdata = Attack( (1,10,0), double_handed = True )
+
+class GreatSword( Item ):
+    true_name = "Greatsword"
+    true_desc = ""
+    itemtype = SWORD
+    avatar_image = "avatar_sword.png"
+    avatar_frame = 3
+    mass = 150
+    attackdata = Attack( (2,6,0), double_handed = True )
+
+class Flamberge( Item ):
+    true_name = "Flamberge"
+    true_desc = "The flamelike waves on this sword's blade help with parrying enemy attacks."
+    itemtype = SWORD
+    avatar_image = "avatar_sword.png"
+    avatar_frame = 11
+    mass = 55
+    attackdata = Attack( (1,8,0) )
+    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 5 })
+
+
 class SilverShortsword( Item ):
     true_name = "Silver Shortsword"
-    true_desc = "This blade was forged to slay unholy creatures. Its light weight favors an agile user."
+    true_desc = "This blade was forged to slay unholy creatures. Its light weight favors reflexes over brute strength."
     itemtype = SWORD
     avatar_image = "avatar_sword.png"
     avatar_frame = 28

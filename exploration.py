@@ -239,7 +239,7 @@ class Explorer( object ):
 
 
     def view_party( self, n, can_switch=True ):
-        if n > self.camp.party:
+        if n >= len( self.camp.party ):
             n = 0
         pc = self.camp.party[ n ]
         keep_going = True

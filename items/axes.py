@@ -33,7 +33,7 @@ class BattleAxe( Item ):
     true_desc = "A sturdy double-handed axe."
     itemtype = AXE
     avatar_image = "avatar_axe.png"
-    avatar_frame = 7
+    avatar_frame = 2
     mass = 110
     attackdata = Attack( (1,8,0), double_handed = True )
 
@@ -45,6 +45,25 @@ class Greataxe( Item ):
     avatar_frame = 3
     mass = 145
     attackdata = Attack( (1,10,0), double_handed = True )
+
+class DwarvenWaraxe( Item ):
+    true_name = "Dwarven Waraxe"
+    true_desc = "The blade of this axe is nearly sharp enough to cut stone. It is used by dwarves in tunnel fighting."
+    itemtype = AXE
+    avatar_image = "avatar_axe.png"
+    avatar_frame = 6
+    mass = 85
+    attackdata = Attack( (2,6,0) )
+
+class OrcishBattleaxe( Item ):
+    true_name = "Orcish Battleaxe"
+    true_desc = "Though crudely made, the sheer weight of this weapon is enough to cause massive damage."
+    itemtype = AXE
+    avatar_image = "avatar_axe.png"
+    avatar_frame = 7
+    mass = 160
+    attackdata = Attack( (1,12,0), double_handed = True )
+
 
 class ExecutionersAxe( Item ):
     true_name = "Executioner's Axe"
