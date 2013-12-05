@@ -79,12 +79,24 @@ class CharacterSheet( pygame.Rect ):
         y += pygwrap.SMALLFONT.get_linesize() * 2
 
         for s in self.MISC_STATS:
-            sv = self.pc.get_stat(s)
-            if sv != 0:
-                if s.default_bonus:
-                    sv += self.pc.get_stat_bonus( s.default_bonus )
-                self.just_print( screen, self.x+self.RIGHT_COLUMN, y, s.name+":", str(sv)+"%", width=160 )
-                y += pygwrap.SMALLFONT.get_linesize()
+            # Stealth gets a bit of special treatment here.
+            if s is stats.STEALTH:
+                if self.pc.can_use_stealth():
+                    sv = self.pc.get_stat(s) + self.pc.get_stat_bonus( s.default_bonus )
+                    self.just_print( screen, self.x+self.RIGHT_COLUMN, y, s.name+":", str(sv)+"%", width=160 )
+                    y += pygwrap.SMALLFONT.get_linesize()
+            elif s is stats.HOLY_SIGN:
+                if self.pc.can_use_holy_sign():
+                    sv = self.pc.get_stat(s) + self.pc.get_stat_bonus( s.default_bonus )
+                    self.just_print( screen, self.x+self.RIGHT_COLUMN, y, s.name+":", str(sv)+"%", width=160 )
+                    y += pygwrap.SMALLFONT.get_linesize()
+            else:
+                sv = self.pc.get_stat(s)
+                if sv:
+                    if s.default_bonus:
+                        sv += self.pc.get_stat_bonus( s.default_bonus )
+                    self.just_print( screen, self.x+self.RIGHT_COLUMN, y, s.name+":", str(sv)+"%", width=160 )
+                    y += pygwrap.SMALLFONT.get_linesize()
 
 class MenuRedrawer( object ):
     def __init__( self , border_rect = None, backdrop = "bg_wests_stonewall5.png", charsheet = None, screen = None, caption = None ):

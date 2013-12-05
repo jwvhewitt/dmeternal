@@ -404,6 +404,14 @@ class Character(object):
 
         return it
 
+    def can_use_stealth( self ):
+        """Return True if this character can hide in combat."""
+        return sum( l.get_stat( stats.STEALTH ) for l in self.levels ) > 0
+
+    def can_use_holy_sign( self ):
+        """Return True if this character can use holy sign in combat."""
+        return sum( l.get_stat( stats.HOLY_SIGN ) for l in self.levels ) > 0
+
     def get_stat_bonus( self , stat ):
         statval = max( self.get_stat( stat ) , 1 )
         return statval * 3 - 36

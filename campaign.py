@@ -100,7 +100,7 @@ if __name__=='__main__':
 
     for y in range( 10 ):
         i = random.choice( items.ITEM_LIST )()
-        i.pos = (17,22)
+        i.pos = (23,17)
         myscene.contents.append( i )
 
     myscene.map[25][10].wall = maps.MOUNTAIN_TOP
