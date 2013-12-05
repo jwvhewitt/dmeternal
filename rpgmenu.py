@@ -96,8 +96,8 @@ class Menu( pygame.Rect ):
         # Return the menu item under this mouse position.
         x,y = pos
         if self.collidepoint( pos ):
-            the_item = ( y - self.top ) / MENUFONT.get_linesize() + self.top_item
-            if the_item > len( self.items ):
+            the_item = ( y - self.top ) // MENUFONT.get_linesize() + self.top_item
+            if the_item >= len( self.items ):
                 the_item = None
             return the_item
         else:
