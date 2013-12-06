@@ -37,4 +37,13 @@ class Morningstar( Item ):
     mass = 70
     attackdata = Attack( (1,8,0), element = stats.RESIST_CRUSHING )
 
+class TitanHammer( Item ):
+    true_name = "Hammer of the Titans"
+    true_desc = ""
+    itemtype = MACE
+    avatar_image = "avatar_titanic.png"
+    avatar_frame = 0
+    mass = 400
+    attackdata = Attack( (4,6,0), element = stats.RESIST_CRUSHING )
+
 

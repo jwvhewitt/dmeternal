@@ -102,6 +102,10 @@ if __name__=='__main__':
         i = random.choice( items.ITEM_LIST )()
         i.pos = (23,17)
         myscene.contents.append( i )
+    i = items.maces.TitanHammer()
+    i.pos = (24,17)
+    myscene.contents.append( i )
+
 
     myscene.map[25][10].wall = maps.MOUNTAIN_TOP
     myscene.map[25][11].wall = maps.MOUNTAIN_LEFT
