@@ -1,5 +1,6 @@
 import base
 import stats
+import items
 
 class Goblin( base.Monster ):
     name = "Goblin"    
@@ -8,6 +9,9 @@ class Goblin( base.Monster ):
     SPRITENAME = "monster_goblins.png"
     FRAME = 0
     TEMPLATES = ()
+    MOVE_POINTS = 12
+
+    ATTACK = items.Attack( (1,6,0), element = stats.RESIST_CRUSHING )
 
     def init_monster( self ):
         self.levels.append( base.Humanoid( 1, self ) )

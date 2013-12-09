@@ -100,14 +100,17 @@ AIR = SingTemp( "AIR", { stats.MAGIC_ATTACK: 5, stats.MAGIC_DEFENSE: -5, \
 ICE = SingTemp( "ICE", { stats.RESIST_PIERCING: -100, stats.RESIST_FIRE: -100, \
     stats.RESIST_COLD: 100, stats.RESIST_WIND: 50, stats.RESIST_WATER: 50 })
 
+# Monster Monster Monster Monster Monster
 
 class Monster( characters.Character ):
     SPRITENAME = "monster_default.png"
     statline = { stats.STRENGTH: 12, stats.TOUGHNESS: 12, stats.REFLEXES: 12, \
         stats.INTELLIGENCE: 12, stats.PIETY: 12, stats.CHARISMA: 12 }
+    ATTACK = None
 
-    def __init__( self ):
+    def __init__( self, team = None ):
         super(Monster, self).__init__( name=self.name, statline=self.statline )
+        self.team = team
         self.init_monster()
 
     def init_monster( self ):
@@ -117,6 +120,7 @@ class Monster( characters.Character ):
     def generate_avatar( self ):
         # Generate an image for this character.
         return image.Image( self.SPRITENAME, frame_width = 54, frame_height = 54 )
+
 
 
 
