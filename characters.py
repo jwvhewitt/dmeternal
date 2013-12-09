@@ -14,6 +14,9 @@ class Level( object ):
     # use the new values.
     starting_equipment = ()
     name = "???"
+    spell_circles = ()
+    LEVELS_PER_GEM = 0
+    legal_equipment = ()
     def __init__( self, rank=0, pc=None ):
         self.rank = 0
         self.hp = 0
@@ -51,7 +54,6 @@ class Warrior( Level ):
     requirements = { stats.STRENGTH: 11 }
     statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 5, stats.MAGIC_ATTACK: 3, stats.MAGIC_DEFENSE: 3, \
         stats.AWARENESS: 4 } )
-    spell_circles = ()
     HP_DIE = 12
     MP_DIE = 4
     LEVELS_PER_GEM = 0
@@ -356,10 +358,13 @@ class CappedModifierList( list ):
 
 class Character(object):
     FRAME = 0
+    TEMPLATES = ()
 
-    def __init__( self, name = "", species = None, gender = stats.NEUTER ):
+    def __init__( self, name = "", species = None, gender = stats.NEUTER, statline=None ):
         self.name = name
-        self.statline = dict()
+        if not statline:
+            statline = dict()
+        self.statline = statline
         self.levels = []
         self.mr_level = Level()
         self.species = species
@@ -387,6 +392,10 @@ class Character(object):
         # Add bonuses from any earned classes...
         for l in self.levels:
             it += l.get_stat( stat )
+
+        # Add bonuses from any templates...
+        for l in self.TEMPLATES:
+            it += l.get( stat, 0 )
 
         # Add bonuses from any equipment...
         for item in self.inventory:

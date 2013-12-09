@@ -69,6 +69,7 @@ if __name__=='__main__':
     import exploration
     import random
     import items
+    import monsters
 
     # Set the screen size.
     screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
@@ -111,6 +112,10 @@ if __name__=='__main__':
     myscene.map[25][11].wall = maps.MOUNTAIN_LEFT
     myscene.map[26][10].wall = maps.MOUNTAIN_RIGHT
     myscene.map[26][11].wall = maps.MOUNTAIN_BOTTOM
+
+    mygob = monsters.goblins.Goblin()
+    mygob.pos = (27,12)
+    myscene.contents.append( mygob )
 
     camp = Campaign()
 
