@@ -15,6 +15,8 @@ import copy
 import pygame
 import pygwrap
 import rpgmenu
+import voice
+import personalizer
 
 
 class Context(object):
@@ -299,16 +301,19 @@ class ConvoRedraw( pygame.Rect ):
         pygwrap.draw_text( screen, pygwrap.SMALLFONT, self.text, self.text_rect, justify = -1 )
 
 
-def converse( exp, npc, offer ):
+def converse( exp, pc, npc, offer ):
     # The party is going to converse with someone.
     crd = ConvoRedraw( npc, screen = exp.screen, predraw = exp.view )
     coff = offer
 
+    pc_voice = pc.get_voice()
+    npc_voice = npc.get_voice()
+
     while coff:
-        crd.text = coff.msg
+        crd.text = personalize_text( coff.msg , npc_voice )
         mymenu = rpgmenu.Menu( exp.screen, crd.menu_rect.x, crd.menu_rect.y, crd.menu_rect.width, crd.menu_rect.height, border=None, predraw=crd )
         for i in coff.replies:
-            mymenu.add_item( i.msg, i.destination )
+            mymenu.add_item( personalize_text( i.msg, pc_voice ), i.destination )
         if not mymenu.items:
             mymenu.add_item( "[Continue]", None )
         else:
@@ -316,7 +321,39 @@ def converse( exp, npc, offer ):
 
         coff = mymenu.query()
 
-O1 = Offer( "This is my shop. There's not much here yet." , context = Context.shop )
+
+
+def personalize_text( in_text, speaker_voice ):
+    """Return text personalized for the provided context."""
+    # Split the text into individual words.
+    all_words = in_text.split()
+    out_text = []
+
+    # Going through the words, check for conversions in the conversion table.
+    for w in all_words:
+        out_text.append( w )
+
+        for t in range( 5, 0, -1 ):
+            if len( out_text ) >= t:
+                mykey = " ".join( out_text[-t:] )
+
+                if mykey in personalizer.PT_DATABASE:
+                    choices = []
+
+                    for c in personalizer.PT_DATABASE[ mykey ]:
+                        if c.fits_voice( speaker_voice ):
+                            choices.append( c.subtext )
+
+                    if choices and random.randint( 0, len( choices ) + 1 ) != 0:
+                        myswap = random.choice( choices )
+
+                        del out_text[-t:]
+                        words_to_add = myswap.split()
+                        out_text += words_to_add
+
+    return " ".join( out_text )
+
+O1 = Offer( "This is my shop. There is not much here yet." , context = Context.shop )
 O2 = Offer( "Hello. This is manual helloism." , context = Context.hello )
 
 offres = [O1]

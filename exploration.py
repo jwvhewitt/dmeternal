@@ -68,7 +68,7 @@ class MoveTo( object ):
                                 target.pos = pc.pos
                             pc.pos = p2
                             pfov.PCPointOfView( exp.scene, pc.pos[0], pc.pos[1], 10 )
-                        else:
+                        elif first:
                             exp.bump_model( target )
                             keep_going = False
                     elif first:
@@ -174,7 +174,7 @@ class Explorer( object ):
     def bump_model( self, target ):
         offers = [ dialogue.O1 ]
         convo = dialogue.build_conversation( dialogue.Cue( dialogue.Context.hello ) , offers )
-        dialogue.converse( self, target, convo )
+        dialogue.converse( self, self.camp.party_spokesperson(), target, convo )
 
     def pick_up( self, loc ):
         """Party will pick up items at this location."""

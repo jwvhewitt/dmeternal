@@ -1,6 +1,7 @@
 import base
 import stats
 import items
+import dialogue
 
 class Goblin( base.Monster ):
     name = "Goblin"    
@@ -10,6 +11,7 @@ class Goblin( base.Monster ):
     FRAME = 0
     TEMPLATES = ()
     MOVE_POINTS = 12
+    VOICE = dialogue.voice.ORCISH
 
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_CRUSHING )
 

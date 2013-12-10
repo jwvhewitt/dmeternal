@@ -2,6 +2,7 @@ import util
 import charsheet
 import glob
 import pickle
+import stats
 
 class Campaign( object ):
     """A general holder for all the stuff that goes into a DME campaign."""
@@ -17,6 +18,16 @@ class Campaign( object ):
             if pc.is_alive():
                 flp = pc
                 break
+        return flp
+
+    def party_spokesperson( self ):
+        """Return the PC with the highest charisma."""
+        flp = None
+        best = -999
+        for pc in self.party:
+            if pc.is_alive() and pc.get_stat( stats.CHARISMA ) > best:
+                flp = pc
+                best = pc.get_stat( stats.CHARISMA )
         return flp
 
     def save( self ):

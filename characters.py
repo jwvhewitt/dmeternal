@@ -4,6 +4,7 @@ import spells
 import random
 import image
 import items
+import dialogue
 
 
 
@@ -288,6 +289,7 @@ class Dwarf( Human ):
     desc = "They are tough, but lack reflexes"
     statline = { stats.TOUGHNESS: 2, stats.REFLEXES: -2, stats.DISARM_TRAPS: 5, stats.STEALTH: -5 }
     starting_equipment = ( items.maces.Warhammer, items.axes.WarAxe )
+    VOICE = dialogue.voice.DWARVEN
 
 class Elf( Human ):
     name = "Elf"
@@ -296,12 +298,14 @@ class Elf( Human ):
         stats.INTELLIGENCE: 1 }
     FIRST_IMAGE = 6
     starting_equipment = ( items.swords.Longsword, )
+    VOICE = dialogue.voice.ELVEN
 
 class Gnome( Human ):
     name = "Gnome"
     desc = "They are very pious but lack physical strength."
     statline = { stats.STRENGTH: -2, stats.PIETY: 2, stats.STEALTH: 5 }
     starting_equipment = ( items.hats.GnomeHat, items.axes.Pickaxe )
+    VOICE = dialogue.voice.DWARVEN
 
 class Orc( Human ):
     name = "Orc"
@@ -309,6 +313,7 @@ class Orc( Human ):
     statline = { stats.STRENGTH: 2, stats.INTELLIGENCE: -2 }
     FIRST_IMAGE = 12
     starting_equipment = ( items.maces.Morningstar, items.axes.BattleAxe )
+    VOICE = dialogue.voice.ORCISH
 
 class Hurthling( Human ):
     name = "Hurthling"
@@ -332,6 +337,7 @@ class Reptal( Human ):
     NUM_COLORS = 6
     HAS_HAIR = False
     starting_equipment = ( items.maces.Club, items.clothes.AnimalSkin )
+    VOICE = dialogue.voice.DRACONIAN
 
 class Centaur( Human ):
     name = "Centaur"
@@ -549,6 +555,20 @@ class Character(object):
     def desc( self ):
         return "L"+str( self.rank())+" "+stats.GENDER[self.gender]+" "+str(self.species)+" "+str(self.mr_level)
 
+    def get_voice( self ):
+        myvoice = set()
+        if hasattr( self, "VOICE" ):
+            myvoice.add( self.VOICE)
+        if self.species and hasattr( self.species, "VOICE" ):
+            myvoice.add( self.species.VOICE )
+        if self.mr_level and hasattr( self.mr_level, "VOICE" ):
+            myvoice.add( self.mr_level.VOICE )
+        iq = self.get_stat( stats.INTELLIGENCE )
+        if iq < 9:
+            myvoice.add( dialogue.voice.STUPID )
+        elif iq > 15:
+            myvoice.add( dialogue.voice.SMART )
+        return myvoice
 
 if __name__ == '__main__':
     pc = Character()
