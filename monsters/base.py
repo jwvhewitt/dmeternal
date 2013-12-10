@@ -121,6 +121,10 @@ class Monster( characters.Character ):
         # Generate an image for this character.
         return image.Image( self.SPRITENAME, frame_width = 54, frame_height = 54 )
 
+    def desc( self ):
+        return "L"+str( self.rank())+" "+stats.GENDER[self.gender]+" "+str(self.mr_level)
+
+
 
 
 

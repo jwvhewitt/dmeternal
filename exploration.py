@@ -5,6 +5,7 @@ import pygame
 import hotmaps
 import charsheet
 import items
+import dialogue
 
 # Commands should be callable objects which take the explorer and return a value.
 # If untrue, the command stops.
@@ -171,7 +172,9 @@ class Explorer( object ):
         pass
 
     def bump_model( self, target ):
-        pass
+        offers = [ dialogue.O1 ]
+        convo = dialogue.build_conversation( dialogue.Cue( dialogue.Context.hello ) , offers )
+        dialogue.converse( self, target, convo )
 
     def pick_up( self, loc ):
         """Party will pick up items at this location."""

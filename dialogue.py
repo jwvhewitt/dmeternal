@@ -12,7 +12,9 @@
 
 import random
 import copy
-
+import pygame
+import pygwrap
+import rpgmenu
 
 
 class Context(object):
@@ -203,7 +205,7 @@ def build_conversation( start,offers ):
         while keep_seeking_cues:
             cues = root.get_cue_set()
 
-            if len(cues) > 0:
+            if cues:
                 # We have cues to convert. Find a matching offer for one cue,
                 # then add a new exhange.
                 o = find_offer_by_cues( cues , offers )
@@ -250,19 +252,76 @@ def build_conversation( start,offers ):
 
     return root
 
-def print_exchange( exc , header = "" ):
-    print header + 'NPC: ' + exc.msg
-    for r in exc.replies:
-        print header + '  PC: ' + r.msg
-        print_exchange( r.destination , header + '    ' )
+class ConvoRedraw( pygame.Rect ):
+    # Note that the display will be larger than this, because the border is
+    # drawn outside. Consider this measurement the safe area and the border the bleed.
+    WIDTH = 350
+    HEIGHT = 250
+    MENU_HEIGHT = 75
 
-if __name__=='__main__':
-    O1 = Offer( "This is my shop. There's not much here yet." , context = Context.shop )
-    O2 = Offer( "Hello. This is manual helloism." , context = Context.hello )
+    def __init__( self, npc, x=0, y=0, screen = None, predraw = None ):
+        if screen:
+            x = screen.get_width() // 2 - self.WIDTH // 2
+            y = screen.get_height() // 2 - self.HEIGHT // 2
+        super(ConvoRedraw, self).__init__(x,y,self.WIDTH,self.HEIGHT)
+        self.npc = npc
+        self.regenerate_avatar()
 
-    offers = [O1]
+        self.menu_rect = pygame.Rect( x,y+self.HEIGHT-self.MENU_HEIGHT,self.WIDTH,self.MENU_HEIGHT )
+        self.text_rect = pygame.Rect( x, y+70, self.WIDTH, self.HEIGHT - self.MENU_HEIGHT - 86 )
 
-    Convo = build_conversation( Cue( Context.hello ) , offers )
-    print_exchange( Convo )
+        self.text = ""
+        self.predraw = predraw
+
+    def regenerate_avatar( self ):
+        mybmp = pygame.Surface( (54 , 54) )
+        mybmp.fill((0,0,255))
+        mybmp.set_colorkey((0,0,255),pygame.RLEACCEL)
+        myimg = self.npc.generate_avatar()
+        myimg.render( mybmp, frame=self.npc.FRAME )
+        self.img = pygame.transform.scale2x( mybmp )
+
+    def __call__( self, screen ):
+        if self.predraw:
+            self.predraw( screen )
+        pygwrap.default_border.render( screen , self )
+
+        # Header avatar
+        if self.img:
+            screen.blit(self.img , (self.x-20,self.y-20) )
+
+        # Header info- name and level/gender/race/class
+        y = self.y + 6
+        pygwrap.draw_text( screen, pygwrap.BIGFONT, str( self.npc ), pygame.Rect( self.x+64, y, self.width-64, pygwrap.BIGFONT.get_linesize() ), justify = 0, color=(240,240,240) )
+        y += pygwrap.BIGFONT.get_linesize()
+        pygwrap.draw_text( screen, pygwrap.SMALLFONT, self.npc.desc(), pygame.Rect( self.x+64, y, self.width-64, pygwrap.SMALLFONT.get_linesize() ), justify = 0 )
+
+        pygwrap.draw_text( screen, pygwrap.SMALLFONT, self.text, self.text_rect, justify = -1 )
+
+
+def converse( exp, npc, offer ):
+    # The party is going to converse with someone.
+    crd = ConvoRedraw( npc, screen = exp.screen, predraw = exp.view )
+    coff = offer
+
+    while coff:
+        crd.text = coff.msg
+        mymenu = rpgmenu.Menu( exp.screen, crd.menu_rect.x, crd.menu_rect.y, crd.menu_rect.width, crd.menu_rect.height, border=None, predraw=crd )
+        for i in coff.replies:
+            mymenu.add_item( i.msg, i.destination )
+        if not mymenu.items:
+            mymenu.add_item( "[Continue]", None )
+        else:
+            mymenu.sort()
+
+        coff = mymenu.query()
+
+O1 = Offer( "This is my shop. There's not much here yet." , context = Context.shop )
+O2 = Offer( "Hello. This is manual helloism." , context = Context.hello )
+
+offres = [O1]
+
+Convo = build_conversation( Cue( Context.hello ) , offres )
+
 
 

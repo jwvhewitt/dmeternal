@@ -48,7 +48,7 @@ class CharacterSheet( pygame.Rect ):
         y = self.y + 6
         pygwrap.draw_text( screen, pygwrap.BIGFONT, self.pc.name, pygame.Rect( self.x+64, y, self.width-64, pygwrap.BIGFONT.get_linesize() ), justify = 0, color=(240,240,240) )
         y += pygwrap.BIGFONT.get_linesize()
-        pygwrap.draw_text( screen, pygwrap.SMALLFONT, "L"+str( self.pc.rank())+" "+stats.GENDER[self.pc.gender]+" "+str(self.pc.species)+" "+str(self.pc.mr_level), pygame.Rect( self.x+64, y, self.width-64, pygwrap.SMALLFONT.get_linesize() ), justify = 0 )
+        pygwrap.draw_text( screen, pygwrap.SMALLFONT, self.pc.desc(), pygame.Rect( self.x+64, y, self.width-64, pygwrap.SMALLFONT.get_linesize() ), justify = 0 )
         y += pygwrap.SMALLFONT.get_linesize()
         pygwrap.draw_text( screen, pygwrap.SMALLFONT, "XP: "+str(self.pc.xp)+"/"+str(self.pc.xp_for_next_level()), pygame.Rect( self.x+64, y, self.width-64, pygwrap.SMALLFONT.get_linesize() ), justify = 0 )
 

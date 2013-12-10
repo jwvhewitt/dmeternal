@@ -546,6 +546,9 @@ class Character(object):
     def __str__( self ):
         return self.name
 
+    def desc( self ):
+        return "L"+str( self.rank())+" "+stats.GENDER[self.gender]+" "+str(self.species)+" "+str(self.mr_level)
+
 
 if __name__ == '__main__':
     pc = Character()

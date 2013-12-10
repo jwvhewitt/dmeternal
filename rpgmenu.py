@@ -37,7 +37,7 @@ class DescBox( pygame.Rect ):
 
 class Menu( pygame.Rect ):
 
-    def __init__(self,screen,x,y,w=30,h=10,menuitem=(150,145,130),menuselect=(250,250,125),border=pygwrap.default_border):
+    def __init__(self,screen,x,y,w=30,h=10,menuitem=(150,145,130),menuselect=(250,250,125),border=pygwrap.default_border,predraw=None):
         super(Menu, self).__init__(x,y,w,h)
         self.screen = screen
         self.menuitem = menuitem
@@ -53,7 +53,7 @@ class Menu( pygame.Rect ):
 
         # predraw is a function that will take the screen as a parameter. It
         # redraws/clears the screen before the menu is rendered.
-        self.predraw = None
+        self.predraw = predraw
 
     def add_item(self,msg,value,desc=None):
         item = MenuItem( msg , value , desc )
