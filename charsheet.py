@@ -30,8 +30,13 @@ class CharacterSheet( pygame.Rect ):
         self.regenerate_avatar()
 
     def regenerate_avatar( self ):
+        mybmp = pygame.Surface( (54 , 54) )
+        mybmp.fill((0,0,255))
+        mybmp.set_colorkey((0,0,255),pygame.RLEACCEL)
         myimg = self.pc.generate_avatar()
-        self.img = pygame.transform.scale2x( myimg.bitmap )
+        myimg.render( mybmp, frame=self.pc.FRAME )
+        self.img = pygame.transform.scale2x( mybmp )
+
     def just_print( self, screen, x, y, text1, text2, width=120 ):
         """Do proper justification for stat line at x,y."""
         pygwrap.draw_text( screen, pygwrap.SMALLFONT, text1, pygame.Rect( x, y, width, 20 ), justify = -1 )

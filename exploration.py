@@ -173,7 +173,7 @@ class Explorer( object ):
 
     def bump_model( self, target ):
         offers = [ dialogue.O1 ]
-        convo = dialogue.build_conversation( dialogue.Cue( dialogue.Context.hello ) , offers )
+        convo = dialogue.build_conversation( dialogue.CUE_HELLO , offers )
         dialogue.converse( self, self.camp.party_spokesperson(), target, convo )
 
     def pick_up( self, loc ):

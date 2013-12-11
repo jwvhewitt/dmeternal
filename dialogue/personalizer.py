@@ -1,5 +1,9 @@
 import voice
 
+""" Style Guide:
+    - Do not use contractions.
+"""
+
 class PTEntry( object ):
     def __init__( self, subtext, requires = {} ):
         self.subtext = subtext
@@ -19,6 +23,9 @@ PT_DATABASE = {
     "here":   (
         PTEntry( "'ere", { voice.ORCISH: True } ),
         ),
+    "is not": (
+        PTEntry( "isn't" ),
+        ),
     "my":   (
         PTEntry( "me", { voice.ORCISH: True } ),
         PTEntry( "me", { voice.ORCISH: True, voice.STUPID: True } ),
@@ -36,6 +43,12 @@ PT_DATABASE = {
     "This is": (
         PTEntry( "Dis ere's", { voice.ORCISH: True } ),
         PTEntry( "This here's", { voice.ORCISH: True, voice.SMART: True } )
-       )
+       ),
+    "Welcome": {
+        PTEntry( "Lali-ho", { voice.DWARVEN: True } ),
+       },
+    "Welcome to": {
+        PTEntry( "Git over 'ere to", { voice.ORCISH: True } ),
+       },
     }
 
