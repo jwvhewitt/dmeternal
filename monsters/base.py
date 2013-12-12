@@ -125,6 +125,3 @@ class Monster( characters.Character ):
         return "L"+str( self.rank())+" "+stats.GENDER[self.gender]+" "+str(self.mr_level)
 
 
-
-
-

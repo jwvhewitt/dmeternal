@@ -81,6 +81,7 @@ if __name__=='__main__':
     import random
     import items
     import monsters
+    import characters
 
     # Set the screen size.
     screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
@@ -127,6 +128,14 @@ if __name__=='__main__':
     mygob = monsters.goblins.Goblin()
     mygob.pos = (27,12)
     myscene.contents.append( mygob )
+
+    mymon = monsters.generate_npc( species = characters.Dwarf )
+    mymon.pos = (29,14)
+    myscene.contents.append( mymon )
+
+    mymon = monsters.generate_npc( species = characters.Reptal )
+    mymon.pos = (30,17)
+    myscene.contents.append( mymon )
 
     camp = Campaign()
 

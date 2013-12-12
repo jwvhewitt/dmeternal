@@ -1,5 +1,5 @@
 
-HELLO,SHOP,WEAPON,MISSION,HINT = range(5)
+HELLO,SHOP,WEAPON,INFO,HINT = range(5)
 
 
 class ContextTag( tuple ):

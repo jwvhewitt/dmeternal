@@ -23,6 +23,7 @@ import base
 from base import Cue, Offer, Reply
 import offers
 import replies
+import re
 
 def harvest( mod, class_to_collect ):
     mylist = []
@@ -251,12 +252,36 @@ def converse( exp, pc, npc, conversation ):
 
         coff = mymenu.query()
 
+def split_words_and_punctuation( in_text ):
+    """Split the string by whitespace, removing punctuation with it."""
+    myre = re.compile( r"\b([\w'-]+)([.,:;!?]*)" )
+    words = list()
+    for mo in re.finditer( myre, in_text ):
+        if mo.group(1):
+            words.append( mo.group(1) )
+        if mo.group(2):
+            words.append( mo.group(2) )
+    return words
 
+def preprocess_out_text( otext ):
+    """Join punctuation to preceding words."""
+    nutext = []
+    p = ""
+    for w in otext:
+        if w in ".,:;!?":
+            p = p + w
+            w = ""
+        if p:
+            nutext.append( p )
+        p = w
+    if p:
+        nutext.append( p )
+    return nutext
 
 def personalize_text( in_text, speaker_voice ):
     """Return text personalized for the provided context."""
     # Split the text into individual words.
-    all_words = in_text.split()
+    all_words = split_words_and_punctuation( in_text )
     out_text = []
 
     # Going through the words, check for conversions in the conversion table.
@@ -278,15 +303,18 @@ def personalize_text( in_text, speaker_voice ):
                         myswap = random.choice( choices )
 
                         del out_text[-t:]
-                        words_to_add = myswap.split()
+                        words_to_add = split_words_and_punctuation( myswap )
                         out_text += words_to_add
 
+    out_text = preprocess_out_text( out_text )
     return " ".join( out_text )
 
 O1 = Offer( "This is my shop. There is not much here yet." , context = context.ContextTag([context.SHOP,context.WEAPON]) )
+O2 = Offer( "All of these conversations start out exactly the same. It is the message mutator in the dialogue package that makes them different." , context = context.ContextTag([context.INFO,context.HINT]) )
 
 offers = [O1]
 
-
-
-
+#a = split_words_and_punctuation( "This 'ere is me's auntie." )
+#print a
+#b = preprocess_out_text( a )
+#print " ".join( b )
