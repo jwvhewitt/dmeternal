@@ -1,6 +1,6 @@
 import voice
 
-""" Style Guide:
+""" Style Guide: When writing dialogue, try to follow the following rules.
     - Do not use contractions.
 """
 
@@ -20,11 +20,26 @@ class PTEntry( object ):
         return ok
 
 PT_DATABASE = {
+    "Hello.":   (
+        PTEntry( "'Ello, ello.", { voice.ORCISH: True } ),
+        PTEntry( "Lali-ho.", { voice.DWARVEN: True } ),
+        ),
+    "Hello,":   (
+        PTEntry( "'Ello there,", { voice.ORCISH: True } ),
+        PTEntry( "Lali-ho,", { voice.DWARVEN: True } ),
+        ),
     "here":   (
         PTEntry( "'ere", { voice.ORCISH: True } ),
         ),
+    "I am": (
+        PTEntry( "I'm" ),
+        ),
+    "I would": (
+        PTEntry( "I'd" ),
+        ),
     "is not": (
         PTEntry( "isn't" ),
+        PTEntry( "ain't", { voice.STUPID: True } ),
         ),
     "my":   (
         PTEntry( "me", { voice.ORCISH: True } ),
@@ -44,11 +59,11 @@ PT_DATABASE = {
         PTEntry( "Dis ere's", { voice.ORCISH: True } ),
         PTEntry( "This here's", { voice.ORCISH: True, voice.SMART: True } )
        ),
-    "Welcome": {
+    "Welcome": (
         PTEntry( "Lali-ho", { voice.DWARVEN: True } ),
-       },
-    "Welcome to": {
+       ),
+    "Welcome to": (
         PTEntry( "Git over 'ere to", { voice.ORCISH: True } ),
-       },
+       ),
     }
 
