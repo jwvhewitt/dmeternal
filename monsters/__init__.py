@@ -17,13 +17,15 @@ def harvest( mod ):
 harvest( goblins )
 
 
-def generate_npc( species=None, job=None, gender=None, rank=1 ):
+def generate_npc( species=None, job=None, gender=None, rank=None ):
     if not species:
         species = random.choice( characters.PC_SPECIES )
     if not job:
         job = random.choice( characters.PC_CLASSES )
     if not gender:
         gender = random.randint(0,1)
+    if not rank:
+        rank = random.randint(1,10)
 
     npc = characters.Character( species=species(), gender=gender )
     npc.roll_stats()
