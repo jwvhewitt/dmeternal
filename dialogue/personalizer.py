@@ -38,11 +38,23 @@ class PTEntry( object ):
         return ok
 
 PT_DATABASE = {
+    "am looking for": (
+        PTEntry( "seek", { voice.DRACONIAN: True } ),
+        ),
     "anything":   (
         PTEntry( "stuff", { voice.STUPID: True } ),
         ),
+    "buy":   (
+        PTEntry( "purchase", { voice.SMART: True } ),
+        ),
+    "buy something":   (
+        PTEntry( "get a thing", { voice.STUPID: True } ),
+        PTEntry( "make a purchase", { voice.ELVEN: True } ),
+        PTEntry( "lay down some coin", { voice.DWARVEN: True } ),
+        ),
     'different':   (
         PTEntry( "divergent", { voice.SMART: True } ),
+        PTEntry( "not the same", { voice.STUPID: True } ),
         PTEntry( "dissimilar", { voice.ELVEN: True } ),
         ),
     "Do you have":   (
@@ -56,12 +68,16 @@ PT_DATABASE = {
     "have":   (
         PTEntry( "'ave", { voice.ORCISH: True } ),
         PTEntry( "haves", { voice.DRACONIAN: True, voice.STUPID: True } ),
-        PTEntry( "possess", { voice.DRACONIAN: True } ),
+        ),
+    "have .":   (
+        PTEntry( "possess.", { voice.DRACONIAN: True } ),
         ),
     "Hello":   (
         PTEntry( "'Ello, ello", { voice.ORCISH: True } ),
+        PTEntry( "'Ello", { voice.ORCISH: True, voice.STUPID: False } ),
         PTEntry( "Greetings", { voice.SMART: True } ),
-        PTEntry( "Greetingss", { voice.DRACONIAN: True } ),
+        PTEntry( "Hey", { voice.STUPID: True } ),
+        PTEntry( "Salutations", { voice.DRACONIAN: True } ),
         PTEntry( "Hi", { voice.SMART: False, voice.DWARVEN: False, voice.ORCISH: False } ),
         PTEntry( "Lali-ho", { voice.DWARVEN: True } ),
         ),
@@ -79,6 +95,14 @@ PT_DATABASE = {
     "I would": (
         PTEntry( "I'd" ),
         ),
+    "information": (
+        PTEntry( "stuff", { voice.STUPID: True } ),
+        PTEntry( "knowledge", { voice.SMART: True } ),
+        PTEntry( "enlightenment", { voice.ELVEN: True, voice.STUPID: False } ),
+        PTEntry( "know-wotz", { voice.ORCISH: True } ),
+        PTEntry( "secrets", { voice.DRACONIAN: True } ),
+        PTEntry( "truth", { voice.DWARVEN: True } ),
+       ),
     "is not": (
         PTEntry( "isn't" ),
         PTEntry( "ain't", { voice.STUPID: True } ),
@@ -88,16 +112,39 @@ PT_DATABASE = {
         ),
     "Let me": (
         PTEntry( "Lemme", { voice.STUPID: True } ),
+        PTEntry( "Allow me to", { voice.SMART: True } ),
         ),
     "Looking for": (
+        PTEntry( "Lookin' for", { voice.ORCISH: True } ),
         PTEntry( "Seeking", { voice.DRACONIAN: True } ),
         ),
     "my":   (
         PTEntry( "me", { voice.ORCISH: True } ),
         PTEntry( "me", { voice.STUPID: True } ),
         ),
+    "need":   (
+        PTEntry( "needs", { voice.DRACONIAN: True } ),
+        PTEntry( "require", { voice.STUPID: False } ),
+        ),
     "sea": (
         PTEntry( "whale-road", { voice.DWARVEN: True } ),
+       ),
+    "see your wares": (
+        PTEntry( "see what you have" ),
+        PTEntry( "examine your wares", { voice.DWARVEN: True } ),
+        PTEntry( "see your treasures", { voice.DRACONIAN: True } ),
+        PTEntry( "look at yer gubbins", { voice.ORCISH: True } ),
+        PTEntry( "peruse your wares", { voice.ELVEN: True } ),
+        PTEntry( "inspect your merchandise", { voice.SMART: True } ),
+        PTEntry( "look at your stuff", { voice.STUPID: True } ),
+        ),
+    "shop": (
+        PTEntry( "store" ),
+        PTEntry( "forge-front", { voice.DWARVEN: True } ),
+        PTEntry( "boutique", { voice.ELVEN: True } ),
+       ),
+    "something": (
+        PTEntry( "wotever", { voice.ORCISH: True } ),
        ),
     "sun": (
         PTEntry( "sky-candle", { voice.DWARVEN: True } ),
@@ -110,6 +157,12 @@ PT_DATABASE = {
        ),
     "that makes": (
         PTEntry( "wot makes", { voice.ORCISH: True } ),
+       ),
+    "The": (
+        PTEntry( "Dat", { voice.ORCISH: True } ),
+       ),
+    "the": (
+        PTEntry( "dat", { voice.ORCISH: True } ),
        ),
     "There is": (
         PTEntry( "There's" ),
