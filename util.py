@@ -29,6 +29,8 @@ def game_dir(fname=""):
     return os.path.join(os.path.dirname(__file__),fname)
 def image_dir(fname=""):
     return os.path.join(game_dir('image'),fname)
+def data_dir(fname=""):
+    return os.path.join(game_dir('data'),fname)
 def user_dir( fname=""):
     return os.path.join(USERDIR,fname)
 

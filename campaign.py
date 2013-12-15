@@ -146,7 +146,7 @@ if __name__=='__main__':
     myscene.map[26][10].wall = maps.MOUNTAIN_RIGHT
     myscene.map[26][11].wall = maps.MOUNTAIN_BOTTOM
 
-    mygob = monsters.goblins.Goblin()
+    mygob = monsters.generate_npc( species = characters.Orc )
     mygob.pos = (27,12)
     myscene.contents.append( mygob )
 
@@ -156,6 +156,26 @@ if __name__=='__main__':
 
     mymon = monsters.generate_npc( species = characters.Reptal )
     mymon.pos = (30,17)
+    myscene.contents.append( mymon )
+
+    mymon = monsters.generate_npc( species = characters.Elf )
+    mymon.pos = (29,19)
+    myscene.contents.append( mymon )
+
+    mymon = monsters.generate_npc( species = characters.Human )
+    mymon.pos = (28,21)
+    myscene.contents.append( mymon )
+
+    mymon = monsters.generate_npc( species = characters.Centaur )
+    mymon.pos = (27,23)
+    myscene.contents.append( mymon )
+
+    mymon = monsters.generate_npc( species = characters.Fuzzy )
+    mymon.pos = (26,24)
+    myscene.contents.append( mymon )
+
+    mymon = monsters.generate_npc( species = characters.Gnome )
+    mymon.pos = (23,25)
     myscene.contents.append( mymon )
 
     camp = Campaign()

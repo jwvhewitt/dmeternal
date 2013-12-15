@@ -312,9 +312,8 @@ def personalize_text( in_text, speaker_voice ):
 O1 = Offer( "This is my shop. There is not much here yet." , context = context.ContextTag([context.SHOP,context.WEAPON]) )
 O2 = Offer( "All of these conversations start out exactly the same. It is the message mutator in the dialogue package that makes them different." , context = context.ContextTag([context.INFO,context.HINT]) )
 
+# DIS AR TEH MAH SHOP. THAR IZ NOT MUTCH HER YET.
+# ALL OV THEES CONVERSASHUNS START OUT EGSAKTLY TEH SAME. IT TEH MESAGE MUTATOR IN DA DIALOGUE PACKAGE DAT MAKEZ THEM DIFFERENT.
+
 offers = [O1]
 
-#a = split_words_and_punctuation( "This 'ere is me's auntie." )
-#print a
-#b = preprocess_out_text( a )
-#print " ".join( b )

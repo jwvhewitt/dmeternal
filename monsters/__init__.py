@@ -3,6 +3,8 @@ import base
 import characters
 import random
 import chargen
+import namegen
+from dialogue import voice
 
 import goblins
 
@@ -16,6 +18,10 @@ def harvest( mod ):
 
 harvest( goblins )
 
+VOICE_TO_NAMEGEN = { voice.ORCISH: namegen.ORC, voice.ELVEN: namegen.ELF, \
+    voice.DRACONIAN: namegen.DRAGON, voice.DWARVEN: namegen.DWARF, \
+    voice.GREEK: namegen.GREEK, voice.KITTEH: namegen.JAPANESE, \
+    voice.GNOMIC: namegen.GNOME }
 
 def generate_npc( species=None, job=None, gender=None, rank=None ):
     if not species:
@@ -33,6 +39,15 @@ def generate_npc( species=None, job=None, gender=None, rank=None ):
     ji = job( rank=rank, pc=npc )
     npc.levels.append( ji )
     chargen.give_starting_equipment( npc )
+
+    # Generate a random name. This is gonna depend on the voice.
+    myvoice = npc.get_voice()
+    ng = namegen.DEFAULT
+    for lang in myvoice:
+        if lang in VOICE_TO_NAMEGEN:
+            ng = VOICE_TO_NAMEGEN[ lang ]
+            break
+    npc.name = ng.gen_word()
 
     return npc
 

@@ -305,7 +305,7 @@ class Gnome( Human ):
     desc = "They are very pious but lack physical strength."
     statline = { stats.STRENGTH: -2, stats.PIETY: 2, stats.STEALTH: 5 }
     starting_equipment = ( items.hats.GnomeHat, items.axes.Pickaxe )
-    VOICE = dialogue.voice.DWARVEN
+    VOICE = dialogue.voice.GNOMIC
 
 class Orc( Human ):
     name = "Orc"
@@ -326,6 +326,7 @@ class Fuzzy( Human ):
     desc = "Fuzzies are humanoids with animal features. They are known for their exceptional luck."
     statline = { stats.INTELLIGENCE: -1, stats.PIETY: -1, stats.CHARISMA: 2 }
     FIRST_IMAGE = 18
+    VOICE = dialogue.voice.KITTEH
 
 class Reptal( Human ):
     name = "Reptal"
@@ -346,6 +347,7 @@ class Centaur( Human ):
     FIRST_IMAGE = 36
     slots = ( items.BACK, items.BODY, items.HANDS, items.HAND1, items.HAND2, items.HEAD )
     starting_equipment = ( items.polearms.Spear, items.clothes.LeatherJacket )
+    VOICE = dialogue.voice.GREEK
 
 PC_SPECIES = (Human, Dwarf, Elf, Gnome, Orc, Hurthling, Fuzzy, Reptal, Centaur )
 
