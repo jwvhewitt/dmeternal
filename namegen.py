@@ -169,6 +169,7 @@ ORC = NameGen( "ng_orc.txt" )
 GREEK = NameGen( "ng_greek.txt" )
 JAPANESE = NameGen( "ng_japanese.txt" )
 GNOME = NameGen( "ng_gnome.txt" )
+HURTHLING = NameGen( "ng_hurthling.txt" )
 
 if __name__=="__main__":
 #    print "Gnome"
@@ -179,6 +180,11 @@ if __name__=="__main__":
 #    test_names( GREEK, 1000 )
     print "Dwarf"
     test_names( DWARF, 100000 )
+
+    print "Hurthling"
+    test_names( HURTHING, 100000 )
+
+
 #    print "Dragon"
 #    test_names( DRAGON, 1000 )
 #    print "Elf"

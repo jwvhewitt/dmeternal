@@ -320,6 +320,7 @@ class Hurthling( Human ):
     desc = "Hurthlings are small humanoids who live in burrows. They have good reflexes and luck, but aren't very strong or tough."
     statline = { stats.STRENGTH: -3, stats.TOUGHNESS: -2, stats.REFLEXES: 4, \
         stats.STEALTH: 10 }
+    VOICE = dialogue.voice.HURTHLING
 
 class Fuzzy( Human ):
     name = "Fuzzy"

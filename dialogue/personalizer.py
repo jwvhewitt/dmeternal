@@ -366,6 +366,7 @@ PT_DATABASE = {
         PTEntry( "gutripper", { voice.ORCISH: True } ),
         PTEntry( "armament", { voice.SMART: True } ),
         PTEntry( "hurty thing", { voice.STUPID: True } ),
+        PTEntry( "weppun", { voice.KITTEH: True } ),
        ),
     "Welcome": (
         PTEntry( "Lali-ho", { voice.DWARVEN: True } ),
