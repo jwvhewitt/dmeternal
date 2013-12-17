@@ -178,6 +178,10 @@ if __name__=='__main__':
     mymon.pos = (23,25)
     myscene.contents.append( mymon )
 
+    mymon = monsters.generate_npc( species = characters.Hurthling )
+    mymon.pos = (21,26)
+    myscene.contents.append( mymon )
+
     camp = Campaign()
 
     camp.party = load_party( screen )

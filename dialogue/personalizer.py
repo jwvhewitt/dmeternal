@@ -17,6 +17,8 @@ import voice
     beings from Greek mythology can use the Green name generator. Maybe try to
     use as many loanwords as possible?
 
+    HURTHISH: It's all about the food.
+
     KITTEH: I can haz lolspeak? Should have a big smart/stupid difference- the
     smart speakers get grammar right, just use Kitteh vocabulary. Also, try and
     stick to lolspeak which can be spoken aloud + isn't perfectly homophonic.
@@ -97,6 +99,9 @@ PT_DATABASE = {
         PTEntry( "You got", { voice.ORCISH: True } ),
         PTEntry( "You haz got", { voice.KITTEH: True, voice.SMART: False } ),
         ),
+    "do you want":   (
+        PTEntry( "may you be wanting", { voice.HURTHISH: True } ),
+        ),
     "eternity":   (
         PTEntry( "eternitys", { voice.KITTEH: True } ),
         PTEntry( "all-tomorrows", { voice.DWARVEN: True } ),
@@ -107,6 +112,7 @@ PT_DATABASE = {
         PTEntry( "right", { voice.STUPID: True } ),
         PTEntry( "egsaktly", { voice.KITTEH: True } ),
         PTEntry( "preshishley", { voice.KITTEH: True, voice.SMART: True } ),
+        PTEntry( "suitably", { voice.HURTHISH: True } ),
         ),
     "forever":   (
         PTEntry( "furevur", { voice.KITTEH: True } ),
@@ -136,6 +142,7 @@ PT_DATABASE = {
         PTEntry( "Hi", { voice.SMART: False, voice.DWARVEN: False, voice.ORCISH: False, voice.DRACONIAN: False } ),
         PTEntry( "Lali-ho", { voice.DWARVEN: True } ),
         PTEntry( "Hai", { voice.KITTEH: True } ),
+        PTEntry( "Hullo", { voice.HURTHISH: True } ),
         ),
     "Hello ,":   (
         PTEntry( "'Ello there,", { voice.ORCISH: True } ),
@@ -238,6 +245,7 @@ PT_DATABASE = {
         ),
     "normal":   (
         PTEntry( "orthodox", { voice.GREEK: True } ),
+        PTEntry( "suitable", { voice.HURTHISH: True } ),
         ),
     "nothing":   (
         PTEntry( "nuttin", { voice.KITTEH: True } ),

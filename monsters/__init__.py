@@ -21,7 +21,7 @@ harvest( goblins )
 VOICE_TO_NAMEGEN = { voice.ORCISH: namegen.ORC, voice.ELVEN: namegen.ELF, \
     voice.DRACONIAN: namegen.DRAGON, voice.DWARVEN: namegen.DWARF, \
     voice.GREEK: namegen.GREEK, voice.KITTEH: namegen.JAPANESE, \
-    voice.GNOMIC: namegen.GNOME }
+    voice.GNOMIC: namegen.GNOME, voice.HURTHISH: namegen.HURTHLING }
 
 def generate_npc( species=None, job=None, gender=None, rank=None ):
     if not species:

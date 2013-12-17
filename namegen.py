@@ -170,6 +170,7 @@ GREEK = NameGen( "ng_greek.txt" )
 JAPANESE = NameGen( "ng_japanese.txt" )
 GNOME = NameGen( "ng_gnome.txt" )
 HURTHLING = NameGen( "ng_hurthling.txt" )
+ELDRITCH = NameGen( "ng_eldritch.txt", max_syl=5 )
 
 if __name__=="__main__":
 #    print "Gnome"
@@ -178,11 +179,15 @@ if __name__=="__main__":
 #    test_names( DEFAULT, 1000 )
 #    print "Greek"
 #    test_names( GREEK, 1000 )
-    print "Dwarf"
-    test_names( DWARF, 100000 )
+#    print "Dwarf"
+#    test_names( DWARF, 100000 )
+#    print "Hurthling"
+#    test_names( HURTHLING, 100000 )
+#    print "Eldritch"
+#    test_names( ELDRITCH, 100000 )
 
-    print "Hurthling"
-    test_names( HURTHING, 100000 )
+    for t in range( 100 ):
+        print ELDRITCH.gen_word()
 
 
 #    print "Dragon"
