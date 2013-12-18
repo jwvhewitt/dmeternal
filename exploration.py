@@ -329,11 +329,18 @@ class Explorer( object ):
                 elif gdi.type == pygame.MOUSEBUTTONUP:
                     if gdi.button == 1:
                         # Left mouse button.
-                        if self.view.mouse_tile != self.camp.first_living_pc().pos:
+                        if ( self.view.mouse_tile != self.camp.first_living_pc().pos ) and self.scene.on_the_map( *self.view.mouse_tile ):
                             self.order = MoveTo( self.scene, self.view.mouse_tile )
                             self.view.overlays.clear()
                         else:
                             self.pick_up( self.view.mouse_tile )
+                    else:
+                        animobpos = self.view.mouse_tile
+                        anims = [ animobs.Lightning(self.camp.first_living_pc().pos,self.view.mouse_tile ), ]
+                        animobs.handle_anim_sequence( self.screen, self.view, anims )
+                        anims = [ animobs.BlueSparkle(animobpos ), ]
+                        animobs.handle_anim_sequence( self.screen, self.view, anims )
+
 
 
 
