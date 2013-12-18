@@ -5,7 +5,8 @@ Dungeon Monkey Eternal- Third game in the dungeon monkey series, first written i
 
 Requires Python 2 and PyGame.
 
-===========
+![Screenshot](image/screenshot.png)
+
 HOW TO PLAY
 ===========
 
@@ -28,12 +29,13 @@ neither of which do anything. There are also two piles of items on the ground
 in front of the building's door. Stand on a pile, then click again with the
 mouse to pick them up.
 
-========
 COMMANDS
 ========
 
 Left click: Move to spot/Pick up items
+
 1-4: View party member/inventory screen
+
 Q: Quit the game. There is no saving because there is no point.
 
 

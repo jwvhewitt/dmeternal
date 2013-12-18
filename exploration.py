@@ -6,6 +6,7 @@ import hotmaps
 import charsheet
 import items
 import dialogue
+import animobs
 
 # Commands should be callable objects which take the explorer and return a value.
 # If untrue, the command stops.
@@ -172,9 +173,15 @@ class Explorer( object ):
         pass
 
     def bump_model( self, target ):
+        # Do the animation first.
+        pc = self.camp.party_spokesperson()
+
+        anims = [ animobs.SpeakHello(pos=pc.pos), animobs.SpeakHello(pos=target.pos)]
+        animobs.handle_anim_sequence( self.screen, self.view, anims )
+
         offers = [ dialogue.O1, dialogue.O2 ]
         convo = dialogue.build_conversation( dialogue.CUE_HELLO , offers )
-        dialogue.converse( self, self.camp.party_spokesperson(), target, convo )
+        dialogue.converse( self, pc, target, convo )
 
     def pick_up( self, loc ):
         """Party will pick up items at this location."""

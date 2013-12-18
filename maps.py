@@ -258,6 +258,7 @@ class SceneView( object ):
             self.sprites[k] = image.Image( v, 54, 54 )
         self.extrasprite = image.Image( "sceneview_extras.png", 54, 54 )
         self.overlays = dict()
+        self.anims = dict()
 
         self.modelmap = dict()
         self.modelsprite = weakref.WeakKeyDictionary()
@@ -483,6 +484,10 @@ class SceneView( object ):
                             msprite = m.generate_avatar()
                             self.modelsprite[ m ] = msprite
                         msprite.render( screen, dest, m.FRAME )
+
+                    m = self.anims.get( (x,y) , None )
+                    if m:
+                        m.render( self, screen, dest )
 
 
         self.phase = ( self.phase + 1 ) % 600
