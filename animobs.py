@@ -38,6 +38,8 @@ class AnimOb( object ):
         mydest.y += self.y_off
         self.sprite.render( screen, mydest, self.frame )
 
+# fx_effects.png
+
 class RedBoom( AnimOb ):
     def __init__(self, pos=(0,0), loop=0 ):
         super(RedBoom, self).__init__(sprite_name="fx_effects.png",pos=pos,start_frame=0,end_frame=2,loop=loop,ticks_per_frame=2)
@@ -78,6 +80,16 @@ class PinkBoom( AnimOb ):
     def __init__(self, pos=(0,0), loop=0 ):
         super(PinkBoom, self).__init__(sprite_name="fx_effects.png",pos=pos,start_frame=27,end_frame=29,loop=loop,ticks_per_frame=2)
 
+class CriticalHit( AnimOb ):
+    def __init__(self, pos=(0,0), loop=0 ):
+        super(CriticalHit, self).__init__(sprite_name="fx_effects.png",pos=pos,start_frame=30,end_frame=39,loop=loop,ticks_per_frame=1)
+
+class LittleBirdies( AnimOb ):
+    def __init__(self, pos=(0,0), loop=2 ):
+        super(LittleBirdies, self).__init__(sprite_name="fx_effects.png",pos=pos,start_frame=40,end_frame=49,loop=loop,y_off=-16)
+
+# fx_sparkles.png
+
 class YellowSparkle( AnimOb ):
     def __init__(self, pos=(0,0), loop=1 ):
         super(YellowSparkle, self).__init__(sprite_name="fx_sparkles.png",pos=pos,start_frame=0,end_frame=7,loop=loop)
@@ -110,10 +122,137 @@ class LifeSparkle( AnimOb ):
     def __init__(self, pos=(0,0), loop=2 ):
         super(LifeSparkle, self).__init__(sprite_name="fx_sparkles.png",pos=pos,start_frame=56,end_frame=63,loop=loop)
 
+# fx_spells.png
+
 class HealthUp( AnimOb ):
     def __init__(self, pos=(0,0), loop=2 ):
         super(HealthUp, self).__init__(sprite_name="fx_spells.png",pos=pos,start_frame=0,end_frame=7,loop=loop)
 
+class Webbed( AnimOb ):
+    def __init__(self, pos=(0,0), loop=0 ):
+        super(Webbed, self).__init__(sprite_name="fx_spells.png",pos=pos,start_frame=8,end_frame=15,loop=loop,ticks_per_frame=1)
+
+class Paralysis( AnimOb ):
+    def __init__(self, pos=(0,0), loop=0 ):
+        super(Paralysis, self).__init__(sprite_name="fx_spells.png",pos=pos,start_frame=16,end_frame=23,loop=loop,ticks_per_frame=1)
+
+class ArmorUp( AnimOb ):
+    def __init__(self, pos=(0,0), loop=2 ):
+        super(ArmorUp, self).__init__(sprite_name="fx_spells.png",pos=pos,start_frame=24,end_frame=31,loop=loop,ticks_per_frame=1)
+
+# fx_explosion.png
+
+class OrangeExplosion( AnimOb ):
+    def __init__(self, pos=(0,0), loop=0 ):
+        super(OrangeExplosion, self).__init__(sprite_name="fx_explosion.png",pos=pos,start_frame=0,end_frame=7,loop=loop,ticks_per_frame=1)
+
+class BlueExplosion( AnimOb ):
+    def __init__(self, pos=(0,0), loop=0 ):
+        super(BlueExplosion, self).__init__(sprite_name="fx_explosion.png",pos=pos,start_frame=8,end_frame=15,loop=loop,ticks_per_frame=1)
+
+class GreenExplosion( AnimOb ):
+    def __init__(self, pos=(0,0), loop=0 ):
+        super(GreenExplosion, self).__init__(sprite_name="fx_explosion.png",pos=pos,start_frame=16,end_frame=23,loop=loop,ticks_per_frame=1)
+
+class PurpleExplosion( AnimOb ):
+    def __init__(self, pos=(0,0), loop=0 ):
+        super(PurpleExplosion, self).__init__(sprite_name="fx_explosion.png",pos=pos,start_frame=24,end_frame=31,loop=loop,ticks_per_frame=1)
+
+class YellowExplosion( AnimOb ):
+    def __init__(self, pos=(0,0), loop=0 ):
+        super(YellowExplosion, self).__init__(sprite_name="fx_explosion.png",pos=pos,start_frame=32,end_frame=39,loop=loop,ticks_per_frame=1)
+
+# fx_blizzard.png
+
+class Blizzard( AnimOb ):
+    def __init__(self, pos=(0,0), loop=1 ):
+        super(Blizzard, self).__init__(sprite_name="fx_blizzard.png",pos=pos,start_frame=0,end_frame=15,loop=loop,ticks_per_frame=1)
+
+# fx_bubbles.png
+
+class Bubbles( AnimOb ):
+    def __init__(self, pos=(0,0), loop=0 ):
+        super(Bubbles, self).__init__(sprite_name="fx_bubbles.png",pos=pos,start_frame=0,end_frame=19,loop=loop,ticks_per_frame=1)
+
+# fx_marquee.png
+
+class Marquee( AnimOb ):
+    def __init__(self, pos=(0,0), loop=0 ):
+        super(Marquee, self).__init__(sprite_name="fx_marquee.png",pos=pos,start_frame=0,end_frame=14,loop=loop,ticks_per_frame=2)
+
+# fx_spiral.png
+
+class Spiral( AnimOb ):
+    def __init__(self, pos=(0,0), loop=0 ):
+        super(Spiral, self).__init__(sprite_name="fx_spiral.png",pos=pos,start_frame=0,end_frame=15,loop=loop,ticks_per_frame=1)
+
+# fx_meteorstorm.png
+
+class MeteorStorm( AnimOb ):
+    def __init__(self, pos=(0,0), loop=0 ):
+        super(MeteorStorm, self).__init__(sprite_name="fx_meteorstorm.png",pos=pos,start_frame=0,end_frame=23,loop=loop,ticks_per_frame=1)
+
+# fx_icestorm.png
+
+class IceStorm( AnimOb ):
+    def __init__(self, pos=(0,0), loop=0 ):
+        super(IceStorm, self).__init__(sprite_name="fx_icestorm.png",pos=pos,start_frame=0,end_frame=23,loop=loop,ticks_per_frame=1)
+
+# fx_acidstorm.png
+
+class AcidStorm( AnimOb ):
+    def __init__(self, pos=(0,0), loop=0 ):
+        super(AcidStorm, self).__init__(sprite_name="fx_acidstorm.png",pos=pos,start_frame=0,end_frame=23,loop=loop,ticks_per_frame=1)
+
+# fx_thunderstorm.png
+
+class ThunderStorm( AnimOb ):
+    def __init__(self, pos=(0,0), loop=0 ):
+        super(ThunderStorm, self).__init__(sprite_name="fx_thunderstorm.png",pos=pos,start_frame=0,end_frame=23,loop=loop,ticks_per_frame=1)
+
+# fx_clouds.png
+
+class BlueCloud( AnimOb ):
+    def __init__(self, pos=(0,0), loop=0 ):
+        super(BlueCloud, self).__init__(sprite_name="fx_clouds.png",pos=pos,start_frame=0,end_frame=4,loop=loop,ticks_per_frame=1)
+
+class RedCloud( AnimOb ):
+    def __init__(self, pos=(0,0), loop=0 ):
+        super(RedCloud, self).__init__(sprite_name="fx_clouds.png",pos=pos,start_frame=5,end_frame=9,loop=loop,ticks_per_frame=1)
+
+class GreenCloud( AnimOb ):
+    def __init__(self, pos=(0,0), loop=0 ):
+        super(GreenCloud, self).__init__(sprite_name="fx_clouds.png",pos=pos,start_frame=10,end_frame=14,loop=loop,ticks_per_frame=1)
+
+
+# fx_nuclear.png
+
+class Nuclear( AnimOb ):
+    def __init__(self, pos=(0,0), loop=0 ):
+        super(Nuclear, self).__init__(sprite_name="fx_nuclear.png",pos=pos,start_frame=0,end_frame=9,loop=loop,ticks_per_frame=1)
+
+# fx_pearl.png
+
+class Pearl( AnimOb ):
+    def __init__(self, pos=(0,0), loop=0 ):
+        super(Pearl, self).__init__(sprite_name="fx_pearl.png",pos=pos,start_frame=0,end_frame=5,loop=loop,ticks_per_frame=2)
+    def update( self ):
+        self.counter += 1
+        self.y_off += -1
+        if self.counter >= self.ticks_per_frame:
+            self.frame += 1
+            self.counter = 0
+
+        if self.frame > self.end_frame:
+            self.loop += -1
+            if self.loop < 0:
+                self.frame = self.end_frame
+                self.needs_deletion = True
+            else:
+                self.frame = self.start_frame
+                self.counter = 0
+
+# fx_emoticons.png
 
 class SpeakHello( AnimOb ):
     def __init__(self, pos=(0,0), loop=8 ):
@@ -294,10 +433,11 @@ def handle_anim_sequence( screen, view, anims ):
     while anims:
         view.anims.clear()
         for a in anims[:]:
-            view.anims[a.pos] = a
-            a.update()
             if a.needs_deletion:
                 anims.remove( a )
+            else:
+                view.anims[a.pos] = a
+                a.update()
         view( screen )
         pygame.display.flip()
         while pygwrap.wait_event().type != pygwrap.TIMEREVENT:

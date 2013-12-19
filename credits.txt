@@ -1,0 +1,19 @@
+Most tiles by the supremely talented (and generous) David Gervais. You can
+download his tilesets from here:
+
+    http://pousse.rapiere.free.fr/tome/
+
+Part of the graphic tiles used in this program is the public domain roguelike
+tileset "RLTiles". Some of the tiles have been modified by me.
+
+    You can find the original tileset at:
+    http://rltiles.sf.net
+
+Many other graphics obtained from http://opengameart.org
+
+Nuclear explosion, Pearl effect by Jetrel.
+
+
+Programming mostly by Joseph Hewitt, except the bits I stole from other people.
+
+

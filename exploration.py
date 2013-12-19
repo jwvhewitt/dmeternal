@@ -336,11 +336,19 @@ class Explorer( object ):
                             self.pick_up( self.view.mouse_tile )
                     else:
                         animobpos = self.view.mouse_tile
-                        anims = [ animobs.Lightning(self.camp.first_living_pc().pos,self.view.mouse_tile ), ]
+                        anims = [ animobs.Fireball(self.camp.first_living_pc().pos,self.view.mouse_tile ), ]
                         animobs.handle_anim_sequence( self.screen, self.view, anims )
-                        anims = [ animobs.BlueSparkle(animobpos ), ]
-                        animobs.handle_anim_sequence( self.screen, self.view, anims )
+#                        anims = [ animobs.RedCloud(animobpos ), ]
 
+                        anims = []
+                        for x in range(-2,3):
+                            for y in range(-2,3):
+                                if ( abs(x) != 2 ) or ( abs(y) != 2 ):
+                                    ao = animobs.Nuclear( (animobpos[0]+x,animobpos[1]+y) )
+                                    ao.y_off = -20 + 5 * ( abs( x ) + abs( y ) )
+                                    anims.append( ao )
+
+                        animobs.handle_anim_sequence( self.screen, self.view, anims )
 
 
 
