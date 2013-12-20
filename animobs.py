@@ -426,6 +426,9 @@ class YellowVortex( Projectile ):
     def __init__(self, start_pos=(0,0), end_pos=(0,0) ):
         super(YellowVortex, self).__init__(sprite_name="fx_projectiles.png",start_pos=start_pos, end_pos=end_pos, frame=144)
 
+class Whirlwind( Projectile ):
+    def __init__(self, start_pos=(0,0), end_pos=(0,0) ):
+        super(Whirlwind, self).__init__(sprite_name="fx_projectiles.png",start_pos=start_pos, end_pos=end_pos, frame=152, set_frame_offset=False)
 
 
 

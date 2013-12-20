@@ -203,11 +203,11 @@ class Necromancer( Level ):
 
 class Samurai( Level ):
     name = 'Samurai'
-    desc = "Mystic warriors. They gain lunar magic but can't use heavy armor or missile weapons."
+    desc = "Mystic warriors. They gain fire magic but can't use heavy armor or missile weapons."
     requirements = { stats.STRENGTH: 15, stats.REFLEXES: 11, stats.INTELLIGENCE: 13, stats.PIETY: 11 }
     statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 5, stats.MAGIC_ATTACK: 4, stats.MAGIC_DEFENSE: 3, \
         stats.KUNG_FU: 2, stats.AWARENESS: 3 } )
-    spell_circles = ( spells.LUNAR, )
+    spell_circles = ( spells.FIRE, )
     HP_DIE = 10
     MP_DIE = 6
     LEVELS_PER_GEM = 2
