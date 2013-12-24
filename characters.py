@@ -471,6 +471,9 @@ class Character(object):
         cr = self.rank()
         return cr * ( cr + 1 ) * 500
 
+    def get_move( self ):
+        return 10
+
 
     def generate_avatar( self ):
         # Generate an image for this character.

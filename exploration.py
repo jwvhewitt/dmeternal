@@ -287,6 +287,16 @@ class Explorer( object ):
             else:
                 keep_going = False
 
+    def update_monsters( self ):
+        for m in self.scene.contents:
+            if isinstance( m, characters.Character ) and m not in self.camp.party:
+                # First handle movement.
+                if m.get_move():
+                    pass
+
+                # Next, check visibility to PC.
+
+
     def go( self ):
         keep_going = True
         self.order = None

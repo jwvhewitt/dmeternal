@@ -107,6 +107,7 @@ class Monster( characters.Character ):
     statline = { stats.STRENGTH: 12, stats.TOUGHNESS: 12, stats.REFLEXES: 12, \
         stats.INTELLIGENCE: 12, stats.PIETY: 12, stats.CHARISMA: 12 }
     ATTACK = None
+    MOVE_POINTS = 10
 
     def __init__( self, team = None ):
         super(Monster, self).__init__( name=self.name, statline=self.statline )
@@ -123,5 +124,8 @@ class Monster( characters.Character ):
 
     def desc( self ):
         return "L"+str( self.rank())+" "+stats.GENDER[self.gender]+" "+str(self.mr_level)
+
+    def get_move( self ):
+        return self.MOVE_POINTS
 
 
