@@ -262,6 +262,27 @@ class SpeakHello( AnimOb ):
         if self.counter >= self.loop:
             self.needs_deletion = True
 
+class SpeakAttack( SpeakHello ):
+    def __init__(self, pos=(0,0), loop=8 ):
+        super(SpeakAttack, self).__init__(pos=pos,loop=loop)
+        self.frame = 1
+
+class SpeakSurprise( SpeakHello ):
+    def __init__(self, pos=(0,0), loop=8 ):
+        super(SpeakSurprise, self).__init__(pos=pos,loop=loop)
+        self.frame = 2
+
+class SpeakAngry( SpeakHello ):
+    def __init__(self, pos=(0,0), loop=8 ):
+        super(SpeakAngry, self).__init__(pos=pos,loop=loop)
+        self.frame = 3
+
+class SpeakSad( SpeakHello ):
+    def __init__(self, pos=(0,0), loop=8 ):
+        super(SpeakSad, self).__init__(pos=pos,loop=loop)
+        self.frame = 4
+
+
 class Projectile( AnimOb ):
     """An AnimOb which moves along a line."""
     def __init__( self, sprite_name, width=54, height=54, start_pos=(0,0), end_pos=(0,0), frame=0, set_frame_offset=True, y_off=0 ):

@@ -25,12 +25,14 @@ import glob
 import pickle
 import stats
 
+
 class Campaign( object ):
     """A general holder for all the stuff that goes into a DME campaign."""
     def __init__( self, name = "BobDwarf19" ):
         self.name = name
         self.party = []
         self.scenes = []
+        self.fight = None
 
     def first_living_pc( self ):
         """Return the first living PC in the party."""
@@ -103,6 +105,7 @@ if __name__=='__main__':
     import items
     import monsters
     import characters
+    import teams
 
     # Set the screen size.
     screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
@@ -146,40 +149,50 @@ if __name__=='__main__':
     myscene.map[26][10].wall = maps.MOUNTAIN_RIGHT
     myscene.map[26][11].wall = maps.MOUNTAIN_BOTTOM
 
-    mygob = monsters.generate_npc( species = characters.Orc )
+    myroom = pygame.Rect(21,12,12,20)
+    myteam = teams.Team(default_reaction=teams.SAFELY_FRIENDLY, home=myroom)
+
+    mygob = monsters.generate_npc( species = characters.Orc, team=myteam )
     mygob.pos = (27,12)
     myscene.contents.append( mygob )
 
-    mymon = monsters.generate_npc( species = characters.Dwarf )
+    mymon = monsters.generate_npc( species = characters.Dwarf, team=myteam )
     mymon.pos = (29,14)
     myscene.contents.append( mymon )
 
-    mymon = monsters.generate_npc( species = characters.Reptal )
+    mymon = monsters.generate_npc( species = characters.Reptal, team=myteam )
     mymon.pos = (30,17)
     myscene.contents.append( mymon )
 
-    mymon = monsters.generate_npc( species = characters.Elf )
+    mymon = monsters.generate_npc( species = characters.Elf, team=myteam )
     mymon.pos = (29,19)
     myscene.contents.append( mymon )
 
-    mymon = monsters.generate_npc( species = characters.Human )
+    mymon = monsters.generate_npc( species = characters.Human, team=myteam )
     mymon.pos = (28,21)
     myscene.contents.append( mymon )
 
-    mymon = monsters.generate_npc( species = characters.Centaur )
+    mymon = monsters.generate_npc( species = characters.Centaur, team=myteam )
     mymon.pos = (27,23)
     myscene.contents.append( mymon )
 
-    mymon = monsters.generate_npc( species = characters.Fuzzy )
+    mymon = monsters.generate_npc( species = characters.Fuzzy, team=myteam )
     mymon.pos = (26,24)
     myscene.contents.append( mymon )
 
-    mymon = monsters.generate_npc( species = characters.Gnome )
+    mymon = monsters.generate_npc( species = characters.Gnome, team=myteam )
     mymon.pos = (23,25)
     myscene.contents.append( mymon )
 
-    mymon = monsters.generate_npc( species = characters.Hurthling )
+    mymon = monsters.generate_npc( species = characters.Hurthling, team=myteam )
     mymon.pos = (21,26)
+    myscene.contents.append( mymon )
+
+
+    myroom = pygame.Rect(50,12,10,10)
+    myteam = teams.Team(default_reaction=-50, home=myroom)
+    mymon = monsters.goblins.Goblin( team=myteam )
+    mymon.pos = (55,17)
     myscene.contents.append( mymon )
 
     camp = Campaign()

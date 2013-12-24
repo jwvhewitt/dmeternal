@@ -23,7 +23,7 @@ VOICE_TO_NAMEGEN = { voice.ORCISH: namegen.ORC, voice.ELVEN: namegen.ELF, \
     voice.GREEK: namegen.GREEK, voice.KITTEH: namegen.JAPANESE, \
     voice.GNOMIC: namegen.GNOME, voice.HURTHISH: namegen.HURTHLING }
 
-def generate_npc( species=None, job=None, gender=None, rank=None ):
+def generate_npc( species=None, job=None, gender=None, rank=None, team=None ):
     if not species:
         species = random.choice( characters.PC_SPECIES )
     if not job:
@@ -35,6 +35,7 @@ def generate_npc( species=None, job=None, gender=None, rank=None ):
 
     npc = characters.Character( species=species(), gender=gender )
     npc.roll_stats()
+    npc.team = team
 
     ji = job( rank=rank, pc=npc )
     npc.levels.append( ji )

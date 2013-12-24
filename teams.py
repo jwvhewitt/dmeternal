@@ -15,10 +15,15 @@ class Team( object ):
     def check_reaction( self, camp ):
         if self.charm_roll:
             return self.charm_roll + self.default_reaction
-        else
+        else:
             pc = camp.party_spokesperson()
             self.charm_roll = random.randint( 1, 50 ) - random.randint( 1, 50 ) + pc.get_stat_bonus( stats.CHARISMA )
             return self.charm_roll + self.default_reaction
 
 
-
+    def on_guard( self ):
+        """Returns True if monster isn't definitely friendly."""
+        if not self.charm_roll:
+            return True
+        else:
+            return ( self.charm_roll + self.default_reaction ) < FRIENDLY_THRESHOLD

@@ -7,6 +7,10 @@ import charsheet
 import items
 import dialogue
 import animobs
+import characters
+import random
+import teams
+
 
 # Commands should be callable objects which take the explorer and return a value.
 # If untrue, the command stops.
@@ -159,11 +163,12 @@ class Explorer( object ):
         self.camp = camp
         self.scene = scene
         self.view = maps.SceneView( scene )
+        self.time = 0
 
         # Update the view of all party members.
         for pc in camp.party:
             x,y = pc.pos
-            pfov.PCPointOfView( scene, x, y, 10 )
+            pfov.PCPointOfView( scene, x, y, 15 )
 
         # Focus on the first PC.
         x,y = camp.first_living_pc().pos
@@ -287,14 +292,43 @@ class Explorer( object ):
             else:
                 keep_going = False
 
+    def activate_monster( self, monster_zero ):
+        """Combat is starting. Activate all needed monsters."""
+
+
     def update_monsters( self ):
         for m in self.scene.contents:
             if isinstance( m, characters.Character ) and m not in self.camp.party:
                 # First handle movement.
-                if m.get_move():
-                    pass
+                if m.get_move() and ((self.time + hash(m)) % 35 == 1 ):
+                    rdel = random.choice( self.scene.DELTA8 )
+                    nupos = ( m.pos[0] + rdel[0], m.pos[1] + rdel[1] )
+
+                    if self.scene.on_the_map(nupos[0],nupos[1]) and not self.scene.map[nupos[0]][nupos[1]].blocks_walking() and not self.scene.get_character_at_spot(nupos):
+                        if m.team and m.team.home:
+                            if m.team.home.collidepoint( nupos ):
+                                m.pos = nupos
+                        else:
+                            m.pos = nupos
 
                 # Next, check visibility to PC.
+                if m.team and m.team.on_guard():
+                    pov = pfov.PointOfView( self.scene, m.pos[0], m.pos[1], 5 )
+                    in_sight = False
+                    for pc in self.camp.party:
+                        if pc.pos in pov.tiles:
+                            in_sight = True
+                            break
+                    if in_sight:
+                        react = m.team.check_reaction( self.camp )
+                        if react < teams.FRIENDLY_THRESHOLD:
+                            if react < teams.ENEMY_THRESHOLD:
+                                anims = [ animobs.SpeakAttack(m.pos,loop=16), ]
+                            else:
+                                anims = [ animobs.SpeakAngry(m.pos,loop=16), ]
+
+                            animobs.handle_anim_sequence( self.screen, self.view, anims )
+                            m.team.default_reaction = 999
 
 
     def go( self ):
@@ -313,10 +347,13 @@ class Explorer( object ):
                 self.view( self.screen )
                 pygame.display.flip()
 
+                self.time += 1
+
                 if self.order:
                     if not self.order( self ):
                         self.order = None
 
+                self.update_monsters()
 
             elif not self.order:
                 # Set the mouse cursor on the map.
@@ -351,12 +388,12 @@ class Explorer( object ):
 #                        anims = [ animobs.Spiral(animobpos ), ]
 
                         anims = []
-                        for x in range(-2,3):
-                            for y in range(-2,3):
-                                if ( abs(x) != 2 ) or ( abs(y) != 2 ):
-                                    ao = animobs.Spiral( (animobpos[0]+x,animobpos[1]+y) )
-#                                    ao.y_off = -20 + 5 * ( abs( x ) + abs( y ) )
-                                    anims.append( ao )
+
+                        area = pfov.PointOfView( self.scene, animobpos[0], animobpos[1], 5 )
+                        for a in area.tiles:
+                            ao = animobs.Nuclear( a )
+                            ao.y_off = -25 + 5 * ( abs( a[0]-animobpos[0] ) + abs( a[1]-animobpos[1] ) )
+                            anims.append( ao )
 
                         animobs.handle_anim_sequence( self.screen, self.view, anims )
 

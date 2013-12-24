@@ -19,6 +19,7 @@
 """
 
 import copy
+import math
 
 
 
@@ -333,16 +334,18 @@ def __checkView(activeViews, viewIndex):
 
 class PointOfView( object ):
     # This class constructs a field of vision.
-    def __init__(self, scene, x0, y0, radius):
+    def __init__(self, scene, x0, y0, radius, manhattan=False):
         self.x = x0
         self.y = y0
         self.scene = scene
         self.radius = radius
+        self.manhattan = manhattan
         self.tiles = set()
         fieldOfView( x0 , y0 , scene.width , scene.height , radius , self )
 
     def VisitTile( self , x , y ):
-        self.tiles.add( ( x , y ) )
+        if self.manhattan or ( math.sqrt( ( x-self.x )**2 + ( y-self.y )**2 ) <= self.radius ):
+            self.tiles.add( ( x , y ) )
 
     def TileBlocked( self , x , y ):
         if self.scene.on_the_map( x , y ):
@@ -354,7 +357,8 @@ class PCPointOfView( PointOfView ):
     # This class also constructs a field of vision, but automatically adds
     # the tiles it sees to the visible area of the map.
     def VisitTile( self , x , y ):
-        self.tiles.add( ( x , y ) )
-        if self.scene.on_the_map( x , y ):
-            self.scene.map[x][y].visible = True
+        if self.manhattan or ( math.sqrt( ( x-self.x )**2 + ( y-self.y )**2 ) <= self.radius ):
+            self.tiles.add( ( x , y ) )
+            if self.scene.on_the_map( x , y ):
+                self.scene.map[x][y].visible = True
 
