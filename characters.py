@@ -576,6 +576,10 @@ class Character(object):
             myvoice.add( dialogue.voice.SMART )
         return myvoice
 
+def roll_initiative( pc ):
+    """Convenience function for making initiative rolls."""
+    return pc.get_stat( stats.REFLEXES ) + random.randint( 1, 20 )
+
 if __name__ == '__main__':
     pc = Character()
     pc.levels.append( Ninja(3) )

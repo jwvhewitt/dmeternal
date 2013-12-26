@@ -2,6 +2,7 @@ import pygame
 import image
 import weakref
 import characters
+import math
 
 # Enumerated constants for sprite sheets.
 SPRITE_GROUND, SPRITE_WALL, SPRITE_BORDER, SPRITE_MISC, SPRITE_DECOR = range( 5 )
@@ -241,6 +242,9 @@ class Scene( object ):
                 npc = m
                 break
         return npc
+
+    def range( self, pos1, pos2 ):
+        return math.sqrt( ( pos1[0]-pos2[0] )**2 + ( pos1[1]-pos2[1] )**2 )
 
 
 OVERLAY_ITEM = 0

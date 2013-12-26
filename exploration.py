@@ -10,6 +10,7 @@ import animobs
 import characters
 import random
 import teams
+import combat
 
 
 # Commands should be callable objects which take the explorer and return a value.
@@ -292,10 +293,6 @@ class Explorer( object ):
             else:
                 keep_going = False
 
-    def activate_monster( self, monster_zero ):
-        """Combat is starting. Activate all needed monsters."""
-
-
     def update_monsters( self ):
         for m in self.scene.contents:
             if isinstance( m, characters.Character ) and m not in self.camp.party:
@@ -324,10 +321,14 @@ class Explorer( object ):
                         if react < teams.FRIENDLY_THRESHOLD:
                             if react < teams.ENEMY_THRESHOLD:
                                 anims = [ animobs.SpeakAttack(m.pos,loop=16), ]
+                                animobs.handle_anim_sequence( self.screen, self.view, anims )
+                                self.camp.fight = combat.Combat( self, m )
+                                print self.camp.fight.active
+                                m.team.default_reaction = 999
+                                break
                             else:
                                 anims = [ animobs.SpeakAngry(m.pos,loop=16), ]
-
-                            animobs.handle_anim_sequence( self.screen, self.view, anims )
+                                animobs.handle_anim_sequence( self.screen, self.view, anims )
                             m.team.default_reaction = 999
 
 
@@ -340,6 +341,9 @@ class Explorer( object ):
         pygame.display.flip()
 
         while keep_going:
+            if self.camp.fight:
+                pass
+
             # Get input and process it.
             gdi = pygwrap.wait_event()
 
@@ -396,7 +400,6 @@ class Explorer( object ):
                             anims.append( ao )
 
                         animobs.handle_anim_sequence( self.screen, self.view, anims )
-
 
 
 
