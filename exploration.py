@@ -31,6 +31,7 @@ class MoveTo( object ):
     def smart_downhill_dir( self, exp, pc ):
         """Return the best direction for the PC to move in."""
         best_d = None
+        random.shuffle( self.hmap.DELTA8 )
         heat = self.hmap.map[pc.pos[0]][pc.pos[1]]
         for d in self.hmap.DELTA8:
             x2 = d[0] + pc.pos[0]
@@ -73,7 +74,7 @@ class MoveTo( object ):
                             if target:
                                 target.pos = pc.pos
                             pc.pos = p2
-                            pfov.PCPointOfView( exp.scene, pc.pos[0], pc.pos[1], 10 )
+                            exp.scene.update_pc_position( pc )
                         elif first:
                             exp.bump_model( target )
                             keep_going = False
@@ -317,7 +318,7 @@ class Explorer( object ):
                             in_sight = True
                             break
                     if in_sight:
-                        react = m.team.check_reaction( self.camp )
+                        react = m.get_reaction( self.camp )
                         if react < teams.FRIENDLY_THRESHOLD:
                             if react < teams.ENEMY_THRESHOLD:
                                 anims = [ animobs.SpeakAttack(m.pos,loop=16), ]
@@ -342,7 +343,7 @@ class Explorer( object ):
 
         while keep_going:
             if self.camp.fight:
-                pass
+                self.camp.fight.go( self )
 
             # Get input and process it.
             gdi = pygwrap.wait_event()

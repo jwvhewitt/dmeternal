@@ -368,6 +368,7 @@ class CappedModifierList( list ):
 class Character(object):
     FRAME = 0
     TEMPLATES = ()
+    team = None
 
     def __init__( self, name = "", species = None, gender = stats.NEUTER, statline=None ):
         self.name = name
@@ -576,6 +577,12 @@ class Character(object):
             myvoice.add( dialogue.voice.SMART )
         return myvoice
 
+    def get_reaction( self, camp ):
+        if self.team:
+            return self.team.check_reaction( camp )
+        else:
+            return 999
+
 def roll_initiative( pc ):
     """Convenience function for making initiative rolls."""
     return pc.get_stat( stats.REFLEXES ) + random.randint( 1, 20 )
@@ -587,6 +594,7 @@ if __name__ == '__main__':
 
     print pc.rank()
     print pc.get_stat( stats.PHYSICAL_ATTACK )
+
 
     pc.statline[ stats.TOUGHNESS ] = 17
     print "HP at 17:" , pc.max_hp()

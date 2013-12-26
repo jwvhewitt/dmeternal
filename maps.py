@@ -3,6 +3,7 @@ import image
 import weakref
 import characters
 import math
+import pfov
 
 # Enumerated constants for sprite sheets.
 SPRITE_GROUND, SPRITE_WALL, SPRITE_BORDER, SPRITE_MISC, SPRITE_DECOR = range( 5 )
@@ -246,12 +247,16 @@ class Scene( object ):
     def range( self, pos1, pos2 ):
         return math.sqrt( ( pos1[0]-pos2[0] )**2 + ( pos1[1]-pos2[1] )**2 )
 
+    def update_pc_position( self, pc ):
+        pfov.PCPointOfView( self, pc.pos[0], pc.pos[1], 10 )
+
 
 OVERLAY_ITEM = 0
 OVERLAY_CURSOR = 1
 OVERLAY_ATTACK = 2
 OVERLAY_MOVETILE = 3
 OVERLAY_AOE = 4
+OVERLAY_CURRENTCHARA = 5
 
 SCROLL_STEP = 12
 

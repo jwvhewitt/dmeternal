@@ -1,5 +1,7 @@
 # Pathfinding algorithm.
 
+import pygame
+
 class HotTile( object ):
     def __init__( self ):
         self.heat = 9999
@@ -7,8 +9,8 @@ class HotTile( object ):
         self.block = False
 
 class HotMap( object ):
-    DELTA8 = ( (-1,-1), (0,-1), (1,-1), (-1,0), (1,0), (-1,1), (0,1), (1,1) )
-    def __init__( self, scene, hot_points ):
+    DELTA8 = [ (-1,-1), (0,-1), (1,-1), (-1,0), (1,0), (-1,1), (0,1), (1,1) ]
+    def __init__( self, scene, hot_points, limits=None ):
         """Calculate this hotmap given scene and set of hot points."""
         self.scene = scene
         self.map = [[ int(9999)
@@ -18,11 +20,19 @@ class HotMap( object ):
         for p in hot_points:
             self.map[p[0]][p[1]] = 0
 
+        if limits:
+            lo_x = max( limits.x, 1 )
+            hi_x = min( limits.x + limits.width + 1, scene.width - 1 )
+            lo_y = max( limits.y, 1 )
+            hi_y = min( limits.y + limits.height + 1, scene.height - 1 )
+        else:
+            lo_x,hi_x,lo_y,hi_y = 1, scene.width-1, 1, scene.height-1
+
         flag = True
         while flag:
             flag = False
-            for y in range( 1 , scene.height-1 ):
-                for x in range( 1 , scene.width-1 ):
+            for y in range( lo_y, hi_y ):
+                for x in range( lo_x, hi_x ):
                     if not scene.map[x][y].blocks_walking():
                         dh = 2 + self.map[x-1][y]
                         dv = 2 + self.map[x][y-1]
@@ -66,22 +76,29 @@ class PointMap( HotMap ):
         myset.add( dest )
         super( PointMap, self ).__init__( scene, myset )
 
+class MoveMap( HotMap ):
+    def __init__( self, scene, chara ):
+        myset = set()
+        myset.add( chara.pos )
+        speed = chara.get_move()
+        super( MoveMap, self ).__init__( scene, myset, limits=pygame.Rect(chara.pos[0]-speed, chara.pos[1]-speed, speed*2+1, speed*2+1 ) )
 
 
 if __name__=='__main__':
     import timeit
     import maps
     import random
+    import pygame
 
 
-    myscene = maps.Scene( 30 , 30 )
+    myscene = maps.Scene( 100 , 100 )
     for x in range( 5, myscene.width ):
         for y in range( 5, myscene.height ):
             if random.randint(1,3) == 1:
                 myscene.map[x][y].wall = maps.BASIC_WALL
 
     myset = set()
-    myset.add( (3,3) )
+    myset.add( (23,23) )
 
 
     class OldWay( object ):
@@ -93,15 +110,16 @@ if __name__=='__main__':
     class NewWay( object ):
         def __init__( self, m ):
             self.m = m
+            self.myrect = pygame.Rect( 20, 20, 5, 5 )
         def __call__(self):
-            NuHotMap( self.m, myset )
+            HotMap( self.m, myset, limits=self.myrect )
 
 
     t1 = timeit.Timer( OldWay( myscene ) )
     t2 = timeit.Timer( NewWay( myscene ) )
 
-    print t1.timeit(10)
-    print t2.timeit(10)
+    print t1.timeit(100)
+    print t2.timeit(100)
 
 
 
