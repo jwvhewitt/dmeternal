@@ -3,6 +3,7 @@ import teams
 import hotmaps
 import pygwrap
 import pygame
+import maps
 
 class TacticsRedraw( object ):
     def __init__( self, chara, comba, explo ):
@@ -14,7 +15,7 @@ class TacticsRedraw( object ):
     def __call__( self, screen ):
         self.explo.view( screen )
         pygwrap.default_border.render( screen, self.rect )
-        draw_text( screen, pygwrap.BIGFONT, str( self.chara ), self.rect )
+        pygwrap.draw_text( screen, pygwrap.BIGFONT, str( self.chara ), self.rect )
 
 
 class Combat( object ):
@@ -22,6 +23,7 @@ class Combat( object ):
         self.active = []
         self.scene = explo.scene
         self.camp = explo.camp
+        self.no_quit = True
 
         for m in explo.scene.contents:
             if isinstance( m, characters.Character ) and m.is_alive():
@@ -46,9 +48,9 @@ class Combat( object ):
         """Return True if the provided character can act right now."""
         return chara.is_alive()
 
-    def keep_going( self ):
+    def still_fighting( self ):
         """Keep playing as long as there are enemies, players, and no quit."""
-        return self.num_enemies() and self.camp.first_living_pc() and not pygwrap.GOT_QUIT
+        return self.num_enemies() and self.camp.first_living_pc() and self.no_quit and not pygwrap.GOT_QUIT
 
     def step( self, chara, hmap ):
         """Move chara to a better position according to hmap."""
@@ -76,7 +78,7 @@ class Combat( object ):
             return True
 
 
-    def move_player_to_spot( self, chara, pos ):
+    def move_player_to_spot( self, explo, chara, pos ):
         if self.scene.on_the_map( *pos ) and not self.scene.map[pos[0]][pos[1]].blocks_walking():
 #	        CreatePointHotMap( GB , X2 , Y2 , True );
 #	        WalkTowardsSpot := WalkTowardsGoal( GB , M , WalkError );
@@ -85,11 +87,11 @@ class Combat( object ):
 
     def do_player_action( self, explo, chara ):
         #Start by making a hotmap centered on PC, to see how far can move.
-        hm = hotmap.MoveMap( self.scene, chara )
+        hm = hotmaps.MoveMap( self.scene, chara )
 
         tacred = TacticsRedraw( chara, self, explo )
 
-        while self.can_act( chara ) and self.keep_going():
+        while self.can_act( chara ) and self.still_fighting():
             # Get input and process it.
             gdi = pygwrap.wait_event()
 
@@ -105,13 +107,12 @@ class Combat( object ):
 
                 if gdi.type == pygame.KEYDOWN:
                     if gdi.unicode == u"Q":
-                        pygame.GOT_QUIT = True
+                        self.no_quit = False
                 elif gdi.type == pygame.MOUSEBUTTONUP:
                     if gdi.button == 1:
                         # Left mouse button.
-                        if ( self.view.mouse_tile != self.camp.first_living_pc().pos ) and self.scene.on_the_map( *self.view.mouse_tile ):
-                            self.order = MoveTo( self.scene, self.view.mouse_tile )
-                            self.view.overlays.clear()
+                        if ( explo.view.mouse_tile != chara.pos ) and self.scene.on_the_map( *explo.view.mouse_tile ):
+                            self.move_player_to_spot( explo, chara, explo.view.mouse_tile )
 
 
     def do_npc_action( self, explo, chara ):
@@ -128,13 +129,13 @@ class Combat( object ):
         """Perform this combat."""
 
         n = 0
-        while self.keep_going():
+        while self.still_fighting():
             if self.active[n].is_alive():
                 self.do_combat_action( explo, self.active[n] )
             n += 1
             if n > len( self.active ):
                 n = 0
 
-        self.camp.fight = None
+
 
 

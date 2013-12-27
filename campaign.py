@@ -190,7 +190,7 @@ if __name__=='__main__':
 
 
     myroom = pygame.Rect(50,12,10,10)
-    myteam = teams.Team(default_reaction=-50, home=myroom)
+    myteam = teams.Team(default_reaction=-999, home=myroom)
     mymon = monsters.goblins.Goblin( team=myteam )
     mymon.pos = (55,17)
     myscene.contents.append( mymon )

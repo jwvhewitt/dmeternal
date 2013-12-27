@@ -80,8 +80,8 @@ class MoveMap( HotMap ):
     def __init__( self, scene, chara ):
         myset = set()
         myset.add( chara.pos )
-        speed = chara.get_move()
-        super( MoveMap, self ).__init__( scene, myset, limits=pygame.Rect(chara.pos[0]-speed, chara.pos[1]-speed, speed*2+1, speed*2+1 ) )
+        reach = ( chara.get_move() + 1 ) // 2
+        super( MoveMap, self ).__init__( scene, myset, limits=pygame.Rect(chara.pos[0]-reach, chara.pos[1]-reach, reach*2+1, reach*2+1 ) )
 
 
 if __name__=='__main__':

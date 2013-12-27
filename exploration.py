@@ -324,8 +324,6 @@ class Explorer( object ):
                                 anims = [ animobs.SpeakAttack(m.pos,loop=16), ]
                                 animobs.handle_anim_sequence( self.screen, self.view, anims )
                                 self.camp.fight = combat.Combat( self, m )
-                                print self.camp.fight.active
-                                m.team.default_reaction = 999
                                 break
                             else:
                                 anims = [ animobs.SpeakAngry(m.pos,loop=16), ]
@@ -341,9 +339,15 @@ class Explorer( object ):
         self.view( self.screen )
         pygame.display.flip()
 
-        while keep_going:
+        while keep_going and not pygwrap.GOT_QUIT:
             if self.camp.fight:
+                self.order = None
                 self.camp.fight.go( self )
+                if not self.camp.fight.no_quit:
+                    keep_going = False
+                    break
+                self.camp.fight = None
+
 
             # Get input and process it.
             gdi = pygwrap.wait_event()
