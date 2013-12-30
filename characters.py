@@ -454,7 +454,7 @@ class Character(object):
     def current_hp( self ):
         return self.max_hp() - self.hp_damage
 
-    def is_alive( self ):
+    def is_alright( self ):
         return self.current_hp() > 0
 
     def max_mp( self ):
@@ -582,6 +582,17 @@ class Character(object):
             return self.team.check_reaction( camp )
         else:
             return 999
+
+    def is_hostile( self, camp ):
+        """Return True if this character is hostile to the party."""
+        return self.get_reaction( camp ) < teams.ENEMY_THRESHOLD
+
+    def is_enemy( self, camp, other ):
+        """Return True if other is an enemy of this model."""
+        if self.is_hostile( camp ):
+            return not other.is_hostile( camp )
+        else:
+            return other.is_hostile( camp )
 
 def roll_initiative( pc ):
     """Convenience function for making initiative rolls."""

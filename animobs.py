@@ -16,6 +16,7 @@ class AnimOb( object ):
         self.y_off = y_off
         self.needs_deletion = False
         self.pos = pos
+        self.children = list()
 
     def update( self ):
         self.counter += 1
@@ -282,6 +283,19 @@ class SpeakSad( SpeakHello ):
         super(SpeakSad, self).__init__(pos=pos,loop=loop)
         self.frame = 4
 
+# Dynamically generated
+
+class Caption( AnimOb ):
+    def __init__(self, txt="???", pos=(0,0), loop=16, color=(250,250,250) ):
+        super(Caption, self).__init__(sprite_name=None,pos=pos,loop=loop,y_off=-16)
+        pygwrap.draw_text( self.sprite.bitmap, pygwrap.ANIMFONT, txt, pygame.Rect(0,17,54,20), color=color, justify=0 )
+    def update( self ):
+        self.counter += 1
+        self.y_off = 8 - 2*self.counter
+        if self.counter >= self.loop:
+            self.needs_deletion = True
+
+# Let it be known that the organizational principle of this program is "Fifteen Tons of Flax".
 
 class Projectile( AnimOb ):
     """An AnimOb which moves along a line."""
@@ -296,6 +310,7 @@ class Projectile( AnimOb ):
         self.needs_deletion = False
         self.pos = start_pos
         self.itinerary = self.get_line( start_pos[0], start_pos[1], end_pos[0], end_pos[1] )
+        self.children = list()
 
     def dir_frame_offset( self, start_pos, end_pos ):
         # There are 8 sprites for each projectile type, one for each of 
@@ -459,13 +474,13 @@ def handle_anim_sequence( screen, view, anims ):
         for a in anims[:]:
             if a.needs_deletion:
                 anims.remove( a )
+                anims += a.children
             else:
-                view.anims[a.pos] = a
+                view.anims[a.pos].append( a )
                 a.update()
         view( screen )
         pygame.display.flip()
-        while pygwrap.wait_event().type != pygwrap.TIMEREVENT:
-            pass
+        pygwrap.anim_delay()
     view.anims.clear()
 
 

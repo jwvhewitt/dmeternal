@@ -1,6 +1,8 @@
 # Pathfinding algorithm.
 
 import pygame
+import characters
+import random
 
 class HotTile( object ):
     def __init__( self ):
@@ -10,9 +12,14 @@ class HotTile( object ):
 
 class HotMap( object ):
     DELTA8 = [ (-1,-1), (0,-1), (1,-1), (-1,0), (1,0), (-1,1), (0,1), (1,1) ]
-    def __init__( self, scene, hot_points, limits=None ):
+    def __init__( self, scene, hot_points, obstacles=set(), limits=None, avoid_models=False ):
         """Calculate this hotmap given scene and set of hot points."""
         self.scene = scene
+
+        if avoid_models:
+            obstacles = self.list_model_positions().union( obstacles )
+
+        self.obstacles = obstacles
         self.map = [[ int(9999)
             for y in range(scene.height) ]
                 for x in range(scene.width) ]
@@ -33,7 +40,7 @@ class HotMap( object ):
             flag = False
             for y in range( lo_y, hi_y ):
                 for x in range( lo_x, hi_x ):
-                    if not scene.map[x][y].blocks_walking():
+                    if not self.blocks_movement( x, y ):
                         dh = 2 + self.map[x-1][y]
                         dv = 2 + self.map[x][y-1]
                         dd = 3 + self.map[x-1][y-1]
@@ -47,7 +54,7 @@ class HotMap( object ):
 
             for y in range( scene.height-2, 0, -1 ):
                 for x in range( scene.width - 2, 0, -1 ):
-                    if not scene.map[x][y].blocks_walking():
+                    if not self.blocks_movement( x, y ):
                         dh = 2 + self.map[x+1][y]
                         dv = 2 + self.map[x][y+1]
                         dd = 3 + self.map[x+1][y+1]
@@ -58,9 +65,20 @@ class HotMap( object ):
                             self.map[x][y] = dp
                             flag = True
 
+    def blocks_movement( self, x, y ):
+        return self.scene.map[x][y].blocks_walking() or (x,y) in self.obstacles
+
+    def list_model_positions( self ):
+        mylist = set()
+        for m in self.scene.contents:
+            if isinstance( m , characters.Character ):
+                mylist.add( m.pos )
+        return mylist
+
     def downhill_dir( self, pos ):
         """Return a dx,dy tuple showing the lower heat value."""
         best_d = None
+        random.shuffle( self.DELTA8 )
         heat = self.map[pos[0]][pos[1]]
         for d in self.DELTA8:
             x2 = d[0] + pos[0]
@@ -71,17 +89,18 @@ class HotMap( object ):
         return best_d
 
 class PointMap( HotMap ):
-    def __init__( self, scene, dest ):
+    def __init__( self, scene, dest, avoid_models = False ):
         myset = set()
         myset.add( dest )
-        super( PointMap, self ).__init__( scene, myset )
+        super( PointMap, self ).__init__( scene, myset, avoid_models=avoid_models )
 
 class MoveMap( HotMap ):
-    def __init__( self, scene, chara ):
+    """Calculates movement costs to different tiles. Only calcs as far as necessary."""
+    def __init__( self, scene, chara, avoid_models = False ):
         myset = set()
         myset.add( chara.pos )
         reach = ( chara.get_move() + 1 ) // 2
-        super( MoveMap, self ).__init__( scene, myset, limits=pygame.Rect(chara.pos[0]-reach, chara.pos[1]-reach, reach*2+1, reach*2+1 ) )
+        super( MoveMap, self ).__init__( scene, myset, limits=pygame.Rect(chara.pos[0]-reach, chara.pos[1]-reach, reach*2+1, reach*2+1 ), avoid_models=avoid_models )
 
 
 if __name__=='__main__':

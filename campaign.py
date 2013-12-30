@@ -28,9 +28,10 @@ import stats
 
 class Campaign( object ):
     """A general holder for all the stuff that goes into a DME campaign."""
-    def __init__( self, name = "BobDwarf19" ):
+    def __init__( self, name = "BobDwarf19", scene=None ):
         self.name = name
         self.party = []
+        self.scene = scene
         self.scenes = []
         self.fight = None
 
@@ -38,7 +39,7 @@ class Campaign( object ):
         """Return the first living PC in the party."""
         flp = None
         for pc in self.party:
-            if pc.is_alive():
+            if pc.is_alright():
                 flp = pc
                 break
         return flp
@@ -48,7 +49,7 @@ class Campaign( object ):
         flp = None
         best = -999
         for pc in self.party:
-            if pc.is_alive() and pc.get_stat( stats.CHARISMA ) > best:
+            if pc.is_alright() and pc.get_stat( stats.CHARISMA ) > best:
                 flp = pc
                 best = pc.get_stat( stats.CHARISMA )
         return flp
@@ -110,6 +111,7 @@ if __name__=='__main__':
     # Set the screen size.
     screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
 #    screen = pygame.display.set_mode( (800,600) )
+#    screen = pygame.display.set_mode( (800,600), pygame.FULLSCREEN )
 
     pygame.init()
     pygwrap.init()
@@ -195,7 +197,7 @@ if __name__=='__main__':
     mymon.pos = (55,17)
     myscene.contents.append( mymon )
 
-    camp = Campaign()
+    camp = Campaign( scene=myscene )
 
     camp.party = load_party( screen )
     x = 23
@@ -206,6 +208,6 @@ if __name__=='__main__':
         pcpov = pfov.PCPointOfView( myscene, 24, 10, 15 )
 
     if camp.party:
-        exp = exploration.Explorer( screen, camp, myscene )
+        exp = exploration.Explorer( screen, camp )
         exp.go()
 

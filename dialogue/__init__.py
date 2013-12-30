@@ -127,6 +127,7 @@ def replace_all_refs( conversation , cue , exchange ):
         elif isinstance( r.destination , Offer ):
             replace_all_refs( r.destination , cue , exchange )
 
+# We have Markov Cheney right where he wants us.
 
 def build_conversation( start,npc_offers ):
     # Given a list of offers, construct a conversation which uses as many of

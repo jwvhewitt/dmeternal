@@ -180,6 +180,8 @@ def make_character( screen ):
     else:
         return None
 
+# Embrace the chaos. Or at least give it a firm handshake.
+
 def make_and_save_character( screen ):
     pc = make_character( screen )
     if pc:

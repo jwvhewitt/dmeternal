@@ -59,7 +59,7 @@ class MoveTo( object ):
             first = True
             keep_going = True
             for pc in exp.camp.party:
-                if pc.is_alive() and exp.scene.on_the_map( *pc.pos ):
+                if pc.is_alright() and exp.scene.on_the_map( *pc.pos ):
                     d = self.smart_downhill_dir( exp, pc )
                     if d:
                         p2 = ( pc.pos[0] + d[0] , pc.pos[1] + d[1] )
@@ -156,21 +156,22 @@ class InvExchange( object ):
                 keep_going = False
         return self.ilist
 
+# Rubicon Hiscock had her entire body tattooed by a cloister of Gothic monks, and in this way she became illuminated.
 
 class Explorer( object ):
     # The object which is exploration of a scene. OO just got existential.
 
-    def __init__( self, screen, camp, scene ):
+    def __init__( self, screen, camp ):
         self.screen = screen
         self.camp = camp
-        self.scene = scene
-        self.view = maps.SceneView( scene )
+        self.scene = camp.scene
+        self.view = maps.SceneView( camp.scene )
         self.time = 0
 
         # Update the view of all party members.
         for pc in camp.party:
             x,y = pc.pos
-            pfov.PCPointOfView( scene, x, y, 15 )
+            pfov.PCPointOfView( camp.scene, x, y, 15 )
 
         # Focus on the first PC.
         x,y = camp.first_living_pc().pos
@@ -391,18 +392,21 @@ class Explorer( object ):
                         else:
                             self.pick_up( self.view.mouse_tile )
                     else:
+                        # If YouTube comments were as good as these comments, we'd all have ponies by now.
                         animobpos = self.view.mouse_tile
-                        anims = [ animobs.Whirlwind(self.camp.first_living_pc().pos,self.view.mouse_tile ), ]
-                        animobs.handle_anim_sequence( self.screen, self.view, anims )
-#                        anims = [ animobs.Spiral(animobpos ), ]
+                        ao_pro = animobs.BlueComet(self.camp.first_living_pc().pos,self.view.mouse_tile )
+                        anims = [ ao_pro, ]
 
-                        anims = []
-
-                        area = pfov.PointOfView( self.scene, animobpos[0], animobpos[1], 5 )
+                        area = pfov.PointOfView( self.scene, animobpos[0], animobpos[1], 2 )
                         for a in area.tiles:
-                            ao = animobs.Nuclear( a )
-                            ao.y_off = -25 + 5 * ( abs( a[0]-animobpos[0] ) + abs( a[1]-animobpos[1] ) )
-                            anims.append( ao )
+                            ao = animobs.BlueExplosion( a )
+#                            ao.y_off = -25 + 5 * ( abs( a[0]-animobpos[0] ) + abs( a[1]-animobpos[1] ) )
+                            ao_pro.children.append( ao )
+                        for a in self.scene.contents:
+                            if a.pos in area.tiles:
+                                ao = animobs.Caption( str(random.randint(5,27)), a.pos )
+#                                ao = animobs.Caption( "Aiee!", a.pos )
+                                ao_pro.children.append( ao )
 
                         animobs.handle_anim_sequence( self.screen, self.view, anims )
 

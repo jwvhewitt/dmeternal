@@ -24,6 +24,7 @@ INPUT_CURSOR = None
 SMALLFONT = None
 ITALICFONT = None
 BIGFONT = None
+ANIMFONT = None
 
 INIT_DONE = False
 
@@ -59,6 +60,10 @@ def wait_event():
         pygame.event.clear( TIMEREVENT )
 
     return ev
+
+def anim_delay():
+    while wait_event().type != TIMEREVENT:
+        pass
 
 
 class Border( object ):
@@ -255,6 +260,9 @@ def init():
 
         global SMALLFONT
         SMALLFONT = pygame.font.Font( util.image_dir( "VeraBd.ttf" ) , 12 )
+
+        global ANIMFONT
+        ANIMFONT = pygame.font.Font( util.image_dir( "DejaVuSansCondensed-Bold.ttf" ) , 16 )
 
         global ITALICFONT
         ITALICFONT = pygame.font.Font( util.image_dir( "VeraBI.ttf" ) , 12 )

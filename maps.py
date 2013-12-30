@@ -4,6 +4,7 @@ import weakref
 import characters
 import math
 import pfov
+import collections
 
 # Enumerated constants for sprite sheets.
 SPRITE_GROUND, SPRITE_WALL, SPRITE_BORDER, SPRITE_MISC, SPRITE_DECOR = range( 5 )
@@ -239,7 +240,7 @@ class Scene( object ):
         """Find and return first character at given position."""
         npc = None
         for m in self.contents:
-            if isinstance( m , characters.Character ) and m.pos == pos and m.is_alive():
+            if isinstance( m , characters.Character ) and m.pos == pos and m.is_alright():
                 npc = m
                 break
         return npc
@@ -267,7 +268,7 @@ class SceneView( object ):
             self.sprites[k] = image.Image( v, 54, 54 )
         self.extrasprite = image.Image( "sceneview_extras.png", 54, 54 )
         self.overlays = dict()
-        self.anims = dict()
+        self.anims = collections.defaultdict(list)
 
         self.modelmap = dict()
         self.modelsprite = weakref.WeakKeyDictionary()
@@ -430,7 +431,7 @@ class SceneView( object ):
         self.modelmap.clear()
         itemmap = dict()
         for m in self.scene.contents:
-            if isinstance( m , characters.Character ) and m.is_alive():
+            if isinstance( m , characters.Character ) and m.is_alright():
                 self.modelmap[ tuple( m.pos ) ] = m
             else:
                 itemmap[ tuple( m.pos ) ] = True
@@ -494,9 +495,10 @@ class SceneView( object ):
                             self.modelsprite[ m ] = msprite
                         msprite.render( screen, dest, m.FRAME )
 
-                    m = self.anims.get( (x,y) , None )
-                    if m:
-                        m.render( self, screen, dest )
+                    mlist = self.anims.get( (x,y) , None )
+                    if mlist:
+                        for m in mlist:
+                            m.render( self, screen, dest )
 
 
         self.phase = ( self.phase + 1 ) % 600
