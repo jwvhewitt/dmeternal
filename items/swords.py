@@ -34,12 +34,23 @@ class Broadsword( Longsword ):
     true_desc = ""
     avatar_frame = 2
     mass = 45
+    attackdata = Attack( (2,4,0) )
 
 class Wakizashi( Longsword ):
     true_name = "Wakizashi"
     true_desc = ""
     avatar_frame = 18
     mass = 35
+
+class Falchion( Item ):
+    true_name = "Falchion"
+    true_desc = ""
+    itemtype = SWORD
+    avatar_image = "avatar_sword.png"
+    avatar_frame = 8
+    mass = 42
+    attackdata = Attack( (1,8,0), double_handed = True )
+
 
 class BastardSword( Item ):
     true_name = "Bastard Sword"

@@ -1,6 +1,8 @@
 import stats
 import image
 import inspect
+import effects
+import animobs
 
 # Enumerated constants for the item slots.
 # Note that these are defined in the order in which they're applied to avatar.
@@ -44,16 +46,18 @@ SHOES = SingType( "SHOES", "Shoes", slot = FEET )
 BOOTS = SingType( "BOOTS", "Boots", slot = FEET )
 CLOAK = SingType( "CLOAK", "Cloak", slot = BACK )
 HOLYSYMBOL = SingType( "HOLYSYMBOL", "Symbol", slot = HAND2 )
+WAND = SingType( "WAND", "Wand", slot = HAND1 )
 
 class Attack( object ):
     def __init__( self, damage = (1,6,0), skill_mod = stats.STRENGTH, damage_mod = stats.STRENGTH, \
-         double_handed = False, element = stats.RESIST_SLASHING, reach = 1 ):
+         double_handed = False, element = stats.RESIST_SLASHING, reach = 1, hit_anim=animobs.RedBoom ):
         self.damage = damage
         self.skill_mod = skill_mod
         self.damage_mod = damage_mod
         self.double_handed = double_handed
         self.element = element
         self.reach = reach
+        self.hit_anim = hit_anim
     def cost( self ):
         """Return the GP value of this attack."""
         # Calculate the maximum damage that can be rolled.
@@ -63,6 +67,11 @@ class Attack( object ):
         # Modify for range; each point increases cost by a third.
         if self.reach > 1:
             it = it * ( self.reach + 2 ) // 3
+        # If weapon performance unaffected by stats, make it cheaper.
+        if not self.skill_mod:
+            it = ( it * 4 ) // 5
+        if not self.damage_mod:
+            it = ( it * 4 ) // 5
         # Multiply by element cost.
         it *= self.element.element_cost_mod
         return it
@@ -74,6 +83,15 @@ class Attack( object ):
         if self.reach > 1:
             it = it + ", Range:{0}".format( self.reach )
         return it
+    def get_effect( self, user, att_modifier ):
+        """Generate an effect tree for this attack."""
+        hit = effects.HealthDamage( att_dice=self.damage, stat_bonus=self.damage_mod, element=self.element, anim=self.hit_anim )
+        if self.double_handed:
+            hit.stat_mod = 1.5
+        miss = effects.NoEffect( anim=animobs.SmallBoom )
+        roll = effects.PhysicalAttackRoll( att_stat=self.skill_mod, att_modifier=att_modifier, on_success=[hit,], on_failure=[miss,] )
+
+        return roll
 
 class Item( object ):
     true_name = "Item"
@@ -82,11 +100,12 @@ class Item( object ):
     itemtype = GENERIC
     identified = False
     attackdata = None
-    quantity = 0
+#    quantity = 0
     avatar_image = None
     avatar_frame = 0
     mass = 1
     equipped = False
+    shot_anim=None
     def cost( self ):
         it = 1
         if self.statline != None:
@@ -121,9 +140,85 @@ class Item( object ):
             smod.append( str(k) + ":" + "{0:+}".format( v ) )
         return ", ".join( smod )
 
+    def can_attack( self, user ):
+        """Return True if this weapon can be used to attack right now."""
+        return True
+    def spend_attack_price( self, user ):
+        """Spend this weapon's attack price."""
+        pass
+
     @property
     def slot( self ):
         return self.itemtype.slot
+
+class MissileWeapon( Item ):
+    AMMOTYPE = ARROW
+    def cost( self ):
+        it = 1
+        if self.statline != None:
+            it += self.statline.cost()
+        if self.attackdata != None:
+            # Missile weapons only pay half normal cost for attackdata.
+            it += self.attackdata.cost() // 2
+        return it
+    def can_attack( self, user ):
+        """Return True if this weapon can be used to attack right now."""
+        h2 = user.inventory.get_equip( HAND2 )
+        return h2 and h2.itemtype == self.AMMOTYPE
+    def spend_attack_price( self, user ):
+        """Spend this weapon's attack price."""
+        h2 = user.inventory.get_equip( HAND2 )
+        h2.quantity += -1
+        if h2.quantity < 1:
+            user.inventory.remove( h2 )
+
+class Ammo( Item ):
+    quantity = 20
+    mass_per_shot = 1
+    itemtype = ARROW
+    cost_per_shot = 1
+
+    def cost( self ):
+        it = self.cost_per_shot * self.quantity
+        if self.statline != None:
+            it += self.statline.cost()
+        if self.attackdata != None:
+            it += self.attackdata.cost()
+        return it
+
+    def __str__( self ):
+        return "{0} [{1}]".format( self.true_name, self.quantity )
+
+    @property
+    def mass( self ):
+        return self.quantity * self.mass_per_shot
+
+class ManaWeapon( Item ):
+    MP_COST = 1
+    def cost( self ):
+        it = 1
+        if self.statline != None:
+            it += self.statline.cost()
+        if self.attackdata != None:
+            # Mana weapons only pay 3/4 normal cost for attackdata.
+            it += ( self.attackdata.cost() * 3 ) // 4
+        return it
+    def stat_desc( self ):
+        """Return descriptions of all stat modifiers provided."""
+        smod = []
+        if self.attackdata:
+            smod.append( self.attackdata.stat_desc() )
+            if self.MP_COST:
+                smod.append( "{0} MP".format( self.MP_COST ) )
+        for k,v in self.statline.iteritems():
+            smod.append( "{0}:{1:+}".format( str(k) , v ) )
+        return ", ".join( smod )
+    def can_attack( self, user ):
+        """Return True if this weapon can be used to attack right now."""
+        return user.current_mp() >= self.MP_COST
+    def spend_attack_price( self, user ):
+        """Spend this weapon's attack price."""
+        user.mp_damage += self.MP_COST
 
 class Clothing( Item ):
     true_name = "Travelers Garb"
@@ -160,6 +255,7 @@ class Clothing( Item ):
 
 
 import axes
+import bows
 import cloaks
 import clothes
 import daggers
@@ -170,18 +266,21 @@ import lightarmor
 import maces
 import polearms
 import shoes
+import slings
 import staves
 import swords
+import wands
 
 # Compile the items into a useful list.
 ITEM_LIST = []
 def harvest( mod ):
     for name in dir( mod ):
         o = getattr( mod, name )
-        if inspect.isclass( o ) and issubclass( o , Item ) and o is not Item:
+        if inspect.isclass( o ) and issubclass( o , Item ) and o not in (Item, MissileWeapon, Ammo, ManaWeapon, Clothing):
             ITEM_LIST.append( o )
 
 harvest( axes )
+harvest( bows )
 harvest( cloaks )
 harvest( clothes )
 harvest( daggers )
@@ -192,8 +291,10 @@ harvest( lightarmor )
 harvest( maces )
 harvest( polearms )
 harvest( shoes )
+harvest( slings )
 harvest( staves )
 harvest( swords )
+harvest( wands )
 
 
 class Backpack( list ):

@@ -1,9 +1,12 @@
 import stats
 import random
+import animobs
 
 class NoEffect( object ):
     """An effect that does nothing. Good for placing anims, subclass of the rest."""
     def __init__(self, children=(), anim=None ):
+        if not children:
+            children = list()
         self.children = children
         self.anim = anim
 
@@ -23,12 +26,16 @@ class NoEffect( object ):
             nfx( camp, originator, pos, anims )
 
 class PhysicalAttackRoll( NoEffect ):
-    def __init__(self, att_skill=stats.MAGIC_ATTACK, att_stat=stats.INTELLIGENCE, \
-      att_modifier=0, on_success=(), on_failure=(), anim=None ):
+    def __init__(self, att_skill=stats.PHYSICAL_ATTACK, att_stat=stats.REFLEXES, \
+      att_modifier=0, on_success=None, on_failure=None, anim=None ):
         self.att_skill = att_skill
         self.att_stat = att_stat
         self.att_modifier = att_modifier
+        if not on_success:
+            on_success = list()
         self.on_success = on_success
+        if not on_failure:
+            on_failure = list()
         self.on_failure = on_failure
         self.anim = anim
 
@@ -36,8 +43,8 @@ class PhysicalAttackRoll( NoEffect ):
         """Make attack roll vs target's physical defense."""
         target = camp.scene.get_character_at_spot( pos )
         if target:
-            atroll = random.randint(1,100) + originator.get_stat( self.att_skill ) + originator.get_stat_bonus( self.att_stat ) + self.att_modifier
-            deroll = min( 51 + target.get_defense() , 95 )
+            atroll = random.randint(1,100)
+            deroll = min( 51 + target.get_defense() - originator.get_stat( self.att_skill ) - originator.get_stat_bonus( self.att_stat ) - self.att_modifier , 95 )
             if atroll > deroll:
                 return self.on_success
             else:
@@ -48,13 +55,17 @@ class PhysicalAttackRoll( NoEffect ):
 class OpposedRoll( NoEffect ):
     def __init__(self, att_skill=stats.MAGIC_ATTACK, att_stat=stats.INTELLIGENCE, \
       att_modifier=0, def_skill=stats.MAGIC_DEFENSE, def_stat=stats.PIETY, \
-      on_success=(), on_failure=(), anim=None ):
+      on_success=None, on_failure=None, anim=None ):
         self.att_skill = att_skill
         self.att_stat = att_stat
         self.att_modifier = att_modifier
         self.def_skill = def_skill
         self.def_stat = def_stat
+        if not on_success:
+            on_success = list()
         self.on_success = on_success
+        if not on_failure:
+            on_failure = list()
         self.on_failure = on_failure
         self.anim = anim
 
@@ -62,8 +73,8 @@ class OpposedRoll( NoEffect ):
         """Make opposed rolls by orginator, target. If no target, count as failure."""
         target = camp.scene.get_character_at_spot( pos )
         if target:
-            atroll = random.randint(1,100) + originator.get_stat( self.att_skill ) + originator.get_stat_bonus( self.att_stat ) + self.att_modifier
-            deroll = min( 51 + target.get_stat( self.def_skill ) + target.get_stat_bonus( self.def_stat ) , 95 )
+            atroll = random.randint(1,100)
+            deroll = min( 51 + target.get_stat( self.def_skill ) + target.get_stat_bonus( self.def_stat ) - originator.get_stat( self.att_skill ) - originator.get_stat_bonus( self.att_stat ) - self.att_modifier , 95 )
             if atroll > deroll:
                 return self.on_success
             else:
@@ -73,13 +84,19 @@ class OpposedRoll( NoEffect ):
 
 class HealthDamage( NoEffect ):
     def __init__(self, att_dice=(1,6,0), stat_bonus=None, stat_mod=1, element=None, \
-      on_death=(), on_success=(), on_failure=(), anim=None ):
+      on_death=None, on_success=None, on_failure=None, anim=None ):
         self.att_dice = att_dice
         self.stat_bonus = stat_bonus
         self.stat_mod = stat_mod
         self.element = element
+        if not on_death:
+            on_death = list()
         self.on_death = on_death
+        if not on_success:
+            on_success = list()
         self.on_success = on_success
+        if not on_failure:
+            on_failure = list()
         self.on_failure = on_failure
         self.anim = anim
 
@@ -87,9 +104,9 @@ class HealthDamage( NoEffect ):
         """Apply some hurting to whoever is in the indicated tile."""
         target = camp.scene.get_character_at_spot( pos )
         if target:
-            dmg = sum( random.randint(1,self.dice[1]) for x in range( self.dice[0] ) ) + self.dice[2]
+            dmg = sum( random.randint(1,self.att_dice[1]) for x in range( self.att_dice[0] ) ) + self.att_dice[2]
             if self.stat_bonus and originator:
-                stat = floor( originator.get_stat( self.stat_bonus ) * self.stat_mod )
+                stat = int( originator.get_stat( self.stat_bonus ) * self.stat_mod )
                 dmg = max( dmg + ( stat - 11 ) // 2 , 1 )
             if self.element:
                 resist = target.get_stat( self.element )
@@ -99,6 +116,8 @@ class HealthDamage( NoEffect ):
                 elif dmg < 1:
                     dmg = 0
             target.hp_damage += dmg
+
+            anims.append( animobs.Caption( str(dmg), pos ) )
 
             if target.is_alright():
                 if dmg > 0:

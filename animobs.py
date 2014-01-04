@@ -166,7 +166,7 @@ class YellowExplosion( AnimOb ):
 # fx_blizzard.png
 
 class Blizzard( AnimOb ):
-    def __init__(self, pos=(0,0), loop=1 ):
+    def __init__(self, pos=(0,0), loop=0 ):
         super(Blizzard, self).__init__(sprite_name="fx_blizzard.png",pos=pos,start_frame=0,end_frame=15,loop=loop,ticks_per_frame=1)
 
 # fx_bubbles.png
@@ -288,7 +288,7 @@ class SpeakSad( SpeakHello ):
 class Caption( AnimOb ):
     def __init__(self, txt="???", pos=(0,0), loop=16, color=(250,250,250) ):
         super(Caption, self).__init__(sprite_name=None,pos=pos,loop=loop,y_off=-16)
-        pygwrap.draw_text( self.sprite.bitmap, pygwrap.ANIMFONT, txt, pygame.Rect(0,17,54,20), color=color, justify=0 )
+        pygwrap.draw_text( self.sprite.bitmap, pygwrap.ANIMFONT, txt, pygame.Rect(0,0,54,20), color=color, justify=0 )
     def update( self ):
         self.counter += 1
         self.y_off = 8 - 2*self.counter

@@ -28,6 +28,7 @@ class MerchantGarb( Clothing ):
     avatar_frame = 2
     male_frame = 1
     pants_frame = 6
+    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 5, stats.RESIST_PIERCING: 5 })
     mass = 20
 
 class MageRobe( Clothing ):

@@ -5,6 +5,16 @@ import rpgmenu
 import image
 import items
 
+EL_NAME = ( "Light", "Heavy", "Severe" )
+def encumberance_desc( pc, show_ceiling=True ):
+    """Return a string describing this PC's encumberance level."""
+    mass = sum( i.mass for i in pc.inventory )
+    ec = pc.get_encumberance_ceilings()
+    el = pc.encumberance_level()
+    if show_ceiling:
+        return "{0}.{1}/{2}.{3}lbs {4}".format( mass//10, mass%10, ec[el]//10, ec[el]%10, EL_NAME[el] )
+    else:
+        return "{0}.{1}lbs {2}".format( mass//10, mass%10, EL_NAME[el] )
 
 class CharacterSheet( pygame.Rect ):
     # Note that the display will be larger than this, because the border is
@@ -21,12 +31,13 @@ class CharacterSheet( pygame.Rect ):
         stats.RESIST_POISON, stats.RESIST_WATER, stats.RESIST_WIND, \
         stats.RESIST_LUNAR, stats.RESIST_SOLAR, stats.RESIST_ATOMIC )
 
-    def __init__( self, pc, x=0, y=0, screen = None ):
+    def __init__( self, pc, x=0, y=0, screen = None, camp = None ):
         if screen:
             x = screen.get_width() // 2 - self.WIDTH
             y = screen.get_height() // 2 - self.HEIGHT // 2 + 32
         super(CharacterSheet, self).__init__(x,y,self.WIDTH,self.HEIGHT)
         self.pc = pc
+        self.camp = camp
         self.regenerate_avatar()
 
     def regenerate_avatar( self ):
@@ -68,7 +79,16 @@ class CharacterSheet( pygame.Rect ):
         self.just_print( screen, self.x, y, "HP:", str( self.pc.current_hp() ) + "/" + str( self.pc.max_hp() ) )
         y += pygwrap.SMALLFONT.get_linesize()
         self.just_print( screen, self.x, y, "MP:", str( self.pc.current_mp() ) + "/" + str( self.pc.max_mp() ) )
+        y += pygwrap.SMALLFONT.get_linesize() * 2
+        if self.camp:
+            self.just_print( screen, self.x, y, "Gold:", str( self.camp.gold ) )
+        else:
+            self.just_print( screen, self.x, y, "Gold:", "0" )
         y += pygwrap.SMALLFONT.get_linesize()
+        self.just_print( screen, self.x, y, "Encumberance:", "" )
+        y += pygwrap.SMALLFONT.get_linesize()
+        self.just_print( screen, self.x, y, "", encumberance_desc( self.pc, False ), width=135 )
+
 
         # Column 2 - skills
         y = self.y + self.BODY_Y
@@ -240,6 +260,9 @@ class InvExchangeRedrawer( object ):
             pygwrap.default_border.render( screen , self.rect1 )
             if self.pc:
                 pygwrap.draw_text( screen, pygwrap.BIGFONT, str( self.pc ), self.rect1, justify=0, color=(240,240,240) )
+                myrect = pygame.Rect( self.rect1.x, self.rect1.y + pygwrap.BIGFONT.get_linesize(), self.rect1.width, 32 )
+                pygwrap.draw_text( screen, pygwrap.ITALICFONT, "carrying " + encumberance_desc( self.pc ), myrect, justify=0 )
+
         if self.rect2:
             pygwrap.default_border.render( screen , self.rect2 )
             if self.menu:
@@ -260,8 +283,8 @@ class LeftMenu( rpgmenu.Menu ):
     # This menu appears in what is normally the character sheet area.
     def __init__( self, screen, predraw = None, border=None ):
         x = screen.get_width() // 2 - CharacterSheet.WIDTH
-        y = screen.get_height() // 2 - CharacterSheet.HEIGHT // 2 + 40 + pygwrap.BIGFONT.get_linesize()
-        super(LeftMenu, self).__init__(screen,x,y,CharacterSheet.WIDTH,CharacterSheet.HEIGHT - 8 - pygwrap.BIGFONT.get_linesize(), border=border)
+        y = screen.get_height() // 2 - CharacterSheet.HEIGHT // 2 + 40 + pygwrap.BIGFONT.get_linesize() * 2
+        super(LeftMenu, self).__init__(screen,x,y,CharacterSheet.WIDTH,CharacterSheet.HEIGHT - pygwrap.BIGFONT.get_linesize() * 2, border=border)
         self.predraw = predraw
 
 

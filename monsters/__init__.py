@@ -6,6 +6,7 @@ import chargen
 import namegen
 from dialogue import voice
 
+import giants
 import goblins
 
 # Compile the monsters into a useful list.
@@ -16,6 +17,7 @@ def harvest( mod ):
         if inspect.isclass( o ) and issubclass( o , base.Monster ) and o is not base.Monster:
             MONSTER_LIST.append( o )
 
+harvest( giants )
 harvest( goblins )
 
 VOICE_TO_NAMEGEN = { voice.ORCISH: namegen.ORC, voice.ELVEN: namegen.ELF, \
@@ -23,11 +25,11 @@ VOICE_TO_NAMEGEN = { voice.ORCISH: namegen.ORC, voice.ELVEN: namegen.ELF, \
     voice.GREEK: namegen.GREEK, voice.KITTEH: namegen.JAPANESE, \
     voice.GNOMIC: namegen.GNOME, voice.HURTHISH: namegen.HURTHLING }
 
+NPC_CLASSES = ( base.Peasant, base.Merchant )
+
 def generate_npc( species=None, job=None, gender=None, rank=None, team=None ):
     if not species:
         species = random.choice( characters.PC_SPECIES )
-    if not job:
-        job = random.choice( characters.PC_CLASSES )
     if not gender:
         gender = random.randint(0,1)
     if not rank:
@@ -36,6 +38,10 @@ def generate_npc( species=None, job=None, gender=None, rank=None, team=None ):
     npc = characters.Character( species=species(), gender=gender )
     npc.roll_stats()
     npc.team = team
+
+    if not job:
+        choices = chargen.get_possible_levels( npc ) + chargen.get_possible_levels( npc, NPC_CLASSES )
+        job = random.choice( choices )
 
     ji = job( rank=rank, pc=npc )
     npc.levels.append( ji )

@@ -12,6 +12,7 @@ class Goblin( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 12
     VOICE = dialogue.voice.ORCISH
+    GP_VALUE = 5
 
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_CRUSHING )
 

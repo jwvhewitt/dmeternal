@@ -5,6 +5,7 @@ import characters
 import math
 import pfov
 import collections
+import pygwrap
 
 # Enumerated constants for sprite sheets.
 SPRITE_GROUND, SPRITE_WALL, SPRITE_BORDER, SPRITE_MISC, SPRITE_DECOR = range( 5 )
@@ -245,7 +246,7 @@ class Scene( object ):
                 break
         return npc
 
-    def range( self, pos1, pos2 ):
+    def distance( self, pos1, pos2 ):
         return math.sqrt( ( pos1[0]-pos2[0] )**2 + ( pos1[1]-pos2[1] )**2 )
 
     def update_pc_position( self, pc ):
@@ -406,6 +407,36 @@ class SceneView( object ):
         for m in models:
             self.modelsprite[ m ] = m.generate_avatar()
 
+    def draw_caption( self, screen, center, txt ):
+        myimage = pygwrap.TINYFONT.render( txt, True, (240,240,240) )
+        mydest = myimage.get_rect(center=center)
+        myfill = pygame.Rect( mydest.x - 2, mydest.y - 1, mydest.width + 4, mydest.height + 2 )
+        screen.fill( (36,37,36), myfill )
+        screen.blit( myimage, mydest )
+
+    def quick_model_status( self, screen, dest, model ):
+        # Do a quick model status for this model.
+        self.draw_caption( screen, (dest.centerx,dest.y-8), str( model ) )
+
+        box = pygame.Rect( dest.x + 7, dest.y , 40, 3 )
+        screen.fill( ( 250, 0, 0, 200 ), box )
+        hp = model.max_hp()
+        hpd = min( model.hp_damage, hp )
+        if hp > 0:
+            box.x += box.w - ( hpd * box.w ) // hp
+            box.w = dest.x + 7 + box.w - box.x
+            screen.fill( (120, 0, 0, 100), box )
+
+        box = pygame.Rect( dest.x + 7, dest.y + 4 , 40, 3 )
+        screen.fill( ( 0, 150, 250, 200 ), box )
+        hp = model.max_mp()
+        hpd = min( model.mp_damage, hp )
+        if hp > 0:
+            box.x += box.w - ( hpd * box.w ) // hp
+            box.w = dest.x + 7 + box.w - box.x
+            screen.fill( (0, 0, 120, 100), box )
+
+
     def __call__( self , screen ):
         """Draws this mapview to the provided screen."""
         screen_area = screen.get_rect()
@@ -431,7 +462,7 @@ class SceneView( object ):
         self.modelmap.clear()
         itemmap = dict()
         for m in self.scene.contents:
-            if isinstance( m , characters.Character ) and m.is_alright():
+            if isinstance( m , characters.Character ):
                 self.modelmap[ tuple( m.pos ) ] = m
             else:
                 itemmap[ tuple( m.pos ) ] = True
@@ -487,18 +518,24 @@ class SceneView( object ):
                         self.extrasprite.render( screen, dest, OVERLAY_ITEM )
 
 
-                    m = self.modelmap.get( (x,y) , None )
-                    if m:
-                        msprite = self.modelsprite.get( m , None )
+                    modl = self.modelmap.get( (x,y) , None )
+                    if modl:
+                        msprite = self.modelsprite.get( modl , None )
                         if not msprite:
-                            msprite = m.generate_avatar()
-                            self.modelsprite[ m ] = msprite
-                        msprite.render( screen, dest, m.FRAME )
+                            msprite = modl.generate_avatar()
+                            self.modelsprite[ modl ] = msprite
+                        msprite.render( screen, dest, modl.FRAME )
+
+                    if ( x==tile_x ) and ( y==tile_y) and modl:
+                        self.quick_model_status( screen, dest, modl )
 
                     mlist = self.anims.get( (x,y) , None )
                     if mlist:
                         for m in mlist:
                             m.render( self, screen, dest )
+
+
+
 
 
         self.phase = ( self.phase + 1 ) % 600

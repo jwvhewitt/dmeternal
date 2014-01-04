@@ -24,6 +24,7 @@ import charsheet
 import glob
 import pickle
 import stats
+import combat
 
 
 class Campaign( object ):
@@ -34,6 +35,7 @@ class Campaign( object ):
         self.scene = scene
         self.scenes = []
         self.fight = None
+        self.gold = 300
 
     def first_living_pc( self ):
         """Return the first living PC in the party."""
@@ -43,6 +45,14 @@ class Campaign( object ):
                 flp = pc
                 break
         return flp
+
+    def num_pcs( self ):
+        """Return the number of living PCs in the party."""
+        total = 0
+        for pc in self.party:
+            if pc.is_alright():
+                total += 1
+        return total
 
     def party_spokesperson( self ):
         """Return the PC with the highest charisma."""
@@ -58,6 +68,13 @@ class Campaign( object ):
         f = open( util.user_dir( "rpg_" + self.name + ".sav" ) , "wb" )
         pickle.dump( self , f, -1 )
         f.close()
+
+    def activate_monster( self, explo, mon ):
+        """Prepare this monster for combat."""
+        if self.fight:
+            self.fight.activate_monster( mon )
+        else:
+            self.fight = combat.Combat( explo, mon )
 
 
 
@@ -141,7 +158,19 @@ if __name__=='__main__':
         i = random.choice( items.ITEM_LIST )()
         i.pos = (23,17)
         myscene.contents.append( i )
+    i = items.bows.Arrows()
+    i.pos = (24,17)
+    myscene.contents.append( i )
+    i = items.bows.Longbow()
+    i.pos = (24,17)
+    myscene.contents.append( i )
+    i = items.bows.Shortbow()
+    i.pos = (24,17)
+    myscene.contents.append( i )
     i = items.maces.TitanHammer()
+    i.pos = (24,17)
+    myscene.contents.append( i )
+    i = items.wands.TelekinesisWand()
     i.pos = (24,17)
     myscene.contents.append( i )
 
@@ -193,7 +222,7 @@ if __name__=='__main__':
 
     myroom = pygame.Rect(50,12,10,10)
     myteam = teams.Team(default_reaction=-999, home=myroom)
-    mymon = monsters.goblins.Goblin( team=myteam )
+    mymon = monsters.giants.Ogre( team=myteam )
     mymon.pos = (55,17)
     myscene.contents.append( mymon )
 

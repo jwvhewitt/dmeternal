@@ -149,7 +149,7 @@ class InvExchange( object ):
                     if not it.equipped:
                         pc.inventory.remove( it )
                         self.ilist.append( it )
-                else:
+                elif pc.can_take_item( it ) and pc.is_alright():
                     self.ilist.remove( it )
                     pc.inventory.append( it )
             else:
@@ -176,6 +176,43 @@ class Explorer( object ):
         # Focus on the first PC.
         x,y = camp.first_living_pc().pos
         self.view.focus( screen, x, y )
+
+    def invoke_effect( self, effect, originator, area_of_effect, opening_anim = None ):
+        all_anims = list()
+        if opening_anim:
+            all_anims.append( opening_anim )
+            anims = opening_anim.children
+        else:
+            anims = all_anims
+        for p in area_of_effect:
+            effect( self.camp, originator, p, anims )
+        animobs.handle_anim_sequence( self.screen, self.view, all_anims )
+
+        # Remove dead models from the map.
+        for m in self.scene.contents[:]:
+            if isinstance( m, characters.Character ) and not m.is_alright():
+                self.scene.contents.remove( m )
+                # Drop all held items.
+                for i in m.inventory[:]:
+                    m.inventory.remove(i)
+                    i.pos = m.pos
+                    i.equipped = False
+                    self.scene.contents.append( i )
+
+    def alert( self, txt ):
+        mydest = pygame.Rect( self.screen.get_width() // 2 - 200, self.screen.get_height()//2 - 100, 400, 200 )
+        mytext = pygwrap.render_text( pygwrap.SMALLFONT, txt, 400 )
+        mydest = mytext.get_rect( center = (self.screen.get_width() // 2, self.screen.get_height()//2) )
+
+        while True:
+            ev = pygame.event.wait()
+            if ( ev.type == pygame.MOUSEBUTTONDOWN ) or ( ev.type == pygame.QUIT ) or (ev.type == pygame.KEYDOWN):
+                break
+            elif ev.type == pygwrap.TIMEREVENT:
+                self.view( self.screen )
+                pygwrap.default_border.render( self.screen, mydest )
+                self.screen.blit( mytext, mydest )
+                pygame.display.flip()
 
     def bump_tile( self, pos ):
         pass
@@ -223,7 +260,7 @@ class Explorer( object ):
         """Trade this item to another character."""
         mymenu = charsheet.RightMenu( self.screen, predraw = redraw )
         for opc in self.camp.party:
-            if opc != pc:
+            if opc != pc and opc.is_alright():
                 mymenu.add_item( str( opc ) , opc )
         mymenu.add_item( "Cancel" , False )
         mymenu.add_alpha_keys()
@@ -232,8 +269,11 @@ class Explorer( object ):
         if opc:
             pc.inventory.unequip( it )
             if not it.equipped:
-                pc.inventory.remove( it )
-                opc.inventory.append( it )
+                if opc.can_take_item( it ):
+                    pc.inventory.remove( it )
+                    opc.inventory.append( it )
+                else:
+                    self.alert( "{0} can't carry any more.".format( str( opc ) ) )
 
 
     def equip_or_whatevs( self, it, pc, myredraw ):
@@ -261,7 +301,7 @@ class Explorer( object ):
             n = 0
         pc = self.camp.party[ n ]
         keep_going = True
-        myredraw = charsheet.CharacterViewRedrawer( csheet=charsheet.CharacterSheet(pc, screen=self.screen), screen=self.screen, predraw=self.view, caption="View Party" )
+        myredraw = charsheet.CharacterViewRedrawer( csheet=charsheet.CharacterSheet(pc, screen=self.screen, camp=self.camp), screen=self.screen, predraw=self.view, caption="View Party" )
 
         while keep_going:
             mymenu = charsheet.RightMenu( self.screen, predraw = myredraw )
@@ -282,11 +322,11 @@ class Explorer( object ):
             if it is -1:
                 n = ( n + len( self.camp.party ) - 1 ) % len( self.camp.party )
                 pc = self.camp.party[n]
-                myredraw.csheet = charsheet.CharacterSheet(pc, screen=self.screen)
+                myredraw.csheet = charsheet.CharacterSheet(pc, screen=self.screen, camp=self.camp)
             elif it is 1:
                 n = ( n + 1 ) % len( self.camp.party )
                 pc = self.camp.party[n]
-                myredraw.csheet = charsheet.CharacterSheet(pc, screen=self.screen)
+                myredraw.csheet = charsheet.CharacterSheet(pc, screen=self.screen, camp=self.camp)
 
             elif it:
                 # An item was selected. Deal with it.
@@ -295,11 +335,14 @@ class Explorer( object ):
             else:
                 keep_going = False
 
+    def monster_inactive( self, mon ):
+        return mon not in self.camp.party and (( not self.camp.fight ) or mon not in self.camp.fight.active)
+
     def update_monsters( self ):
         for m in self.scene.contents:
-            if isinstance( m, characters.Character ) and m not in self.camp.party:
+            if isinstance( m, characters.Character ) and self.monster_inactive(m):
                 # First handle movement.
-                if m.get_move() and ((self.time + hash(m)) % 35 == 1 ):
+                if m.get_move() and ( ((self.time + hash(m)) % 35 == 1 ) or self.camp.fight ):
                     rdel = random.choice( self.scene.DELTA8 )
                     nupos = ( m.pos[0] + rdel[0], m.pos[1] + rdel[1] )
 
@@ -315,7 +358,7 @@ class Explorer( object ):
                     pov = pfov.PointOfView( self.scene, m.pos[0], m.pos[1], 5 )
                     in_sight = False
                     for pc in self.camp.party:
-                        if pc.pos in pov.tiles:
+                        if pc.pos in pov.tiles and pc in self.scene.contents:
                             in_sight = True
                             break
                     if in_sight:
@@ -324,12 +367,11 @@ class Explorer( object ):
                             if react < teams.ENEMY_THRESHOLD:
                                 anims = [ animobs.SpeakAttack(m.pos,loop=16), ]
                                 animobs.handle_anim_sequence( self.screen, self.view, anims )
-                                self.camp.fight = combat.Combat( self, m )
+                                self.camp.activate_monster( self, m )
                                 break
                             else:
                                 anims = [ animobs.SpeakAngry(m.pos,loop=16), ]
                                 animobs.handle_anim_sequence( self.screen, self.view, anims )
-                            m.team.default_reaction = 999
 
 
     def go( self ):
@@ -344,11 +386,10 @@ class Explorer( object ):
             if self.camp.fight:
                 self.order = None
                 self.camp.fight.go( self )
-                if not self.camp.fight.no_quit:
+                if pygwrap.GOT_QUIT or not self.camp.fight.no_quit:
                     keep_going = False
                     break
                 self.camp.fight = None
-
 
             # Get input and process it.
             gdi = pygwrap.wait_event()
@@ -373,14 +414,19 @@ class Explorer( object ):
                 if gdi.type == pygame.KEYDOWN:
                     if gdi.unicode == u"1":
                         self.view_party(0)
-                    if gdi.unicode == u"2":
+                    elif gdi.unicode == u"2":
                         self.view_party(1)
-                    if gdi.unicode == u"3":
+                    elif gdi.unicode == u"3":
                         self.view_party(2)
-                    if gdi.unicode == u"4":
+                    elif gdi.unicode == u"4":
                         self.view_party(3)
                     elif gdi.unicode == u"Q":
                         keep_going = False
+                    elif gdi.unicode == u"a":
+                        self.alert( "This is a test of the alert system. Let me know how it turns out." )
+                    elif gdi.unicode == u"c":
+                        self.view.focus( self.screen, *self.camp.first_living_pc().pos )
+
                 elif gdi.type == pygame.QUIT:
                     keep_going = False
                 elif gdi.type == pygame.MOUSEBUTTONUP:
@@ -394,12 +440,12 @@ class Explorer( object ):
                     else:
                         # If YouTube comments were as good as these comments, we'd all have ponies by now.
                         animobpos = self.view.mouse_tile
-                        ao_pro = animobs.BlueComet(self.camp.first_living_pc().pos,self.view.mouse_tile )
+                        ao_pro = animobs.GreenSpray(self.camp.first_living_pc().pos,self.view.mouse_tile )
                         anims = [ ao_pro, ]
 
                         area = pfov.PointOfView( self.scene, animobpos[0], animobpos[1], 2 )
                         for a in area.tiles:
-                            ao = animobs.BlueExplosion( a )
+                            ao = animobs.GreenCloud( a )
 #                            ao.y_off = -25 + 5 * ( abs( a[0]-animobpos[0] ) + abs( a[1]-animobpos[1] ) )
                             ao_pro.children.append( ao )
                         for a in self.scene.contents:

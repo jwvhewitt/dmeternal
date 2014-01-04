@@ -344,7 +344,7 @@ class PointOfView( object ):
         fieldOfView( x0 , y0 , scene.width , scene.height , radius , self )
 
     def VisitTile( self , x , y ):
-        if self.manhattan or ( round( math.sqrt( ( x-self.x )**2 + ( y-self.y )**2 ) ) <= self.radius ):
+        if self.manhattan or ( self.radius == 1 ) or ( round( math.sqrt( ( x-self.x )**2 + ( y-self.y )**2 ) ) <= self.radius ):
             self.tiles.add( ( x , y ) )
 
     def TileBlocked( self , x , y ):
@@ -357,7 +357,7 @@ class PCPointOfView( PointOfView ):
     # This class also constructs a field of vision, but automatically adds
     # the tiles it sees to the visible area of the map.
     def VisitTile( self , x , y ):
-        if self.manhattan or ( round( math.sqrt( ( x-self.x )**2 + ( y-self.y )**2 ) ) <= self.radius ):
+        if self.manhattan or ( self.radius == 1 ) or ( round( math.sqrt( ( x-self.x )**2 + ( y-self.y )**2 ) ) <= self.radius ):
             self.tiles.add( ( x , y ) )
             if self.scene.on_the_map( x , y ):
                 self.scene.map[x][y].visible = True

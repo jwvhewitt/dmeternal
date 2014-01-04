@@ -70,10 +70,10 @@ def choose_species( screen, redraw ):
     redraw.caption = "Select this character's species."
     return rpm.query()
 
-def get_possible_levels( pc ):
+def get_possible_levels( pc, source=characters.PC_CLASSES ):
     """ Return a list of levels the PC qualifies for."""
     pl = []
-    for l in characters.PC_CLASSES:
+    for l in source:
         is_legal = True
         for k,v in l.requirements.iteritems():
             if pc.get_stat( k ) < v:

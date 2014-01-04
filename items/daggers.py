@@ -17,5 +17,11 @@ class Sickle( Dagger ):
     mass = 15
     attackdata = Attack( (1,6,0) )
 
+class Dirk( Dagger ):
+    true_name = "Dirk"
+    true_desc = ""
+    avatar_frame = 3
+    mass = 16
+    attackdata = Attack( (1,6,0) )
 
 

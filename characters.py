@@ -5,7 +5,9 @@ import random
 import image
 import items
 import dialogue
-
+import teams
+import effects
+import animobs
 
 
 class Level( object ):
@@ -18,6 +20,7 @@ class Level( object ):
     spell_circles = ()
     LEVELS_PER_GEM = 0
     legal_equipment = ()
+    XP_VALUE = 75
     def __init__( self, rank=0, pc=None ):
         self.rank = 0
         self.hp = 0
@@ -80,7 +83,7 @@ class Thief( Level ):
         items.BOW, items.ARROW, items.SLING, \
         items.BULLET, items.CLOTHES, items.LIGHT_ARMOR, \
         items.HAT, items.GLOVE, items.SANDALS, \
-        items.SHOES, items.BOOTS, items.CLOAK )
+        items.SHOES, items.BOOTS, items.CLOAK, items.WAND )
     starting_equipment = ( items.hats.Bandana, items.daggers.Dagger, items.lightarmor.PaddedArmor, items.cloaks.ThiefCloak )
 
 
@@ -98,7 +101,7 @@ class Bard( Level ):
         items.BOW, items.ARROW, items.SLING, \
         items.BULLET, items.CLOTHES, items.LIGHT_ARMOR, items.HAT, \
         items.GLOVE, items.SANDALS, items.SHOES, \
-        items.BOOTS, items.CLOAK )
+        items.BOOTS, items.CLOAK, items.WAND )
     starting_equipment = ( items.swords.Rapier, items.hats.JauntyHat, items.lightarmor.LeatherArmor )
 
 class Priest( Level ):
@@ -131,7 +134,7 @@ class Mage( Level ):
     legal_equipment = ( items.DAGGER, items.STAFF, items.SLING, \
         items.BULLET, items.CLOTHES, items.HAT, \
         items.GLOVE, items.SANDALS, items.SHOES, \
-        items.BOOTS, items.CLOAK )
+        items.BOOTS, items.CLOAK, items.WAND )
     starting_equipment = ( items.staves.Quarterstaff, items.clothes.MageRobe, items.hats.MageHat )
 
 class Druid( Level ):
@@ -148,7 +151,7 @@ class Druid( Level ):
         items.BOW, items.POLEARM, items.ARROW, items.SLING, \
         items.BULLET, items.CLOTHES, items.HAT, \
         items.GLOVE, items.SANDALS, items.SHOES, \
-        items.BOOTS, items.CLOAK )
+        items.BOOTS, items.CLOAK, items.WAND )
     starting_equipment = ( items.daggers.Sickle, items.clothes.DruidRobe, items.cloaks.NormalCloak )
 
 class Knight( Level ):
@@ -198,7 +201,7 @@ class Necromancer( Level ):
     legal_equipment = ( items.DAGGER, items.STAFF, items.SLING, \
         items.BULLET, items.CLOTHES, items.HAT, \
         items.GLOVE, items.SANDALS, items.SHOES, \
-        items.BOOTS, items.CLOAK )
+        items.BOOTS, items.CLOAK, items.WAND )
     starting_equipment = ( items.staves.Quarterstaff, items.clothes.NecromancerRobe, items.hats.NecromancerHat )
 
 class Samurai( Level ):
@@ -268,6 +271,7 @@ class Human( object ):
     statline = {}
     slots = ( items.BACK, items.FEET, items.BODY, items.HANDS, items.HAND1, items.HAND2, items.HEAD )
     starting_equipment = ()
+    MOVE_POINTS = 10
 
     def __init__( self ):
         self.skin_color = random.randint( 0 , self.NUM_COLORS - 1 )
@@ -349,6 +353,7 @@ class Centaur( Human ):
     slots = ( items.BACK, items.BODY, items.HANDS, items.HAND1, items.HAND2, items.HEAD )
     starting_equipment = ( items.polearms.Spear, items.clothes.LeatherJacket )
     VOICE = dialogue.voice.GREEK
+    MOVE_POINTS = 12
 
 PC_SPECIES = (Human, Dwarf, Elf, Gnome, Orc, Hurthling, Fuzzy, Reptal, Centaur )
 
@@ -393,6 +398,9 @@ class Character(object):
         self.condition = CappedModifierList()
 
     def get_stat( self , stat ):
+        if stat == None:
+            return 0
+
         # Start with the basic stat value. This will probably be 0.
         it = self.statline.get( stat , 0 )
         # Add bonus from species...
@@ -423,6 +431,27 @@ class Character(object):
 
         return it
 
+    def get_encumberance_ceilings( self ):
+        """Return ceilings for light, medium, heavy encumberance."""
+        strength = self.get_stat( stats.STRENGTH )
+        return ( strength * 30, strength * 60, strength * 100 )
+
+    def encumberance_level( self ):
+        """Return value from 0 to 2 denoting severity of encumberance."""
+        mass = sum( i.mass for i in self.inventory )
+        ec = self.get_encumberance_ceilings()
+        if mass < ec[0]:
+            return 0
+        elif mass < ec[1]:
+            return 1
+        else:
+            return 2
+
+    def can_take_item( self, thing ):
+        """Return True if this character can take this item."""
+        mass = sum( i.mass for i in self.inventory )
+        return ( mass + thing.mass ) <= self.get_encumberance_ceilings()[2]
+
     def can_use_stealth( self ):
         """Return True if this character can hide in combat."""
         return sum( l.get_stat( stats.STEALTH ) for l in self.levels ) > 0
@@ -432,6 +461,9 @@ class Character(object):
         return sum( l.get_stat( stats.HOLY_SIGN ) for l in self.levels ) > 0
 
     def get_stat_bonus( self , stat ):
+        if stat == None:
+            return 0
+
         statval = max( self.get_stat( stat ) , 1 )
         return statval * 3 - 36
 
@@ -473,7 +505,13 @@ class Character(object):
         return cr * ( cr + 1 ) * 500
 
     def get_move( self ):
-        return 10
+        if self.species:
+            base = self.species.MOVE_POINTS
+        elif hasattr( self, "MOVE_POINTS" ):
+            base = self.MOVE_POINTS
+        else:
+            base = 10
+        return max( 0, base - 2 * self.encumberance_level() )
 
 
     def generate_avatar( self ):
@@ -593,6 +631,80 @@ class Character(object):
             return not other.is_hostile( camp )
         else:
             return other.is_hostile( camp )
+
+    KUNG_FU_DAMAGE = ( ( 1, 2, 0, 0 ),
+        ( 1, 2, 0, 0 ),( 1, 3, 0, 0 ),( 1, 4, 0, 0 ),( 1, 6, 0, 0 ),( 1, 8, 0, 0 ),
+        ( 1, 8, 0, 0 ),( 1,10, 0, 0 ),( 1,10, 0, 0 ),( 2, 6, 0, 0 ),( 2, 6, 0, 0 ),
+        ( 2, 6, 1, 2 ),( 2, 6, 1, 3 ),( 2, 8, 1, 4 ),( 2, 8, 1, 5 ),( 2, 8, 1, 6 ),
+        ( 2, 9, 1, 6 ),( 2, 9, 1, 7 ),( 2,10, 1, 7 ),( 2,10, 1, 8 ),( 2,10, 1,10 ) )
+
+    def unarmed_attack_effect( self, roll_mod=0 ):
+        """Return the attackdata for this character's unarmed strikes."""
+        kungfu = self.get_stat( stats.KUNG_FU ) // 5
+        dbonus = 0
+        if kungfu > 20:
+            dbonus = kungfu - 20
+            kungfu = 20
+        dice= ( self.KUNG_FU_DAMAGE[kungfu][0], self.KUNG_FU_DAMAGE[kungfu][1], dbonus )
+
+        hit = effects.HealthDamage( att_dice=dice, stat_bonus=stats.STRENGTH, element=stats.RESIST_CRUSHING, anim=animobs.RedBoom )
+        miss = effects.NoEffect( anim=animobs.SmallBoom )
+        roll = effects.PhysicalAttackRoll( att_stat=stats.STRENGTH, att_modifier=roll_mod, on_success=[hit,], on_failure=[miss,] )
+
+        if self.KUNG_FU_DAMAGE[kungfu][2] > 0:
+            dice= ( self.KUNG_FU_DAMAGE[kungfu][2], self.KUNG_FU_DAMAGE[kungfu][3], dbonus )
+            hit2 = effects.HealthDamage( att_dice=dice, stat_bonus=stats.PIETY, element=stats.RESIST_SOLAR, anim=animobs.YellowExplosion )
+            hit.on_success.append( hit2 )
+            hit.on_failure.append( hit2 )
+
+        return roll
+
+    def get_attack_reach( self ):
+        """Return the tile distance at which this character can attack."""
+        weapon = self.inventory.get_equip( items.HAND1 )
+        if weapon:
+            return weapon.attackdata.reach
+        elif hasattr( self, "ATTACK" ):
+            return self.ATTACK.reach
+        else:
+            return 1
+
+    def get_attack_effect( self, roll_mod=0 ):
+        """Return the effect for this character's attack."""
+        weapon = self.inventory.get_equip( items.HAND1 )
+        if weapon:
+            return weapon.attackdata.get_effect( self, roll_mod )
+        elif hasattr( self, "ATTACK" ):
+            return self.ATTACK.get_effect( self, roll_mod )
+        else:
+            return self.unarmed_attack_effect( roll_mod )
+
+    def get_attack_shot_anim( self ):
+        weapon = self.inventory.get_equip( items.HAND1 )
+        if weapon:
+            return weapon.shot_anim
+        else:
+            return None
+
+    def can_attack( self ):
+        weapon = self.inventory.get_equip( items.HAND1 )
+        if weapon:
+            return weapon.can_attack( self )
+        else:
+            return True
+
+    def spend_attack_price( self ):
+        weapon = self.inventory.get_equip( items.HAND1 )
+        if weapon:
+            weapon.spend_attack_price( self )
+
+    def number_of_attacks( self ):
+        # Extra attacks = unmodified PHYSICAL_ATTACK score divided by 20
+        return sum( l.get_stat( stats.PHYSICAL_ATTACK ) for l in self.levels ) // 20 + 1
+
+    def xp_value( self ):
+        # Extra attacks = unmodified PHYSICAL_ATTACK score divided by 20
+        return sum( l.XP_VALUE * l.rank for l in self.levels )
 
 def roll_initiative( pc ):
     """Convenience function for making initiative rolls."""

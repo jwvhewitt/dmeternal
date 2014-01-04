@@ -22,6 +22,7 @@ except ImportError:
 
 INPUT_CURSOR = None
 SMALLFONT = None
+TINYFONT = None
 ITALICFONT = None
 BIGFONT = None
 ANIMFONT = None
@@ -260,6 +261,9 @@ def init():
 
         global SMALLFONT
         SMALLFONT = pygame.font.Font( util.image_dir( "VeraBd.ttf" ) , 12 )
+
+        global TINYFONT
+        TINYFONT = pygame.font.Font( util.image_dir( "VeraBd.ttf" ) , 9 )
 
         global ANIMFONT
         ANIMFONT = pygame.font.Font( util.image_dir( "DejaVuSansCondensed-Bold.ttf" ) , 16 )
