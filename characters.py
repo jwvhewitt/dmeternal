@@ -516,7 +516,7 @@ class Character(object):
 
 
     def generate_avatar( self ):
-        if not self.is_alright():
+        if not self.is_alright() and self.levels:
             return image.Image( "avatar_tombstone.png", 54, 54 )
 
         # Generate an image for this character.

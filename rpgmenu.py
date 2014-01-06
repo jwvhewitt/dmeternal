@@ -232,6 +232,23 @@ class Menu( pygame.Rect ):
                 self.selected_item = n
         self.reposition()
 
+class PopUpMenu( Menu ):
+    """Creates a small menu at the current mouse position."""
+    WIDTH = 200
+    HEIGHT = 250
+    def __init__( self, screen, predraw=None, border=pygwrap.gold_border ):
+        x,y = pygame.mouse.get_pos()
+        x += 8
+        y += 8
+        sw,sh = screen.get_size()
+        if x + self.WIDTH + 32 > sw:
+            x += -self.WIDTH - 32
+        if y + self.HEIGHT + 32 > sh:
+            y += -self.HEIGHT - 32
+
+        super(PopUpMenu, self).__init__(screen,x,y,self.WIDTH,self.HEIGHT, border=border, predraw=predraw)
+
+
 def init():
     # Don't call init until after the display has been set.
     global INIT_DONE

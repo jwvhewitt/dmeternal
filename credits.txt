@@ -13,6 +13,8 @@ Many other graphics obtained from http://opengameart.org
 
 Nuclear explosion, Pearl effect by Jetrel.
 
+Smoke effect by Pow Studios. http://powstudios.com
+
 
 Programming mostly by Joseph Hewitt, except the bits I stole from other people.
 

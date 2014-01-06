@@ -9,6 +9,8 @@ import image
 import pfov
 import random
 import stats
+import rpgmenu
+import animobs
 
 class TacticsRedraw( object ):
     def __init__( self, chara, comba, explo, hmap = None ):
@@ -145,7 +147,7 @@ class Combat( object ):
                     chara.hidden = False
             else:
                 break
-        self.ap_spent[ chara ] += chara.get_move()
+        self.end_turn( chara )
 
 
     def move_to_attack( self, explo, chara, target, redraw=None ):
@@ -206,6 +208,53 @@ class Combat( object ):
 
         return result
 
+    def end_turn( self, chara ):
+        """End this character's turn."""
+        self.ap_spent[ chara ] += chara.get_move()
+
+
+    def attempt_stealth( self, explo, chara ):
+        """Make a stealth roll for chara vs best enemy awareness roll."""
+        # Determine the highest awareness of all enemies.
+        hi = 0
+        for m in self.active:
+            if m.is_alright() and m.is_enemy( self.camp, chara ):
+                awareness = m.get_stat( stats.AWARENESS ) + m.get_stat_bonus( stats.INTELLIGENCE )
+                hi = max( hi, awareness )
+        # The target number is clamped between 5 and 96- always 5% chance of success or failure.
+        hi = min( max( hi - chara.get_stat( stats.STEALTH ) - chara.get_stat( stats.REFLEXES ) + 45 , 5 ), 96 )
+        anims = list()
+        if random.randint(1,100) >= hi:
+            chara.hidden = True
+            anims.append( animobs.Smoke( pos=chara.pos ) )
+        else:
+            anims.append( animobs.Smoke( pos=chara.pos ) )
+            anims.append( animobs.Caption( "Fail!", pos=chara.pos ) )
+        animobs.handle_anim_sequence( explo.screen, explo.view, anims )
+
+        self.end_turn( chara )
+
+    def pop_combat_menu( self, explo, chara ):
+        mymenu = rpgmenu.PopUpMenu( explo.screen, explo.view )
+        mymenu.add_item( "-----", -1 )
+        if chara.can_use_stealth():
+            mymenu.add_item( "Skill: Stealth", 4 )
+        mymenu.add_item( "View Inventory".format(str(chara)), 2 )
+        mymenu.add_item( "Focus on {0}".format(str(chara)), 1 )
+        mymenu.add_item( "End Turn".format(str(chara)), 3 )
+
+        choice = mymenu.query()
+
+        if choice == 1:
+            explo.view.focus( explo.screen, *chara.pos )
+        elif choice == 2:
+            explo.view_party( self.camp.party.index(chara), can_switch=False )
+            self.end_turn( chara )
+        elif choice == 3:
+            self.end_turn( chara )
+        elif choice == 4:
+            self.attempt_stealth( explo, chara )
+
 
     def do_player_action( self, explo, chara ):
         #Start by making a hotmap centered on PC, to see how far can move.
@@ -231,11 +280,11 @@ class Combat( object ):
                         self.no_quit = False
                     elif gdi.unicode == u"i":
                         explo.view_party( self.camp.party.index(chara), can_switch=False )
-                        self.ap_spent[ chara ] += chara.get_move()
+                        self.end_turn( chara )
                     elif gdi.unicode == u"c":
                         explo.view.focus( explo.screen, *chara.pos )
                     elif gdi.unicode == u" ":
-                        self.ap_spent[ chara ] += chara.get_move()
+                        self.end_turn( chara )
                 elif gdi.type == pygame.MOUSEBUTTONUP:
                     if gdi.button == 1:
                         # Left mouse button.
@@ -250,6 +299,8 @@ class Combat( object ):
                             else:
                                 self.move_player_to_spot( explo, chara, explo.view.mouse_tile, tacred )
                             tacred.hmap = hotmaps.MoveMap( self.scene, chara )
+                    else:
+                        self.pop_combat_menu( explo, chara )
 
     def do_npc_action( self, explo, chara ):
         tacred = TacticsRedraw( chara, self, explo )
@@ -269,10 +320,16 @@ class Combat( object ):
 
 
     def do_combat_action( self, explo, chara ):
+        started_turn_hidden = chara.hidden
+
         if chara in self.camp.party:
             self.do_player_action( explo, chara )
         else:
             self.do_npc_action( explo, chara )
+
+        # If they started the turn hidden, random chance of decloaking.
+        if started_turn_hidden and random.randint(1,10)==1:
+            chara.hidden = False
 
     def give_xp_and_treasure( self, explo ):
         """Add up xp,gold from defeated monsters, and give to party."""
@@ -313,6 +370,10 @@ class Combat( object ):
         if self.num_enemies() == 0:
             # Combat has ended because we ran out of enemies. Dole experience.
             self.give_xp_and_treasure( explo )
+
+        # PCs stop hiding when combat ends.
+        for pc in self.camp.party:
+            pc.hidden = False
 
 # I do not intend to create one more boring derivative fantasy RPG. I intend to create all of the boring derivative fantasy RPGs.
 

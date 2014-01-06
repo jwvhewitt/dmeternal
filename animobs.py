@@ -225,6 +225,11 @@ class GreenCloud( AnimOb ):
     def __init__(self, pos=(0,0), loop=0 ):
         super(GreenCloud, self).__init__(sprite_name="fx_clouds.png",pos=pos,start_frame=10,end_frame=14,loop=loop,ticks_per_frame=1)
 
+# fx_smoke.png
+class Smoke( AnimOb ):
+    def __init__(self, pos=(0,0), loop=0 ):
+        super(Smoke, self).__init__(sprite_name="fx_smoke.png",pos=pos,start_frame=0,end_frame=7,loop=loop,ticks_per_frame=1)
+
 
 # fx_nuclear.png
 
