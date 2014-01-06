@@ -91,6 +91,14 @@ class Attack( object ):
         miss = effects.NoEffect( anim=animobs.SmallBoom )
         roll = effects.PhysicalAttackRoll( att_stat=self.skill_mod, att_modifier=att_modifier, on_success=[hit,], on_failure=[miss,] )
 
+        # If the attacker has critical hit skill, use it.
+        if user.get_stat( stats.CRITICAL_HIT ) > 0:
+            kill = effects.InstaKill( anim=animobs.CriticalHit )
+            kill_roll = effects.PercentRoll( roll_skill=stats.CRITICAL_HIT, roll_stat=None, \
+              roll_modifier=min(att_modifier*2,0), target_affects=True, on_success=(kill,) )
+            kill_check = effects.IsAnimal( on_true=(kill_roll,) )
+            hit.on_success.append( kill_check )
+
         return roll
 
 class Item( object ):
@@ -259,12 +267,16 @@ import bows
 import cloaks
 import clothes
 import daggers
+import gauntlets
+import gloves
 import hats
 import heavyarmor
+import helms
 import holysymbols
 import lightarmor
 import maces
 import polearms
+import shields
 import shoes
 import slings
 import staves
@@ -284,12 +296,16 @@ harvest( bows )
 harvest( cloaks )
 harvest( clothes )
 harvest( daggers )
+harvest( gauntlets )
+harvest( gloves )
 harvest( hats )
 harvest( heavyarmor )
+harvest( helms )
 harvest( holysymbols )
 harvest( lightarmor )
 harvest( maces )
 harvest( polearms )
+harvest( shields )
 harvest( shoes )
 harvest( slings )
 harvest( staves )

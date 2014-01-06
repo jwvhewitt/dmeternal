@@ -67,8 +67,10 @@ class PaddedRobe( Clothing ):
     true_desc = ""
     itemtype = LIGHT_ARMOR
     avatar_image = "avatar_lightarmor.png"
-    avatar_frame = 9
-    pants_sprite = None
+    avatar_frame = 22
+    male_frame = 21
+    pants_image = "avatar_robebottom.png"
+    pants_frame = 0
     statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 10 })
     mass = 85
 

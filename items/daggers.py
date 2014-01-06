@@ -6,7 +6,7 @@ class Dagger( Item ):
     true_desc = ""
     itemtype = DAGGER
     avatar_image = "avatar_dagger.png"
-    avatar_frame = 0
+    avatar_frame = 2
     mass = 12
     attackdata = Attack( (1,4,0), element = stats.RESIST_PIERCING )
 
@@ -15,12 +15,12 @@ class Sickle( Dagger ):
     true_desc = ""
     avatar_frame = 4
     mass = 15
-    attackdata = Attack( (1,6,0) )
+    attackdata = Attack( (1,6,0), element = stats.RESIST_SLASHING )
 
 class Dirk( Dagger ):
     true_name = "Dirk"
     true_desc = ""
-    avatar_frame = 3
+    avatar_frame = 1
     mass = 16
     attackdata = Attack( (1,6,0) )
 

@@ -11,6 +11,7 @@ import characters
 import random
 import teams
 import combat
+import stats
 
 
 # Commands should be callable objects which take the explorer and return a value.
@@ -58,6 +59,7 @@ class MoveTo( object ):
         else:
             first = True
             keep_going = True
+            tiles_in_sight = set()
             for pc in exp.camp.party:
                 if pc.is_alright() and exp.scene.on_the_map( *pc.pos ):
                     d = self.smart_downhill_dir( exp, pc )
@@ -74,19 +76,31 @@ class MoveTo( object ):
                             if target:
                                 target.pos = pc.pos
                             pc.pos = p2
-                            exp.scene.update_pc_position( pc )
+                            pcview = exp.scene.update_pc_position( pc )
+                            tiles_in_sight.update( pcview.tiles )
                         elif first:
                             exp.bump_model( target )
                             keep_going = False
                     elif first:
                         keep_going = False
                     first = False
+            # Now that all of the pcs have moved, check the tiles_in_sight for
+            # hidden models.
+            awareness = exp.camp.party_stat( stats.AWARENESS, stats.INTELLIGENCE )
+            for m in exp.scene.contents:
+                if isinstance( m, characters.Character ) and m.hidden and m.pos in tiles_in_sight and \
+                  awareness > m.get_stat( stats.STEALTH ) + m.get_stat_bonus(stats.REFLEXES):
+                    m.hidden = False
+
             return keep_going
 
 class InvExchange( object ):
     # The party will exchange inventory with a list.
     def __init__( self, party, ilist, predraw, caption="/ to switch menus" ):
-        self.party = party
+        self.party = []
+        for p in party:
+            if p.is_alright():
+                self.party.append( p )
         self.predraw = predraw
         self.ilist = ilist
         self.caption = caption
@@ -172,6 +186,11 @@ class Explorer( object ):
         for pc in camp.party:
             x,y = pc.pos
             pfov.PCPointOfView( camp.scene, x, y, 15 )
+
+        # Hide any monsters who can manage it.
+        for m in self.scene.contents:
+            if isinstance( m, characters.Character ) and m.can_use_stealth() and m.is_hostile( camp ):
+                m.hidden = True
 
         # Focus on the first PC.
         x,y = camp.first_living_pc().pos
@@ -367,7 +386,7 @@ class Explorer( object ):
                             if react < teams.ENEMY_THRESHOLD:
                                 anims = [ animobs.SpeakAttack(m.pos,loop=16), ]
                                 animobs.handle_anim_sequence( self.screen, self.view, anims )
-                                self.camp.activate_monster( self, m )
+                                self.camp.activate_monster( m )
                                 break
                             else:
                                 anims = [ animobs.SpeakAngry(m.pos,loop=16), ]

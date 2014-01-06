@@ -8,6 +8,7 @@ from dialogue import voice
 
 import giants
 import goblins
+import undead
 
 # Compile the monsters into a useful list.
 MONSTER_LIST = []
@@ -19,6 +20,7 @@ def harvest( mod ):
 
 harvest( giants )
 harvest( goblins )
+harvest( undead )
 
 VOICE_TO_NAMEGEN = { voice.ORCISH: namegen.ORC, voice.ELVEN: namegen.ELF, \
     voice.DRACONIAN: namegen.DRAGON, voice.DWARVEN: namegen.DWARF, \

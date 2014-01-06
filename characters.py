@@ -374,6 +374,7 @@ class Character(object):
     FRAME = 0
     TEMPLATES = ()
     team = None
+    hidden = False
 
     def __init__( self, name = "", species = None, gender = stats.NEUTER, statline=None ):
         self.name = name
@@ -413,7 +414,7 @@ class Character(object):
 
         # Add bonuses from any templates...
         for l in self.TEMPLATES:
-            it += l.get( stat, 0 )
+            it += l.bonuses.get( stat, 0 )
 
         # Add bonuses from any equipment...
         for item in self.inventory:
@@ -515,6 +516,9 @@ class Character(object):
 
 
     def generate_avatar( self ):
+        if not self.is_alright():
+            return image.Image( "avatar_tombstone.png", 54, 54 )
+
         # Generate an image for this character.
         avatar = image.Image( frame_width = 54, frame_height = 54 )
         # Add each layer in turn.
@@ -657,6 +661,14 @@ class Character(object):
             hit.on_success.append( hit2 )
             hit.on_failure.append( hit2 )
 
+        # If the attacker has critical hit skill, use it.
+        if self.get_stat( stats.CRITICAL_HIT ) > 0:
+            kill = effects.InstaKill( anim=animobs.CriticalHit )
+            kill_roll = effects.PercentRoll( roll_skill=stats.CRITICAL_HIT, roll_stat=None, \
+              roll_modifier=min(roll_mod*2,0), target_affects=True, on_success=(kill,) )
+            kill_check = effects.IsAnimal( on_true=(kill_roll,) )
+            hit.on_success.append( kill_check )
+
         return roll
 
     def get_attack_reach( self ):
@@ -671,13 +683,20 @@ class Character(object):
 
     def get_attack_effect( self, roll_mod=0 ):
         """Return the effect for this character's attack."""
+        if self.hidden:
+            # Sneak attacks get +20% bonus
+            roll_mod += 20
         weapon = self.inventory.get_equip( items.HAND1 )
         if weapon:
-            return weapon.attackdata.get_effect( self, roll_mod )
+            fx = weapon.attackdata.get_effect( self, roll_mod )
         elif hasattr( self, "ATTACK" ):
-            return self.ATTACK.get_effect( self, roll_mod )
+            fx = self.ATTACK.get_effect( self, roll_mod )
         else:
-            return self.unarmed_attack_effect( roll_mod )
+            fx = self.unarmed_attack_effect( roll_mod )
+        if self.hidden:
+            # Also, sneak attacks get double damage dice.
+            fx.on_success[0].att_dice = (fx.on_success[0].att_dice[0]*2,fx.on_success[0].att_dice[1],fx.on_success[0].att_dice[2])
+        return fx
 
     def get_attack_shot_anim( self ):
         weapon = self.inventory.get_equip( items.HAND1 )
@@ -706,9 +725,16 @@ class Character(object):
         # Extra attacks = unmodified PHYSICAL_ATTACK score divided by 20
         return sum( l.XP_VALUE * l.rank for l in self.levels )
 
+    def has_template( self, temp ):
+        return temp in self.TEMPLATES
+
+
 def roll_initiative( pc ):
     """Convenience function for making initiative rolls."""
-    return pc.get_stat( stats.REFLEXES ) + random.randint( 1, 20 )
+    roll = pc.get_stat( stats.REFLEXES ) + random.randint( 1, 20 )
+    if pc.hidden:
+        roll += 20
+    return roll
 
 if __name__ == '__main__':
     pc = Character()

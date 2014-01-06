@@ -1,7 +1,6 @@
 # Pathfinding algorithm.
 
 import pygame
-import characters
 import random
 
 class HotTile( object ):
@@ -71,7 +70,7 @@ class HotMap( object ):
     def list_model_positions( self ):
         mylist = set()
         for m in self.scene.contents:
-            if isinstance( m , characters.Character ):
+            if self.scene.is_model(m):
                 mylist.add( m.pos )
         return mylist
 

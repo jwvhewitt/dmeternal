@@ -90,6 +90,58 @@ class StatMod( dict ):
         return it
 
 
+# MONSTER TEMPLATES
+
+class SingTemp( object ):
+    # A singleton template class; use these objects as tokens for whatever.
+    # Also includes misc information related to the template in question.
+    def __init__( self, ident, bonuses = None ):
+        # ident should be the module-level name of this stat.
+        self.ident = ident
+        self.bonuses = bonuses
+    def __str__( self ):
+        return self.name
+    def __reduce__( self ):
+        return self.ident
+
+UNDEAD = SingTemp( "UNDEAD", { PHYSICAL_ATTACK: 5, MAGIC_ATTACK: 5, \
+    RESIST_COLD: 50, RESIST_LUNAR: 50, RESIST_SOLAR: -100, \
+    RESIST_POISON: 155 } )
+BONE = SingTemp( "BONE", { RESIST_SLASHING: 50, RESIST_PIERCING: 50 } )
+
+CONSTRUCT = SingTemp( "CONSTRUCT", { RESIST_CRUSHING: 25, RESIST_PIERCING: 25, \
+    RESIST_SLASHING: 25, RESIST_WATER: -100, RESIST_ATOMIC: -300, \
+    RESIST_POISON: 155, AWARENESS: -10 } )
+PLANT = SingTemp( "PLANT", { RESIST_FIRE: -100, RESIST_SOLAR: 100, RESIST_LUNAR: -100, \
+    RESIST_WATER: 250, AWARENESS: -10 })
+ELEMENTAL = SingTemp( "ELEMENTAL", { PHYSICAL_DEFENSE: 5, MAGIC_DEFENSE: -5, \
+    RESIST_ATOMIC: -100, RESIST_POISON: 155 })
+DEMON = SingTemp( "DEMON", { MAGIC_DEFENSE: 5, RESIST_FIRE: 75, RESIST_LUNAR: 75, \
+    RESIST_SOLAR: -100, RESIST_POISON: 100 })
+BUG = SingTemp( "BUG", { PHYSICAL_DEFENSE: 10, MAGIC_DEFENSE: -10, \
+    RESIST_SLASHING: 50, RESIST_ACID: -100, RESIST_POISON: -100 })
+REPTILE = SingTemp( "REPTILE", { RESIST_FIRE: 50, RESIST_COLD: -50 })
+DRAGON = SingTemp( "DRAGON", { PHYSICAL_DEFENSE: 10, MAGIC_DEFENSE: 10, \
+    RESIST_FIRE: 50, RESIST_COLD: 50, RESIST_ACID: 50, \
+    RESIST_LIGHTNING: 50, RESIST_POISON: 50, RESIST_SLASHING: 33, \
+    RESIST_CRUSHING: 33, AWARENESS: 15 })
+FIRE = SingTemp( "FIRE", { PHYSICAL_ATTACK: 5, PHYSICAL_DEFENSE: -5, \
+    RESIST_FIRE: 100, RESIST_COLD: -100, \
+    RESIST_WATER: -100, RESIST_ATOMIC: 50 })
+WATER = SingTemp( "WATER", { MAGIC_ATTACK: -5, MAGIC_DEFENSE: 5, \
+    RESIST_FIRE: 50, RESIST_COLD: 50, \
+    RESIST_LIGHTNING: -100, RESIST_ACID: -100, RESIST_WATER: 50 })
+EARTH = SingTemp( "EARTH", { PHYSICAL_ATTACK: -5, PHYSICAL_DEFENSE: 5, \
+    RESIST_CRUSHING: -50, RESIST_LIGHTNING: 100, RESIST_ACID: 50, \
+    RESIST_WIND: -100, RESIST_WATER: -100 })
+AIR = SingTemp( "AIR", { MAGIC_ATTACK: 5, MAGIC_DEFENSE: -5, \
+    RESIST_SLASHING: -50, RESIST_FIRE: -100, RESIST_ACID: 50, \
+    RESIST_WIND: 50 })
+ICE = SingTemp( "ICE", { RESIST_PIERCING: -100, RESIST_FIRE: -100, \
+    RESIST_COLD: 100, RESIST_WIND: 50, RESIST_WATER: 50 })
+
+
+
 if __name__ == '__main__':
 
     import pickle

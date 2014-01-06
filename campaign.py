@@ -64,17 +64,25 @@ class Campaign( object ):
                 best = pc.get_stat( stats.CHARISMA )
         return flp
 
+    def party_stat( self, ps_skill, ps_bonus=None ):
+        best = 0
+        for p in self.party:
+            pscore = p.get_stat( ps_skill ) + p.get_stat_bonus( ps_bonus )
+            if pscore > best:
+                best = pscore
+        return best
+
     def save( self ):
         f = open( util.user_dir( "rpg_" + self.name + ".sav" ) , "wb" )
         pickle.dump( self , f, -1 )
         f.close()
 
-    def activate_monster( self, explo, mon ):
+    def activate_monster( self, mon ):
         """Prepare this monster for combat."""
         if self.fight:
             self.fight.activate_monster( mon )
         else:
-            self.fight = combat.Combat( explo, mon )
+            self.fight = combat.Combat( self, mon )
 
 
 
@@ -158,7 +166,8 @@ if __name__=='__main__':
         i = random.choice( items.ITEM_LIST )()
         i.pos = (23,17)
         myscene.contents.append( i )
-    i = items.bows.Arrows()
+
+    i = items.gloves.BracersOfDefense()
     i.pos = (24,17)
     myscene.contents.append( i )
     i = items.bows.Longbow()
@@ -179,6 +188,12 @@ if __name__=='__main__':
     myscene.map[25][11].wall = maps.MOUNTAIN_LEFT
     myscene.map[26][10].wall = maps.MOUNTAIN_RIGHT
     myscene.map[26][11].wall = maps.MOUNTAIN_BOTTOM
+
+    myscene.map[25][50].wall = maps.MOUNTAIN_TOP
+    myscene.map[25][51].wall = maps.MOUNTAIN_LEFT
+    myscene.map[26][50].wall = maps.MOUNTAIN_RIGHT
+    myscene.map[26][51].wall = maps.MOUNTAIN_BOTTOM
+
 
     myroom = pygame.Rect(21,12,12,20)
     myteam = teams.Team(default_reaction=teams.SAFELY_FRIENDLY, home=myroom)
@@ -224,6 +239,10 @@ if __name__=='__main__':
     myteam = teams.Team(default_reaction=-999, home=myroom)
     mymon = monsters.giants.Ogre( team=myteam )
     mymon.pos = (55,17)
+    myscene.contents.append( mymon )
+    mymon = monsters.undead.Skeleton( team=myteam )
+    mymon.pos = (57,18)
+    mymon.hidden = True
     myscene.contents.append( mymon )
 
     camp = Campaign( scene=myscene )

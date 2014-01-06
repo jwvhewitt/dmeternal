@@ -8,6 +8,7 @@ import collections
 import image
 import pfov
 import random
+import stats
 
 class TacticsRedraw( object ):
     def __init__( self, chara, comba, explo, hmap = None ):
@@ -45,10 +46,10 @@ class TacticsRedraw( object ):
 
 
 class Combat( object ):
-    def __init__( self, explo, monster_zero ):
+    def __init__( self, camp, monster_zero ):
         self.active = []
-        self.scene = explo.scene
-        self.camp = explo.camp
+        self.scene = camp.scene
+        self.camp = camp
         self.ap_spent = collections.defaultdict( int )
         self.no_quit = True
 
@@ -59,7 +60,7 @@ class Combat( object ):
 
     def activate_monster( self, monster_zero ):
         for m in self.scene.contents:
-            if isinstance( m, characters.Character ) and m.is_alright():
+            if isinstance( m, characters.Character ) and m.is_alright() and m not in self.active:
                 if m in self.camp.party:
                     self.active.append( m )
                 elif self.scene.distance( m.pos, monster_zero.pos ) < 5:
@@ -130,7 +131,7 @@ class Combat( object ):
         else:
             num_attacks = 1
         for a in range( num_attacks ):
-            if chara.can_attack():
+            if chara.can_attack() and target.is_alright():
                 at_fx = chara.get_attack_effect( roll_mod = -10 * a )
                 at_anim = chara.get_attack_shot_anim()
                 if at_anim:
@@ -139,6 +140,9 @@ class Combat( object ):
                     opening_shot = None
                 explo.invoke_effect( at_fx, chara, (target.pos,), opening_shot )
                 chara.spend_attack_price()
+                # A hidden character will likely be revealed if the target survived.
+                if target.is_alright() and chara.hidden and random.randint(1,100) + target.get_stat(stats.AWARENESS) + target.get_stat_bonus(stats.INTELLIGENCE) > chara.get_stat(stats.STEALTH) + chara.get_stat_bonus(stats.REFLEXES):
+                    chara.hidden = False
             else:
                 break
         self.ap_spent[ chara ] += chara.get_move()
@@ -150,8 +154,12 @@ class Combat( object ):
             redraw = explo.view
         explo.view.overlays.clear()
         if self.scene.on_the_map( *target.pos ):
-            attack_positions = pfov.PointOfView( self.scene, target.pos[0], target.pos[1], chara.get_attack_reach() )
-            hmap = hotmaps.HotMap( self.scene, attack_positions.tiles, avoid_models=True )
+            attack_positions = pfov.PointOfView( self.scene, target.pos[0], target.pos[1], chara.get_attack_reach() ).tiles
+            # Remove the positions of models from the goal tiles, so they will be avoided.
+            for m in self.scene.contents:
+                if self.scene.is_model(m) and m.pos in attack_positions and m is not chara:
+                    attack_positions.remove( m.pos )
+            hmap = hotmaps.HotMap( self.scene, attack_positions, avoid_models=True )
 
             while self.ap_spent[ chara ] < chara.get_move():
                 result = self.step( chara, hmap )
@@ -164,7 +172,7 @@ class Combat( object ):
                 pygame.display.flip()
                 pygwrap.anim_delay()
 
-            if chara.pos in attack_positions.tiles:
+            if chara.pos in attack_positions:
                 # Close enough to attack. Make it so.
                 self.attack( explo, chara, target, redraw )
 
@@ -178,7 +186,7 @@ class Combat( object ):
         attack_positions = set()
 
         for m in self.scene.contents:
-            if isinstance( m, characters.Character ) and chara.is_enemy( self.camp, m ):
+            if isinstance( m, characters.Character ) and chara.is_enemy( self.camp, m ) and not m.hidden:
                 attack_positions.add( m.pos )
 
         hmap = hotmaps.HotMap( self.scene, attack_positions, avoid_models=True )

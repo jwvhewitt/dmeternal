@@ -237,6 +237,10 @@ class Scene( object ):
                             self.map[x][y].floor = LOGROUND
                             break
 
+    def is_model( self, thing ):
+        """Return True if thing is a model which blocks movement through tile."""
+        return isinstance( thing , characters.Character )
+
     def get_character_at_spot( self, pos ):
         """Find and return first character at given position."""
         npc = None
@@ -250,7 +254,7 @@ class Scene( object ):
         return math.sqrt( ( pos1[0]-pos2[0] )**2 + ( pos1[1]-pos2[1] )**2 )
 
     def update_pc_position( self, pc ):
-        pfov.PCPointOfView( self, pc.pos[0], pc.pos[1], 10 )
+        return pfov.PCPointOfView( self, pc.pos[0], pc.pos[1], 10 )
 
 
 OVERLAY_ITEM = 0
@@ -259,6 +263,7 @@ OVERLAY_ATTACK = 2
 OVERLAY_MOVETILE = 3
 OVERLAY_AOE = 4
 OVERLAY_CURRENTCHARA = 5
+OVERLAY_HIDDEN = 6
 
 SCROLL_STEP = 12
 
@@ -520,13 +525,17 @@ class SceneView( object ):
 
                     modl = self.modelmap.get( (x,y) , None )
                     if modl:
-                        msprite = self.modelsprite.get( modl , None )
-                        if not msprite:
-                            msprite = modl.generate_avatar()
-                            self.modelsprite[ modl ] = msprite
-                        msprite.render( screen, dest, modl.FRAME )
+                        if modl.hidden:
+                            # This is easy! All hidden models get the same sprite.
+                            self.extrasprite.render( screen, dest, OVERLAY_HIDDEN )
+                        else:
+                            msprite = self.modelsprite.get( modl , None )
+                            if not msprite:
+                                msprite = modl.generate_avatar()
+                                self.modelsprite[ modl ] = msprite
+                            msprite.render( screen, dest, modl.FRAME )
 
-                    if ( x==tile_x ) and ( y==tile_y) and modl:
+                    if ( x==tile_x ) and ( y==tile_y) and modl and not modl.hidden:
                         self.quick_model_status( screen, dest, modl )
 
                     mlist = self.anims.get( (x,y) , None )
