@@ -65,7 +65,7 @@ class Warrior( Level ):
         items.BOW, items.POLEARM, items.ARROW, items.SHIELD, items.SLING, \
         items.BULLET, items.CLOTHES, items.LIGHT_ARMOR, items.HEAVY_ARMOR, items.HAT, \
         items.HELM, items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES, \
-        items.BOOTS, items.CLOAK )
+        items.BOOTS, items.CLOAK, items.FARMTOOL )
     starting_equipment = ( items.lightarmor.GladiatorArmor, items.swords.Broadsword, items.shoes.NormalBoots )
 
 
@@ -74,7 +74,7 @@ class Thief( Level ):
     desc = 'Highly skilled at stealth and disarming traps.'
     requirements = { stats.REFLEXES: 11 }
     statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 4, stats.MAGIC_ATTACK: 3, stats.MAGIC_DEFENSE: 5, \
-        stats.DISARM_TRAPS: 6, stats.STEALTH: 5, stats.AWARENESS: 5 } )
+        stats.DISARM_TRAPS: 6, stats.STEALTH: 5, stats.AWARENESS: 4 } )
     spell_circles = ()
     HP_DIE = 6
     MP_DIE = 6
@@ -151,8 +151,8 @@ class Druid( Level ):
         items.BOW, items.POLEARM, items.ARROW, items.SLING, \
         items.BULLET, items.CLOTHES, items.HAT, \
         items.GLOVE, items.SANDALS, items.SHOES, \
-        items.BOOTS, items.CLOAK, items.WAND )
-    starting_equipment = ( items.daggers.Sickle, items.clothes.DruidRobe, items.cloaks.NormalCloak )
+        items.BOOTS, items.CLOAK, items.WAND, items.FARMTOOL )
+    starting_equipment = ( items.farmtools.Sickle, items.clothes.DruidRobe, items.cloaks.NormalCloak )
 
 class Knight( Level ):
     name = 'Knight'
@@ -185,7 +185,7 @@ class Ranger( Level ):
         items.BOW, items.POLEARM, items.ARROW, items.SHIELD, items.SLING, \
         items.BULLET, items.CLOTHES, items.LIGHT_ARMOR, items.HAT, \
         items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES, \
-        items.BOOTS, items.CLOAK )
+        items.BOOTS, items.CLOAK, items.FARMTOOL )
     starting_equipment = ( items.axes.HandAxe, items.lightarmor.RangerArmor, items.hats.WoodsmansHat, items.shoes.NormalBoots )
 
 class Necromancer( Level ):
@@ -201,7 +201,7 @@ class Necromancer( Level ):
     legal_equipment = ( items.DAGGER, items.STAFF, items.SLING, \
         items.BULLET, items.CLOTHES, items.HAT, \
         items.GLOVE, items.SANDALS, items.SHOES, \
-        items.BOOTS, items.CLOAK, items.WAND )
+        items.BOOTS, items.CLOAK, items.WAND, items.FARMTOOL )
     starting_equipment = ( items.staves.Quarterstaff, items.clothes.NecromancerRobe, items.hats.NecromancerHat )
 
 class Samurai( Level ):
@@ -299,7 +299,7 @@ class Elf( Human ):
     name = "Elf"
     desc = "They are graceful and intelligent, but somewhat frail."
     statline = { stats.STRENGTH: -1, stats.TOUGHNESS: -1, stats.REFLEXES: 1, \
-        stats.INTELLIGENCE: 1 }
+        stats.INTELLIGENCE: 1, stats.CHARISMA: 1 }
     FIRST_IMAGE = 6
     starting_equipment = ( items.swords.Longsword, )
     VOICE = dialogue.voice.ELVEN

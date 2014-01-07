@@ -182,6 +182,7 @@ class Combat( object ):
 
     def move_and_attack_anyone( self, explo, chara, redraw=None ):
         result = None
+        did_attack = False
         if not redraw:
             redraw = explo.view
         explo.view.overlays.clear()
@@ -200,11 +201,19 @@ class Combat( object ):
             if result:
                 if isinstance( result, characters.Character ) and chara.is_enemy( self.camp, result ):
                     self.attack( explo, chara, result, redraw )
+                    did_attack = True
                 break
 
             redraw( explo.screen )
             pygame.display.flip()
             pygwrap.anim_delay()
+
+        if not did_attack:
+            if self.num_enemies_hiding( chara ):
+                # There are hiding enemies. Attempt to spot them.
+                self.attempt_awareness( self, explo, chara )
+            elif chara.can_use_stealth():
+                self.attempt_stealth( self, explo, chara )
 
         return result
 
@@ -222,7 +231,7 @@ class Combat( object ):
                 awareness = m.get_stat( stats.AWARENESS ) + m.get_stat_bonus( stats.INTELLIGENCE )
                 hi = max( hi, awareness )
         # The target number is clamped between 5 and 96- always 5% chance of success or failure.
-        hi = min( max( hi - chara.get_stat( stats.STEALTH ) - chara.get_stat( stats.REFLEXES ) + 45 , 5 ), 96 )
+        hi = min( max( hi - chara.get_stat( stats.STEALTH ) - chara.get_stat_bonus( stats.REFLEXES ) + 45 , 5 ), 96 )
         anims = list()
         if random.randint(1,100) >= hi:
             chara.hidden = True
@@ -234,11 +243,36 @@ class Combat( object ):
 
         self.end_turn( chara )
 
+    def attempt_awareness( self, explo, chara ):
+        """Try to spot any hidden models taking part in combat."""
+        awareness = chara.get_stat( stats.AWARENESS ) + chara.get_stat_bonus( stats.INTELLIGENCE ) + 55
+        anims = list()
+        for m in self.active:
+            if m.is_alright() and m.is_enemy( self.camp, chara ) and m.hidden:
+                spot_chance = max( awareness - m.get_stat( stats.STEALTH ) - chara.get_stat_bonus( stats.REFLEXES ), 10)
+                if random.randint(1,100) <= spot_chance:
+                    m.hidden = False
+                    anims.append( animobs.PurpleSparkle( pos=m.pos ) )
+        if not anims:
+            anims.append( animobs.Caption( "Fail!", pos=chara.pos ) )
+        animobs.handle_anim_sequence( explo.screen, explo.view, anims )
+        self.end_turn( chara )
+
+
+    def num_enemies_hiding( self, chara ):
+        n = 0
+        for m in self.active:
+            if m.is_alright() and m.is_enemy( self.camp, chara ) and m.hidden:
+                n += 1
+        return n
+
     def pop_combat_menu( self, explo, chara ):
         mymenu = rpgmenu.PopUpMenu( explo.screen, explo.view )
         mymenu.add_item( "-----", -1 )
         if chara.can_use_stealth():
             mymenu.add_item( "Skill: Stealth", 4 )
+        if self.num_enemies_hiding(chara):
+            mymenu.add_item( "Skill: Awareness", 5 )
         mymenu.add_item( "View Inventory".format(str(chara)), 2 )
         mymenu.add_item( "Focus on {0}".format(str(chara)), 1 )
         mymenu.add_item( "End Turn".format(str(chara)), 3 )
@@ -254,6 +288,8 @@ class Combat( object ):
             self.end_turn( chara )
         elif choice == 4:
             self.attempt_stealth( explo, chara )
+        elif choice == 5:
+            self.attempt_awareness( explo, chara )
 
 
     def do_player_action( self, explo, chara ):

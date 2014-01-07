@@ -47,6 +47,7 @@ BOOTS = SingType( "BOOTS", "Boots", slot = FEET )
 CLOAK = SingType( "CLOAK", "Cloak", slot = BACK )
 HOLYSYMBOL = SingType( "HOLYSYMBOL", "Symbol", slot = HAND2 )
 WAND = SingType( "WAND", "Wand", slot = HAND1 )
+FARMTOOL = SingType( "FARMTOOL", "Farm Tool", slot = HAND1 )
 
 class Attack( object ):
     def __init__( self, damage = (1,6,0), skill_mod = stats.STRENGTH, damage_mod = stats.STRENGTH, \
@@ -267,6 +268,7 @@ import bows
 import cloaks
 import clothes
 import daggers
+import farmtools
 import gauntlets
 import gloves
 import hats
@@ -296,6 +298,7 @@ harvest( bows )
 harvest( cloaks )
 harvest( clothes )
 harvest( daggers )
+harvest( farmtools )
 harvest( gauntlets )
 harvest( gloves )
 harvest( hats )

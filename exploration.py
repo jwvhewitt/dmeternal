@@ -372,6 +372,10 @@ class Explorer( object ):
                         else:
                             m.pos = nupos
 
+                    # Monsters that can hide may hide.
+                    if m.can_use_stealth() and m.is_hostile( self.camp ) and random.randint(1,6) == 1:
+                        m.hidden = True
+
                 # Next, check visibility to PC.
                 if m.team and m.team.on_guard():
                     pov = pfov.PointOfView( self.scene, m.pos[0], m.pos[1], 5 )

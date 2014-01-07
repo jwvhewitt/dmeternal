@@ -1,14 +1,6 @@
 import stats
 from . import Item,Attack,POLEARM
 
-class Pitchfork( Item ):
-    true_name = "Pitchfork"
-    true_desc = "A farm tool that can also be used as a weapon."
-    itemtype = POLEARM
-    avatar_image = "avatar_polearm.png"
-    avatar_frame = 10
-    attackdata = Attack( (1,6,0), element = stats.RESIST_PIERCING )
-    mass = 65
 
 class Spear( Item ):
     true_name = "Spear"

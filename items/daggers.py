@@ -10,13 +10,6 @@ class Dagger( Item ):
     mass = 12
     attackdata = Attack( (1,4,0), element = stats.RESIST_PIERCING )
 
-class Sickle( Dagger ):
-    true_name = "Sickle"
-    true_desc = ""
-    avatar_frame = 4
-    mass = 15
-    attackdata = Attack( (1,6,0), element = stats.RESIST_SLASHING )
-
 class Dirk( Dagger ):
     true_name = "Dirk"
     true_desc = ""

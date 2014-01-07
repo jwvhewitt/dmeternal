@@ -5,7 +5,7 @@ import pygame
 
 class AnimOb( object ):
     """An animation for the map."""
-    def __init__( self, sprite_name, width=54, height=54, pos=(0,0), start_frame=0, end_frame=0, ticks_per_frame=1, loop=0, y_off=0 ):
+    def __init__( self, sprite_name, width=54, height=54, pos=(0,0), start_frame=0, end_frame=0, ticks_per_frame=1, loop=0, y_off=0, delay=1 ):
         self.sprite = image.Image( sprite_name, width, height )
         self.start_frame = start_frame
         self.frame = start_frame
@@ -16,28 +16,33 @@ class AnimOb( object ):
         self.y_off = y_off
         self.needs_deletion = False
         self.pos = pos
+        self.delay = delay
         self.children = list()
 
     def update( self ):
-        self.counter += 1
-        if self.counter >= self.ticks_per_frame:
-            self.frame += 1
-            self.counter = 0
-
-        if self.frame > self.end_frame:
-            self.loop += -1
-            if self.loop < 0:
-                self.frame = self.end_frame
-                self.needs_deletion = True
-            else:
-                self.frame = self.start_frame
+        if self.delay > 0:
+            self.delay += -1
+        else:
+            self.counter += 1
+            if self.counter >= self.ticks_per_frame:
+                self.frame += 1
                 self.counter = 0
+
+            if self.frame > self.end_frame:
+                self.loop += -1
+                if self.loop < 0:
+                    self.frame = self.end_frame
+                    self.needs_deletion = True
+                else:
+                    self.frame = self.start_frame
+                    self.counter = 0
 
 
     def render( self, view, screen, dest ):
-        mydest = pygame.Rect( dest )
-        mydest.y += self.y_off
-        self.sprite.render( screen, mydest, self.frame )
+        if not self.delay:
+            mydest = pygame.Rect( dest )
+            mydest.y += self.y_off
+            self.sprite.render( screen, mydest, self.frame )
 
 # fx_effects.png
 
@@ -243,20 +248,23 @@ class Pearl( AnimOb ):
     def __init__(self, pos=(0,0), loop=0 ):
         super(Pearl, self).__init__(sprite_name="fx_pearl.png",pos=pos,start_frame=0,end_frame=5,loop=loop,ticks_per_frame=2)
     def update( self ):
-        self.counter += 1
-        self.y_off += -1
-        if self.counter >= self.ticks_per_frame:
-            self.frame += 1
-            self.counter = 0
-
-        if self.frame > self.end_frame:
-            self.loop += -1
-            if self.loop < 0:
-                self.frame = self.end_frame
-                self.needs_deletion = True
-            else:
-                self.frame = self.start_frame
+        if self.delay > 0:
+            self.delay += -1
+        else:
+            self.counter += 1
+            self.y_off += -1
+            if self.counter >= self.ticks_per_frame:
+                self.frame += 1
                 self.counter = 0
+
+            if self.frame > self.end_frame:
+                self.loop += -1
+                if self.loop < 0:
+                    self.frame = self.end_frame
+                    self.needs_deletion = True
+                else:
+                    self.frame = self.start_frame
+                    self.counter = 0
 
 # fx_emoticons.png
 
@@ -264,9 +272,12 @@ class SpeakHello( AnimOb ):
     def __init__(self, pos=(0,0), loop=8 ):
         super(SpeakHello, self).__init__(sprite_name="fx_emoticons.png",pos=pos,loop=loop,y_off=-16)
     def update( self ):
-        self.counter += 1
-        if self.counter >= self.loop:
-            self.needs_deletion = True
+        if self.delay > 0:
+            self.delay += -1
+        else:
+            self.counter += 1
+            if self.counter >= self.loop:
+                self.needs_deletion = True
 
 class SpeakAttack( SpeakHello ):
     def __init__(self, pos=(0,0), loop=8 ):
@@ -295,16 +306,19 @@ class Caption( AnimOb ):
         super(Caption, self).__init__(sprite_name=None,pos=pos,loop=loop,y_off=-16)
         pygwrap.draw_text( self.sprite.bitmap, pygwrap.ANIMFONT, txt, pygame.Rect(0,0,54,20), color=color, justify=0 )
     def update( self ):
-        self.counter += 1
-        self.y_off = 8 - 2*self.counter
-        if self.counter >= self.loop:
-            self.needs_deletion = True
+        if self.delay > 0:
+            self.delay += -1
+        else:
+            self.counter += 1
+            self.y_off = 8 - 2*self.counter
+            if self.counter >= self.loop:
+                self.needs_deletion = True
 
 # Let it be known that the organizational principle of this program is "Fifteen Tons of Flax".
 
 class Projectile( AnimOb ):
     """An AnimOb which moves along a line."""
-    def __init__( self, sprite_name, width=54, height=54, start_pos=(0,0), end_pos=(0,0), frame=0, set_frame_offset=True, y_off=0 ):
+    def __init__( self, sprite_name, width=54, height=54, start_pos=(0,0), end_pos=(0,0), frame=0, set_frame_offset=True, y_off=0, delay=0 ):
         self.sprite = image.Image( sprite_name, width, height )
         if set_frame_offset:
             self.frame = frame + self.dir_frame_offset( start_pos, end_pos )
@@ -316,6 +330,7 @@ class Projectile( AnimOb ):
         self.pos = start_pos
         self.itinerary = self.get_line( start_pos[0], start_pos[1], end_pos[0], end_pos[1] )
         self.children = list()
+        self.delay = delay
 
     def dir_frame_offset( self, start_pos, end_pos ):
         # There are 8 sprites for each projectile type, one for each of 
@@ -385,11 +400,14 @@ class Projectile( AnimOb ):
         return points
 
     def update( self ):
-        self.counter += 1
-        if self.counter >= len( self.itinerary ):
-            self.needs_deletion = True
+        if self.delay > 0:
+            self.delay += -1
         else:
-            self.pos = self.itinerary[ self.counter ]
+            self.counter += 1
+            if self.counter >= len( self.itinerary ):
+                self.needs_deletion = True
+            else:
+                self.pos = self.itinerary[ self.counter ]
 
 class Arrow( Projectile ):
     def __init__(self, start_pos=(0,0), end_pos=(0,0) ):
