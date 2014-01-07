@@ -21,6 +21,9 @@
 import copy
 import math
 
+# For the line drawer, for the Cone object...
+import animobs
+
 
 
 def fieldOfView(startX, startY, mapWidth, mapHeight, radius, \
@@ -361,6 +364,39 @@ class PCPointOfView( PointOfView ):
             self.tiles.add( ( x , y ) )
             if self.scene.on_the_map( x , y ):
                 self.scene.map[x][y].visible = True
+
+class Cone( PointOfView ):
+    """Create a cone shaped template."""
+    def __init__(self, scene, start, end, manhattan=False):
+        self.x,self.y = start
+        self.scene = scene
+        self.endradius = max( int( scene.distance( start, end ) // 3 ) , 1 )
+        self.radius = int( scene.distance( start, end ) + self.endradius )
+        self.manhattan = manhattan
+
+        # Start with a ball
+        proto_cone = set()
+        for x in range( end[0]-self.endradius, end[0]+self.endradius+1):
+            for y in range( end[1]-self.endradius, end[1]+self.endradius+1):
+                if scene.distance( (x,y), end ) <= self.endradius:
+                    proto_cone.add( (x,y) )
+
+        # Draw lines back to origin.
+        for t in range( -self.endradius, self.endradius+1 ):
+            h_line = animobs.get_line( start[0], start[1], end[0]+t, end[1] )
+            proto_cone.update( h_line )
+            if t != 0:
+                v_line = animobs.get_line( start[0], start[1], end[0], end[1]+t )
+                proto_cone.update( v_line )
+
+        # Determine the PFOV from origin.
+        self.tiles = set()
+        fieldOfView( start[0] , start[1] , scene.width , scene.height , self.radius , self )
+
+        # The finished cone is the intersection of the two.
+        self.tiles.intersection_update( proto_cone )
+        self.tiles.remove( start )
+
 
 if __name__=="__main__":
     import timeit

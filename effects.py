@@ -11,20 +11,27 @@ class NoEffect( object ):
         self.children = children
         self.anim = anim
 
-    def handle_effect( self, camp, originator, pos, anims ):
+    def handle_effect( self, camp, originator, pos, anims, delay=0 ):
         """Do whatever is required of effect; return list of child effects."""
         return self.children
 
-    def __call__( self, camp, originator, pos, anims ):
+    def __call__( self, camp, originator, pos, anims, delay=0 ):
         o_anims = anims
+        o_delay = delay
         if self.anim:
-            this_anim = self.anim( pos = pos )
+            this_anim = self.anim( pos = pos, delay=delay )
             anims.append( this_anim )
+            # The children of this animob don't get delayed.
             anims = this_anim.children
+            delay = 0
 
-        next_fx = self.handle_effect( camp, originator, pos, o_anims )
+        # Send the original anim list and delay to next_fx, in case there are
+        # additional anims to be added by the effect itself. "handle_effect" is
+        # called after the automatic anim above so that any captions/etc get
+        # drawn on top of the base anim.
+        next_fx = self.handle_effect( camp, originator, pos, o_anims, o_delay )
         for nfx in next_fx:
-            nfx( camp, originator, pos, anims )
+            nfx( camp, originator, pos, anims, delay )
 
 class PhysicalAttackRoll( NoEffect ):
     def __init__(self, att_skill=stats.PHYSICAL_ATTACK, att_stat=stats.REFLEXES, \
@@ -40,7 +47,7 @@ class PhysicalAttackRoll( NoEffect ):
         self.on_failure = on_failure
         self.anim = anim
 
-    def handle_effect( self, camp, originator, pos, anims ):
+    def handle_effect( self, camp, originator, pos, anims, delay=0 ):
         """Make attack roll vs target's physical defense."""
         target = camp.scene.get_character_at_spot( pos )
         if target:
@@ -72,7 +79,7 @@ class OpposedRoll( NoEffect ):
         self.on_failure = on_failure
         self.anim = anim
 
-    def handle_effect( self, camp, originator, pos, anims ):
+    def handle_effect( self, camp, originator, pos, anims, delay=0 ):
         """Make opposed rolls by orginator, target. If no target, count as failure."""
         target = camp.scene.get_character_at_spot( pos )
         if target:
@@ -100,7 +107,7 @@ class PercentRoll( NoEffect ):
         self.on_failure = on_failure
         self.anim = anim
 
-    def handle_effect( self, camp, originator, pos, anims ):
+    def handle_effect( self, camp, originator, pos, anims, delay=0 ):
         """Roll d100 to match a percentile score."""
         tarnum = originator.get_stat( self.roll_skill ) + originator.get_stat_bonus( self.roll_stat ) + self.roll_modifier
 
@@ -131,7 +138,7 @@ class HealthDamage( NoEffect ):
         self.on_failure = on_failure
         self.anim = anim
 
-    def handle_effect( self, camp, originator, pos, anims ):
+    def handle_effect( self, camp, originator, pos, anims, delay=0 ):
         """Apply some hurting to whoever is in the indicated tile."""
         target = camp.scene.get_character_at_spot( pos )
         if target:
@@ -148,7 +155,7 @@ class HealthDamage( NoEffect ):
                     dmg = 0
             target.hp_damage += dmg
 
-            anims.append( animobs.Caption( str(dmg), pos ) )
+            anims.append( animobs.Caption( str(dmg), pos, delay=delay ) )
 
             # A damaged monster gets activated, and automatically loses hiding.
             camp.activate_monster( target )
@@ -166,7 +173,7 @@ class HealthDamage( NoEffect ):
 
 class InstaKill( NoEffect ):
     """This effect automatically kills the target."""
-    def handle_effect( self, camp, originator, pos, anims ):
+    def handle_effect( self, camp, originator, pos, anims, delay=0 ):
         """Apply some hurting to whoever is in the indicated tile."""
         target = camp.scene.get_character_at_spot( pos )
         if target:
@@ -178,9 +185,13 @@ class InstaKill( NoEffect ):
 
         return self.children
 
-class IsAnimal( NoEffect ):
+ANIMAL = {stats.UNDEAD: False, stats.DEMON: False, stats.ELEMENTAL: False, \
+    stats.PLANT: False, stats.CONSTRUCT: False}
+
+class TargetIs( NoEffect ):
     """An effect that branches depending on if target is an animal."""
-    def __init__(self, on_true=(), on_false=(), anim=None ):
+    def __init__(self, pat=ANIMAL, on_true=(), on_false=(), anim=None ):
+        self.pat = pat
         if not on_true:
             on_true = list()
         self.on_true = on_true
@@ -188,15 +199,28 @@ class IsAnimal( NoEffect ):
             on_false = list()
         self.on_false = on_false
         self.anim = anim
-    TEMPLATES_TO_CHECK = (stats.UNDEAD,stats.DEMON,stats.ELEMENTAL,stats.PLANT,stats.CONSTRUCT)
-    def handle_effect( self, camp, originator, pos, anims ):
+
+    def handle_effect( self, camp, originator, pos, anims, delay=0 ):
         """Do whatever is required of effect; return list of child effects."""
         target = camp.scene.get_character_at_spot( pos )
         if target:
-            if any( target.has_template( x ) for x in self.TEMPLATES_TO_CHECK ):
-                return self.on_false
-            else:
+            match = True
+            for k,v in self.pat.iteritems():
+                if v:
+                    # This key must exist in target's templates.
+                    if k not in target.TEMPLATES:
+                        match = False
+                        break
+                else:
+                    # This key must not exist in target's templates.
+                    if k in target.TEMPLATES:
+                        match = False
+                        break
+
+            if match:
                 return self.on_true
+            else:
+                return self.on_false
         else:
             return self.on_false
 

@@ -196,15 +196,18 @@ class Explorer( object ):
         x,y = camp.first_living_pc().pos
         self.view.focus( screen, x, y )
 
-    def invoke_effect( self, effect, originator, area_of_effect, opening_anim = None ):
+    def invoke_effect( self, effect, originator, area_of_effect, opening_anim = None, delay_point=None ):
         all_anims = list()
         if opening_anim:
             all_anims.append( opening_anim )
             anims = opening_anim.children
         else:
             anims = all_anims
+        delay = 1
         for p in area_of_effect:
-            effect( self.camp, originator, p, anims )
+            if delay_point:
+                delay = self.scene.distance( p, delay_point ) * 2 + 1
+            effect( self.camp, originator, p, anims, delay )
         animobs.handle_anim_sequence( self.screen, self.view, all_anims )
 
         # Remove dead models from the map.
@@ -396,21 +399,23 @@ class Explorer( object ):
                                 anims = [ animobs.SpeakAngry(m.pos,loop=16), ]
                                 animobs.handle_anim_sequence( self.screen, self.view, anims )
 
+    def keep_exploring( self ):
+        return self.camp.first_living_pc() and self.no_quit and not pygwrap.GOT_QUIT
 
     def go( self ):
-        keep_going = True
+        self.no_quit = True
         self.order = None
 
         # Do one view first, just to prep the model map and mouse tile.
         self.view( self.screen )
         pygame.display.flip()
 
-        while keep_going and not pygwrap.GOT_QUIT:
+        while self.keep_exploring():
             if self.camp.fight:
                 self.order = None
                 self.camp.fight.go( self )
                 if pygwrap.GOT_QUIT or not self.camp.fight.no_quit:
-                    keep_going = False
+                    self.no_quit = False
                     break
                 self.camp.fight = None
 
@@ -444,14 +449,14 @@ class Explorer( object ):
                     elif gdi.unicode == u"4":
                         self.view_party(3)
                     elif gdi.unicode == u"Q":
-                        keep_going = False
+                        self.no_quit = False
                     elif gdi.unicode == u"a":
                         self.alert( "This is a test of the alert system. Let me know how it turns out." )
                     elif gdi.unicode == u"c":
                         self.view.focus( self.screen, *self.camp.first_living_pc().pos )
 
                 elif gdi.type == pygame.QUIT:
-                    keep_going = False
+                    self.no_quit = False
                 elif gdi.type == pygame.MOUSEBUTTONUP:
                     if gdi.button == 1:
                         # Left mouse button.
@@ -463,19 +468,34 @@ class Explorer( object ):
                     else:
                         # If YouTube comments were as good as these comments, we'd all have ponies by now.
                         animobpos = self.view.mouse_tile
-                        ao_pro = animobs.GreenSpray(self.camp.first_living_pc().pos,self.view.mouse_tile )
-                        anims = [ ao_pro, ]
-
-                        area = pfov.PointOfView( self.scene, animobpos[0], animobpos[1], 2 )
-                        for a in area.tiles:
-                            ao = animobs.GreenCloud( a )
+#                        ao_pro = animobs.GreenSpray(self.camp.first_living_pc().pos,self.view.mouse_tile )
+#                        anims = [ ao_pro, ]
+#
+#                        area = pfov.PointOfView( self.scene, animobpos[0], animobpos[1], 5 )
+#                        for a in area.tiles:
+#                            ao = animobs.GreenCloud( pos=a, delay=self.scene.distance(a,animobpos ) * 2 + 1 )
 #                            ao.y_off = -25 + 5 * ( abs( a[0]-animobpos[0] ) + abs( a[1]-animobpos[1] ) )
-                            ao_pro.children.append( ao )
+#                            ao_pro.children.append( ao )
+#                        for a in self.scene.contents:
+#                            if a.pos in area.tiles:
+#                                ao = animobs.Caption( str(random.randint(5,27)), a.pos, delay=self.scene.distance(a.pos,animobpos ) * 2 + 1 )
+#                                ao = animobs.Caption( "Aiee!", a.pos )
+#                                ao_pro.children.append( ao )
+#
+#                        animobs.handle_anim_sequence( self.screen, self.view, anims )
+
+                        animobpos = self.view.mouse_tile
+                        pcpos = self.camp.first_living_pc().pos
+                        anims = list()
+
+                        area = pfov.Cone( self.scene, pcpos, animobpos )
+                        for a in area.tiles:
+                            ao = animobs.GreenCloud( pos=a, delay=self.scene.distance(a,pcpos ) * 2 + 1 )
+                            anims.append( ao )
                         for a in self.scene.contents:
                             if a.pos in area.tiles:
-                                ao = animobs.Caption( str(random.randint(5,27)), a.pos )
-#                                ao = animobs.Caption( "Aiee!", a.pos )
-                                ao_pro.children.append( ao )
+                                ao = animobs.Caption( str(random.randint(5,27)), a.pos, delay=self.scene.distance(a.pos,pcpos ) * 2 + 1 )
+                                anims.append( ao )
 
                         animobs.handle_anim_sequence( self.screen, self.view, anims )
 

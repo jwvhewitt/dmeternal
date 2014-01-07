@@ -97,7 +97,7 @@ class Attack( object ):
             kill = effects.InstaKill( anim=animobs.CriticalHit )
             kill_roll = effects.PercentRoll( roll_skill=stats.CRITICAL_HIT, roll_stat=None, \
               roll_modifier=min(att_modifier*2,0), target_affects=True, on_success=(kill,) )
-            kill_check = effects.IsAnimal( on_true=(kill_roll,) )
+            kill_check = effects.TargetIs( effects.ANIMAL, on_true=(kill_roll,) )
             hit.on_success.append( kill_check )
 
         return roll

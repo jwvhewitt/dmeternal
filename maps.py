@@ -251,7 +251,7 @@ class Scene( object ):
         return npc
 
     def distance( self, pos1, pos2 ):
-        return math.sqrt( ( pos1[0]-pos2[0] )**2 + ( pos1[1]-pos2[1] )**2 )
+        return round( math.sqrt( ( pos1[0]-pos2[0] )**2 + ( pos1[1]-pos2[1] )**2 ) )
 
     def update_pc_position( self, pc ):
         return pfov.PCPointOfView( self, pc.pos[0], pc.pos[1], 10 )
@@ -390,6 +390,7 @@ class SceneView( object ):
     def map_y( self, sx, sy ):
         """Return the map y row for the given screen coordinates."""
         return ( ( sy - self.y_off ) / self.HTH - ( sx - self.x_off ) / self.HTW ) // 2
+
 
     def check_origin( self ):
         """Make sure the offset point is within map boundaries."""
