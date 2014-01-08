@@ -269,6 +269,11 @@ class Smoke( AnimOb ):
     def __init__(self, pos=(0,0), loop=0, delay=1 ):
         super(Smoke, self).__init__(sprite_name="fx_smoke.png",pos=pos,start_frame=0,end_frame=7,loop=loop,ticks_per_frame=1, delay=delay)
 
+# fx_steam.png
+class Steam( AnimOb ):
+    def __init__(self, pos=(0,0), loop=0, delay=1 ):
+        super(Steam, self).__init__(sprite_name="fx_steam.png",pos=pos,start_frame=0,end_frame=7,loop=loop,ticks_per_frame=1, delay=delay)
+
 
 # fx_nuclear.png
 

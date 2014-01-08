@@ -44,8 +44,14 @@ class TacticsRedraw( object ):
                 else:
                     self.gems.render( screen, mydest, 5 )
 
-
-
+class ComStat( object ):
+    """Keep track of some stats that only matter during combat."""
+    def __init__( self ):
+        self.paralysis = 0
+        self.confusion = 0
+        self.asleep = False
+    def can_act( self ):
+        return self.paralysis < 1 and not self.asleep
 
 class Combat( object ):
     def __init__( self, camp, monster_zero ):
@@ -53,6 +59,7 @@ class Combat( object ):
         self.scene = camp.scene
         self.camp = camp
         self.ap_spent = collections.defaultdict( int )
+        self.cstat = collections.defaultdict( CombatStat )
         self.no_quit = True
 
         self.activate_monster( monster_zero )
@@ -80,7 +87,7 @@ class Combat( object ):
 
     def can_act( self, chara ):
         """Return True if the provided character can act right now."""
-        return chara.is_alright() and self.ap_spent[ chara ] < chara.get_move()
+        return chara.is_alright() and self.ap_spent[ chara ] < chara.get_move() and self.cstat[chara].can_act()
 
     def still_fighting( self ):
         """Keep playing as long as there are enemies, players, and no quit."""
@@ -358,10 +365,21 @@ class Combat( object ):
     def do_combat_action( self, explo, chara ):
         started_turn_hidden = chara.hidden
 
-        if chara in self.camp.party:
-            self.do_player_action( explo, chara )
+        if self.cstat[chara].paralysis > 0:
+            # This character can do nothing this turn.
+            self.end_turn( chara )
+            self.cstat[chara].paralysis += -1
+        elif self.cstat[chara].asleep:
+            # This character can do nothing this turn... may wake up.
+            self.end_turn( chara )
+            if random.randint(1,3) == 2:
+                self.cstat[chara].asleep = False
         else:
-            self.do_npc_action( explo, chara )
+            # No special psychology or conditions- just do stuff.
+            if chara in self.camp.party:
+                self.do_player_action( explo, chara )
+            else:
+                self.do_npc_action( explo, chara )
 
         # If they started the turn hidden, random chance of decloaking.
         if started_turn_hidden and random.randint(1,10)==1:

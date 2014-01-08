@@ -6,14 +6,17 @@ download his tilesets from here:
 Part of the graphic tiles used in this program is the public domain roguelike
 tileset "RLTiles". Some of the tiles have been modified by me.
 
-    You can find the original tileset at:
     http://rltiles.sf.net
 
-Many other graphics obtained from http://opengameart.org
+Also, the more recent Crawl tiles:
+
+    http://git.develz.org/?p=crawl.git;a=summary
 
 Nuclear explosion, Pearl effect by Jetrel.
 
-Smoke effect by Pow Studios. http://powstudios.com
+Smoke and Steam effects by Pow Studios. http://powstudios.com
+
+Many other graphics obtained from http://opengameart.org
 
 
 Programming mostly by Joseph Hewitt, except the bits I stole from other people.

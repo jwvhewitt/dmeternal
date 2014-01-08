@@ -490,7 +490,7 @@ class Explorer( object ):
 
                         area = pfov.Cone( self.scene, pcpos, animobpos )
                         for a in area.tiles:
-                            ao = animobs.GreenCloud( pos=a, delay=self.scene.distance(a,pcpos ) * 2 + 1 )
+                            ao = animobs.RedCloud( pos=a, delay=self.scene.distance(a,pcpos ) * 2 + 1 )
                             anims.append( ao )
                         for a in self.scene.contents:
                             if a.pos in area.tiles:

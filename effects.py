@@ -153,6 +153,12 @@ class HealthDamage( NoEffect ):
                     dmg = 1
                 elif dmg < 1:
                     dmg = 0
+
+            # If the target is asleep, damage doubled but they wake up.
+            if camp.fight and camp.fight.cstat[target].asleep:
+                dmg = dmg * 2
+                camp.fight.cstat[target].asleep = False
+
             target.hp_damage += dmg
 
             anims.append( animobs.Caption( str(dmg), pos, delay=delay ) )

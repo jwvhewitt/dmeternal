@@ -20,7 +20,7 @@ class IceWand( ManaWeapon ):
     itemtype = WAND
     MP_COST = 1
     avatar_image = "avatar_wand.png"
-    avatar_frame = 0
+    avatar_frame = 1
     mass = 5
     attackdata = Attack( (1,8,1), skill_mod=stats.REFLEXES, damage_mod=stats.INTELLIGENCE, \
         element=stats.RESIST_COLD, reach=7, hit_anim=animobs.BlueExplosion )
@@ -44,7 +44,7 @@ class LightningWand( ManaWeapon ):
     itemtype = WAND
     MP_COST = 1
     avatar_image = "avatar_wand.png"
-    avatar_frame = 0
+    avatar_frame = 27
     mass = 5
     attackdata = Attack( (1,8,1), skill_mod=stats.REFLEXES, damage_mod=stats.INTELLIGENCE, \
         element=stats.RESIST_LIGHTNING, reach=7, hit_anim=animobs.BlueZap )
@@ -56,7 +56,7 @@ class TelekinesisWand( ManaWeapon ):
     itemtype = WAND
     MP_COST = 1
     avatar_image = "avatar_wand.png"
-    avatar_frame = 0
+    avatar_frame = 21
     mass = 5
     attackdata = Attack( (3,6,0), skill_mod=stats.REFLEXES, damage_mod=stats.INTELLIGENCE, \
         element=stats.RESIST_CRUSHING, reach=7, hit_anim=animobs.RedBoom )
