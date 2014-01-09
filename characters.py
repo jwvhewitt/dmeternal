@@ -272,6 +272,7 @@ class Human( object ):
     slots = ( items.BACK, items.FEET, items.BODY, items.HANDS, items.HAND1, items.HAND2, items.HEAD )
     starting_equipment = ()
     MOVE_POINTS = 10
+    TEMPLATES = ()
 
     def __init__( self ):
         self.skin_color = random.randint( 0 , self.NUM_COLORS - 1 )
@@ -337,13 +338,13 @@ class Reptal( Human ):
     name = "Reptal"
     desc = "Reptals are an ancient race of lizard people. They are extremely strong and tough, but quite limited in all other respects."
     statline = { stats.STRENGTH: 4, stats.TOUGHNESS: 3, stats.REFLEXES: -2, \
-        stats.INTELLIGENCE: -4, stats.PIETY: -3, stats.CHARISMA: -3, \
-        stats.RESIST_FIRE: 25, stats.RESIST_COLD: -25 }
+        stats.INTELLIGENCE: -4, stats.PIETY: -3, stats.CHARISMA: -3 }
     FIRST_IMAGE = 24
     NUM_COLORS = 6
     HAS_HAIR = False
     starting_equipment = ( items.maces.Club, items.clothes.AnimalSkin )
     VOICE = dialogue.voice.DRACONIAN
+    TEMPLATES = (stats.REPTILE,)
 
 class Centaur( Human ):
     name = "Centaur"
@@ -363,18 +364,23 @@ class CappedModifierList( list ):
         p_max,n_max = 0,0
         for thing in self:
             if hasattr( thing, "statline" ):
-                v = thing.statline.get( stat )
+                v = thing.statline.get( stat, 0 )
                 if v > 0:
                     p_max = max( v , p_max )
                 elif v < 0:
                     n_max = min( v , n_max )
         return p_max + n_max
+    def tidy( self, dispel_this ):
+        for thing in self[:]:
+            if hasattr( thing, "dispel" ) and dispel_this in thing.dispel:
+                self.remove( thing )
 
 class Character(object):
     FRAME = 0
     TEMPLATES = ()
     team = None
     hidden = False
+    holy_signs_used = 0
 
     def __init__( self, name = "", species = None, gender = stats.NEUTER, statline=None ):
         self.name = name
@@ -407,6 +413,8 @@ class Character(object):
         # Add bonus from species...
         if self.species != None:
             it += self.species.statline.get( stat , 0 )
+            for l in self.species.TEMPLATES:
+                it += l.bonuses.get( stat, 0 )
 
         # Add bonuses from any earned classes...
         for l in self.levels:
@@ -619,9 +627,12 @@ class Character(object):
             myvoice.add( dialogue.voice.SMART )
         return myvoice
 
-    def get_reaction( self, camp ):
+    def get_reaction( self, camp=None ):
         if self.team:
-            return self.team.check_reaction( camp )
+            if camp:
+                return self.team.check_reaction( camp )
+            else:
+                return self.team.default_reaction
         else:
             return 999
 
@@ -641,6 +652,14 @@ class Character(object):
         ( 1, 8, 0, 0 ),( 1,10, 0, 0 ),( 1,10, 0, 0 ),( 2, 6, 0, 0 ),( 2, 6, 0, 0 ),
         ( 2, 6, 1, 2 ),( 2, 6, 1, 3 ),( 2, 8, 1, 4 ),( 2, 8, 1, 5 ),( 2, 8, 1, 6 ),
         ( 2, 9, 1, 6 ),( 2, 9, 1, 7 ),( 2,10, 1, 7 ),( 2,10, 1, 8 ),( 2,10, 1,10 ) )
+
+    def critical_hit_effect( self, roll_mod=0 ):
+        return effects.TargetIs( effects.ANIMAL, on_true=(
+            effects.PercentRoll( roll_skill=stats.CRITICAL_HIT, roll_stat=None, 
+            roll_modifier=min(roll_mod*2,0), target_affects=True, on_success=(
+                effects.InstaKill( anim=animobs.CriticalHit )
+            ,) )
+        ,) ) 
 
     def unarmed_attack_effect( self, roll_mod=0 ):
         """Return the attackdata for this character's unarmed strikes."""
@@ -663,11 +682,7 @@ class Character(object):
 
         # If the attacker has critical hit skill, use it.
         if self.get_stat( stats.CRITICAL_HIT ) > 0:
-            kill = effects.InstaKill( anim=animobs.CriticalHit )
-            kill_roll = effects.PercentRoll( roll_skill=stats.CRITICAL_HIT, roll_stat=None, \
-              roll_modifier=min(roll_mod*2,0), target_affects=True, on_success=(kill,) )
-            kill_check = effects.TargetIs( effects.ANIMAL, on_true=(kill_roll,) )
-            hit.on_success.append( kill_check )
+            hit.on_success.append( self.critical_hit_effect( roll_mod ) )
 
         return roll
 
@@ -712,6 +727,14 @@ class Character(object):
         else:
             return True
 
+    def can_attack_of_opportunity( self ):
+        """Return True if this character can perform an attack of opportunity."""
+        weapon = self.inventory.get_equip( items.HAND1 )
+        if weapon and weapon.itemtype in (items.BOW, items.SLING, items.WAND ):
+            return False
+        else:
+            return self.can_attack()
+
     def spend_attack_price( self ):
         weapon = self.inventory.get_equip( items.HAND1 )
         if weapon:
@@ -721,12 +744,16 @@ class Character(object):
         # Extra attacks = unmodified PHYSICAL_ATTACK score divided by 20
         return sum( l.get_stat( stats.PHYSICAL_ATTACK ) for l in self.levels ) // 20 + 1
 
+    def holy_signs_per_day( self ):
+        # Skill can be used value/25 + 1 times.
+        return sum( l.get_stat( stats.HOLY_SIGN ) for l in self.levels ) // 25 + 1
+
     def xp_value( self ):
-        # Extra attacks = unmodified PHYSICAL_ATTACK score divided by 20
+        # Sum of the xp values of all held levels.
         return sum( l.XP_VALUE * l.rank for l in self.levels )
 
     def has_template( self, temp ):
-        return temp in self.TEMPLATES
+        return ( temp in self.TEMPLATES ) or ( self.species and temp in self.species.TEMPLATES )
 
 
 def roll_initiative( pc ):

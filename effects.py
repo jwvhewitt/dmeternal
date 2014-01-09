@@ -191,11 +191,52 @@ class InstaKill( NoEffect ):
 
         return self.children
 
+class Paralyze( NoEffect ):
+    """Paralyzes the target for a number of turns."""
+    def __init__(self, max_duration=4, children=(), anim=animobs.Paralysis ):
+        self.max_duration = max_duration
+        if not children:
+            children = list()
+        self.children = children
+        self.anim = anim
+
+    def handle_effect( self, camp, originator, pos, anims, delay=0 ):
+        """Do whatever is required of effect; return list of child effects."""
+        target = camp.scene.get_character_at_spot( pos )
+        if target:
+            # Start by activating the target.
+            camp.activate_monster( target )
+
+            if camp.fight:
+                camp.fight.cstat[target].paralysis = random.randint(1,self.max_duration)
+
+        return self.children
+
+
+class Enchant( NoEffect ):
+    """Adds an enchantment to the target's condition list."""
+    def __init__(self, e_type, children=(), anim=None ):
+        self.e_type = e_type
+        if not children:
+            children = list()
+        self.children = children
+        self.anim = anim
+
+    def handle_effect( self, camp, originator, pos, anims, delay=0 ):
+        """Do whatever is required of effect; return list of child effects."""
+        target = camp.scene.get_character_at_spot( pos )
+        if target:
+            target.condition.append( self.e_type() )
+        return self.children
+
+
 ANIMAL = {stats.UNDEAD: False, stats.DEMON: False, stats.ELEMENTAL: False, \
     stats.PLANT: False, stats.CONSTRUCT: False}
 
+UNDEAD = {stats.UNDEAD: True }
+
 class TargetIs( NoEffect ):
-    """An effect that branches depending on if target is an animal."""
+    """An effect that branches depending on if target matches provided pattern."""
     def __init__(self, pat=ANIMAL, on_true=(), on_false=(), anim=None ):
         self.pat = pat
         if not on_true:

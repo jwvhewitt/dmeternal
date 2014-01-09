@@ -24,7 +24,7 @@ class WarAxe( Item ):
     true_desc = "A sturdy single-handed axe."
     itemtype = AXE
     avatar_image = "avatar_axe.png"
-    avatar_frame = 4
+    avatar_frame = 19
     mass = 70
     attackdata = Attack( (1,8,0) )
 

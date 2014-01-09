@@ -221,6 +221,15 @@ class Explorer( object ):
                     i.equipped = False
                     self.scene.contents.append( i )
 
+    def invoke_enchantments( self, chara ):
+        """If this character has any effect enchantments, handle them."""
+        aoe = chara.pos
+        for enc in chara.condition:
+            if enc.fx:
+                self.invoke_effect( enc.fx, chara, aoe )
+                if not chara.is_alright():
+                    break
+
     def alert( self, txt ):
         mydest = pygame.Rect( self.screen.get_width() // 2 - 200, self.screen.get_height()//2 - 100, 400, 200 )
         mytext = pygwrap.render_text( pygwrap.SMALLFONT, txt, 400 )
@@ -488,13 +497,15 @@ class Explorer( object ):
                         pcpos = self.camp.first_living_pc().pos
                         anims = list()
 
-                        area = pfov.Cone( self.scene, pcpos, animobpos )
-                        for a in area.tiles:
-                            ao = animobs.RedCloud( pos=a, delay=self.scene.distance(a,pcpos ) * 2 + 1 )
+#                        area = pfov.Cone( self.scene, pcpos, animobpos ).tiles
+                        area = animobs.get_line( pcpos[0], pcpos[1], animobpos[0], animobpos[1] )
+                        area.remove( pcpos )
+                        for a in area:
+                            ao = animobs.Steam( pos=a, delay=self.scene.distance(a,pcpos ) + 1 )
                             anims.append( ao )
                         for a in self.scene.contents:
-                            if a.pos in area.tiles:
-                                ao = animobs.Caption( str(random.randint(5,27)), a.pos, delay=self.scene.distance(a.pos,pcpos ) * 2 + 1 )
+                            if a.pos in area:
+                                ao = animobs.Caption( str(random.randint(5,27)), a.pos, delay=self.scene.distance(a.pos,pcpos ) + 1 )
                                 anims.append( ao )
 
                         animobs.handle_anim_sequence( self.screen, self.view, anims )

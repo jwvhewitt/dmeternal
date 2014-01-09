@@ -11,14 +11,17 @@ class HotTile( object ):
 
 class HotMap( object ):
     DELTA8 = [ (-1,-1), (0,-1), (1,-1), (-1,0), (1,0), (-1,1), (0,1), (1,1) ]
-    def __init__( self, scene, hot_points, obstacles=set(), limits=None, avoid_models=False ):
+    def __init__( self, scene, hot_points, obstacles=set(), expensive=set(), limits=None, avoid_models=False ):
         """Calculate this hotmap given scene and set of hot points."""
+        # Obstacles block movement.
+        # Expensive tiles are avoided, if possible.
         self.scene = scene
 
         if avoid_models:
             obstacles = self.list_model_positions().union( obstacles )
 
         self.obstacles = obstacles
+        self.expensive = expensive
         self.map = [[ int(9999)
             for y in range(scene.height) ]
                 for x in range(scene.width) ]
@@ -39,6 +42,7 @@ class HotMap( object ):
             flag = False
             for y in range( lo_y, hi_y ):
                 for x in range( lo_x, hi_x ):
+                    p = (x,y)
                     if not self.blocks_movement( x, y ):
                         dh = 2 + self.map[x-1][y]
                         dv = 2 + self.map[x][y-1]
@@ -46,6 +50,8 @@ class HotMap( object ):
                         dp = 3 + self.map[x+1][y-1]
 
                         dp = min(dh,dv,dd,dp)
+                        if p in self.expensive:
+                            dp += 8
                         if dp < self.map[x][y]:
                             self.map[x][y] = dp
                             flag = True
@@ -60,6 +66,8 @@ class HotMap( object ):
                         dp = 3 + self.map[x-1][y+1]
 
                         dp = min(dh,dv,dd,dp)
+                        if p in self.expensive:
+                            dp += 8
                         if dp < self.map[x][y]:
                             self.map[x][y] = dp
                             flag = True
@@ -88,10 +96,10 @@ class HotMap( object ):
         return best_d
 
 class PointMap( HotMap ):
-    def __init__( self, scene, dest, avoid_models = False ):
+    def __init__( self, scene, dest, avoid_models = False, expensive=set() ):
         myset = set()
         myset.add( dest )
-        super( PointMap, self ).__init__( scene, myset, avoid_models=avoid_models )
+        super( PointMap, self ).__init__( scene, myset, expensive=expensive, avoid_models=avoid_models )
 
 class MoveMap( HotMap ):
     """Calculates movement costs to different tiles. Only calcs as far as necessary."""

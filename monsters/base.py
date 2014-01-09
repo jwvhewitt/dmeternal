@@ -42,7 +42,7 @@ class Merchant( characters.Level ):
 class Humanoid( characters.Level ):
     name = 'Humanoid'
     desc = ''
-    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 4, stats.PHYSICAL_DEFENSE: 3,
+    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 4, stats.NATURAL_DEFENSE: 3,
         stats.MAGIC_ATTACK: 4, stats.MAGIC_DEFENSE: 3, stats.AWARENESS: 3} )
     HP_DIE = 8
     MP_DIE = 8
@@ -51,7 +51,7 @@ class Humanoid( characters.Level ):
 class Spellcaster( characters.Level ):
     name = 'Spellcaster'
     desc = ''
-    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 3, stats.PHYSICAL_DEFENSE: 3,
+    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 3, stats.NATURAL_DEFENSE: 3,
         stats.MAGIC_ATTACK: 4, stats.MAGIC_DEFENSE: 4, stats.AWARENESS: 3} )
     HP_DIE = 6
     MP_DIE = 12
@@ -60,7 +60,7 @@ class Spellcaster( characters.Level ):
 class Beast( characters.Level ):
     name = 'Beast'
     desc = ''
-    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 5, stats.PHYSICAL_DEFENSE: 3,
+    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 5, stats.NATURAL_DEFENSE: 3,
         stats.MAGIC_ATTACK: 3, stats.MAGIC_DEFENSE: 2, stats.AWARENESS: 4} )
     HP_DIE = 10
     MP_DIE = 6
@@ -69,7 +69,7 @@ class Beast( characters.Level ):
 class Terror( characters.Level ):
     name = 'Terror'
     desc = ''
-    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 4, stats.PHYSICAL_DEFENSE: 4,
+    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 4, stats.NATURAL_DEFENSE: 4,
         stats.MAGIC_ATTACK: 4, stats.MAGIC_DEFENSE: 4, stats.AWARENESS: 4} )
     HP_DIE = 10
     MP_DIE = 10
@@ -78,7 +78,7 @@ class Terror( characters.Level ):
 class Defender( characters.Level ):
     name = 'Defender'
     desc = ''
-    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 4, stats.PHYSICAL_DEFENSE: 4,
+    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 4, stats.NATURAL_DEFENSE: 4,
         stats.RESIST_FIRE: 4, stats.RESIST_COLD: 4, stats.RESIST_LIGHTNING: 4, stats.RESIST_ACID: 4,
         stats.MAGIC_ATTACK: 3, stats.MAGIC_DEFENSE: 4, stats.AWARENESS: 3} )
     HP_DIE = 12

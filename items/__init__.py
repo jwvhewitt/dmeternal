@@ -94,11 +94,7 @@ class Attack( object ):
 
         # If the attacker has critical hit skill, use it.
         if user.get_stat( stats.CRITICAL_HIT ) > 0:
-            kill = effects.InstaKill( anim=animobs.CriticalHit )
-            kill_roll = effects.PercentRoll( roll_skill=stats.CRITICAL_HIT, roll_stat=None, \
-              roll_modifier=min(att_modifier*2,0), target_affects=True, on_success=(kill,) )
-            kill_check = effects.TargetIs( effects.ANIMAL, on_true=(kill_roll,) )
-            hit.on_success.append( kill_check )
+            hit.on_success.append( user.critical_hit_effect( att_modifier ) )
 
         return roll
 
@@ -109,7 +105,6 @@ class Item( object ):
     itemtype = GENERIC
     identified = False
     attackdata = None
-#    quantity = 0
     avatar_image = None
     avatar_frame = 0
     mass = 1
