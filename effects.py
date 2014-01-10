@@ -229,6 +229,21 @@ class Enchant( NoEffect ):
             target.condition.append( self.e_type() )
         return self.children
 
+class Probe( NoEffect ):
+    """Places the Probe animob."""
+    def __init__(self, children=(), anim=None ):
+        if not children:
+            children = list()
+        self.children = children
+        self.anim = anim
+
+    def handle_effect( self, camp, originator, pos, anims, delay=0 ):
+        """Do whatever is required of effect; return list of child effects."""
+        target = camp.scene.get_character_at_spot( pos )
+        if target:
+            anims.append( animobs.ProbeView( target=target ) )
+        return self.children
+
 
 ANIMAL = {stats.UNDEAD: False, stats.DEMON: False, stats.ELEMENTAL: False, \
     stats.PLANT: False, stats.CONSTRUCT: False}
@@ -270,6 +285,51 @@ class TargetIs( NoEffect ):
                 return self.on_false
         else:
             return self.on_false
+
+class TargetIsAlly( NoEffect ):
+    """An effect that branches depending on if target is an ally."""
+    def __init__(self, on_true=(), on_false=(), anim=None ):
+        if not on_true:
+            on_true = list()
+        self.on_true = on_true
+        if not on_false:
+            on_false = list()
+        self.on_false = on_false
+        self.anim = anim
+
+    def handle_effect( self, camp, originator, pos, anims, delay=0 ):
+        """Do whatever is required of effect; return list of child effects."""
+        target = camp.scene.get_character_at_spot( pos )
+        if target:
+            if target.is_enemy( camp, originator ):
+                return self.on_false
+            else:
+                return self.on_true
+        else:
+            return self.on_false
+
+class TargetIsEnemy( NoEffect ):
+    """An effect that branches depending on if target is an enemy."""
+    def __init__(self, on_true=(), on_false=(), anim=None ):
+        if not on_true:
+            on_true = list()
+        self.on_true = on_true
+        if not on_false:
+            on_false = list()
+        self.on_false = on_false
+        self.anim = anim
+
+    def handle_effect( self, camp, originator, pos, anims, delay=0 ):
+        """Do whatever is required of effect; return list of child effects."""
+        target = camp.scene.get_character_at_spot( pos )
+        if target:
+            if target.is_enemy( camp, originator ):
+                return self.on_true
+            else:
+                return self.on_false
+        else:
+            return self.on_false
+
 
 
 if __name__=='__main__':

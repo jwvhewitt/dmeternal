@@ -221,6 +221,74 @@ class Explorer( object ):
                     i.equipped = False
                     self.scene.contents.append( i )
 
+    SELECT_AREA_CAPTION_ZONE = pygame.Rect( 32, 32, 300, 15 )
+    def select_area( self, origin, aoegen, caption = None ):
+        # Start by determining the possible target tiles.
+        legal_tiles = aoegen.get_targets( self.camp, origin )
+        target = None
+        aoe = set()
+
+        # Keep processing until a target is selected.
+        while not target:
+            # Get input and process it.
+            gdi = pygwrap.wait_event()
+
+            if gdi.type == pygwrap.TIMEREVENT:
+                # Set the mouse cursor on the map.
+                self.view.overlays.clear()
+                self.view.overlays[ origin ] = maps.OVERLAY_CURRENTCHARA
+                self.view.overlays[ self.view.mouse_tile ] = maps.OVERLAY_CURSOR
+                if self.view.mouse_tile in legal_tiles:
+                    aoe = aoegen.get_area( self.camp, origin, self.view.mouse_tile )
+                    for p in aoe:
+                        self.view.overlays[ p ] = maps.OVERLAY_AOE
+
+                self.view( self.screen )
+                if caption:
+                    pygwrap.default_border.render( self.screen, self.SELECT_AREA_CAPTION_ZONE )
+                    pygwrap.draw_text( self.screen, pygwrap.SMALLFONT, caption, self.SELECT_AREA_CAPTION_ZONE )
+
+                pygame.display.flip()
+
+            elif gdi.type == pygame.QUIT:
+                self.no_quit = False
+                break
+            elif gdi.type == pygame.MOUSEBUTTONUP:
+                if gdi.button == 1 and self.view.mouse_tile in legal_tiles:
+                    target = self.view.mouse_tile
+                else:
+                    break
+        self.view.overlays.clear()
+        return target
+
+
+    def invoke_technique( self, chara, tech, aoegen ):
+        """Let chara invoke tech, selecting area of effect via aoegen."""
+        if aoegen.AUTOMATIC:
+            # This is easy.
+            tiles = aoegen.get_area( self.camp, chara.pos, None )
+            target = None
+        else:
+            target = self.select_area( chara.pos, aoegen, caption = str(tech) )
+            if target:
+                tiles = aoegen.get_area( self.camp, chara.pos, target )
+            else:
+                tiles = None
+
+        if tiles:
+            if target and tech.shot_anim:
+                shot = tech.shot_anim( chara.pos, target )
+            else:
+                shot = None
+            if aoegen.delay_from < 0:
+                delay_point = chara.pos
+            elif aoegen.delay_from > 0 and target:
+                delay_point = target
+            else:
+                delay_point = None
+            self.invoke_effect( tech.fx, chara, tiles, opening_anim = shot, delay_point = delay_point )
+
+
     def invoke_enchantments( self, chara ):
         """If this character has any effect enchantments, handle them."""
         aoe = chara.pos
@@ -482,26 +550,26 @@ class Explorer( object ):
 #
 #                        area = pfov.PointOfView( self.scene, animobpos[0], animobpos[1], 5 )
 #                        for a in area.tiles:
-#                            ao = animobs.GreenCloud( pos=a, delay=self.scene.distance(a,animobpos ) * 2 + 1 )
+#                            ao = animobs.DragonFire( pos=a, delay=self.scene.distance(a,animobpos ) * 2 + 1 )
 #                            ao.y_off = -25 + 5 * ( abs( a[0]-animobpos[0] ) + abs( a[1]-animobpos[1] ) )
 #                            ao_pro.children.append( ao )
-#                        for a in self.scene.contents:
+#                       for a in self.scene.contents:
 #                            if a.pos in area.tiles:
 #                                ao = animobs.Caption( str(random.randint(5,27)), a.pos, delay=self.scene.distance(a.pos,animobpos ) * 2 + 1 )
 #                                ao = animobs.Caption( "Aiee!", a.pos )
 #                                ao_pro.children.append( ao )
-#
+
 #                        animobs.handle_anim_sequence( self.screen, self.view, anims )
 
                         animobpos = self.view.mouse_tile
                         pcpos = self.camp.first_living_pc().pos
                         anims = list()
 
-#                        area = pfov.Cone( self.scene, pcpos, animobpos ).tiles
-                        area = animobs.get_line( pcpos[0], pcpos[1], animobpos[0], animobpos[1] )
-                        area.remove( pcpos )
+                        area = pfov.Cone( self.scene, pcpos, animobpos ).tiles
+#                        area = animobs.get_line( pcpos[0], pcpos[1], animobpos[0], animobpos[1] )
+#                        area.remove( pcpos )
                         for a in area:
-                            ao = animobs.Steam( pos=a, delay=self.scene.distance(a,pcpos ) + 1 )
+                            ao = animobs.DragonFire( pos=a, delay=self.scene.distance(a,pcpos ) + 1 )
                             anims.append( ao )
                         for a in self.scene.contents:
                             if a.pos in area:

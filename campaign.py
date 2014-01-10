@@ -132,10 +132,11 @@ if __name__=='__main__':
     import monsters
     import characters
     import teams
+    import spells
 
     # Set the screen size.
-    screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
-#    screen = pygame.display.set_mode( (800,600) )
+#    screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
+    screen = pygame.display.set_mode( (800,600) )
 #    screen = pygame.display.set_mode( (800,600), pygame.FULLSCREEN )
 
     pygame.init()
@@ -251,6 +252,7 @@ if __name__=='__main__':
     x = 23
     for pc in camp.party:
         pc.pos = (x,13)
+        pc.techniques += spells.SPELL_LIST
         x += 1
         myscene.contents.append( pc )
         pcpov = pfov.PCPointOfView( myscene, 24, 10, 15 )

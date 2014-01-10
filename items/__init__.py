@@ -84,7 +84,7 @@ class Attack( object ):
         if self.reach > 1:
             it = it + ", Range:{0}".format( self.reach )
         return it
-    def get_effect( self, user, att_modifier ):
+    def get_effect( self, user, att_modifier=0, target=None ):
         """Generate an effect tree for this attack."""
         hit = effects.HealthDamage( att_dice=self.damage, stat_bonus=self.damage_mod, element=self.element, anim=self.hit_anim )
         if self.double_handed:

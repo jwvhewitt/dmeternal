@@ -109,10 +109,11 @@ class Combat( object ):
         """Keep playing as long as there are enemies, players, and no quit."""
         return self.num_enemies() and self.camp.first_living_pc() and self.no_quit and not pygwrap.GOT_QUIT
 
+
     def get_threatened_area( self, chara ):
         area = set()
         for m in self.active:
-            if m.is_alright() and m.is_enemy( self.camp, chara ) and m.can_attack_of_opportunity() and self.cstat[m].aoo_readied:
+            if m.is_alright() and m.is_enemy( self.camp, chara ) and m.can_attack_of_opportunity() and self.cstat[m].aoo_readied and self.cstat[m].can_act():
                 x,y = m.pos
                 for d in self.scene.DELTA8:
                     area.add( (x + d[0], y + d[1] ) )
@@ -121,7 +122,7 @@ class Combat( object ):
     def opportunity_to_attack( self, explo, target ):
         """Enemies with attacks of opportunity can attack this target."""
         for m in self.active[:]:
-            if m.is_alright() and m.is_enemy( self.camp, target ) and m.can_attack_of_opportunity() and self.cstat[m].aoo_readied and self.scene.distance(m.pos,target.pos) <= 1:
+            if m.is_alright() and m.is_enemy( self.camp, target ) and m.can_attack_of_opportunity() and self.cstat[m].aoo_readied and self.cstat[m].can_act() and self.scene.distance(m.pos,target.pos) <= 1:
                 self.attack( explo, m, target )
                 self.cstat[m].aoo_readied = False
                 # If the target is killed, everyone else can stop piling on.
@@ -323,7 +324,15 @@ class Combat( object ):
 
     def pop_combat_menu( self, explo, chara ):
         mymenu = rpgmenu.PopUpMenu( explo.screen, explo.view )
-        mymenu.add_item( "-----", -1 )
+
+        # Add the techniques.
+        for t in chara.techniques:
+            if t.can_be_invoked( chara, in_combat = True ):
+                mymenu.add_item( str( t ), t )
+        mymenu.sort()
+        mymenu.add_alpha_keys()
+
+        mymenu.add_item( "-----", False )
         if chara.can_use_holy_sign() and chara.holy_signs_used < chara.holy_signs_per_day():
             mymenu.add_item( "Skill: Holy Sign [{0}/{1}]".format(chara.holy_signs_per_day()-chara.holy_signs_used,chara.holy_signs_per_day()) , 6 )
         if chara.can_use_stealth():
@@ -350,6 +359,10 @@ class Combat( object ):
         elif choice == 6:
             self.attempt_holy_sign( explo, chara )
 
+        elif choice:
+            # Presumably, this is an invocation of some kind.
+            explo.invoke_technique( chara, choice, choice.com_tar )
+            self.end_turn( chara )
 
     def do_player_action( self, explo, chara ):
         #Start by making a hotmap centered on PC, to see how far can move.
@@ -467,10 +480,11 @@ class Combat( object ):
         n = 0
         while self.still_fighting():
             if self.active[n].is_alright():
-                self.do_combat_action( explo, self.active[n] )
+                chara = self.active[n]
+                self.do_combat_action( explo, chara )
                 # After action, invoke enchantments and renew attacks of opportunity
-                explo.invoke_enchantments( self.active[n] )
-                self.cstat[self.active[n]].aoo_readied = True
+                explo.invoke_enchantments( chara )
+                self.cstat[chara].aoo_readied = True
             n += 1
             if n >= len( self.active ):
                 # It's the end of the round.
