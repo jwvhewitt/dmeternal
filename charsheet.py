@@ -4,6 +4,7 @@ import stats
 import rpgmenu
 import image
 import items
+import spells
 
 EL_NAME = ( "Light", "Heavy", "Severe" )
 def encumberance_desc( pc, show_ceiling=True ):
@@ -39,6 +40,7 @@ class CharacterSheet( pygame.Rect ):
         self.pc = pc
         self.camp = camp
         self.regenerate_avatar()
+        self.spell_gem_sprite = image.Image( "sys_gems.png", 10, 16 )
 
     def regenerate_avatar( self ):
         mybmp = pygame.Surface( (54 , 54) )
@@ -88,6 +90,15 @@ class CharacterSheet( pygame.Rect ):
         self.just_print( screen, self.x, y, "Encumberance:", "" )
         y += pygwrap.SMALLFONT.get_linesize()
         self.just_print( screen, self.x, y, "", encumberance_desc( self.pc, False ), width=135 )
+
+        y += pygwrap.SMALLFONT.get_linesize() * 2
+        sg = self.pc.total_spell_gems()
+        self.just_print( screen, self.x, y, "Spell Gems:", "{0}/{1}".format( max(sg - self.pc.spell_gems_used(),0), sg ), width=135 )
+        for sgcolor in spells.COLORS:
+            y += pygwrap.SMALLFONT.get_linesize()
+            self.spell_gem_sprite.render( screen, ( self.x+2, y ), sgcolor+1 )
+            sg = self.pc.spell_gems_of_color(sgcolor)
+            self.just_print( screen, self.x+15, y, "{0}:".format(spells.COLOR_NAME[sgcolor]), "{0}/{1}".format( max(sg - self.pc.spell_gems_of_color_used(sgcolor),0), sg ) )
 
 
         # Column 2 - skills
@@ -149,7 +160,8 @@ class MenuRedrawer( object ):
         self.counter += 4
 
 class PartySelectRedrawer( object ):
-    def __init__( self , border_rect = None, backdrop = "bg_wests_stonewall5.png", menu=None, charsheets=None, screen = None, caption=None ):
+    def __init__( self , predraw=None, border_rect = None, backdrop = "bg_wests_stonewall5.png", menu=None, charsheets=None, screen = None, caption=None ):
+        self.predraw = predraw
         self.backdrop = image.Image( backdrop )
         self.counter = 0
         self.menu = menu
@@ -164,9 +176,14 @@ class PartySelectRedrawer( object ):
         self.caption = caption
 
     def __call__( self , screen ):
-        self.backdrop.tile( screen , ( self.counter * 5 , self.counter ) )
+        if self.predraw:
+            self.predraw( screen )
+        else:
+            self.backdrop.tile( screen , ( self.counter * 5 , self.counter ) )
         if self.menu and self.charsheets:
-            self.charsheets[ self.menu.items[ self.menu.selected_item ].value ].render( screen )
+            cs = self.charsheets.get( self.menu.items[ self.menu.selected_item ].value, None )
+            if cs:
+                cs.render( screen )
         if self.rect:
             pygwrap.default_border.render( screen , self.rect )
         if self.caption and self.caption_rect:
@@ -213,6 +230,33 @@ class CharacterViewRedrawer( object ):
         self.caption = caption
         self.menu = menu
         self.predraw = predraw
+        self.spell_gem_sprite = image.Image( "sys_gems.png", 10, 16 )
+
+    def display_spell_info( self, screen, it ):
+        """Use the screen to display "it" in myrect."""
+        y = self.rect.y
+        pygwrap.draw_text( screen, pygwrap.BIGFONT, str( it ), pygame.Rect( self.rect.x, y, self.rect.width, pygwrap.BIGFONT.get_linesize() ), justify = 0, color=(240,240,240) )
+        y += pygwrap.BIGFONT.get_linesize()
+        myrect = pygame.Rect( self.rect.x, y, self.rect.width, 16 )
+        pygwrap.draw_text( screen, pygwrap.SMALLFONT, "MP: {0}".format( it.mp_cost() ), myrect, justify = 1 )
+        # Display the spell colors. Start by listing the colors.
+        gemlist = list()
+        for k,v in it.gems.iteritems():
+            gemlist += ( k + 1, ) * v
+        for t in range( it.gems_needed() ):
+            if t < len( gemlist ):
+                sgcolor = gemlist[t]
+            else:
+                sgcolor = 0
+            self.spell_gem_sprite.render( screen, ( self.rect.x + t * 9, y ), sgcolor )
+
+        y += pygwrap.BIGFONT.get_linesize()
+
+        if it.desc:
+            myimg = pygwrap.render_text(pygwrap.SMALLFONT, it.desc, myrect.width, justify = -1 )
+            myrect = myimg.get_rect( topleft = ( myrect.x, y ) )
+            screen.blit( myimg , myrect )
+
 
     def __call__( self , screen ):
         if self.predraw:
@@ -228,6 +272,9 @@ class CharacterViewRedrawer( object ):
                 it = self.menu.items[ self.menu.selected_item ].value
                 if isinstance( it, items.Item ):
                     display_item_info( screen, it, self.rect )
+                elif isinstance( it, spells.Spell ):
+                    self.display_spell_info( screen, it )
+
         if self.caption and self.caption_rect:
             pygwrap.default_border.render( screen , self.caption_rect )
             pygwrap.draw_text( screen, pygwrap.BIGFONT, self.caption, self.caption_rect, justify = 0 )

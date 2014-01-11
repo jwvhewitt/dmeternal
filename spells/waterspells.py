@@ -9,6 +9,8 @@ FREEZE_FOE = Spell( "FREEZE_FOE", "Freeze Foe",
     "A single target will be frozen in its tracks, unable to act for 1 to 3 rounds.",
     effects.OpposedRoll( on_success = (
         effects.Paralyze( max_duration = 3 )
+    ,), on_failure =(
+        effects.NoEffect( anim=animobs.SmallBoom )
     ,) ), rank=1, gems={WATER:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.BlueComet )
 
 WINTER_WIND = Spell( "WINTER_WIND", "Winter Wind",

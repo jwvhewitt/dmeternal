@@ -12,6 +12,7 @@ import random
 import teams
 import combat
 import stats
+import services
 
 
 # Commands should be callable objects which take the explorer and return a value.
@@ -263,7 +264,7 @@ class Explorer( object ):
 
 
     def invoke_technique( self, chara, tech, aoegen ):
-        """Let chara invoke tech, selecting area of effect via aoegen."""
+        """Let chara invoke tech, selecting area of effect, return True if not cancelled."""
         if aoegen.AUTOMATIC:
             # This is easy.
             tiles = aoegen.get_area( self.camp, chara.pos, None )
@@ -287,6 +288,10 @@ class Explorer( object ):
             else:
                 delay_point = None
             self.invoke_effect( tech.fx, chara, tiles, opening_anim = shot, delay_point = delay_point )
+            tech.pay_invocation_price( chara )
+            return True
+        else:
+            return False
 
 
     def invoke_enchantments( self, chara ):
@@ -393,6 +398,45 @@ class Explorer( object ):
             n( it, pc, myredraw )
             myredraw.csheet.regenerate_avatar()
             self.view.regenerate_avatars( self.camp.party )
+
+    def cast_explo_spell( self, n, can_switch=True ):
+        if n >= len( self.camp.party ):
+            n = 0
+        pc = self.camp.party[ n ]
+        keep_going = True
+        myredraw = charsheet.CharacterViewRedrawer( csheet=charsheet.CharacterSheet(pc, screen=self.screen, camp=self.camp), screen=self.screen, predraw=self.view, caption="Spells & Techniques" )
+
+        while keep_going:
+            mymenu = charsheet.RightMenu( self.screen, predraw = myredraw )
+            for tech in pc.techniques:
+                mymenu.add_item( str( tech ) , tech )
+            mymenu.sort()
+            mymenu.add_alpha_keys()
+            mymenu.add_item( "Exit", False )
+            myredraw.menu = mymenu
+            if can_switch:
+                mymenu.quick_keys[ pygame.K_LEFT ] = -1
+                mymenu.quick_keys[ pygame.K_RIGHT ] = 1
+
+            it = mymenu.query()
+            if it is -1:
+                n = ( n + len( self.camp.party ) - 1 ) % len( self.camp.party )
+                pc = self.camp.party[n]
+                myredraw.csheet = charsheet.CharacterSheet(pc, screen=self.screen, camp=self.camp)
+            elif it is 1:
+                n = ( n + 1 ) % len( self.camp.party )
+                pc = self.camp.party[n]
+                myredraw.csheet = charsheet.CharacterSheet(pc, screen=self.screen, camp=self.camp)
+
+            elif it:
+                # A spell was selected. Deal with it.
+                if pc.is_alright() and it.can_be_invoked( pc ):
+                    self.invoke_technique( pc, it, it.exp_tar )
+                else:
+                    self.alert( "That technique cannot be used right now." )
+                keep_going = False
+            else:
+                keep_going = False
 
 
     def view_party( self, n, can_switch=True ):
@@ -531,6 +575,11 @@ class Explorer( object ):
                         self.alert( "This is a test of the alert system. Let me know how it turns out." )
                     elif gdi.unicode == u"c":
                         self.view.focus( self.screen, *self.camp.first_living_pc().pos )
+                    elif gdi.unicode == u"m":
+                        self.cast_explo_spell(0)
+                    elif gdi.unicode == u"l":
+                        lib = services.Library()
+                        lib( self )
 
                 elif gdi.type == pygame.QUIT:
                     self.no_quit = False
@@ -545,8 +594,10 @@ class Explorer( object ):
                     else:
                         # If YouTube comments were as good as these comments, we'd all have ponies by now.
                         animobpos = self.view.mouse_tile
-#                        ao_pro = animobs.GreenSpray(self.camp.first_living_pc().pos,self.view.mouse_tile )
-#                        anims = [ ao_pro, ]
+                        ao_pro = animobs.GreenSpray(self.camp.first_living_pc().pos,self.view.mouse_tile )
+                        anims = [ ao_pro, ]
+                        ao_pro.children.append( animobs.Pearl( pos=animobpos ) )
+
 #
 #                        area = pfov.PointOfView( self.scene, animobpos[0], animobpos[1], 5 )
 #                        for a in area.tiles:
@@ -559,22 +610,20 @@ class Explorer( object ):
 #                                ao = animobs.Caption( "Aiee!", a.pos )
 #                                ao_pro.children.append( ao )
 
-#                        animobs.handle_anim_sequence( self.screen, self.view, anims )
+#                        animobpos = self.view.mouse_tile
+#                        pcpos = self.camp.first_living_pc().pos
+#                        anims = list()
 
-                        animobpos = self.view.mouse_tile
-                        pcpos = self.camp.first_living_pc().pos
-                        anims = list()
-
-                        area = pfov.Cone( self.scene, pcpos, animobpos ).tiles
+#                        area = pfov.Cone( self.scene, pcpos, animobpos ).tiles
 #                        area = animobs.get_line( pcpos[0], pcpos[1], animobpos[0], animobpos[1] )
 #                        area.remove( pcpos )
-                        for a in area:
-                            ao = animobs.DragonFire( pos=a, delay=self.scene.distance(a,pcpos ) + 1 )
-                            anims.append( ao )
-                        for a in self.scene.contents:
-                            if a.pos in area:
-                                ao = animobs.Caption( str(random.randint(5,27)), a.pos, delay=self.scene.distance(a.pos,pcpos ) + 1 )
-                                anims.append( ao )
+#                        for a in area:
+#                            ao = animobs.DragonFire( pos=a, delay=self.scene.distance(a,pcpos ) + 1 )
+#                            anims.append( ao )
+#                        for a in self.scene.contents:
+#                            if a.pos in area:
+#                                ao = animobs.Caption( str(random.randint(5,27)), a.pos, delay=self.scene.distance(a.pos,pcpos ) + 1 )
+#                                anims.append( ao )
 
                         animobs.handle_anim_sequence( self.screen, self.view, anims )
 

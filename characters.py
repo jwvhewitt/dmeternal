@@ -755,6 +755,30 @@ class Character(object):
     def has_template( self, temp ):
         return ( temp in self.TEMPLATES ) or ( self.species and temp in self.species.TEMPLATES )
 
+    def total_spell_gems( self ):
+        """Return the total number of spell gems posessed."""
+        sg = sum( sum( l.spell_gems.itervalues() ) for l in self.levels )
+        if sg:
+            sg += ( self.get_stat( stats.INTELLIGENCE ) * self.rank() + 19 ) // 30
+        return sg
+
+    def spell_gems_of_color( self, sgcolor ):
+        """Return the total number of spell gems posessed."""
+        return sum( l.spell_gems.get(sgcolor,0) for l in self.levels )
+
+    def spell_gems_used( self ):
+        sgu = 0
+        for s in self.techniques:
+            if hasattr( s, "gems_needed" ):
+                sgu += s.gems_needed()
+        return sgu
+
+    def spell_gems_of_color_used( self, sgcolor ):
+        sgu = 0
+        for s in self.techniques:
+            if hasattr( s, "gems" ):
+                sgu += s.gems.get(sgcolor,0)
+        return sgu
 
 def roll_initiative( pc ):
     """Convenience function for making initiative rolls."""

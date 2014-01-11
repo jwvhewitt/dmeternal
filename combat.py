@@ -146,7 +146,7 @@ class Combat( object ):
             if not target:
                 chara.pos = (x2,y2)
                 self.ap_spent[ chara ] += 1 + abs(best_d[0]) + abs(best_d[1])
-                if started_in_threat and chara.pos in threat_area:
+                if started_in_threat and chara.pos in threat_area and not chara.hidden:
                     self.opportunity_to_attack( explo, chara )
                 return False
             else:
@@ -361,8 +361,8 @@ class Combat( object ):
 
         elif choice:
             # Presumably, this is an invocation of some kind.
-            explo.invoke_technique( chara, choice, choice.com_tar )
-            self.end_turn( chara )
+            if explo.invoke_technique( chara, choice, choice.com_tar ):
+                self.end_turn( chara )
 
     def do_player_action( self, explo, chara ):
         #Start by making a hotmap centered on PC, to see how far can move.
