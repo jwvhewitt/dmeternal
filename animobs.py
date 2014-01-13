@@ -1,7 +1,6 @@
 import image
 import pygwrap
 import pygame
-import charsheet
 
 def get_line( x1, y1, x2, y2):
     # Bresenham's line drawing algorithm, as obtained from RogueBasin.
@@ -502,39 +501,11 @@ class Whirlwind( Projectile ):
         super(Whirlwind, self).__init__(sprite_name="fx_projectiles.png",start_pos=start_pos, end_pos=end_pos, frame=152, set_frame_offset=False, delay=delay)
 
 
-# Special Types
-
-class ProbeView( AnimOb ):
-    """An animation for the map."""
-    def __init__( self, pos = None, target=None, delay = 0 ):
-        self.target = target
-        self.needs_deletion = False
-        self.pos = pos
-        self.delay = delay
-        self.children = list()
-
-    def update( self ):
-        pass
-
-    def render( self, view, screen, dest ):
-        pass
-
-    def special( self, view, screen ):
-        csheet = charsheet.CharacterSheet( self.target, screen=screen )
-        myredraw = charsheet.CharacterViewRedrawer( csheet=csheet, screen=screen, caption="Probe", predraw=view)
-        mymenu = charsheet.RightMenu( screen, predraw=myredraw )
-        mymenu.add_item( "Close" , -1 )
-        mymenu.query()
-
 def handle_anim_sequence( screen, view, anims ):
     while anims:
         view.anims.clear()
         for a in anims[:]:
-            if hasattr( a, "special" ):
-                a.special( view, screen )
-                anims.remove( a )
-                anims += a.children
-            elif a.needs_deletion:
+            if a.needs_deletion:
                 anims.remove( a )
                 anims += a.children
             else:

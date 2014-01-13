@@ -6,6 +6,7 @@ import math
 import pfov
 import collections
 import pygwrap
+import enchantments
 
 # Enumerated constants for sprite sheets.
 SPRITE_GROUND, SPRITE_WALL, SPRITE_BORDER, SPRITE_MISC, SPRITE_DECOR = range( 5 )
@@ -250,6 +251,15 @@ class Scene( object ):
                 break
         return npc
 
+    def get_field_at_spot( self, pos ):
+        """Find and return first field at given position."""
+        fld = None
+        for m in self.contents:
+            if m.pos == pos and isinstance( m , enchantments.Field ):
+                fld = m
+                break
+        return fld
+
     def distance( self, pos1, pos2 ):
         return round( math.sqrt( ( pos1[0]-pos2[0] )**2 + ( pos1[1]-pos2[1] )**2 ) )
 
@@ -277,6 +287,7 @@ class SceneView( object ):
         self.anims = collections.defaultdict(list)
 
         self.modelmap = dict()
+        self.fieldmap = dict()
         self.modelsprite = weakref.WeakKeyDictionary()
 
         self.scene = scene
@@ -464,12 +475,15 @@ class SceneView( object ):
             self.check_origin()
 
 
-        # Fill the modelmap and itemmap.
+        # Fill the modelmap, fieldmap, and itemmap.
         self.modelmap.clear()
+        self.fieldmap.clear()
         itemmap = dict()
         for m in self.scene.contents:
             if isinstance( m , characters.Character ):
                 self.modelmap[ tuple( m.pos ) ] = m
+            elif isinstance( m , enchantments.Field ):
+                self.fieldmap[ tuple( m.pos ) ] = m
             else:
                 itemmap[ tuple( m.pos ) ] = True
 
@@ -535,6 +549,15 @@ class SceneView( object ):
                                 msprite = modl.generate_avatar()
                                 self.modelsprite[ modl ] = msprite
                             msprite.render( screen, dest, modl.FRAME )
+
+                    fild = self.fieldmap.get( (x,y) , None )
+                    if fild:
+                        msprite = self.modelsprite.get( fild , None )
+                        if not msprite:
+                            msprite = fild.generate_avatar()
+                            self.modelsprite[ fild ] = msprite
+                        msprite.render( screen, dest, fild.frame( self.phase ) )
+
 
                     if ( x==tile_x ) and ( y==tile_y) and modl and not modl.hidden:
                         self.quick_model_status( screen, dest, modl )

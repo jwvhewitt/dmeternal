@@ -5,6 +5,8 @@ import enchantments
 import animobs
 import stats
 
+# CIRCLE 1
+
 FREEZE_FOE = Spell( "FREEZE_FOE", "Freeze Foe",
     "A single target will be frozen in its tracks, unable to act for 1 to 3 rounds.",
     effects.OpposedRoll( on_success = (
@@ -12,6 +14,10 @@ FREEZE_FOE = Spell( "FREEZE_FOE", "Freeze Foe",
     ,), on_failure =(
         effects.NoEffect( anim=animobs.SmallBoom )
     ,) ), rank=1, gems={WATER:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.BlueComet )
+
+# CIRCLE 2
+
+# CIRCLE 3
 
 WINTER_WIND = Spell( "WINTER_WIND", "Winter Wind",
     "Conjures a cone of intense cold which freezes enemies for 2d6 damage.",

@@ -1,4 +1,5 @@
 import pfov
+import animobs
 
 # Each of the classes here describes a targeting type. Instantiation can set
 # targeting details such as range, whether the center tile is included in a
@@ -17,6 +18,33 @@ class Cone( object ):
         self.delay_from = delay_from
     def get_area( self, camp, origin, target ):
         return pfov.Cone( camp.scene, origin, target ).tiles
+    def get_targets( self, camp, origin ):
+        tiles = pfov.PointOfView( camp.scene, origin[0], origin[1], self.reach ).tiles
+        tiles.remove( origin )
+        return tiles
+
+class Blast( object ):
+    """A circular area centered on target."""
+    AUTOMATIC = False
+    def __init__( self, radius=3, reach=10, delay_from=0 ):
+        self.radius = radius
+        self.reach = reach
+        self.delay_from = delay_from
+    def get_area( self, camp, origin, target ):
+        return pfov.PointOfView( camp.scene, target[0], target[1], self.radius ).tiles
+    def get_targets( self, camp, origin ):
+        return pfov.PointOfView( camp.scene, origin[0], origin[1], self.reach ).tiles
+
+class Line( object ):
+    """A line from caster to target."""
+    AUTOMATIC = False
+    def __init__( self, reach=10, delay_from=-1 ):
+        self.reach = reach
+        self.delay_from = delay_from
+    def get_area( self, camp, origin, target ):
+        tiles = animobs.get_line( origin[0], origin[1], target[0], target[1] )
+        tiles.remove( origin )
+        return tiles
     def get_targets( self, camp, origin ):
         tiles = pfov.PointOfView( camp.scene, origin[0], origin[1], self.reach ).tiles
         tiles.remove( origin )
@@ -47,4 +75,30 @@ class SingleTarget( object ):
         return tiles
     def get_targets( self, camp, origin ):
         return pfov.PointOfView( camp.scene, origin[0], origin[1], self.reach ).tiles
+
+class SinglePartyMember( SingleTarget ):
+    """Just the target tile, which must be a party member."""
+    AUTOMATIC = False
+    def __init__( self, delay_from=0 ):
+        self.delay_from = delay_from
+    def get_area( self, camp, origin, target ):
+        tiles = set()
+        tiles.add( target )
+        return tiles
+    def get_targets( self, camp, origin ):
+        tiles = set()
+        for pc in camp.party:
+            tiles.add( pc.pos )
+        return tiles
+
+class AllPartyMembers( object ):
+    """Target all party members."""
+    AUTOMATIC = True
+    def __init__( self, delay_from=-1 ):
+        self.delay_from = delay_from
+    def get_area( self, camp, origin, target ):
+        tiles = set()
+        for pc in camp.party:
+            tiles.add( pc.pos )
+        return tiles
 

@@ -3,8 +3,8 @@ import pygwrap
 import stats
 import rpgmenu
 import image
-import items
-import spells
+from items import Item
+from spells import COLORS, COLOR_NAME, Spell
 
 EL_NAME = ( "Light", "Heavy", "Severe" )
 def encumberance_desc( pc, show_ceiling=True ):
@@ -94,11 +94,11 @@ class CharacterSheet( pygame.Rect ):
         y += pygwrap.SMALLFONT.get_linesize() * 2
         sg = self.pc.total_spell_gems()
         self.just_print( screen, self.x, y, "Spell Gems:", "{0}/{1}".format( max(sg - self.pc.spell_gems_used(),0), sg ), width=135 )
-        for sgcolor in spells.COLORS:
+        for sgcolor in COLORS:
             y += pygwrap.SMALLFONT.get_linesize()
             self.spell_gem_sprite.render( screen, ( self.x+2, y ), sgcolor+1 )
             sg = self.pc.spell_gems_of_color(sgcolor)
-            self.just_print( screen, self.x+15, y, "{0}:".format(spells.COLOR_NAME[sgcolor]), "{0}/{1}".format( max(sg - self.pc.spell_gems_of_color_used(sgcolor),0), sg ) )
+            self.just_print( screen, self.x+15, y, "{0}:".format(COLOR_NAME[sgcolor]), "{0}/{1}".format( max(sg - self.pc.spell_gems_of_color_used(sgcolor),0), sg ) )
 
 
         # Column 2 - skills
@@ -158,6 +158,7 @@ class MenuRedrawer( object ):
             pygwrap.default_border.render( screen , self.caption_rect )
             pygwrap.draw_text( screen, pygwrap.BIGFONT, self.caption, self.caption_rect, justify = 0 )
         self.counter += 4
+
 
 class PartySelectRedrawer( object ):
     def __init__( self , predraw=None, border_rect = None, backdrop = "bg_wests_stonewall5.png", menu=None, charsheets=None, screen = None, caption=None ):
@@ -270,9 +271,9 @@ class CharacterViewRedrawer( object ):
             if self.menu:
                 # Display the item info in the upper display rect.
                 it = self.menu.items[ self.menu.selected_item ].value
-                if isinstance( it, items.Item ):
+                if isinstance( it, Item ):
                     display_item_info( screen, it, self.rect )
-                elif isinstance( it, spells.Spell ):
+                elif isinstance( it, Spell ):
                     self.display_spell_info( screen, it )
 
         if self.caption and self.caption_rect:
@@ -315,7 +316,7 @@ class InvExchangeRedrawer( object ):
             if self.menu:
                 # Display the item info in the upper display rect.
                 it = self.menu.items[ self.menu.selected_item ].value
-                if isinstance( it, items.Item ):
+                if isinstance( it, Item ):
                     display_item_info( screen, it, self.rect2 )
         if self.caption and self.caption_rect:
             pygwrap.default_border.render( screen , self.caption_rect )

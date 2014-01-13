@@ -27,4 +27,11 @@ SHOCK_SPHERE = Spell( "SHOCK_SPHERE", "Shock Sphere",
             effects.HealthDamage( (1,3,0), stat_bonus=None, element=stats.RESIST_LIGHTNING, anim=animobs.BlueZap )
     ,) ) ,) ), rank=1, gems={AIR:2}, com_tar=targetarea.SelfCentered(radius=1,exclude_middle=True) )
 
+THUNDER_STRIKE = Spell( "THUNDER_STRIKE", "Thunder Strike",
+    "A bolt of lightning strikes all in its path for 3d6 damage.",
+    effects.OpposedRoll( on_success = (
+        effects.HealthDamage( (3,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_LIGHTNING, anim=animobs.BlueZap )
+    ,), on_failure = (
+        effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_LIGHTNING, anim=animobs.BlueZap )
+    ,) ), rank=3, gems={AIR:1}, com_tar=targetarea.Line() )
 

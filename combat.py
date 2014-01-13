@@ -144,9 +144,17 @@ class Combat( object ):
             target = self.scene.get_character_at_spot( (x2,y2) )
 
             if not target:
+                # Move the character.
                 chara.pos = (x2,y2)
                 self.ap_spent[ chara ] += 1 + abs(best_d[0]) + abs(best_d[1])
-                if started_in_threat and chara.pos in threat_area and not chara.hidden:
+
+                # Suffer any field effects.
+                fld = self.scene.get_field_at_spot( chara.pos )
+                if fld:
+                    fld.invoke( explo )
+
+                # Maybe take an attack of opportunity.
+                if chara.is_alright() and started_in_threat and chara.pos in threat_area and not chara.hidden:
                     self.opportunity_to_attack( explo, chara )
                 return False
             else:
@@ -238,11 +246,14 @@ class Combat( object ):
         explo.view.overlays.clear()
         attack_positions = set()
 
+        expensive_points = self.get_threatened_area( chara )
         for m in self.scene.contents:
             if isinstance( m, characters.Character ) and chara.is_enemy( self.camp, m ) and not m.hidden:
                 attack_positions.add( m.pos )
+            elif isinstance( m, enchantments.Field ):
+                expensive_points.add( m.pos )
 
-        hmap = hotmaps.HotMap( self.scene, attack_positions, avoid_models=True, expensive=self.get_threatened_area( chara ) )
+        hmap = hotmaps.HotMap( self.scene, attack_positions, avoid_models=True, expensive=expensive_points )
 
         while self.ap_spent[ chara ] < chara.get_move():
             result = self.step( explo, chara, hmap )
@@ -261,9 +272,9 @@ class Combat( object ):
         if not did_attack:
             if self.num_enemies_hiding( chara ):
                 # There are hiding enemies. Attempt to spot them.
-                self.attempt_awareness( self, explo, chara )
+                self.attempt_awareness( explo, chara )
             elif chara.can_use_stealth():
-                self.attempt_stealth( self, explo, chara )
+                self.attempt_stealth( explo, chara )
 
         return result
 
@@ -431,6 +442,12 @@ class Combat( object ):
         """Give this character its turn."""
         started_turn_hidden = chara.hidden
 
+        # If you start your turn in a field, you get affected by that field.
+        fld = self.scene.get_field_at_spot( chara.pos )
+        if fld:
+            fld.invoke( explo )
+
+        # Check the character's condition to see what they can do...
         if self.cstat[chara].paralysis > 0:
             # This character can do nothing this turn.
             self.end_turn( chara )
@@ -501,9 +518,11 @@ class Combat( object ):
             pc.hidden = False
 
         # Tidy up any combat enchantments.
-        for m in self.scene.contents:
+        for m in self.scene.contents[:]:
             if hasattr( m, "condition" ):
                 m.condition.tidy( enchantments.COMBAT )
+            if hasattr( m, "combat_only" ) and m.combat_only:
+                self.scene.contents.remove( m )
 
 # I do not intend to create one more boring derivative fantasy RPG. I intend to create all of the boring derivative fantasy RPGs.
 

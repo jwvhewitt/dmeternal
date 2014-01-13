@@ -177,6 +177,28 @@ class HealthDamage( NoEffect ):
         else:
             return self.on_failure
 
+class HealthRestore( NoEffect ):
+    def __init__(self, dice=(1,6,0), stat_bonus=stats.PIETY, children=None, anim=animobs.HealthUp ):
+        self.dice = dice
+        self.stat_bonus = stat_bonus
+        if not children:
+            children = list()
+        self.children = children
+        self.anim = anim
+
+    def handle_effect( self, camp, originator, pos, anims, delay=0 ):
+        """Apply some hurting to whoever is in the indicated tile."""
+        target = camp.scene.get_character_at_spot( pos )
+        if target:
+            dmg = sum( random.randint(1,self.dice[1]) for x in range( self.dice[0] ) ) + self.dice[2]
+            if self.stat_bonus and originator:
+                dmg = max( dmg + ( originator.get_stat( self.stat_bonus ) - 11 ) // 2 , 1 )
+            dmg = min( dmg, target.hp_damage )
+            target.hp_damage -= dmg
+            anims.append( animobs.Caption( str(dmg), pos, delay=delay, color=(100,250,100) ) )
+        return self.children
+
+
 class InstaKill( NoEffect ):
     """This effect automatically kills the target."""
     def handle_effect( self, camp, originator, pos, anims, delay=0 ):
@@ -229,6 +251,23 @@ class Enchant( NoEffect ):
             target.condition.append( self.e_type() )
         return self.children
 
+class PlaceField( NoEffect ):
+    """Adds a field to the gameboard."""
+    def __init__(self, f_type, children=None, anim=None ):
+        self.f_type = f_type
+        if not children:
+            children = list()
+        self.children = children
+        self.anim = anim
+
+    def handle_effect( self, camp, originator, pos, anims, delay=0 ):
+        """Do whatever is required of effect; return list of child effects."""
+        f0 = camp.scene.get_field_at_spot( pos )
+        if f0:
+            camp.scene.contents.remove( f0 )
+        camp.scene.contents.append( self.f_type( pos ) )
+        return self.children
+
 class Probe( NoEffect ):
     """Places the Probe animob."""
     def __init__(self, children=(), anim=None ):
@@ -241,7 +280,7 @@ class Probe( NoEffect ):
         """Do whatever is required of effect; return list of child effects."""
         target = camp.scene.get_character_at_spot( pos )
         if target:
-            anims.append( animobs.ProbeView( target=target ) )
+            target.probe_me = True
         return self.children
 
 

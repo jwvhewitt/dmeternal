@@ -197,6 +197,13 @@ class Explorer( object ):
         x,y = camp.first_living_pc().pos
         self.view.focus( screen, x, y )
 
+    def probe( self, target ):
+        csheet = charsheet.CharacterSheet( target, screen=self.screen )
+        myredraw = charsheet.CharacterViewRedrawer( csheet=csheet, screen=self.screen, caption="Probe", predraw=self.view)
+        mymenu = charsheet.RightMenu( self.screen, predraw=myredraw )
+        mymenu.add_item( "Close" , -1 )
+        mymenu.query()
+
     def invoke_effect( self, effect, originator, area_of_effect, opening_anim = None, delay_point=None ):
         all_anims = list()
         if opening_anim:
@@ -211,8 +218,11 @@ class Explorer( object ):
             effect( self.camp, originator, p, anims, delay )
         animobs.handle_anim_sequence( self.screen, self.view, all_anims )
 
-        # Remove dead models from the map.
+        # Remove dead models from the map, and handle probes.
         for m in self.scene.contents[:]:
+            if hasattr( m, "probe_me" ) and m.probe_me:
+                self.probe( m )
+                m.probe_me = False
             if isinstance( m, characters.Character ) and not m.is_alright():
                 self.scene.contents.remove( m )
                 # Drop all held items.

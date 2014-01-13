@@ -1,5 +1,6 @@
 
 import stats
+#from spells import SOLAR, EARTH, WATER, FIRE, AIR, LUNAR
 import spells
 import random
 import image
@@ -267,6 +268,9 @@ class Human( object ):
     NUM_COLORS = 3
     FIRST_IMAGE = 0
     HAS_HAIR = True
+    HAIRSTYLE = { stats.MALE: (0,1,3,4,5,6,7,9, 15,16,24,26,27,30,31,34,36,38,42,43,44,45,46,47,51,52,53), \
+        stats.FEMALE: (1,2,3,5,8,9, 10,11,12,13, 14,15,17,18,19,20,21,22,23,25,26,28,29,31,32,33,34,35,36,37,38,39,40,41,42,43,45,46,47), \
+        stats.NEUTER: (0,1,2,3,4,5,6,7,8,9, 10,11,12,13, 14,15,16,17,18,19, 20,21,22,23,24,25,26,27,28,29, 30,31,32,33,34,35,36,37,38,39, 40,41,42,43,44,45,46,47, 51,52,53 ) }
     skin_color = 0
     statline = {}
     slots = ( items.BACK, items.FEET, items.BODY, items.HANDS, items.HAND1, items.HAND2, items.HEAD )
@@ -295,6 +299,9 @@ class Dwarf( Human ):
     statline = { stats.TOUGHNESS: 2, stats.REFLEXES: -2, stats.DISARM_TRAPS: 5, stats.STEALTH: -5 }
     starting_equipment = ( items.maces.Warhammer, items.axes.WarAxe )
     VOICE = dialogue.voice.DWARVEN
+    HAIRSTYLE = { stats.MALE: (0,1,3,4,5,6,7,9, 15,16,24,26,27,30,31,34,36,38,42,43,44,45,46,47,51,52,53), \
+        stats.FEMALE: (1,2,3,5,8,9, 14,15,17,18,19,20,21,22,23,25,26,28,29,31,32,33,34,35,36,37,38,39,40,41,42,43,45,46,47), \
+        stats.NEUTER: (0,1,2,3,4,5,6,7,8,9, 10,11,12,13, 14,15,16,17,18,19, 20,21,22,23,24,25,26,27,28,29, 30,31,32,33,34,35,36,37,38,39, 40,41,42,43,44,45,46,47, 51,52,53 ) }
 
 class Elf( Human ):
     name = "Elf"
@@ -304,6 +311,9 @@ class Elf( Human ):
     FIRST_IMAGE = 6
     starting_equipment = ( items.swords.Longsword, )
     VOICE = dialogue.voice.ELVEN
+    HAIRSTYLE = { stats.MALE: (0,1,3,4,5,6,7,9, 10,11,12,13, 16,24,26,30,31,34,36,38,42,43,44,45,46,51,52,53), \
+        stats.FEMALE: (1,2,3,5,8,9, 10,11,12,13, 14,17,18,19,20,21,22,23,25,26,28,29,31,32,33,34,35,36,37,38,39,40,41,42,43,45,46), \
+        stats.NEUTER: (0,1,2,3,4,5,6,7,8,9, 10,11,12,13, 14,16,17,18,19, 20,21,22,23,24,25,26,28,29, 30,31,32,33,34,35,36,37,38,39, 40,41,42,43,44,45,46, 51,52,53 ) }
 
 class Gnome( Human ):
     name = "Gnome"
@@ -319,6 +329,9 @@ class Orc( Human ):
     FIRST_IMAGE = 12
     starting_equipment = ( items.maces.Morningstar, items.axes.BattleAxe )
     VOICE = dialogue.voice.ORCISH
+    HAIRSTYLE = { stats.MALE: (0,1,3,4,5,6,7,9, 15,16,24,26,27,30,31,34,36,38,42,43,44,45,46,47,51,52,53), \
+        stats.FEMALE: (1,2,3,5,8,9, 14,15,17,18,19,20,21,22,23,25,26,28,29,31,32,33,34,35,36,37,38,39,40,41,42,43,45,46,47), \
+        stats.NEUTER: (0,1,2,3,4,5,6,7,8,9, 10,11,12,13, 14,15,16,17,18,19, 20,21,22,23,24,25,26,27,28,29, 30,31,32,33,34,35,36,37,38,39, 40,41,42,43,44,45,46,47, 51,52,53 ) }
 
 class Hurthling( Human ):
     name = "Hurthling"
@@ -390,11 +403,11 @@ class Character(object):
         self.levels = []
         self.mr_level = Level()
         self.species = species
-        if species and species.HAS_HAIR:
-            self.hair = random.randint( 0 , 24 )
-        else:
-            self.hair = 0
         self.gender = gender
+        if species and species.HAS_HAIR:
+            self.hair = random.choice( species.HAIRSTYLE[gender] )
+        else:
+            self.hair = -1
         self.inventory = items.Backpack()
         self.xp = 0
         self.beard = 0
@@ -546,9 +559,9 @@ class Character(object):
                 item.stamp_avatar( avatar , self )
 
         # Add hair and beard.
-        if self.hair:
+        if self.hair >= 0:
             img = image.Image( "avatar_hair.png" , 54, 54 )
-            img.render( avatar.bitmap , frame = self.hair - 1 )
+            img.render( avatar.bitmap , frame = self.hair )
         if self.beard:
             img = image.Image( "avatar_beard.png" , 54, 54 )
             img.render( avatar.bitmap , frame = self.beard - 1 )
@@ -601,7 +614,11 @@ class Character(object):
         level.advance( pc = self )
 
     def alter_hair( self ):
-        self.hair = ( self.hair + 1 ) % 25
+        try:
+            n = self.species.HAIRSTYLE[self.gender].index(self.hair)
+        except ValueError:
+            n = 0
+        self.hair = self.species.HAIRSTYLE[self.gender][ ( n + 1 ) % len( self.species.HAIRSTYLE[self.gender] ) ]
 
     def alter_beard( self ):
         self.beard = ( self.beard + 1 ) % 10

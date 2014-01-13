@@ -1,4 +1,7 @@
 import stats
+import image
+import effects
+import animobs
 
 # Enumerated constants for dispelling types.
 COMBAT, MAGIC, POISON = range( 3 )
@@ -27,6 +30,36 @@ class CurseEn( Enchantment ):
 class HolySignMark( Enchantment ):
     def __init__( self ):
         super(HolySignMark, self).__init__(statline=stats.StatMod({stats.PHYSICAL_ATTACK:-5,stats.MAGIC_ATTACK:-5}),dispel=(COMBAT,))
+
+
+class Field( object ):
+    FX = None
+    SPRITENAME = "field_entangle.png"
+    combat_only = True
+    def __init__( self, pos, dispel = (COMBAT,MAGIC) ):
+        self.pos = pos
+        self.dispel = dispel
+
+    def generate_avatar( self ):
+        return image.Image( self.SPRITENAME, frame_width = 54, frame_height = 54 )
+
+    def frame( self, phase ):
+        return ( phase // 10 ) % 2
+
+    def invoke( self, explo ):
+        """Someone is standing here. Do what needs to be done."""
+        if self.FX:
+            explo.invoke_effect( self.FX, None, ( self.pos, ) )
+
+class Entanglement( Field ):
+    FX = None
+    SPRITENAME = "field_entangle.png"
+
+    def invoke( self, explo ):
+        # The character spends extra AP to move through this mess.
+        target = explo.scene.get_character_at_spot( self.pos )
+        if target and explo.camp.fight:
+            explo.camp.fight.ap_spent[target] += 2
 
 
 
