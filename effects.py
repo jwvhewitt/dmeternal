@@ -265,7 +265,7 @@ class PlaceField( NoEffect ):
         f0 = camp.scene.get_field_at_spot( pos )
         if f0:
             camp.scene.contents.remove( f0 )
-        camp.scene.contents.append( self.f_type( pos ) )
+        camp.scene.contents.append( self.f_type( pos, caster=originator ) )
         return self.children
 
 class Probe( NoEffect ):

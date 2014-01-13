@@ -2,6 +2,7 @@ import base
 import stats
 import items
 import dialogue
+import context
 
 class Ogre( base.Monster ):
     name = "Ogre"    
@@ -12,6 +13,9 @@ class Ogre( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 10
     GP_VALUE = 60
+    HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.MTY_HUMANOID,
+     context.MTY_FIGHTER, context.GEN_GIANT )
+    ENC_LEVEL = 4
 
     ATTACK = items.Attack( (1,10,0), element = stats.RESIST_CRUSHING )
 

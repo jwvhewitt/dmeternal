@@ -94,6 +94,7 @@ class Monster( characters.Character ):
         stats.INTELLIGENCE: 12, stats.PIETY: 12, stats.CHARISMA: 12 }
     ATTACK = None
     MOVE_POINTS = 10
+    ENC_LEVEL = 1
 
     def __init__( self, team = None ):
         super(Monster, self).__init__( name=self.name, statline=self.statline )

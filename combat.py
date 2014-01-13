@@ -475,7 +475,7 @@ class Combat( object ):
         for m in self.active:
             if m.is_hostile( self.camp ) and not m.is_alright():
                 xp += m.xp_value()
-                if hasattr( m, "GP_VALUE" ):
+                if hasattr( m, "GP_VALUE" ) and m.GP_VALUE > 1:
                     gold += random.randint( 1, m.GP_VALUE )
         xp = xp // self.camp.num_pcs()
         if xp or gold:

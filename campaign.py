@@ -25,6 +25,9 @@ import glob
 import pickle
 import stats
 import combat
+import monsters
+import context
+import random
 
 
 class Campaign( object ):
@@ -84,7 +87,22 @@ class Campaign( object ):
         else:
             self.fight = combat.Combat( self, mon )
 
-
+    def choose_monster( self, max_rank, habitat ):
+        """Choose a random monster as close to max_rank as possible."""
+        possible_list = list()
+        backup_list = list()
+        for m in monsters.MONSTER_LIST:
+            if m.ENC_LEVEL <= max_rank:
+                n = context.matches_description( m.HABITAT, habitat )
+                if n:
+                    print "{0}: {1}".format(m,n)
+                    backup_list += (m,) * m.ENC_LEVEL
+                    if m.ENC_LEVEL >= max_rank - 2:
+                        possible_list += (m,) * n
+        if possible_list:
+            return random.choice( possible_list )
+        elif backup_list:
+            return random.choice( backup_list )
 
 
 def load_party( screen ):
@@ -127,9 +145,7 @@ if __name__=='__main__':
     import maps
     import pfov
     import exploration
-    import random
     import items
-    import monsters
     import characters
     import teams
     import spells
@@ -235,18 +251,22 @@ if __name__=='__main__':
     mymon.pos = (21,26)
     myscene.contents.append( mymon )
 
+    camp = Campaign( scene=myscene )
 
     myroom = pygame.Rect(50,12,10,10)
     myteam = teams.Team(default_reaction=-999, home=myroom)
     mymon = monsters.giants.Ogre( team=myteam )
     mymon.pos = (55,17)
     myscene.contents.append( mymon )
-    mymon = monsters.undead.Skeleton( team=myteam )
-    mymon.pos = (57,18)
-    mymon.hidden = True
-    myscene.contents.append( mymon )
 
-    camp = Campaign( scene=myscene )
+    mymon = camp.choose_monster(2,{(context.MTY_BEAST,context.GEN_UNDEAD): True})
+    if mymon:
+        mymon = mymon( team=myteam )
+        mymon.pos = (57,18)
+        myscene.contents.append( mymon )
+    else:
+        print "Monster generation failed. Bummer."
+
 
     camp.party = load_party( screen )
     x = 23

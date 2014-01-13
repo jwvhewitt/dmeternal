@@ -6,6 +6,7 @@ import chargen
 import namegen
 from dialogue import voice
 
+import animals
 import giants
 import goblins
 import undead
@@ -18,6 +19,7 @@ def harvest( mod ):
         if inspect.isclass( o ) and issubclass( o , base.Monster ) and o is not base.Monster:
             MONSTER_LIST.append( o )
 
+harvest( animals )
 harvest( giants )
 harvest( goblins )
 harvest( undead )

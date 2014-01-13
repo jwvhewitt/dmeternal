@@ -2,6 +2,7 @@ import base
 import stats
 import items
 import dialogue
+import context
 
 class Goblin( base.Monster ):
     name = "Goblin"    
@@ -13,6 +14,10 @@ class Goblin( base.Monster ):
     MOVE_POINTS = 12
     VOICE = dialogue.voice.ORCISH
     GP_VALUE = 5
+    HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.MTY_HUMANOID,
+     context.MTY_THIEF, context.GEN_GOBLIN )
+    ENC_LEVEL = 1
+
 
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_CRUSHING )
 

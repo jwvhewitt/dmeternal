@@ -2,6 +2,7 @@ import base
 import stats
 import items
 import dialogue
+import context
 
 class Skeleton( base.Monster ):
     name = "Skeleton"
@@ -13,6 +14,8 @@ class Skeleton( base.Monster ):
     MOVE_POINTS = 12
     VOICE = None
     GP_VALUE = 5
+    HABITAT = ( context.HAB_EVERY, context.DES_LUNAR, context.GEN_UNDEAD )
+    ENC_LEVEL = 2
 
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_CRUSHING )
 

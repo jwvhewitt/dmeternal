@@ -36,9 +36,10 @@ class Field( object ):
     FX = None
     SPRITENAME = "field_entangle.png"
     combat_only = True
-    def __init__( self, pos, dispel = (COMBAT,MAGIC) ):
+    def __init__( self, pos, dispel = (COMBAT,MAGIC), caster=None ):
         self.pos = pos
         self.dispel = dispel
+        self.caster = caster
 
     def generate_avatar( self ):
         return image.Image( self.SPRITENAME, frame_width = 54, frame_height = 54 )
@@ -49,7 +50,7 @@ class Field( object ):
     def invoke( self, explo ):
         """Someone is standing here. Do what needs to be done."""
         if self.FX:
-            explo.invoke_effect( self.FX, None, ( self.pos, ) )
+            explo.invoke_effect( self.FX, self.caster, ( self.pos, ) )
 
 class Entanglement( Field ):
     FX = None
