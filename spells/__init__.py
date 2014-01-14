@@ -6,6 +6,7 @@ COLOR_NAME = ( "Solar", "Earth", "Water", "Fire", "Air", "Lunar" )
 
 import airspells
 import earthspells
+import firespells
 import lunarspells
 import solarspells
 import waterspells
@@ -20,6 +21,7 @@ def harvest( mod ):
 
 harvest( airspells )
 harvest( earthspells )
+harvest( firespells )
 harvest( lunarspells )
 harvest( solarspells )
 harvest( waterspells )

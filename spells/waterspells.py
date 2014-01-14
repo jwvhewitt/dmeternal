@@ -5,7 +5,7 @@ import enchantments
 import animobs
 import stats
 
-# CIRCLE 1
+# CIRCLE ONE
 
 FREEZE_FOE = Spell( "FREEZE_FOE", "Freeze Foe",
     "A single target will be frozen in its tracks, unable to act for 1 to 3 rounds.",
@@ -14,6 +14,11 @@ FREEZE_FOE = Spell( "FREEZE_FOE", "Freeze Foe",
     ,), on_failure =(
         effects.NoEffect( anim=animobs.SmallBoom )
     ,) ), rank=1, gems={WATER:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.BlueComet )
+
+RESTORE_FLUIDITY = Spell( "RESTORE_FLUIDITY", "Restore Fluidity",
+    "This spell restores mobility to an ally who has been paralyzed or sedated.",
+    effects.RestoreMobility( anim=animobs.GreenSparkle ),
+    rank=1, gems={WATER:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.BlueComet, mpfudge=-1 )
 
 # CIRCLE 2
 

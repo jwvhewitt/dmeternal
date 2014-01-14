@@ -52,6 +52,7 @@ class CombatStat( object ):
         self.paralysis = 0
         self.confusion = 0
         self.asleep = False
+        self.silent = False
         self.aoo_readied = False
     def can_act( self ):
         return self.paralysis < 1 and not self.asleep
@@ -273,7 +274,7 @@ class Combat( object ):
             if self.num_enemies_hiding( chara ):
                 # There are hiding enemies. Attempt to spot them.
                 self.attempt_awareness( explo, chara )
-            elif chara.can_use_stealth():
+            elif chara.can_use_stealth() and not chara.hidden:
                 self.attempt_stealth( explo, chara )
 
         return result
@@ -346,7 +347,7 @@ class Combat( object ):
         mymenu.add_item( "-----", False )
         if chara.can_use_holy_sign() and chara.holy_signs_used < chara.holy_signs_per_day():
             mymenu.add_item( "Skill: Holy Sign [{0}/{1}]".format(chara.holy_signs_per_day()-chara.holy_signs_used,chara.holy_signs_per_day()) , 6 )
-        if chara.can_use_stealth():
+        if chara.can_use_stealth() and not chara.hidden:
             mymenu.add_item( "Skill: Stealth", 4 )
         if self.num_enemies_hiding(chara):
             mymenu.add_item( "Skill: Awareness", 5 )

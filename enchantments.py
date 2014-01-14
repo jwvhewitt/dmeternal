@@ -13,6 +13,8 @@ class Enchantment( object ):
             statline = stats.StatMod()
         self.statline = statline
         self.dispel = dispel
+    # If any of the following effects are defined, they will be added to attacks.
+    ATTACK_ON_HIT = None
 
 
 class AirArmor( Enchantment ):
@@ -26,6 +28,12 @@ class BlessingEn( Enchantment ):
 class CurseEn( Enchantment ):
     def __init__( self ):
         super(CurseEn, self).__init__(statline=stats.StatMod({stats.PHYSICAL_ATTACK:-5,stats.MAGIC_ATTACK:-5}),dispel=(COMBAT,MAGIC))
+
+class FireWepEn( Enchantment ):
+    def __init__( self ):
+        super(FireWepEn, self).__init__(statline=stats.StatMod({stats.PHYSICAL_ATTACK:5,stats.RESIST_COLD:5}),dispel=(COMBAT,MAGIC))
+    ATTACK_ON_HIT = effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion )
+
 
 class HolySignMark( Enchantment ):
     def __init__( self ):

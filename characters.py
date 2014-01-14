@@ -678,6 +678,12 @@ class Character(object):
             ,) )
         ,) ) 
 
+    def add_attack_enhancements( self, roll, ench ):
+        # Add any attack modifiers attached to this enchantment.
+        if ench.ATTACK_ON_HIT:
+            roll.on_success[0].on_success.append( ench.ATTACK_ON_HIT )
+            roll.on_success[0].on_failure.append( ench.ATTACK_ON_HIT )
+
     def unarmed_attack_effect( self, roll_mod=0 ):
         """Return the attackdata for this character's unarmed strikes."""
         kungfu = self.get_stat( stats.KUNG_FU ) // 5
@@ -700,6 +706,10 @@ class Character(object):
         # If the attacker has critical hit skill, use it.
         if self.get_stat( stats.CRITICAL_HIT ) > 0:
             hit.on_success.append( self.critical_hit_effect( roll_mod ) )
+
+        # Add any enchantment bonuses.
+        for e in self.condition:
+            self.add_attack_enhancements( roll, e )
 
         return roll
 

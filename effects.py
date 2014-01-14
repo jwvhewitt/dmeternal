@@ -1,7 +1,7 @@
 import stats
 import random
 import animobs
-#from monsters import base
+import context
 
 class NoEffect( object ):
     """An effect that does nothing. Good for placing anims, subclass of the rest."""
@@ -267,6 +267,46 @@ class PlaceField( NoEffect ):
             camp.scene.contents.remove( f0 )
         camp.scene.contents.append( self.f_type( pos, caster=originator ) )
         return self.children
+
+class CallMonster( NoEffect ):
+    def __init__(self, habitat={ context.HAB_EVERY: True }, max_level=1, children=None, anim=None ):
+        self.habitat = habitat
+        self.max_level = max_level
+        if not children:
+            children = list()
+        self.children = children
+        self.anim = anim
+
+    def handle_effect( self, camp, originator, pos, anims, delay=0 ):
+        """Attempt to summon a creature for the requested tile"""
+        target = camp.scene.get_character_at_spot( pos )
+        if not target and not camp.scene.map[pos[0]][pos[1]].blocks_walking():
+            # This tile is clear. Feel free to add a creature here.
+            mymon = camp.choose_monster( self.max_level-1, self.max_level, self.habitat )
+            if originator:
+                myteam = originator.team
+            else:
+                myteam = None
+            if mymon:
+                mymon = mymon( team=myteam )
+                mymon.combat_only = True
+                mymon.pos = pos
+                camp.scene.contents.append( mymon )
+                if camp.fight:
+                    camp.fight.active.append( mymon )
+
+        return self.children
+
+class RestoreMobility( NoEffect ):
+    """Remove paralysis and sleep."""
+    def handle_effect( self, camp, originator, pos, anims, delay=0 ):
+        """Drop mobility problems from targeted character."""
+        target = camp.scene.get_character_at_spot( pos )
+        if target and camp.fight:
+            camp.fight.cstat[target].paralysis = 0
+            camp.fight.cstat[target].asleep = False
+        return self.children
+
 
 class Probe( NoEffect ):
     """Places the Probe animob."""

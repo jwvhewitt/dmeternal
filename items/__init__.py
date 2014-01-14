@@ -96,6 +96,10 @@ class Attack( object ):
         if user.get_stat( stats.CRITICAL_HIT ) > 0:
             hit.on_success.append( user.critical_hit_effect( att_modifier ) )
 
+        # Add any enchantment bonuses.
+        for e in user.condition:
+            user.add_attack_enhancements( roll, e )
+
         return roll
 
 class Item( object ):

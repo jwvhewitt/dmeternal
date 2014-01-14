@@ -142,7 +142,7 @@ class GiantFrog( base.Monster ):
     GP_VALUE = 0
     HABITAT = ( context.HAB_CAVE, context.DES_WATER, context.MTY_BEAST, \
      context.GEN_NATURE )
-    ENC_LEVEL = 1
+    ENC_LEVEL = 3
 
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_PIERCING )
 

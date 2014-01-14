@@ -87,7 +87,7 @@ class Campaign( object ):
         else:
             self.fight = combat.Combat( self, mon )
 
-    def choose_monster( self, max_rank, habitat ):
+    def choose_monster( self, min_rank, max_rank, habitat ):
         """Choose a random monster as close to max_rank as possible."""
         possible_list = list()
         backup_list = list()
@@ -95,9 +95,8 @@ class Campaign( object ):
             if m.ENC_LEVEL <= max_rank:
                 n = context.matches_description( m.HABITAT, habitat )
                 if n:
-                    print "{0}: {1}".format(m,n)
                     backup_list += (m,) * m.ENC_LEVEL
-                    if m.ENC_LEVEL >= max_rank - 2:
+                    if m.ENC_LEVEL >= min_rank:
                         possible_list += (m,) * n
         if possible_list:
             return random.choice( possible_list )
@@ -259,7 +258,7 @@ if __name__=='__main__':
     mymon.pos = (55,17)
     myscene.contents.append( mymon )
 
-    mymon = camp.choose_monster(2,{(context.MTY_BEAST,context.GEN_UNDEAD): True})
+    mymon = camp.choose_monster(1,2,{(context.MTY_BEAST,context.GEN_UNDEAD): True})
     if mymon:
         mymon = mymon( team=myteam )
         mymon.pos = (57,18)

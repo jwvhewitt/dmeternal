@@ -5,6 +5,8 @@ import enchantments
 import animobs
 import stats
 
+# CIRCLE ONE
+
 CURSE = Spell( "CURSE", "Curse",
     "Decreases the physical attack score of enemies within 6 tiles by 5%. This effect lasts until the end of combat.",
     effects.TargetIsEnemy( on_true = (
