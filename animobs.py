@@ -500,6 +500,18 @@ class Whirlwind( Projectile ):
     def __init__(self, start_pos=(0,0), end_pos=(0,0), delay=1 ):
         super(Whirlwind, self).__init__(sprite_name="fx_projectiles.png",start_pos=start_pos, end_pos=end_pos, frame=152, set_frame_offset=False, delay=delay)
 
+class BigMeteor( Projectile ):
+    def __init__(self, start_pos=(0,0), end_pos=(0,0), delay=1 ):
+        super(BigMeteor, self).__init__(sprite_name="fx_ktevent.png",start_pos=start_pos, end_pos=end_pos, y_off=-600, set_frame_offset=False, delay=delay)
+        self.pos = end_pos
+    def update( self ):
+        if self.delay > 0:
+            self.delay += -1
+        else:
+            self.frame = ( self.frame + 1 ) % 6
+            self.y_off += 16
+            if self.y_off >= 0:
+                self.needs_deletion = True
 
 def handle_anim_sequence( screen, view, anims ):
     while anims:

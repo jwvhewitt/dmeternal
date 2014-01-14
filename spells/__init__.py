@@ -5,9 +5,11 @@ COLORS = ( SOLAR, EARTH, WATER, FIRE, AIR, LUNAR )
 COLOR_NAME = ( "Solar", "Earth", "Water", "Fire", "Air", "Lunar" )
 
 import airspells
+import druidspells
 import earthspells
 import firespells
 import lunarspells
+import priestspells
 import solarspells
 import waterspells
 
@@ -20,9 +22,11 @@ def harvest( mod ):
             SPELL_LIST.append( o )
 
 harvest( airspells )
+harvest( druidspells )
 harvest( earthspells )
 harvest( firespells )
 harvest( lunarspells )
+harvest( priestspells )
 harvest( solarspells )
 harvest( waterspells )
 
