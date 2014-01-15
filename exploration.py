@@ -606,19 +606,15 @@ class Explorer( object ):
                         animobpos = self.view.mouse_tile
                         ao_pro = animobs.GreenSpray(self.camp.first_living_pc().pos,self.view.mouse_tile )
                         anims = [ ao_pro, ]
-                        ao_pro.children.append( animobs.Pearl( pos=animobpos ) )
+#                        ao_pro.children.append( animobs.Pearl( pos=animobpos ) )
 
-#
-#                        area = pfov.PointOfView( self.scene, animobpos[0], animobpos[1], 5 )
-#                        for a in area.tiles:
-#                            ao = animobs.DragonFire( pos=a, delay=self.scene.distance(a,animobpos ) * 2 + 1 )
+
+                        area = pfov.PointOfView( self.scene, animobpos[0], animobpos[1], 5 )
+                        for a in area.tiles:
+                            ao = animobs.SnowCloud( pos=a )
+#                            ao = animobs.BlueCloud( pos=a, delay=self.scene.distance(a,animobpos ) * 2 + 1 )
 #                            ao.y_off = -25 + 5 * ( abs( a[0]-animobpos[0] ) + abs( a[1]-animobpos[1] ) )
-#                            ao_pro.children.append( ao )
-#                       for a in self.scene.contents:
-#                            if a.pos in area.tiles:
-#                                ao = animobs.Caption( str(random.randint(5,27)), a.pos, delay=self.scene.distance(a.pos,animobpos ) * 2 + 1 )
-#                                ao = animobs.Caption( "Aiee!", a.pos )
-#                                ao_pro.children.append( ao )
+                            ao_pro.children.append( ao )
 
 #                        animobpos = self.view.mouse_tile
 #                        pcpos = self.camp.first_living_pc().pos

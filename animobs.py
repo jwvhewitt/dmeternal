@@ -264,6 +264,14 @@ class GreenCloud( AnimOb ):
     def __init__(self, pos=(0,0), loop=0, delay=1 ):
         super(GreenCloud, self).__init__(sprite_name="fx_clouds.png",pos=pos,start_frame=10,end_frame=14,loop=loop,ticks_per_frame=1, delay=delay)
 
+class PoisonCloud( AnimOb ):
+    def __init__(self, pos=(0,0), loop=0, delay=1 ):
+        super(PoisonCloud, self).__init__(sprite_name="fx_clouds.png",pos=pos,start_frame=15,end_frame=19,loop=loop,ticks_per_frame=1, delay=delay)
+
+class SnowCloud( AnimOb ):
+    def __init__(self, pos=(0,0), loop=0, delay=1 ):
+        super(SnowCloud, self).__init__(sprite_name="fx_clouds.png",pos=pos,start_frame=20,end_frame=24,loop=loop,ticks_per_frame=1, delay=delay)
+
 # fx_smoke.png
 class Smoke( AnimOb ):
     def __init__(self, pos=(0,0), loop=0, delay=1 ):
