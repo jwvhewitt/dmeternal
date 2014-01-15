@@ -45,7 +45,14 @@ class Level( object ):
                 self.hp += max( random.randint( 1, self.HP_DIE ) , random.randint( 1, self.HP_DIE ) )
                 self.mp += max( random.randint( 1, self.MP_DIE ) , random.randint( 1, self.MP_DIE ) )
                 if ( self.LEVELS_PER_GEM > 0 ) and ( self.rank % self.LEVELS_PER_GEM == 0 ) and self.spell_circles:
-                    self.spell_gems[ random.choice( self.spell_circles ) ] += 1
+                    # When adding a random spell gem, favor the colors with low ranks.
+                    candidates = []
+                    for color in self.spell_circles:
+                        if self.spell_gems[color] < 5:
+                            candidates += [color,] * ( 6 - self.spell_gems[color] ) ** 2
+                        else:
+                            candidates.append( color )
+                    self.spell_gems[ random.choice( candidates ) ] += 1
         if pc:
             # If we've been passed a character, record the most recent level.
             pc.mr_level = self
@@ -268,9 +275,9 @@ class Human( object ):
     NUM_COLORS = 3
     FIRST_IMAGE = 0
     HAS_HAIR = True
-    HAIRSTYLE = { stats.MALE: (0,1,3,4,5,6,7,9, 15,16,24,26,27,30,31,34,36,38,42,43,44,45,46,47,51,52,53), \
+    HAIRSTYLE = { stats.MALE: (0,1,3,4,5,6,7,9, 15,16,24,26,27,30,31,34,36,38,42,43,44,45,46,47,48,49,51,52,53), \
         stats.FEMALE: (1,2,3,5,8,9, 10,11,12,13, 14,15,17,18,19,20,21,22,23,25,26,28,29,31,32,33,34,35,36,37,38,39,40,41,42,43,45,46,47), \
-        stats.NEUTER: (0,1,2,3,4,5,6,7,8,9, 10,11,12,13, 14,15,16,17,18,19, 20,21,22,23,24,25,26,27,28,29, 30,31,32,33,34,35,36,37,38,39, 40,41,42,43,44,45,46,47, 51,52,53 ) }
+        stats.NEUTER: (0,1,2,3,4,5,6,7,8,9, 10,11,12,13, 14,15,16,17,18,19, 20,21,22,23,24,25,26,27,28,29, 30,31,32,33,34,35,36,37,38,39, 40,41,42,43,44,45,46,47,48,49, 51,52,53 ) }
     skin_color = 0
     statline = {}
     slots = ( items.BACK, items.FEET, items.BODY, items.HANDS, items.HAND1, items.HAND2, items.HEAD )
@@ -299,9 +306,9 @@ class Dwarf( Human ):
     statline = { stats.TOUGHNESS: 2, stats.REFLEXES: -2, stats.DISARM_TRAPS: 5, stats.STEALTH: -5 }
     starting_equipment = ( items.maces.Warhammer, items.axes.WarAxe )
     VOICE = dialogue.voice.DWARVEN
-    HAIRSTYLE = { stats.MALE: (0,1,3,4,5,6,7,9, 15,16,24,26,27,30,31,34,36,38,42,43,44,45,46,47,51,52,53), \
-        stats.FEMALE: (1,2,3,5,8,9, 14,15,17,18,19,20,21,22,23,25,26,28,29,31,32,33,34,35,36,37,38,39,40,41,42,43,45,46,47), \
-        stats.NEUTER: (0,1,2,3,4,5,6,7,8,9, 10,11,12,13, 14,15,16,17,18,19, 20,21,22,23,24,25,26,27,28,29, 30,31,32,33,34,35,36,37,38,39, 40,41,42,43,44,45,46,47, 51,52,53 ) }
+    HAIRSTYLE = { stats.MALE: (0,1,3,4,5,6,7,9, 15,16,24,26,27,30,31,34,36,38,42,43,44,45,46,47,48,49,51,52,53), \
+        stats.FEMALE: (1,2,3,5,8,9, 14,15,17,18,19,20,21,22,23,25,26,28,29,31,32,33,34,35,36,37,38,39,40,41,42,43,45,46,47,48,49), \
+        stats.NEUTER: (0,1,2,3,4,5,6,7,8,9, 10,11,12,13, 14,15,16,17,18,19, 20,21,22,23,24,25,26,27,28,29, 30,31,32,33,34,35,36,37,38,39, 40,41,42,43,44,45,46,47,48,49, 51,52,53 ) }
 
 class Elf( Human ):
     name = "Elf"
@@ -329,9 +336,9 @@ class Orc( Human ):
     FIRST_IMAGE = 12
     starting_equipment = ( items.maces.Morningstar, items.axes.BattleAxe )
     VOICE = dialogue.voice.ORCISH
-    HAIRSTYLE = { stats.MALE: (0,1,3,4,5,6,7,9, 15,16,24,26,27,30,31,34,36,38,42,43,44,45,46,47,51,52,53), \
+    HAIRSTYLE = { stats.MALE: (0,1,3,4,5,6,7,9, 15,16,24,26,27,30,31,34,36,38,42,43,44,45,46,47,48,49,51,52,53), \
         stats.FEMALE: (1,2,3,5,8,9, 14,15,17,18,19,20,21,22,23,25,26,28,29,31,32,33,34,35,36,37,38,39,40,41,42,43,45,46,47), \
-        stats.NEUTER: (0,1,2,3,4,5,6,7,8,9, 10,11,12,13, 14,15,16,17,18,19, 20,21,22,23,24,25,26,27,28,29, 30,31,32,33,34,35,36,37,38,39, 40,41,42,43,44,45,46,47, 51,52,53 ) }
+        stats.NEUTER: (0,1,2,3,4,5,6,7,8,9, 10,11,12,13, 14,15,16,17,18,19, 20,21,22,23,24,25,26,27,28,29, 30,31,32,33,34,35,36,37,38,39, 40,41,42,43,44,45,46,47,48,49, 51,52,53 ) }
 
 class Hurthling( Human ):
     name = "Hurthling"
@@ -806,6 +813,16 @@ class Character(object):
             if hasattr( s, "gems" ):
                 sgu += s.gems.get(sgcolor,0)
         return sgu
+
+    def choose_random_spells( self ):
+        # Fill this character's spellbook with random stuff.
+        while True:
+            candidates = [ s for s in spells.SPELL_LIST if ( s.can_be_learned(self) and s not in self.techniques ) ]
+            if candidates:
+                s = random.choice( candidates )
+                self.techniques.append( s )
+            else:
+                break
 
 def roll_initiative( pc ):
     """Convenience function for making initiative rolls."""

@@ -59,6 +59,7 @@ def generate_npc( species=None, job=None, gender=None, rank=None, team=None ):
             ng = VOICE_TO_NAMEGEN[ lang ]
             break
     npc.name = ng.gen_word()
+    npc.choose_random_spells()
 
     return npc
 

@@ -271,7 +271,7 @@ if __name__=='__main__':
     x = 23
     for pc in camp.party:
         pc.pos = (x,13)
-        pc.techniques += spells.SPELL_LIST
+        pc.choose_random_spells()
         x += 1
         myscene.contents.append( pc )
         pcpov = pfov.PCPointOfView( myscene, 24, 10, 15 )

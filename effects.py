@@ -248,7 +248,10 @@ class Enchant( NoEffect ):
         """Do whatever is required of effect; return list of child effects."""
         target = camp.scene.get_character_at_spot( pos )
         if target:
-            target.condition.append( self.e_type() )
+            # Only add this enchantment if it's not already present.
+            if not any( isinstance( e, self.e_type ) for e in target.condition ):
+                target.condition.append( self.e_type() )
+                
         return self.children
 
 class PlaceField( NoEffect ):

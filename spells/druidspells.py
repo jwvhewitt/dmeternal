@@ -6,6 +6,28 @@ import animobs
 import stats
 import context
 
+# CIRCLE TWO
+
+CALL_ANIMAL = Spell( "CALL_ANIMAL", "Call Animal",
+    "This spell will summon a natural creature to fight on your behaf.",
+    effects.CallMonster( {context.MTY_BEAST: True, context.DES_EARTH: context.MAYBE, context.GEN_NATURE: context.MAYBE, context.DES_SOLAR: context.MAYBE}, 4, anim=animobs.OrangeSparkle ),
+    rank=2, gems={EARTH:1,SOLAR:1}, com_tar=targetarea.SingleTarget(reach=2), mpfudge = 4 )
+
+# CIRCLE THREE
+
+CALL_BEAST = Spell( "CALL_BEAST", "Call Beast",
+    "This spell will summon a large natural creature to fight on your behaf.",
+    effects.CallMonster( {context.MTY_BEAST: True, context.DES_EARTH: context.MAYBE, context.GEN_NATURE: context.MAYBE, context.DES_SOLAR: context.MAYBE}, 6, anim=animobs.OrangeSparkle ),
+    rank=3, gems={EARTH:2,SOLAR:1}, com_tar=targetarea.SingleTarget(reach=2), mpfudge = 6 )
+
+# CIRCLE FOUR
+
+CALL_MONSTER = Spell( "CALL_MONSTER", "Call Monster",
+    "This spell will summon a powerful creature to fight on your behaf.",
+    effects.CallMonster( {context.MTY_BEAST: True, context.DES_EARTH: context.MAYBE, context.GEN_NATURE: context.MAYBE, context.DES_SOLAR: context.MAYBE}, 8, anim=animobs.OrangeSparkle ),
+    rank=4, gems={EARTH:2,SOLAR:1}, com_tar=targetarea.SingleTarget(reach=2), mpfudge = 9 )
+
+
 # CIRCLE EIGHT
 
 NATURAL_DISASTER = Spell( "NATURAL_DISASTER", "Natural Disaster",

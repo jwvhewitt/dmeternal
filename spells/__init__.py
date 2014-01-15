@@ -9,6 +9,7 @@ import druidspells
 import earthspells
 import firespells
 import lunarspells
+import necrospells
 import priestspells
 import solarspells
 import waterspells
@@ -26,6 +27,7 @@ harvest( druidspells )
 harvest( earthspells )
 harvest( firespells )
 harvest( lunarspells )
+harvest( necrospells )
 harvest( priestspells )
 harvest( solarspells )
 harvest( waterspells )
