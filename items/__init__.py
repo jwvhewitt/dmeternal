@@ -4,6 +4,7 @@ import inspect
 import effects
 import animobs
 import random
+import math
 
 # Enumerated constants for the item slots.
 # Note that these are defined in the order in which they're applied to avatar.
@@ -13,12 +14,12 @@ class SingType( object ):
     # A singleton itemtype class; use these objects as tokens to indicate
     # the type of items.
     # Also includes misc information related to the itemtype in question.
-    def __init__( self, ident, name, slot = NOSLOT, gp_per_level=50 ):
+    def __init__( self, ident, name, slot = NOSLOT, rank_adjust=1.0 ):
         # ident should be the module-level name of this object.
         self.ident = ident
         self.name = name
         self.slot = slot
-        self.gp_per_level = gp_per_level
+        self.rank_adjust = rank_adjust
     def __str__( self ):
         return self.name
     def __reduce__( self ):
@@ -27,27 +28,27 @@ class SingType( object ):
 GENERIC = SingType( "GENERIC", "Item" )
 SWORD = SingType( "SWORD", "Sword", slot = HAND1 )
 AXE = SingType( "AXE", "Axe", slot = HAND1 )
-MACE = SingType( "MACE", "Mace", slot = HAND1 )
-DAGGER = SingType( "DAGGER", "Dagger", slot = HAND1 )
-STAFF = SingType( "STAFF", "Staff", slot = HAND1 )
+MACE = SingType( "MACE", "Mace", slot = HAND1, rank_adjust=1.2 )
+DAGGER = SingType( "DAGGER", "Dagger", slot = HAND1, rank_adjust=1.5 )
+STAFF = SingType( "STAFF", "Staff", slot = HAND1, rank_adjust=2.0 )
 BOW = SingType( "BOW", "Bow", slot = HAND1 )
 POLEARM = SingType( "POLEARM", "Polearm", slot = HAND1 )
 ARROW = SingType( "ARROW", "Arrow", slot = HAND2 )
-SHIELD = SingType( "SHIELD", "Shield", slot = HAND2, gp_per_level=85 )
+SHIELD = SingType( "SHIELD", "Shield", slot = HAND2, rank_adjust=0.9 )
 SLING = SingType( "SLING", "Sling", slot = HAND1 )
 BULLET = SingType( "BULLET", "Bullet", slot = HAND2 )
-CLOTHES = SingType( "CLOTHES", "Clothes", slot = BODY, gp_per_level=65 )
-LIGHT_ARMOR = SingType( "LIGHT_ARMOR", "Light Armor", slot = BODY, gp_per_level=90 )
-HEAVY_ARMOR = SingType( "HEAVY_ARMOR", "Heavy Armor", slot = BODY, gp_per_level=125 )
-HAT = SingType( "HAT", "Hat", slot = HEAD, gp_per_level=20 )
-HELM = SingType( "HELM", "Helm", slot = HEAD, gp_per_level=30 )
-GLOVE = SingType( "GLOVE", "Gloves", slot = HANDS, gp_per_level=20 )
-GAUNTLET = SingType( "GAUNTLET", "Gauntlets", slot = HANDS, gp_per_level=30 )
-SANDALS = SingType( "SANDALS", "Sandals", slot = FEET, gp_per_level=20 )
-SHOES = SingType( "SHOES", "Shoes", slot = FEET, gp_per_level=20 )
-BOOTS = SingType( "BOOTS", "Boots", slot = FEET, gp_per_level=20 )
-CLOAK = SingType( "CLOAK", "Cloak", slot = BACK, gp_per_level=30 )
-HOLYSYMBOL = SingType( "HOLYSYMBOL", "Symbol", slot = HAND2, gp_per_level=75 )
+CLOTHES = SingType( "CLOTHES", "Clothes", slot = BODY )
+LIGHT_ARMOR = SingType( "LIGHT_ARMOR", "Light Armor", slot = BODY, rank_adjust=0.90 )
+HEAVY_ARMOR = SingType( "HEAVY_ARMOR", "Heavy Armor", slot = BODY, rank_adjust=0.75 )
+HAT = SingType( "HAT", "Hat", slot = HEAD )
+HELM = SingType( "HELM", "Helm", slot = HEAD )
+GLOVE = SingType( "GLOVE", "Gloves", slot = HANDS )
+GAUNTLET = SingType( "GAUNTLET", "Gauntlets", slot = HANDS )
+SANDALS = SingType( "SANDALS", "Sandals", slot = FEET )
+SHOES = SingType( "SHOES", "Shoes", slot = FEET )
+BOOTS = SingType( "BOOTS", "Boots", slot = FEET )
+CLOAK = SingType( "CLOAK", "Cloak", slot = BACK )
+HOLYSYMBOL = SingType( "HOLYSYMBOL", "Symbol", slot = HAND2 )
 WAND = SingType( "WAND", "Wand", slot = HAND1 )
 FARMTOOL = SingType( "FARMTOOL", "Farm Tool", slot = HAND1 )
 
@@ -157,7 +158,8 @@ class Item( object ):
         """Spend this weapon's attack price."""
         pass
     def min_rank( self ):
-        return min( max( self.cost() // self.itemtype.gp_per_level , 1 ), 20 )
+#        return min( max( self.cost() // self.itemtype.gp_per_level + 1 , 1 ), 20 )
+        return int( ( -10 + math.sqrt( 100 + 40 * self.cost() * self.itemtype.rank_adjust ) ) / 20 )
 
     @property
     def slot( self ):
@@ -314,13 +316,19 @@ harvest( staves )
 harvest( swords )
 harvest( wands )
 
+# Test Items
+for ic in ITEM_LIST:
+    i = ic()
+    print "{0}: {1}".format( i, i.min_rank() )
+
 def choose_item( item_type=None, max_rank=20 ):
     """Return an item of the specified type, of at most max_rank."""
     candidates = []
     for ic in ITEM_LIST:
         i = ic()
         if i.min_rank() <= max_rank and ( i.itemtype == item_type or not item_type ):
-            candidates += [i,] * i.min_rank()
+            candidates.append( i )
+#            candidates += [i,] * ( i.min_rank() + 2 )
     if candidates:
         return random.choice( candidates )
 

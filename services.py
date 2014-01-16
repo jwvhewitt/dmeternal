@@ -10,13 +10,14 @@ GENERAL_STORE = ( items.SWORD, items.AXE, items.MACE, items.DAGGER, items.STAFF,
     items.CLOAK, items.FARMTOOL )
 
 class Shop( object ):
-    def __init__( self, ware_types = GENERAL_STORE, allow_misc=True, allow_magic=False, caption="Shop", rank=3 ):
+    def __init__( self, ware_types = GENERAL_STORE, allow_misc=True, allow_magic=False, caption="Shop", rank=3, num_items=30 ):
         self.wares = list()
         self.ware_types = ware_types
         self.allow_misc = allow_misc
         self.allow_magic = allow_magic
         self.caption = caption
         self.rank = rank
+        self.num_items = num_items
         self.last_updated = -1
 
     def update_wares( self ):
@@ -24,12 +25,22 @@ class Shop( object ):
         # there's at least one item of every ware_type, and then fill up the
         # store to full capacity.
         needed_wares = list( self.ware_types )
+        for i in self.wares:
+            if i.itemtype in needed_wares:
+                needed_wares.remove( i.itemtype )
 
         for w in needed_wares:
             it = items.choose_item( w, self.rank )
-            self.wares.append( it )
+            if it:
+                self.wares.append( it )
+        while len( self.wares ) < self.num_items:
+            it = items.choose_item( None, self.rank )
+            if it and not any( i.true_name == it.true_name for i in self.wares ):
+                self.wares.append( it )
+            elif not it:
+                break
 
-        print self.wares
+        print [ str(w) for w in self.wares ]
 
 
     def __call__( self, explo ):
