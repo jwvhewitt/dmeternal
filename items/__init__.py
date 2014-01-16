@@ -3,6 +3,7 @@ import image
 import inspect
 import effects
 import animobs
+import random
 
 # Enumerated constants for the item slots.
 # Note that these are defined in the order in which they're applied to avatar.
@@ -261,10 +262,6 @@ class Clothing( Item ):
             img.render( avatar.bitmap , frame = frame )
 
 
-
-
-
-
 import axes
 import bows
 import cloaks
@@ -316,6 +313,17 @@ harvest( slings )
 harvest( staves )
 harvest( swords )
 harvest( wands )
+
+def choose_item( item_type=None, max_rank=20 ):
+    """Return an item of the specified type, of at most max_rank."""
+    candidates = []
+    for ic in ITEM_LIST:
+        i = ic()
+        if i.min_rank() <= max_rank and ( i.itemtype == item_type or not item_type ):
+            candidates += [i,] * i.min_rank()
+    if candidates:
+        return random.choice( candidates )
+
 
 class Backpack( list ):
     def get_equip( self , slot ):

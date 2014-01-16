@@ -1,17 +1,42 @@
 import spells
 import charsheet
 import pygame
+import items
+
+GENERAL_STORE = ( items.SWORD, items.AXE, items.MACE, items.DAGGER, items.STAFF,
+    items.BOW, items.POLEARM, items.ARROW, items.SHIELD, items.SLING, items.BULLET,
+    items.CLOTHES, items.LIGHT_ARMOR, items.HEAVY_ARMOR, items.HAT, items.HELM,
+    items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES, items.BOOTS,
+    items.CLOAK, items.FARMTOOL )
 
 class Shop( object ):
-    def __init__( self, ware_types = (), allow_misc=True, allow_magic=False, caption="Shop" ):
+    def __init__( self, ware_types = GENERAL_STORE, allow_misc=True, allow_magic=False, caption="Shop", rank=3 ):
         self.wares = list()
         self.ware_types = ware_types
         self.allow_misc = allow_misc
         self.allow_magic = allow_magic
         self.caption = caption
+        self.rank = rank
+        self.last_updated = -1
+
+    def update_wares( self ):
+        # Once a day the wares get updated. Delete some items, make sure that
+        # there's at least one item of every ware_type, and then fill up the
+        # store to full capacity.
+        needed_wares = list( self.ware_types )
+
+        for w in needed_wares:
+            it = items.choose_item( w, self.rank )
+            self.wares.append( it )
+
+        print self.wares
 
 
     def __call__( self, explo ):
+        if explo.camp.day > self.last_updated:
+            self.update_wares()
+            self.last_updated = explo.camp.day
+
         charsheets = dict()
         for pc in explo.camp.party:
             charsheets[ pc ] = charsheet.CharacterSheet( pc , screen=explo.screen, camp=explo.camp )

@@ -39,6 +39,7 @@ class Campaign( object ):
         self.scenes = []
         self.fight = None
         self.gold = 300
+        self.day = 1
 
     def first_living_pc( self ):
         """Return the first living PC in the party."""

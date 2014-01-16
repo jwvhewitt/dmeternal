@@ -183,6 +183,8 @@ class Explorer( object ):
         self.view = maps.SceneView( camp.scene )
         self.time = 0
 
+        self.shop = services.Shop()
+
         # Update the view of all party members.
         for pc in camp.party:
             x,y = pc.pos
@@ -590,6 +592,8 @@ class Explorer( object ):
                     elif gdi.unicode == u"l":
                         lib = services.Library()
                         lib( self )
+                    elif gdi.unicode == u"s":
+                        self.shop( self )
 
                 elif gdi.type == pygame.QUIT:
                     self.no_quit = False
