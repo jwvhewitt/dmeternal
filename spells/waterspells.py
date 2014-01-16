@@ -30,7 +30,7 @@ WINTER_WIND = Spell( "WINTER_WIND", "Winter Wind",
         effects.HealthDamage( (2,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_COLD, anim=animobs.BlueCloud )
     ,), on_failure = (
         effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_COLD, anim=animobs.BlueCloud )
-    ,) ), rank=3, gems={WATER:2}, com_tar=targetarea.Cone() )
+    ,) ), rank=3, gems={WATER:2}, com_tar=targetarea.Cone(reach=8) )
 
 
 

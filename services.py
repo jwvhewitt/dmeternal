@@ -2,6 +2,38 @@ import spells
 import charsheet
 import pygame
 
+class Shop( object ):
+    def __init__( self, ware_types = (), allow_misc=True, allow_magic=False, caption="Shop" ):
+        self.wares = list()
+        self.ware_types = ware_types
+        self.allow_misc = allow_misc
+        self.allow_magic = allow_magic
+        self.caption = caption
+
+
+    def __call__( self, explo ):
+        charsheets = dict()
+        for pc in explo.camp.party:
+            charsheets[ pc ] = charsheet.CharacterSheet( pc , screen=explo.screen, camp=explo.camp )
+        psr = charsheet.PartySelectRedrawer( predraw=explo.view, charsheets=charsheets, screen=explo.screen, caption="Who needs to buy something?" )
+
+        rpm = charsheet.RightMenu( explo.screen, predraw=psr, add_desc=False )
+        psr.menu = rpm
+        for pc in explo.camp.party:
+            rpm.add_item( str( pc ), pc )
+        rpm.sort()
+        rpm.add_alpha_keys()
+        rpm.add_item( "Exit", None )
+        keep_going = True
+
+        while keep_going:
+            pc = rpm.query()
+
+            if pc:
+                self.enter_shop( explo, pc )
+            else:
+                keep_going = False
+
 
 class Library( object ):
     def __init__( self, spell_list = spells.SPELL_LIST, caption="Library" ):

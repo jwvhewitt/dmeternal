@@ -5,6 +5,9 @@ import enchantments
 import animobs
 import stats
 
+# Necromancers get EARTH, LUNAR, and WATER magic. These spells use at least two
+# of those colors.
+
 # CIRCLE ONE
 
 ICE_BOLT = Spell( "ICE_BOLT", "Icy Bolt",

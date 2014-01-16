@@ -12,11 +12,12 @@ class SingType( object ):
     # A singleton itemtype class; use these objects as tokens to indicate
     # the type of items.
     # Also includes misc information related to the itemtype in question.
-    def __init__( self, ident, name, slot = NOSLOT ):
+    def __init__( self, ident, name, slot = NOSLOT, gp_per_level=50 ):
         # ident should be the module-level name of this object.
         self.ident = ident
         self.name = name
         self.slot = slot
+        self.gp_per_level = gp_per_level
     def __str__( self ):
         return self.name
     def __reduce__( self ):
@@ -31,21 +32,21 @@ STAFF = SingType( "STAFF", "Staff", slot = HAND1 )
 BOW = SingType( "BOW", "Bow", slot = HAND1 )
 POLEARM = SingType( "POLEARM", "Polearm", slot = HAND1 )
 ARROW = SingType( "ARROW", "Arrow", slot = HAND2 )
-SHIELD = SingType( "SHIELD", "Shield", slot = HAND2 )
+SHIELD = SingType( "SHIELD", "Shield", slot = HAND2, gp_per_level=85 )
 SLING = SingType( "SLING", "Sling", slot = HAND1 )
 BULLET = SingType( "BULLET", "Bullet", slot = HAND2 )
-CLOTHES = SingType( "CLOTHES", "Clothes", slot = BODY )
-LIGHT_ARMOR = SingType( "LIGHT_ARMOR", "Light Armor", slot = BODY )
-HEAVY_ARMOR = SingType( "HEAVY_ARMOR", "Heavy Armor", slot = BODY )
-HAT = SingType( "HAT", "Hat", slot = HEAD )
-HELM = SingType( "HELM", "Helm", slot = HEAD )
-GLOVE = SingType( "GLOVE", "Gloves", slot = HANDS )
-GAUNTLET = SingType( "GAUNTLET", "Gauntlets", slot = HANDS )
-SANDALS = SingType( "SANDALS", "Sandals", slot = FEET )
-SHOES = SingType( "SHOES", "Shoes", slot = FEET )
-BOOTS = SingType( "BOOTS", "Boots", slot = FEET )
-CLOAK = SingType( "CLOAK", "Cloak", slot = BACK )
-HOLYSYMBOL = SingType( "HOLYSYMBOL", "Symbol", slot = HAND2 )
+CLOTHES = SingType( "CLOTHES", "Clothes", slot = BODY, gp_per_level=65 )
+LIGHT_ARMOR = SingType( "LIGHT_ARMOR", "Light Armor", slot = BODY, gp_per_level=90 )
+HEAVY_ARMOR = SingType( "HEAVY_ARMOR", "Heavy Armor", slot = BODY, gp_per_level=125 )
+HAT = SingType( "HAT", "Hat", slot = HEAD, gp_per_level=20 )
+HELM = SingType( "HELM", "Helm", slot = HEAD, gp_per_level=30 )
+GLOVE = SingType( "GLOVE", "Gloves", slot = HANDS, gp_per_level=20 )
+GAUNTLET = SingType( "GAUNTLET", "Gauntlets", slot = HANDS, gp_per_level=30 )
+SANDALS = SingType( "SANDALS", "Sandals", slot = FEET, gp_per_level=20 )
+SHOES = SingType( "SHOES", "Shoes", slot = FEET, gp_per_level=20 )
+BOOTS = SingType( "BOOTS", "Boots", slot = FEET, gp_per_level=20 )
+CLOAK = SingType( "CLOAK", "Cloak", slot = BACK, gp_per_level=30 )
+HOLYSYMBOL = SingType( "HOLYSYMBOL", "Symbol", slot = HAND2, gp_per_level=75 )
 WAND = SingType( "WAND", "Wand", slot = HAND1 )
 FARMTOOL = SingType( "FARMTOOL", "Farm Tool", slot = HAND1 )
 
@@ -154,6 +155,8 @@ class Item( object ):
     def spend_attack_price( self, user ):
         """Spend this weapon's attack price."""
         pass
+    def min_rank( self ):
+        return min( max( self.cost() // self.itemtype.gp_per_level , 1 ), 20 )
 
     @property
     def slot( self ):
@@ -313,7 +316,6 @@ harvest( slings )
 harvest( staves )
 harvest( swords )
 harvest( wands )
-
 
 class Backpack( list ):
     def get_equip( self , slot ):

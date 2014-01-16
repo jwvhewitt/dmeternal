@@ -6,6 +6,15 @@ import animobs
 import stats
 import context
 
+# Priests get AIR, SOLAR, and WATER magic. These spells use a mixture of two
+# or more of those colors.
+
+# CIRCLE ONE
+
+# CIRCLE TWO
+
+# CIRCLE THREE
+
 # CIRCLE FOUR
 
 BLIZZARD = Spell( "BLIZZARD", "Blizzard",

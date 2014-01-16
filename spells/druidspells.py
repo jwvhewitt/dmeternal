@@ -6,6 +6,12 @@ import animobs
 import stats
 import context
 
+# Druids get EARTH, FIRE, and SOLAR magic. These spells use a combination of
+# those colors.
+
+# CIRCLE ONE
+
+
 # CIRCLE TWO
 
 CALL_ANIMAL = Spell( "CALL_ANIMAL", "Call Animal",
