@@ -46,8 +46,8 @@ class Partisan( Item ):
     avatar_image = "avatar_polearm.png"
     avatar_frame = 17
     attackdata = Attack( (1,10,0), double_handed=True, element=stats.RESIST_PIERCING, reach=2 )
-    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 5 })
-    mass = 145
+    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 10 })
+    mass = 155
 
 class Voulge( Item ):
     true_name = "Voulge"

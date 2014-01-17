@@ -136,9 +136,17 @@ class InvExchange( object ):
             rmenu.quick_keys[ "/" ] = 2
 
             for it in pc.inventory:
-                lmenu.add_item( str( it ), it )
+                if it.equipped:
+                    lmenu.add_item( "*"+str( it ), it )
+                elif not pc.can_equip( it ):
+                    lmenu.add_item( "#"+str( it ), it )
+                else:
+                    lmenu.add_item( str( it ), it )
             for it in self.ilist:
-                rmenu.add_item( str( it ), it )
+                if not pc.can_equip( it ):
+                    rmenu.add_item( "#"+str( it ), it )
+                else:
+                    rmenu.add_item( str( it ), it )
             lmenu.sort()
             rmenu.sort()
             lmenu.add_alpha_keys()
@@ -450,7 +458,6 @@ class Explorer( object ):
             else:
                 keep_going = False
 
-
     def view_party( self, n, can_switch=True ):
         if n >= len( self.camp.party ):
             n = 0
@@ -463,6 +470,8 @@ class Explorer( object ):
             for i in pc.inventory:
                 if i.equipped:
                     mymenu.add_item( "*" + str( i ) , i )
+                elif not pc.can_equip( i ):
+                    mymenu.add_item( "#" + str( i ) , i )
                 else:
                     mymenu.add_item( str( i ) , i )
             mymenu.sort()

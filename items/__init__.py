@@ -68,6 +68,9 @@ class Attack( object ):
         D = self.damage[0] * self.damage[1] + self.damage[2]
         # Base price is this amount squared, plus number of dice squared.
         it = D ** 2 + self.damage[0] ** 2
+        # Increase if double handed.
+        if self.double_handed:
+            it = ( it * 6 ) // 5
         # Modify for range; each point increases cost by a third.
         if self.reach > 1:
             it = it * ( self.reach + 2 ) // 3
@@ -110,7 +113,7 @@ class Item( object ):
     true_desc = ""
     statline = stats.StatMod()
     itemtype = GENERIC
-    identified = False
+    identified = True
     attackdata = None
     avatar_image = None
     avatar_frame = 0
@@ -140,8 +143,10 @@ class Item( object ):
                 # The other is apparently not an item, so this is obviously better.
                 return True
     def __str__( self ):
-        return self.true_name
-
+        if self.identified:
+            return self.true_name
+        else:
+            return "?"+self.itemtype.name
     def stat_desc( self ):
         """Return descriptions of all stat modifiers provided."""
         smod = []
@@ -159,7 +164,7 @@ class Item( object ):
         pass
     def min_rank( self ):
 #        return min( max( self.cost() // self.itemtype.gp_per_level + 1 , 1 ), 20 )
-        return int( ( -10 + math.sqrt( 100 + 40 * self.cost() * self.itemtype.rank_adjust ) ) / 20 )
+        return int( ( -9 + math.sqrt( 81 + 36 * self.cost() * self.itemtype.rank_adjust ) ) / 18 )
 
     @property
     def slot( self ):
@@ -317,9 +322,9 @@ harvest( swords )
 harvest( wands )
 
 # Test Items
-for ic in ITEM_LIST:
-    i = ic()
-    print "{0}: {1}".format( i, i.min_rank() )
+#for ic in ITEM_LIST:
+#    i = ic()
+#    print "{0}: {1}/{2}gp".format( i, i.min_rank(), i.cost() )
 
 def choose_item( item_type=None, max_rank=20 ):
     """Return an item of the specified type, of at most max_rank."""

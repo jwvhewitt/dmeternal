@@ -15,7 +15,7 @@ class SteelGauntlets( Item ):
     true_desc = ""
     itemtype = GAUNTLET
     avatar_image = "avatar_arm.png"
-    avatar_frame = 5
+    avatar_frame = 6
     mass = 10
     statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 5, stats.MAGIC_ATTACK: -5 })
 
