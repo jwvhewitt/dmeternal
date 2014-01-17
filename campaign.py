@@ -28,14 +28,20 @@ import combat
 import monsters
 import context
 import random
+import waypoints
+import pfov
+import exploration
+import pygwrap
 
 
 class Campaign( object ):
     """A general holder for all the stuff that goes into a DME campaign."""
-    def __init__( self, name = "BobDwarf19", scene=None ):
+    def __init__( self, name = "BobDwarf19", scene=None, entrance=None ):
         self.name = name
         self.party = []
         self.scene = scene
+        self.entrance = entrance
+        self.destination = None
         self.scenes = []
         self.fight = None
         self.gold = 300
@@ -104,6 +110,44 @@ class Campaign( object ):
         elif backup_list:
             return random.choice( backup_list )
 
+    def place_party( self ):
+        """Stick the party close to the waypoint."""
+        good_points = list()
+        x0,y0 = self.entrance.pos
+        for x in range(x0-3,x0+4):
+            for y in range(y0-3,y0+4):
+                if self.scene.on_the_map(x,y) and not self.scene.map[x][y].blocks_walking() and not self.scene.get_character_at_spot((x,y)):
+                    good_points.append( (x,y) )
+        for pc in self.party:
+            if pc.is_alright():
+                if good_points:
+                    pos = random.choice( good_points )
+                    good_points.remove( pos )
+                else:
+                    pos = self.entrance.pos
+                pc.pos = pos
+                self.scene.contents.append( pc )
+                pfov.PCPointOfView( self.scene, pos[0], pos[1], 15 )
+
+    def remove_party_from_scene( self ):
+        for pc in self.party:
+            pc.pos = None
+            if pc in self.scene.contents:
+                self.scene.contents.remove( pc )
+
+    def play( self, screen ):
+        while self.first_living_pc() and not pygwrap.GOT_QUIT:
+            exp = exploration.Explorer( screen, self )
+            exp.go()
+            if self.destination:
+                self.remove_party_from_scene()
+                self.scene, self.destination = self.destination, None
+                self.place_party()
+            elif not exp.no_quit:
+                # If the player quit in exploration mode, exit to main menu.
+                break
+
+
 
 def load_party( screen ):
     # Select up to four characters to form the new party.
@@ -140,11 +184,8 @@ def load_party( screen ):
 
 if __name__=='__main__':
     import pygame
-    import pygwrap
     import rpgmenu
     import maps
-    import pfov
-    import exploration
     import items
     import characters
     import teams
@@ -251,7 +292,31 @@ if __name__=='__main__':
     mymon.pos = (21,26)
     myscene.contents.append( mymon )
 
-    camp = Campaign( scene=myscene )
+    myent = waypoints.Waypoint( myscene, (23,13) )
+
+    waypoints.Bookshelf( myscene, (18,12) )
+
+    otherscene = maps.Scene( 50 , 50, sprites={maps.SPRITE_WALL: "terrain_wall_dungeon.png"} )
+    for x in range( otherscene.width ):
+        for y in range( otherscene.height ):
+            otherscene.map[x][y].wall = maps.BASIC_WALL
+    for x in range( 20 ):
+        for y in range( 20 ):
+            otherscene.map[x+10][y+10].wall = None
+
+    stairs_1 = waypoints.SpiralStairsDown( myscene, (19,25) )
+    stairs_2 = waypoints.SpiralStairsUp( otherscene, (19,19) )
+
+    stairs_1.destination = otherscene
+    stairs_1.otherside = stairs_2
+
+    stairs_2.destination = myscene
+    stairs_2.otherside = stairs_1
+
+    camp = Campaign( scene=myscene, entrance=myent )
+    camp.scenes.append( myscene )
+    camp.scenes.append( otherscene )
+
 
     myroom = pygame.Rect(50,12,10,10)
     myteam = teams.Team(default_reaction=-999, home=myroom)
@@ -269,15 +334,15 @@ if __name__=='__main__':
 
 
     camp.party = load_party( screen )
-    x = 23
-    for pc in camp.party:
-        pc.pos = (x,13)
-        pc.choose_random_spells()
-        x += 1
-        myscene.contents.append( pc )
-        pcpov = pfov.PCPointOfView( myscene, 24, 10, 15 )
+
 
     if camp.party:
-        exp = exploration.Explorer( screen, camp )
-        exp.go()
+        for pc in camp.party:
+            pc.choose_random_spells()
+        camp.place_party()
+
+        camp.play( screen )
+
+#        exp = exploration.Explorer( screen, camp )
+#        exp.go()
 

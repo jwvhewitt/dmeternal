@@ -7,9 +7,10 @@ import pfov
 import collections
 import pygwrap
 import enchantments
+import items
 
 # Enumerated constants for sprite sheets.
-SPRITE_GROUND, SPRITE_WALL, SPRITE_BORDER, SPRITE_MISC, SPRITE_DECOR = range( 5 )
+SPRITE_GROUND, SPRITE_WALL, SPRITE_BORDER, SPRITE_INTERIOR, SPRITE_DECOR = range( 5 )
 
 class SingTerrain( object ):
     # A singleton terrain class; use these objects as tokens for maps.
@@ -160,6 +161,8 @@ MOUNTAIN_TOP = SingTerrain( "MOUNTAIN_TOP", block_walk = True, frame = 59 )
 MOUNTAIN_LEFT = SingTerrain( "MOUNTAIN_LEFT", block_walk = True, frame = 60 )
 MOUNTAIN_RIGHT = SingTerrain( "MOUNTAIN_RIGHT", block_walk = True, frame = 61 )
 MOUNTAIN_BOTTOM = SingTerrain( "MOUNTAIN_BOTTOM", block_walk = True, frame = 62 )
+SPIRAL_STAIRS_UP = SingTerrain( "SPIRAL_STAIRS_UP", block_walk = True, spritesheet=SPRITE_INTERIOR, frame=0 )
+SPIRAL_STAIRS_DOWN = SingTerrain( "SPIRAL_STAIRS_DOWN", block_walk = True, spritesheet=SPRITE_INTERIOR, frame=1 )
 
 # DECOR TYPES
 BOOKSHELF = OnTheWallTerrain( "BOOKSHELF", frame = 13 )
@@ -187,7 +190,7 @@ class Tile( object ):
 DEFAULT_SPRITES = { SPRITE_GROUND: "terrain_ground_forest.png", \
     SPRITE_WALL: "terrain_wall_lightbrick.png", \
     SPRITE_BORDER: "terrain_border.png", \
-    SPRITE_MISC: "", \
+    SPRITE_INTERIOR: "terrain_int_default.png", \
     SPRITE_DECOR: "terrain_decor.png" }
 
 class Scene( object ):
@@ -259,6 +262,15 @@ class Scene( object ):
                 fld = m
                 break
         return fld
+
+    def get_bumpable_at_spot( self, pos ):
+        """Find and return first bumpable at given position."""
+        bump = None
+        for m in self.contents:
+            if m.pos == pos and hasattr( m, "bump" ):
+                bump = m
+                break
+        return bump
 
     def distance( self, pos1, pos2 ):
         return round( math.sqrt( ( pos1[0]-pos2[0] )**2 + ( pos1[1]-pos2[1] )**2 ) )
@@ -484,7 +496,7 @@ class SceneView( object ):
                 self.modelmap[ tuple( m.pos ) ] = m
             elif isinstance( m , enchantments.Field ):
                 self.fieldmap[ tuple( m.pos ) ] = m
-            else:
+            elif isinstance( m, items.Item ):
                 itemmap[ tuple( m.pos ) ] = True
 
         x_min = self.map_x( *screen_area.topleft ) - 1

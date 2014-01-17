@@ -339,7 +339,9 @@ class Explorer( object ):
                 pygame.display.flip()
 
     def bump_tile( self, pos ):
-        pass
+        target = self.scene.get_bumpable_at_spot( pos )
+        if target:
+            target.bump( self )
 
     def bump_model( self, target ):
         # Do the animation first.
@@ -542,7 +544,7 @@ class Explorer( object ):
                                 animobs.handle_anim_sequence( self.screen, self.view, anims )
 
     def keep_exploring( self ):
-        return self.camp.first_living_pc() and self.no_quit and not pygwrap.GOT_QUIT
+        return self.camp.first_living_pc() and self.no_quit and not pygwrap.GOT_QUIT and not self.camp.destination
 
     def go( self ):
         self.no_quit = True
@@ -598,9 +600,6 @@ class Explorer( object ):
                         self.view.focus( self.screen, *self.camp.first_living_pc().pos )
                     elif gdi.unicode == u"m":
                         self.cast_explo_spell(0)
-                    elif gdi.unicode == u"l":
-                        lib = services.Library()
-                        lib( self )
                     elif gdi.unicode == u"s":
                         self.shop( self )
 
