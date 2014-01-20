@@ -296,10 +296,18 @@ if __name__=='__main__':
 
     waypoints.Bookshelf( myscene, (18,12) )
 
-    otherscene = maps.Scene( 50 , 50, sprites={maps.SPRITE_WALL: "terrain_wall_dungeon.png"} )
+    otherscene = maps.Scene( 50 , 50, sprites={ maps.SPRITE_GROUND: "terrain_ground_cthonic.png", maps.SPRITE_WALL: "terrain_wall_dungeon.png",maps.SPRITE_FLOOR: "terrain_floor_gravel.png"} )
     for x in range( otherscene.width ):
         for y in range( otherscene.height ):
             otherscene.map[x][y].wall = maps.BASIC_WALL
+            if otherscene.distance( (x,y), (19,19) ) < 5:
+                otherscene.map[x][y].floor = maps.HIGROUND
+            else:
+                otherscene.map[x][y].floor = maps.LOGROUND
+            if otherscene.distance( (x,y), (35,35) ) < 15:
+                otherscene.map[x][y].wall = None
+                otherscene.map[x][y].floor = maps.WATER
+
     for x in range( 20 ):
         for y in range( 20 ):
             otherscene.map[x+10][y+10].wall = None

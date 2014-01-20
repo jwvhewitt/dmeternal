@@ -10,7 +10,7 @@ import enchantments
 import items
 
 # Enumerated constants for sprite sheets.
-SPRITE_GROUND, SPRITE_WALL, SPRITE_BORDER, SPRITE_INTERIOR, SPRITE_DECOR = range( 5 )
+SPRITE_GROUND, SPRITE_WALL, SPRITE_BORDER, SPRITE_INTERIOR, SPRITE_FLOOR, SPRITE_DECOR = range( 6 )
 
 class SingTerrain( object ):
     # A singleton terrain class; use these objects as tokens for maps.
@@ -34,6 +34,23 @@ class SingTerrain( object ):
         return self.ident
     def __reduce__( self ):
         return self.ident
+
+class VariableTerrain( object ):
+    # A singleton terrain class; use these objects as tokens for maps.
+    def __init__( self, ident, spritesheet = SPRITE_FLOOR, block_vision = False, block_walk = False, block_fly = False, frames = (0,1,) ):
+        # ident should be the module-level name of this stat.
+        self.ident = ident
+        self.spritesheet = spritesheet
+        self.block_vision = block_vision
+        self.block_walk = block_walk
+        self.block_fly = block_fly
+        self.frames = frames
+    def render( self, screen, dest, view, data ):
+        view.sprites[ self.spritesheet ].render( screen, dest, data )
+    def get_data( self, view, x, y ):
+        """Pre-generate display data for this tile."""
+        return self.frames[ view.get_pseudo_random() % len(self.frames) ]
+
 
 class GroundTerrain( SingTerrain ):
     # A singleton terrain class; use these objects as tokens for maps.
@@ -149,6 +166,7 @@ class OnTheWallTerrain( SingTerrain ):
 WATER = WaterTerrain( "WATER", frame = 56 )
 LOGROUND = GroundTerrain( "LOGROUND", frame = 28, edge = WATER )
 HIGROUND = GroundTerrain( "HIGROUND", edge = LOGROUND )
+BASIC_FLOOR = VariableTerrain( "BASIC_FLOOR", frames=(0,1,2,3,4,5) )
 
 # WALL TYPES
 BASIC_WALL = WallTerrain( "BASIC_WALL" )
@@ -191,6 +209,7 @@ DEFAULT_SPRITES = { SPRITE_GROUND: "terrain_ground_forest.png", \
     SPRITE_WALL: "terrain_wall_lightbrick.png", \
     SPRITE_BORDER: "terrain_border.png", \
     SPRITE_INTERIOR: "terrain_int_default.png", \
+    SPRITE_FLOOR: "terrain_floor_gravel.png", \
     SPRITE_DECOR: "terrain_decor.png" }
 
 class Scene( object ):
@@ -466,7 +485,7 @@ class SceneView( object ):
             screen.fill( (0, 0, 120, 100), box )
 
 
-    def __call__( self , screen ):
+    def __call__( self , screen, show_quick_stats=True ):
         """Draws this mapview to the provided screen."""
         screen_area = screen.get_rect()
         mouse_x,mouse_y = pygame.mouse.get_pos()
@@ -571,7 +590,7 @@ class SceneView( object ):
                         msprite.render( screen, dest, fild.frame( self.phase ) )
 
 
-                    if ( x==tile_x ) and ( y==tile_y) and modl and not modl.hidden:
+                    if ( x==tile_x ) and ( y==tile_y) and modl and show_quick_stats and not modl.hidden:
                         self.quick_model_status( screen, dest, modl )
 
                     mlist = self.anims.get( (x,y) , None )

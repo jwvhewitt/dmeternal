@@ -531,7 +531,7 @@ def handle_anim_sequence( screen, view, anims ):
             else:
                 view.anims[a.pos].append( a )
                 a.update()
-        view( screen )
+        view( screen, show_quick_stats=False )
         pygame.display.flip()
         pygwrap.anim_delay()
     view.anims.clear()
