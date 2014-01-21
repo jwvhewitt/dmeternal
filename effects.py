@@ -144,8 +144,12 @@ class HealthDamage( NoEffect ):
         if target:
             dmg = sum( random.randint(1,self.att_dice[1]) for x in range( self.att_dice[0] ) ) + self.att_dice[2]
             if self.stat_bonus and originator:
-                stat = int( originator.get_stat( self.stat_bonus ) * self.stat_mod )
-                dmg = max( dmg + ( stat - 11 ) // 2 , 1 )
+                # Calculate base stat bonus
+                bstatb = ( originator.get_stat( self.stat_bonus ) - 11 ) // 2
+                stat = int( bstatb * self.stat_mod )
+                if self.stat_mod > 1:
+                    stat = max( stat, bstatb + 1 )
+                dmg = max( dmg + stat , 1 )
             if self.element:
                 resist = target.get_stat( self.element )
                 dmg = ( dmg * ( 100 - resist ) ) // 100

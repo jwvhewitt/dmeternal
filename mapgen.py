@@ -1,5 +1,6 @@
 import pygame
 import random
+import context
 
 class Plasma( object ):
     """Creates a plasma; cels have value from 0.0 to 1.0."""
@@ -65,14 +66,67 @@ class Plasma( object ):
 
 class Room( object ):
     """A Room is an area on the map. The outer edge is generally a wall."""
-    def __init__( self, width, height, tags=() ):
+    def __init__( self, width=7, height=7, tags=() ):
         self.width = width
         self.height = height
         self.tags = tags
         self.area = None
         self.contents = list()
+        self.special = dict()
 
-class RandomScene( object ):
+    def step_two( self, gb ):
+        self.arrange_contents( gb )
+        # Prepare any child nodes in self.contents as needed.
+        for r in self.contents:
+            r.arrange_contents( gb )
+    def step_three( self, gb ):
+        self.connect_contents( gb )
+        # Prepare any child nodes in self.contents as needed.
+        for r in self.contents:
+            r.connect_contents( gb )
+    def step_four( self, gb ):
+        self.mutate( gb )
+        # Prepare any child nodes in self.contents as needed.
+        for r in self.contents:
+            r.mutate( gb )
+    def step_five( self, gb ):
+        self.render( gb )
+        # Prepare any child nodes in self.contents as needed.
+        for r in self.contents:
+            r.render( gb )
+
+    def arrange_contents( self, gb ):
+        # Step Two: Arrange subcomponents within this area.
+        pass
+
+    def connect_contents( self, gb ):
+        # Step Three: Connect all rooms in contents, making trails on map.
+        pass
+
+    def mutate( self, gb ):
+        # Step Four: If a mutator has been defined, call it.
+        pass
+
+    def render( self, gb ):
+        # Step Five: Actually draw the room, taking into account terrain already on map.
+        pass
+
+    def fill( self, gb, dest, floor=-1, wall=-1, decor=-1 ):
+        # Fill the provided area with the provided terrain.
+        for x in range( dest.x, dest.x + dest.width ):
+            for y in range( dest.y, dest.y + dest.height ):
+                if gb.on_the_map(x,y):
+                    if floor != -1:
+                        gb.map[x][y].floor = floor
+                    if wall != -1:
+                        gb.map[x][y].wall = wall
+                    if decor != -1:
+                        gb.map[x][y].decor = decor
+
+
+
+
+class RandomScene( Room ):
     """The blueprint for a scene."""
     def __init__( self, width, height, sprites=None ):
         self.width = width
@@ -82,55 +136,89 @@ class RandomScene( object ):
     def convert_true_walls( self ):
         for x in self.width:
             for y in self.height:
-                if self.gp[x][y].wall == True:
-                    self.gp[x][y].wall = maps.BASIC_WALL
-
-    def fill( dest, floor=-1, wall=-1, decor=-1 ):
-        # Fill the provided area with the provided terrain.
-        for x in range( dest.x, dest.x + dest.width ):
-            for y in range( dest.y, dest.y + dest.height ):
-                if self.gb.on_the_map(x,y):
-                    if floor != -1:
-                        self.gb.map[x][y].floor = floor
-                    if wall != -1:
-                        self.gb.map[x][y].wall = wall
-                    if decor != -1:
-                        self.gb.map[x][y].decor = decor
-
-
-class DividedIslands( RandomScene ):
-    """The rooms will into two groups divided by a locked bridge."""
+                if self.gb[x][y].wall == True:
+                    self.gb[x][y].wall = maps.BASIC_WALL
 
     def make( self ):
         """Assemble this stuff into a real map."""
         self.gb = maps.scene( self.width, self.height, self.sprites )
 
+        # Conduct the five steps of building a level.
+        self.prepare( self.gb ) # Only the scene generator gets to prepare
+        self.step_two( self.gb ) # Arrange contents for self, then children
+        self.step_three( self.gb ) # Connect contents for self, then children
+        self.step_four( self.gb ) # Mutate for self, then children
+        self.step_five( self.gb ) # Render for self, then children
+
+        # Convert undefined walls to real walls.
+        self.convert_true_walls()
+        self.gb.validate_terrain()
+
+        return self.gb
+
+class DividedIslands( RandomScene ):
+    """The rooms will into two groups divided by a locked bridge."""
+
+    def prepare( self, gb ):
         # Step one- we're going to use a plasma map to set water/lo/hi ground.
         # Fill all non-water tiles with True walls for now.
         myplasma = Plasma()
         for x in self.width:
             for y in self.height:
                 if myplasma.map[x][y] < 0.3:
-                    self.gp[x][y].floor = maps.WATER
+                    gb.map[x][y].floor = maps.WATER
                 elif myplasma.map[x][y] < 0.5:
-                    self.gp[x][y].floor = maps.LOGROUND
-                    self.gp[x][y].wall = True
+                    gb.map[x][y].floor = maps.LOGROUND
+                    gb.map[x][y].wall = True
                 else:
-                    self.gp[x][y].floor = maps.HIGROUND
-                    self.gp[x][y].wall = True
+                    gb.map[x][y].floor = maps.HIGROUND
+                    gb.map[x][y].wall = True
 
+    def arrange_contents( self, gb ):
         # Divide the map into two segments.
         if random.randint(1,2) == 1:
             # Horizontal river
-            z1 = pygame.Rect( 0,0,self.width,(self.height-4)//2 )
-            z2 = pygame.Rect( 0,(self.height-4)//2 + 5,self.width,(self.height-4)//2 )
+            z1 = Room()
+            z1.area = pygame.Rect( 0,0,self.width,(self.height-4)//2 )
+            z2 = Room()
+            z2.area = pygame.Rect( 0,(self.height-4)//2 + 5,self.width,(self.height-4)//2 )
             river = pygame.Rect( 0,(self.height-4)//2,self.width,4 )
         else:
             # Vertical river
-            z1 = pygame.Rect( 0,0,(self.width-4)//2,self.height )
-            z2 = pygame.Rect( (self.width-4)//2+5,0,(self.width-4)//2,self.height )
+            z1 = Room()
+            z1.area = pygame.Rect( 0,0,(self.width-4)//2,self.height )
+            z2 = Room()
+            z2.area = pygame.Rect( (self.width-4)//2+5,0,(self.width-4)//2,self.height )
             river = pygame.Rect( (self.width-4)//2,0,4,self.height )
-        self.fill( river, floor=maps.WATER, wall=None )
+        self.fill( gb, river, floor=maps.WATER, wall=None )
+
+        # Locate the bridge, before_bridge, and after_bridge rooms, creating them
+        # if none currently exist.
+
+
+        # Go through the remaining rooms, sorting each into either z1 or z2
+        z1_turn = True
+        for r in self.contents[:]:
+            if context.ENTRANCE in r.tags:
+                self.contents.remove( r )
+                z1.contents.append( r )
+            elif context.GOAL in r.tags:
+                self.contents.remove( r )
+                z2.contents.append( r )
+            elif z1_turn:
+                self.contents.remove( r )
+                z1.contents.append( r )
+                z1_turn = False
+            else:
+                self.contents.remove( r )
+                z2.contents.append( r )
+                z1_turn = True
+
+    def connect_contents( self, gb ):
+        # This is pretty easy- just connect before_bridge to bridge to after_bridge.
+        pass
+
+
 
 
 if __name__ == '__main__':
@@ -143,7 +231,16 @@ if __name__ == '__main__':
 
     myplasma = Plasma()
 #    myplasma.draw( screen )
-    myplasma.draw_layers( screen, 0.2, 0.3 )
+#    myplasma.draw_layers( screen, 0.2, 0.3 )
+
+    p2 = Plasma()
+    p3 = Plasma()
+
+    for x in range( myplasma.width ):
+        for y in range( myplasma.height ):
+            pygame.draw.rect(screen,(255*myplasma.map[x][y],255*p2.map[x][y],255*p3.map[x][y]),pygame.Rect(x*2,y*2,2,2) )
+#            pygame.draw.rect(screen,(255*myplasma.map[x][y],0,255*p2.map[x][y]),pygame.Rect(x*2,y*2,2,2) )
+
 
     pygame.display.flip()
 
