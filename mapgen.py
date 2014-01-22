@@ -149,20 +149,28 @@ class Room( object ):
 
     def deploy( self, gb ):
         # Step Six: Move items and monsters onto the map.
+        # Find a list of good spots for stuff that goes in the open.
         good_spots = list()
         for x in range( self.area.x, self.area.x + self.area.width ):
             for y in range( self.area.y, self.area.y + self.area.height ):
-                if gb.on_the_map(x,y) and not gb.map[x][y].blocks_walking():
+                if not gb.map[x][y].blocks_walking():
                     good_spots.append( (x,y) )
 
+        # Find a list of good walls for stuff that must be mounted on a wall.
+        # If there are no good walls, add some.
+
+
         for i in self.inventory:
-            p = random.choice( good_spots )
-            good_spots.remove( p )
-            if hasattr( i, "place" ):
-                i.place( gb, p )
+            if hasattr( i, "ATTACH_TO_WALL" ) and i.ATTACH_TO_WALL:
+
             else:
-                i.pos = p
-                gb.contents.append( i )
+                p = random.choice( good_spots )
+                good_spots.remove( p )
+                if hasattr( i, "place" ):
+                    i.place( gb, p )
+                else:
+                    i.pos = p
+                    gb.contents.append( i )
 
 
     def fill( self, gb, dest, floor=-1, wall=-1, decor=-1 ):

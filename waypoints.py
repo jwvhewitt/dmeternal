@@ -8,6 +8,7 @@ import services
 
 class Waypoint( object ):
     TILE = None
+    ATTACH_TO_WALL = False
     def __init__( self, scene=None, pos=(0,0) ):
         """Place this waypoint in a scene."""
         if scene:
@@ -15,15 +16,18 @@ class Waypoint( object ):
 
     def place( self, scene, pos ):
         self.scene = scene
-        self.pos = pos
         scene.contents.append( self )
-        if scene.on_the_map( *pos ) and self.TILE:
-            if self.TILE.floor:
-                scene.map[pos[0]][pos[1]].floor = self.TILE.floor
-            if self.TILE.wall:
-                scene.map[pos[0]][pos[1]].wall = self.TILE.wall
-            if self.TILE.decor:
-                scene.map[pos[0]][pos[1]].decor = self.TILE.decor
+        if scene.on_the_map( *pos ):
+            self.pos = pos
+            if self.TILE:
+                if self.TILE.floor:
+                    scene.map[pos[0]][pos[1]].floor = self.TILE.floor
+                if self.TILE.wall:
+                    scene.map[pos[0]][pos[1]].wall = self.TILE.wall
+                if self.TILE.decor:
+                    scene.map[pos[0]][pos[1]].decor = self.TILE.decor
+        else:
+            self.pos = (0,0)
 
     def bump( self, explo ):
         # Perform this waypoint's special action.
@@ -31,6 +35,7 @@ class Waypoint( object ):
 
 class Bookshelf( Waypoint ):
     TILE = maps.Tile( None, None, maps.BOOKSHELF )
+    ATTACH_TO_WALL = True
     LIBRARY = services.Library()
     def bump( self, explo ):
         self.LIBRARY( explo )
@@ -59,9 +64,9 @@ class SpiralStairsDown( Waypoint ):
 
 class PuzzleDoor( Waypoint ):
     TILE = maps.Tile( None, maps.CLOSED_DOOR, None )
+    ATTACH_TO_WALL = True
     def bump( self, explo ):
         explo.alert( "This door is impassable." )
-        self.scene.map[self.pos[0]][self.pos[1]].wall = maps.OPEN_DOOR
     def activate( self, explo ):
         self.scene.map[self.pos[0]][self.pos[1]].wall = maps.OPEN_DOOR
 
