@@ -297,7 +297,7 @@ if __name__=='__main__':
 
     waypoints.Bookshelf( myscene, (18,12) )
 
-    otherscene = maps.Scene( 102, 102, sprites={ maps.SPRITE_GROUND: "terrain_ground_cthonic.png", maps.SPRITE_WALL: "terrain_wall_rocks.png",maps.SPRITE_FLOOR: "terrain_floor_gravel.png"} )
+    otherscene = maps.Scene( 102, 102, sprites={ maps.SPRITE_GROUND: "terrain_ground_cthonic.png", maps.SPRITE_WALL: "terrain_wall_darkstone.png",maps.SPRITE_FLOOR: "terrain_floor_gravel.png"} )
 
     stairs_1 = waypoints.SpiralStairsDown( myscene, (19,25) )
     stairs_2 = waypoints.SpiralStairsUp()
@@ -315,7 +315,12 @@ if __name__=='__main__':
     room3 = mapgen.FuzzyRoom( tags=(context.GOAL,) )
     room2.name = "Room 2"
     room3.name = "Room 3"
-    osgen.contents += (room1,room2,room3)
+    room4 = mapgen.BottleneckRoom()
+    osgen.special_c["bridge"] = room4
+    pdoor = waypoints.PuzzleDoor()
+    room4.special_c["door"] = pdoor
+
+    osgen.contents += (room1,room2,room3,room4)
 
     osgen.make()
 

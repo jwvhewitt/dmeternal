@@ -183,7 +183,7 @@ SPIRAL_STAIRS_UP = SingTerrain( "SPIRAL_STAIRS_UP", block_walk = True, spriteshe
 SPIRAL_STAIRS_DOWN = SingTerrain( "SPIRAL_STAIRS_DOWN", block_walk = True, spritesheet=SPRITE_INTERIOR, frame=1 )
 
 # DECOR TYPES
-BOOKSHELF = OnTheWallTerrain( "BOOKSHELF", frame = 13 )
+BOOKSHELF = OnTheWallTerrain( "BOOKSHELF", frame = 13, block_walk=True )
 PUDDLE = SingTerrain( "PUDDLE", frame = 58 )
 SKULL = SingTerrain( "SKULL", spritesheet = SPRITE_DECOR, frame = 0 )
 BONE = SingTerrain( "BONE", spritesheet = SPRITE_DECOR, frame = 1 )

@@ -14,6 +14,7 @@ class Waypoint( object ):
             self.place( scene, pos )
 
     def place( self, scene, pos ):
+        self.scene = scene
         self.pos = pos
         scene.contents.append( self )
         if scene.on_the_map( *pos ) and self.TILE:
@@ -55,4 +56,14 @@ class SpiralStairsDown( Waypoint ):
             explo.camp.entrance = self.otherside
         else:
             explo.alert( "You have just bumped the stairs. Woohoo!" )
+
+class PuzzleDoor( Waypoint ):
+    TILE = maps.Tile( None, maps.CLOSED_DOOR, None )
+    def bump( self, explo ):
+        explo.alert( "This door is impassable." )
+        self.scene.map[self.pos[0]][self.pos[1]].wall = maps.OPEN_DOOR
+    def activate( self, explo ):
+        self.scene.map[self.pos[0]][self.pos[1]].wall = maps.OPEN_DOOR
+
+
 

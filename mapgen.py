@@ -201,7 +201,35 @@ class FuzzyRoom( Room ):
             for y in range( self.area.y, self.area.y + self.area.height ):
                 self.draw_fuzzy_ground( gb, x, y )
 
-
+class BottleneckRoom( Room ):
+    """A room that blocks passage, aside from one door."""
+    def probably_blocks_movement( self, gb, x, y ):
+        if not gb.on_the_map(x,y):
+            return True
+        elif gb.map[x][y].wall:
+            return True
+        else:
+            return gb.map[x][y].blocks_walking()
+    def render( self, gb ):
+        myrect = self.area.inflate(-2,-2)
+        for x in range( myrect.x, myrect.x + myrect.width ):
+            for y in range( myrect.y, myrect.y + myrect.height ):
+                self.draw_fuzzy_ground( gb, x, y )
+        # Determine whether the wall will be vertical or horizontal
+        if self.probably_blocks_movement( gb, *self.area.midtop ) and self.probably_blocks_movement( gb, *self.area.midbottom ):
+            # Obstacles above and below. Draw a vertical wall.
+            x = myrect.centerx
+            for y in range( myrect.y, myrect.y + myrect.height ):
+                gb.map[x][y].wall = maps.BASIC_WALL
+        else:
+            y = myrect.centery
+            for x in range( myrect.x, myrect.x + myrect.width ):
+                gb.map[x][y].wall = maps.BASIC_WALL
+        x,y = myrect.center
+        gb.map[x][y].wall = maps.OPEN_DOOR
+        door_wp = self.special_c.get( "door", None )
+        if door_wp:
+            door_wp.place( gb, (x,y) )
 
 class RandomScene( Room ):
     """The blueprint for a scene."""
