@@ -8,9 +8,10 @@ import services
 
 class Waypoint( object ):
     TILE = None
-    def __init__( self, scene, pos ):
+    def __init__( self, scene=None, pos=(0,0) ):
         """Place this waypoint in a scene."""
-        self.place( scene, pos )
+        if scene:
+            self.place( scene, pos )
 
     def place( self, scene, pos ):
         self.pos = pos

@@ -190,6 +190,7 @@ if __name__=='__main__':
     import characters
     import teams
     import spells
+    import mapgen
 
     # Set the screen size.
 #    screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
@@ -296,30 +297,28 @@ if __name__=='__main__':
 
     waypoints.Bookshelf( myscene, (18,12) )
 
-    otherscene = maps.Scene( 50 , 50, sprites={ maps.SPRITE_GROUND: "terrain_ground_cthonic.png", maps.SPRITE_WALL: "terrain_wall_dungeon.png",maps.SPRITE_FLOOR: "terrain_floor_gravel.png"} )
-    for x in range( otherscene.width ):
-        for y in range( otherscene.height ):
-            otherscene.map[x][y].wall = maps.BASIC_WALL
-            if otherscene.distance( (x,y), (19,19) ) < 5:
-                otherscene.map[x][y].floor = maps.HIGROUND
-            else:
-                otherscene.map[x][y].floor = maps.LOGROUND
-            if otherscene.distance( (x,y), (35,35) ) < 15:
-                otherscene.map[x][y].wall = None
-                otherscene.map[x][y].floor = maps.WATER
-
-    for x in range( 20 ):
-        for y in range( 20 ):
-            otherscene.map[x+10][y+10].wall = None
+    otherscene = maps.Scene( 102, 102, sprites={ maps.SPRITE_GROUND: "terrain_ground_cthonic.png", maps.SPRITE_WALL: "terrain_wall_rocks.png",maps.SPRITE_FLOOR: "terrain_floor_gravel.png"} )
 
     stairs_1 = waypoints.SpiralStairsDown( myscene, (19,25) )
-    stairs_2 = waypoints.SpiralStairsUp( otherscene, (19,19) )
-
+    stairs_2 = waypoints.SpiralStairsUp()
     stairs_1.destination = otherscene
     stairs_1.otherside = stairs_2
-
     stairs_2.destination = myscene
     stairs_2.otherside = stairs_1
+
+
+    osgen = mapgen.DividedIslands( otherscene )
+    room1 = mapgen.FuzzyRoom( tags=(context.ENTRANCE,) )
+    room1.name = "Room 1"
+    room1.inventory.append( stairs_2 )
+    room2 = mapgen.FuzzyRoom( tags=(context.ENTRANCE,) )
+    room3 = mapgen.FuzzyRoom( tags=(context.GOAL,) )
+    room2.name = "Room 2"
+    room3.name = "Room 3"
+    osgen.contents += (room1,room2,room3)
+
+    osgen.make()
+
 
     camp = Campaign( scene=myscene, entrance=myent )
     camp.scenes.append( myscene )
