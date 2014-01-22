@@ -151,18 +151,29 @@ class Room( object ):
         # Step Six: Move items and monsters onto the map.
         # Find a list of good spots for stuff that goes in the open.
         good_spots = list()
-        for x in range( self.area.x, self.area.x + self.area.width ):
-            for y in range( self.area.y, self.area.y + self.area.height ):
+        for x in range( self.area.x+1, self.area.x + self.area.width-1 ):
+            for y in range( self.area.y+1, self.area.y + self.area.height-1 ):
                 if not gb.map[x][y].blocks_walking():
                     good_spots.append( (x,y) )
 
         # Find a list of good walls for stuff that must be mounted on a wall.
-        # If there are no good walls, add some.
-
+        good_walls = list()
+        for x in range( self.area.x + 1, self.area.x + self.area.width - 1 ):
+            if gb.map[x][self.area.y].wall == maps.BASIC_WALL and gb.map[x-1][self.area.y].wall and gb.map[x+1][self.area.y].wall and not gb.map[x][self.area.y+1].blocks_walking():
+                good_walls.append((x,self.area.y ))
+        for y in range( self.area.y + 1, self.area.y + self.area.height - 1 ):
+            if gb.map[self.area.x][y].wall == maps.BASIC_WALL and gb.map[self.area.x][y-1].wall and gb.map[self.area.x][y+1].wall and not gb.map[self.area.x+1][y].blocks_walking():
+                good_walls.append((self.area.x,y ))
 
         for i in self.inventory:
-            if hasattr( i, "ATTACH_TO_WALL" ) and i.ATTACH_TO_WALL:
-
+            if hasattr( i, "ATTACH_TO_WALL" ) and i.ATTACH_TO_WALL and good_walls:
+                p = random.choice( good_walls )
+                good_walls.remove( p )
+                if hasattr( i, "place" ):
+                    i.place( gb, p )
+                else:
+                    i.pos = p
+                    gb.contents.append( i )
             else:
                 p = random.choice( good_spots )
                 good_spots.remove( p )
@@ -193,6 +204,14 @@ class Room( object ):
             if gb.map[x][y].blocks_walking():
                 gb.map[x][y].floor = maps.HIGROUND
 
+    def probably_blocks_movement( self, gb, x, y ):
+        if not gb.on_the_map(x,y):
+            return True
+        elif gb.map[x][y].wall is True:
+            return True
+        else:
+            return gb.map[x][y].blocks_walking()
+
     def draw_direct_connection( self, gb, x1,y1,x2,y2 ):
         path = animobs.get_line( x1,y1,x2,y2 )
         for p in path:
@@ -209,15 +228,47 @@ class FuzzyRoom( Room ):
             for y in range( self.area.y, self.area.y + self.area.height ):
                 self.draw_fuzzy_ground( gb, x, y )
 
+class SharpRoom( Room ):
+    """A room with hard walls, with BASIC_FLOOR floors."""
+    def deal_with_empties( self, gb, empties ):
+        p2 = random.choice( empties )
+        empties.remove( p2 )
+        gb.map[p2[0]][p2[1]].wall = maps.OPEN_DOOR
+        for pp in empties:
+            gb.map[pp[0]][pp[1]].wall = maps.BASIC_WALL
+        del empties[:]
+    def probably_an_entrance( self, gb, p, vec ):
+        return not self.probably_blocks_movement(gb,*p) and not self.probably_blocks_movement(gb,p[0]+vec[0],p[1]+vec[1])
+    def draw_wall( self, gb, points, vec ):
+        empties = list()
+        for p in points:
+            if self.probably_an_entrance(gb,p,vec):
+                empties.append( p )
+            else:
+                gb.map[p[0]][p[1]].wall = maps.BASIC_WALL
+                if empties:
+                    self.deal_with_empties(gb, empties )
+        if empties:
+            self.deal_with_empties(gb, empties )
+
+    def render( self, gb ):
+        # Fill the floor with BASIC_FLOOR, and clear room interior
+        self.fill( gb, self.area, floor=maps.BASIC_FLOOR )
+        self.fill( gb, self.area.inflate(-2,-2), wall=None )
+        # Set the four corners to basic walls
+        gb.map[self.area.x][self.area.y].wall = maps.BASIC_WALL
+        gb.map[self.area.x+self.area.width-1][self.area.y].wall = maps.BASIC_WALL
+        gb.map[self.area.x][self.area.y+self.area.height-1].wall = maps.BASIC_WALL
+        gb.map[self.area.x+self.area.width-1][self.area.y+self.area.height-1].wall = maps.BASIC_WALL
+
+        # Draw each wall. Harder than it sounds.
+        self.draw_wall( gb, animobs.get_line( self.area.x+1,self.area.y,self.area.x+self.area.width-2,self.area.y ), (0,-1) )
+        self.draw_wall( gb, animobs.get_line( self.area.x,self.area.y+1,self.area.x,self.area.y+self.area.height-2 ), (-1,0) )
+        self.draw_wall( gb, animobs.get_line( self.area.x+1,self.area.y+self.area.height-1,self.area.x+self.area.width-2,self.area.y+self.area.height-1 ), (0,1) )
+        self.draw_wall( gb, animobs.get_line( self.area.x+self.area.width-1,self.area.y+1,self.area.x+self.area.width-1,self.area.y+self.area.height-2 ), (1,0) )
+
 class BottleneckRoom( Room ):
     """A room that blocks passage, aside from one door."""
-    def probably_blocks_movement( self, gb, x, y ):
-        if not gb.on_the_map(x,y):
-            return True
-        elif gb.map[x][y].wall:
-            return True
-        else:
-            return gb.map[x][y].blocks_walking()
     def render( self, gb ):
         myrect = self.area.inflate(-2,-2)
         for x in range( myrect.x, myrect.x + myrect.width ):
@@ -285,16 +336,22 @@ class RandomScene( Room ):
                     gb.map[x][y].wall = True
 
 
-class DividedIslands( RandomScene ):
+class DividedIslandScene( RandomScene ):
     """The rooms are divided into two groups by a single bridge."""
-
+    # Special elements:
+    #  bridge: The room in the middle of the river.
+    #  before_bridge: The room before the bridge.
+    #  after_bridge: The room after the bridge.
+    # Tags of note:
+    #  ENTRANCE: Rooms with this tag placed before the bridge
+    #  GOAL: Rooms with this tag placed after the bridge
     def prepare( self, gb ):
         # Step one- we're going to use a plasma map to set water/lo/hi ground.
         # Fill all non-water tiles with True walls for now.
         myplasma = Plasma()
         for x in range( self.width ):
             for y in range( self.height ):
-                if myplasma.map[x][y] < 0.3:
+                if myplasma.map[x][y] < 0.25:
                     gb.map[x][y].floor = maps.WATER
                 elif myplasma.map[x][y] < 0.5:
                     gb.map[x][y].floor = maps.LOGROUND
@@ -307,21 +364,27 @@ class DividedIslands( RandomScene ):
         # Divide the map into two segments.
         if random.randint(1,2) == 1:
             horizontal_river = True
+            subzone_height = ( self.height - 8 ) // 2
             # Horizontal river
             z1 = Room()
-            z1.area = pygame.Rect( 0,0,self.width,(self.height-4)//2 )
+            z1.area = pygame.Rect( 0,0,self.width,subzone_height )
             z2 = Room()
-            z2.area = pygame.Rect( 0,(self.height-4)//2 + 5,self.width,(self.height-4)//2 )
-            river = pygame.Rect( 0,(self.height-4)//2,self.width,4 )
+            z2.area = pygame.Rect( 0,0,self.width,subzone_height )
+            z2.area.bottomleft = self.area.bottomleft
+            river = pygame.Rect( 0,0,self.width,6 )
         else:
             horizontal_river = False
+            subzone_width = ( self.width - 8 ) // 2
             # Vertical river
             z1 = Room()
-            z1.area = pygame.Rect( 0,0,(self.width-4)//2,self.height )
+            z1.area = pygame.Rect( 0,0,subzone_width,self.height )
             z2 = Room()
-            z2.area = pygame.Rect( (self.width-4)//2+5,0,(self.width-4)//2,self.height )
-            river = pygame.Rect( (self.width-4)//2,0,4,self.height )
+            z2.area = pygame.Rect( 0,0,subzone_width,self.height )
+            z2.area.topright = self.area.topright
+            river = pygame.Rect( 0,0,6,self.height )
+        river.center = self.area.center
         self.fill( gb, river, floor=maps.WATER, wall=None )
+        self.fill( gb, river.inflate(2,2), wall=None )
 
         # Locate the bridge, before_bridge, and after_bridge rooms, creating them
         # if none currently exist.
@@ -333,7 +396,6 @@ class DividedIslands( RandomScene ):
         before_bridge = self.special_c.get( "before_bridge", None )
         if not before_bridge:
             before_bridge = FuzzyRoom()
-            before_bridge.inventory.append( waypoints.Bookshelf() )
             self.special_c["before_bridge"] = before_bridge
             z1.contents.append( before_bridge )
         after_bridge = self.special_c.get( "after_bridge", None )

@@ -69,6 +69,34 @@ class PuzzleDoor( Waypoint ):
         explo.alert( "This door is impassable." )
     def activate( self, explo ):
         self.scene.map[self.pos[0]][self.pos[1]].wall = maps.OPEN_DOOR
+        if explo.scene is self.scene:
+            explo.alert( "You hear a rumbling noise in the distance..." )
+        else:
+            explo.alert( "You get the feeling that new possibilities have been opened up." )
+
+class PuzzleSwitch( Waypoint ):
+    TILE = maps.Tile( None, None, maps.SWITCH_UP )
+    ATTACH_TO_WALL = True
+    CALL = None
+    RECALL = None
+    UP = True
+    def bump( self, explo ):
+        if self.UP:
+            if self.CALL:
+                self.CALL( explo )
+                self.scene.map[self.pos[0]][self.pos[1]].decor = maps.SWITCH_DOWN
+                self.UP = False
+            else:
+                explo.alert( "This lever is stuck." )
+        else:
+            if self.RECALL:
+                self.RECALL( explo )
+                self.scene.map[self.pos[0]][self.pos[1]].decor = maps.SWITCH_UP
+                self.UP = True
+            else:
+                explo.alert( "This lever is stuck." )
+
+
 
 
 

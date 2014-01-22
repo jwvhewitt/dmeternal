@@ -189,6 +189,8 @@ SKULL = SingTerrain( "SKULL", spritesheet = SPRITE_DECOR, frame = 0 )
 BONE = SingTerrain( "BONE", spritesheet = SPRITE_DECOR, frame = 1 )
 SKELETON = SingTerrain( "SKELETON", spritesheet = SPRITE_DECOR, frame = 2 )
 HANGING_SKELETON = OnTheWallTerrain( "HANGING_SKELETON", frame = 3 )
+SWITCH_UP = OnTheWallTerrain( "SWITCH_UP", frame = 19 )
+SWITCH_DOWN = OnTheWallTerrain( "SWITCH_DOWN", frame = 21 )
 
 
 

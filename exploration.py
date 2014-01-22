@@ -330,7 +330,7 @@ class Explorer( object ):
 
         while True:
             ev = pygame.event.wait()
-            if ( ev.type == pygame.MOUSEBUTTONDOWN ) or ( ev.type == pygame.QUIT ) or (ev.type == pygame.KEYDOWN):
+            if ( ev.type == pygame.MOUSEBUTTONUP) or ( ev.type == pygame.QUIT ) or (ev.type == pygame.KEYDOWN):
                 break
             elif ev.type == pygwrap.TIMEREVENT:
                 self.view( self.screen )
