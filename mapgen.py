@@ -134,7 +134,7 @@ class Room( object ):
             prev = self.contents[-1]
             for r in self.contents:
                 # Connect r to prev
-                self.draw_direct_connection( gb, r.area.centerx, r.area.centery, prev.area.centerx, prev.area.centery )
+                self.draw_L_connection( gb, r.area.centerx, r.area.centery, prev.area.centerx, prev.area.centery )
 
                 # r becomes the new prev
                 prev = r
@@ -218,6 +218,14 @@ class Room( object ):
             for x in range( p[0]-1, p[0]+2 ):
                 for y in range( p[1]-1, p[1]+2 ):
                     self.draw_fuzzy_ground( gb, x, y )
+
+    def draw_L_connection( self, gb, x1,y1,x2,y2 ):
+        if random.randint(1,2) == 1:
+            cx,cy = x1,y2
+        else:
+            cx,cy = x2,y1
+        self.draw_direct_connection( gb, x1, y1, cx, cy )
+        self.draw_direct_connection( gb, x2, y2, cx, cy )
 
 
 class FuzzyRoom( Room ):
