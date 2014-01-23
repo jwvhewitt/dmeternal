@@ -5,6 +5,7 @@
 
 import maps
 import services
+import exploration
 
 class Waypoint( object ):
     TILE = None
@@ -13,6 +14,7 @@ class Waypoint( object ):
         """Place this waypoint in a scene."""
         if scene:
             self.place( scene, pos )
+        self.inventory = list()
 
     def place( self, scene, pos ):
         self.scene = scene
@@ -96,7 +98,18 @@ class PuzzleSwitch( Waypoint ):
             else:
                 explo.alert( "This lever is stuck." )
 
-
+class SmallChest( Waypoint ):
+    TILE = maps.Tile( None, None, maps.SMALL_CHEST )
+    GOLD = 0
+    ALT_DECOR = maps.SMALL_CHEST_OPEN
+    def bump( self, explo ):
+        self.scene.map[self.pos[0]][self.pos[1]].decor = self.ALT_DECOR
+        if self.GOLD:
+            explo.alert( "You find {0} gold pieces.".format( self.GOLD ) )
+            explo.camp.gold += self.GOLD
+            self.GOLD = 0
+        ix = exploration.InvExchange( explo.camp.party, self.inventory, explo.view )
+        ix( explo.screen )
 
 
 

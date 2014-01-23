@@ -320,6 +320,11 @@ if __name__=='__main__':
     room4.special_c["door"] = pdoor
     room2.inventory.append( pswitch )
 
+    mychest = waypoints.SmallChest()
+    mychest.GOLD,stuff = items.generate_hoard(5,120)
+    mychest.inventory += stuff
+    room3.inventory.append( mychest )
+
     osgen.contents += (room1,room2,room3,room4)
 
     osgen.make()

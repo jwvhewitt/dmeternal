@@ -337,6 +337,41 @@ def choose_item( item_type=None, max_rank=20 ):
     if candidates:
         return random.choice( candidates )
 
+def make_item_magic( item_to_enchant, target_rank ):
+    pass
+
+PREMIUM_TYPES = (SWORD,AXE,MACE,DAGGER,STAFF,BOW,ARROW,SHIELD,POLEARM,SLING,BULLET,
+    LIGHT_ARMOR,HEAVY_ARMOR,HELM,GAUNTLET,LIGHT_ARMOR,HEAVY_ARMOR,SWORD,AXE,MACE)
+
+def generate_hoard( drop_rank, drop_strength ):
+    """Returns a tuple containing gold, list of items."""
+    # drop_rank is the rank of the level.
+    # drop_strength is a percentile loot adjustment.
+
+    # Start by determining actual size of hoard, in gp
+    gp = max( ( drop_rank//2 + random.randint( 1, drop_rank + 1 ) ) * drop_strength + random.randint(1,100) - random.randint(1,100), random.randint(51,150) )
+    hoard = list()
+
+    tries = 10 - drop_rank // 2 - random.randint(0,4)
+    while ( gp > 0 ) and ( tries < 10 ):
+        if random.randint(1,50) == 23:
+            it = choose_item( item_type = random.choice( PREMIUM_TYPES ), max_rank = drop_rank+3 )
+            tries += 1
+            if it:
+                it.identified = False
+        elif random.randint(1,3) != 1:
+            it = choose_item( item_type = random.choice( PREMIUM_TYPES ), max_rank = drop_rank )
+        else:
+            it = choose_item( max_rank = drop_rank )
+        if it:
+            if ( it.min_rank() < drop_rank ) and ( random.randint(1,20) < drop_rank ):
+                make_item_magic( it, drop_rank )
+                it.identified = False
+            hoard.append( it )
+            gp -= it.cost()
+        tries += 1
+
+    return (max(gp,0),hoard)
 
 class Backpack( list ):
     def get_equip( self , slot ):

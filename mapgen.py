@@ -135,6 +135,7 @@ class Room( object ):
             for r in self.contents:
                 # Connect r to prev
                 self.draw_L_connection( gb, r.area.centerx, r.area.centery, prev.area.centerx, prev.area.centery )
+#                self.draw_direct_connection( gb, r.area.centerx, r.area.centery, prev.area.centerx, prev.area.centery )
 
                 # r becomes the new prev
                 prev = r
@@ -451,6 +452,56 @@ class DividedIslandScene( RandomScene ):
         self.draw_direct_connection( gb, before_bridge.area.centerx, before_bridge.area.centery, bridge.area.centerx, bridge.area.centery )
         self.draw_direct_connection( gb, after_bridge.area.centerx, after_bridge.area.centery, bridge.area.centerx, bridge.area.centery )
 
+    def num_nearby_walls( self, gb, x0, y0 ):
+        n = 0
+        for x in range(x0-1,x0+2):
+            for y in range(y0-1,y0+2):
+                if gb.on_the_map(x,y):
+                    if gb.map[x][y].wall:
+                        n += 1
+                else:
+                    n += 1
+        return n
+
+    ANGDIR = ( (-1,-1), (0,-1), (1,-1), (1,0), (1,1), (0,1), (-1,1), (-1,0) )
+    def wall_wont_block( self, gb, x, y ):
+        """Return True if a wall placed here won't block movement."""
+        if gb.map[x][y].wall or gb.map[x][y].blocks_walking():
+            # This is a wall now. Changing it from a wall to a wall really won't
+            # change anything, as should be self-evident.
+            return True
+        else:
+            # Adding a wall will block a passage if there are two or more spaces
+		    # in the eight surrounding tiles which are separated by walls.
+            was_a_space = not self.probably_blocks_movement( gb, x-1, y )
+            n = 0
+            for a in self.ANGDIR:
+                is_a_space = not self.probably_blocks_movement( gb, x+a[0], y+a[1] )
+                if is_a_space != was_a_space:
+                    # We've gone from wall to space or vice versa.
+                    was_a_space = is_a_space
+                    n += 1
+            return n <= 2
+
+    def mutate( self, gb ):
+        DO_NOTHING, WALL_ON, WALL_OFF = range( 3 )
+        temp = [[ int()
+            for y in range(gb.height) ]
+                for x in range(gb.width) ]
+        # Perform the mutation several times in a row.
+        for t in range( 5 ):
+            for x in range( self.area.x + 1, self.area.x + self.area.width - 1 ):
+                for y in range( self.area.y + 1, self.area.y + self.area.height - 1 ):
+                    if self.num_nearby_walls(gb,x,y) >= 5:
+                        temp[x][y] = WALL_ON
+                    else:
+                        temp[x][y] = WALL_OFF
+            for x in range( self.area.x + 1, self.area.x + self.area.width - 1 ):
+                for y in range( self.area.y + 1, self.area.y + self.area.height - 1 ):
+                    if temp[x][y] == WALL_OFF:
+                        gb.map[x][y].wall = None
+                    elif ( temp[x][y] == WALL_ON ) and self.wall_wont_block( gb, x, y ):
+                        gb.map[x][y].wall = True
 
 
 if __name__ == '__main__':

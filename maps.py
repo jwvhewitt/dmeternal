@@ -10,7 +10,7 @@ import enchantments
 import items
 
 # Enumerated constants for sprite sheets.
-SPRITE_GROUND, SPRITE_WALL, SPRITE_BORDER, SPRITE_INTERIOR, SPRITE_FLOOR, SPRITE_DECOR = range( 6 )
+SPRITE_GROUND, SPRITE_WALL, SPRITE_BORDER, SPRITE_INTERIOR, SPRITE_FLOOR, SPRITE_DECOR, SPRITE_CHEST = range( 7 )
 
 class SingTerrain( object ):
     # A singleton terrain class; use these objects as tokens for maps.
@@ -191,6 +191,12 @@ SKELETON = SingTerrain( "SKELETON", spritesheet = SPRITE_DECOR, frame = 2 )
 HANGING_SKELETON = OnTheWallTerrain( "HANGING_SKELETON", frame = 3 )
 SWITCH_UP = OnTheWallTerrain( "SWITCH_UP", frame = 19 )
 SWITCH_DOWN = OnTheWallTerrain( "SWITCH_DOWN", frame = 21 )
+SMALL_CHEST = OnTheWallTerrain( "SMALL_CHEST", spritesheet = SPRITE_CHEST, frame = 0, block_walk=True )
+SMALL_CHEST_OPEN = OnTheWallTerrain( "SMALL_CHEST_OPEN", spritesheet = SPRITE_CHEST, frame = 2, block_walk=True )
+MEDIUM_CHEST = OnTheWallTerrain( "MEDIUM_CHEST", spritesheet = SPRITE_CHEST, frame = 4, block_walk=True )
+MEDIUM_CHEST_OPEN = OnTheWallTerrain( "MEDIUM_CHEST_OPEN", spritesheet = SPRITE_CHEST, frame = 6, block_walk=True )
+LARGE_CHEST = OnTheWallTerrain( "LARGE_CHEST", spritesheet = SPRITE_CHEST, frame = 8, block_walk=True )
+LARGE_CHEST_OPEN = OnTheWallTerrain( "LARGE_CHEST_OPEN", spritesheet = SPRITE_CHEST, frame = 10, block_walk=True )
 
 
 
@@ -212,7 +218,8 @@ DEFAULT_SPRITES = { SPRITE_GROUND: "terrain_ground_forest.png", \
     SPRITE_BORDER: "terrain_border.png", \
     SPRITE_INTERIOR: "terrain_int_default.png", \
     SPRITE_FLOOR: "terrain_floor_gravel.png", \
-    SPRITE_DECOR: "terrain_decor.png" }
+    SPRITE_DECOR: "terrain_decor.png", \
+    SPRITE_CHEST: "terrain_chest_wood.png" }
 
 class Scene( object ):
     DELTA8 = ( (-1,-1), (0,-1), (1,-1), (-1,0), (1,0), (-1,1), (0,1), (1,1) )
