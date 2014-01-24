@@ -195,21 +195,31 @@ class PartySelectRedrawer( object ):
 def display_item_info( screen, it, myrect ):
     """Use the screen to display "it" in myrect."""
     y = myrect.y
-    pygwrap.draw_text( screen, pygwrap.BIGFONT, str( it ), pygame.Rect( myrect.x, y, myrect.width, pygwrap.BIGFONT.get_linesize() ), justify = 0, color=(240,240,240) )
-    y += pygwrap.BIGFONT.get_linesize()
+#    pygwrap.draw_text( screen, pygwrap.BIGFONT, str( it ), pygame.Rect( myrect.x, y, myrect.width, pygwrap.BIGFONT.get_linesize() ), justify = 0, color=(240,240,240) )
+#    y += pygwrap.BIGFONT.get_linesize()
+
+    myimg = pygwrap.render_text( pygwrap.BIGFONT, str( it ), myrect.width, justify=0, color=(240,240,240) )
+    myrect = myimg.get_rect( topleft = ( myrect.x, y ) )
+    screen.blit( myimg , myrect )
+    y += myrect.height
+
     myrect = pygame.Rect( myrect.x, y, myrect.width, pygwrap.SMALLFONT.get_linesize() )
-    pygwrap.draw_text( screen, pygwrap.SMALLFONT, str( it.cost() ) + " GP", myrect, justify = -1 )
+    if it.identified:
+        pygwrap.draw_text( screen, pygwrap.SMALLFONT, str( it.cost() ) + " GP", myrect, justify = -1 )
+    else:
+        pygwrap.draw_text( screen, pygwrap.SMALLFONT, "? GP", myrect, justify = -1 )
     pygwrap.draw_text( screen, pygwrap.SMALLFONT, str( it.mass // 10 ) + "." + str( it.mass % 10 ) + "lbs", myrect, justify = 1 )
     y += pygwrap.BIGFONT.get_linesize()
 
-    if it.true_desc:
-        myimg = pygwrap.render_text(pygwrap.SMALLFONT, it.true_desc, myrect.width, justify = -1 )
+    msg = it.desc()
+    if msg:
+        myimg = pygwrap.render_text(pygwrap.SMALLFONT, msg, myrect.width, justify = -1 )
         myrect = myimg.get_rect( topleft = ( myrect.x, y ) )
         screen.blit( myimg , myrect )
         y += myrect.height + 6
 
     msg = it.stat_desc()
-    if msg:
+    if msg and it.identified:
         myimg = pygwrap.render_text(pygwrap.ITALICFONT, msg, myrect.width, justify = 0 )
         myrect = myimg.get_rect( topleft = ( myrect.x, y ) )
         screen.blit( myimg , myrect )

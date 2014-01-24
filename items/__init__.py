@@ -120,12 +120,15 @@ class Item( object ):
     mass = 1
     equipped = False
     shot_anim=None
+    enhancement = None
     def cost( self ):
         it = 1
-        if self.statline != None:
+        if self.statline:
             it += self.statline.cost()
-        if self.attackdata != None:
+        if self.attackdata:
             it += self.attackdata.cost()
+        if self.enhancement:
+            it += self.enhancement.cost()
         return it
     def stamp_avatar( self, avatar, pc ):
         """Apply this item's sprite to the avatar."""
@@ -142,17 +145,39 @@ class Item( object ):
             except AttributeError:
                 # The other is apparently not an item, so this is obviously better.
                 return True
+    def get_stat( self, stat ):
+        it = self.statline.get( stat, 0 )
+        if self.enhancement:
+            it += self.enhancement.BONUSES.get( stat, 0 )
+        return it
     def __str__( self ):
         if self.identified:
-            return self.true_name
+            if self.enhancement:
+                return self.enhancement.get_name( self )
+            else:
+                return self.true_name
         else:
             return "?"+self.itemtype.name
+    def desc( self ):
+        if self.identified:
+            msg = self.true_desc
+            if self.enhancement:
+                msg = self.enhancement.DESCPAT.format( msg )
+            return msg
+        else:
+            return "???"
     def stat_desc( self ):
         """Return descriptions of all stat modifiers provided."""
         smod = []
         if self.attackdata:
             smod.append( self.attackdata.stat_desc() )
-        for k,v in self.statline.iteritems():
+        if self.enhancement:
+            mydict = self.statline.copy()
+            for k,v in self.enhancement.BONUSES.iteritems():
+                mydict[k] = mydict.get( k, 0 ) + v
+        else:
+            mydict = self.statline
+        for k,v in mydict.iteritems():
             smod.append( str(k) + ":" + "{0:+}".format( v ) )
         return ", ".join( smod )
 
@@ -179,6 +204,8 @@ class MissileWeapon( Item ):
         if self.attackdata != None:
             # Missile weapons only pay half normal cost for attackdata.
             it += self.attackdata.cost() // 2
+        if self.enhancement:
+            it += self.enhancement.cost()
         return it
     def can_attack( self, user ):
         """Return True if this weapon can be used to attack right now."""
@@ -203,6 +230,8 @@ class Ammo( Item ):
             it += self.statline.cost()
         if self.attackdata != None:
             it += self.attackdata.cost()
+        if self.enhancement:
+            it += ( self.enhancement.cost() * self.quantity ) // 25
         return it
 
     def __str__( self ):
@@ -221,6 +250,8 @@ class ManaWeapon( Item ):
         if self.attackdata != None:
             # Mana weapons only pay 3/4 normal cost for attackdata.
             it += ( self.attackdata.cost() * 3 ) // 4
+        if self.enhancement:
+            it += self.enhancement.cost()
         return it
     def stat_desc( self ):
         """Return descriptions of all stat modifiers provided."""
@@ -229,8 +260,14 @@ class ManaWeapon( Item ):
             smod.append( self.attackdata.stat_desc() )
             if self.MP_COST:
                 smod.append( "{0} MP".format( self.MP_COST ) )
-        for k,v in self.statline.iteritems():
-            smod.append( "{0}:{1:+}".format( str(k) , v ) )
+        if self.enhancement:
+            mydict = self.statline.copy()
+            for k,v in self.enhancement.BONUSES.iteritems():
+                mydict[k] = mydict.get( k, 0 ) + v
+        else:
+            mydict = self.statline
+        for k,v in mydict.iteritems():
+            smod.append( str(k) + ":" + "{0:+}".format( v ) )
         return ", ".join( smod )
     def can_attack( self, user ):
         """Return True if this weapon can be used to attack right now."""
@@ -326,6 +363,16 @@ harvest( wands )
 #    i = ic()
 #    print "{0}: {1}/{2}gp".format( i, i.min_rank(), i.cost() )
 
+import enhancers
+# Compile the enhancements into a useful list.
+ENHANCEMENT_LIST = []
+def harvest_enhancements( mod ):
+    for name in dir( mod ):
+        o = getattr( mod, name )
+        if inspect.isclass( o ) and issubclass( o , enhancers.Enhancer ) and o is not enhancers.Enhancer:
+            ENHANCEMENT_LIST.append( o )
+harvest_enhancements( enhancers )
+
 def choose_item( item_type=None, max_rank=20 ):
     """Return an item of the specified type, of at most max_rank."""
     candidates = []
@@ -338,7 +385,14 @@ def choose_item( item_type=None, max_rank=20 ):
         return random.choice( candidates )
 
 def make_item_magic( item_to_enchant, target_rank ):
-    pass
+    pr = target_rank - item_to_enchant.min_rank()
+    elist = list()
+    for e in ENHANCEMENT_LIST:
+        if ( e.PLUSRANK <= pr ) and item_to_enchant.itemtype in e.AFFECTS:
+            elist.append( e )
+    if elist:
+        e = random.choice( elist )
+        item_to_enchant.enhancement = e()
 
 PREMIUM_TYPES = (SWORD,AXE,MACE,DAGGER,STAFF,BOW,ARROW,SHIELD,POLEARM,SLING,BULLET,
     LIGHT_ARMOR,HEAVY_ARMOR,HELM,GAUNTLET,LIGHT_ARMOR,HEAVY_ARMOR,SWORD,AXE,MACE)

@@ -295,7 +295,9 @@ if __name__=='__main__':
 
     myent = waypoints.Waypoint( myscene, (23,13) )
 
-    waypoints.Bookshelf( myscene, (18,12) )
+    mychest = waypoints.SmallChest(myscene,(19,12))
+    mychest.GOLD,stuff = items.generate_hoard(8,200)
+    mychest.inventory += stuff
 
     otherscene = maps.Scene( 102, 102, sprites={ maps.SPRITE_GROUND: "terrain_ground_cthonic.png", maps.SPRITE_WALL: "terrain_wall_rocks.png",maps.SPRITE_FLOOR: "terrain_floor_gravel.png"} )
 

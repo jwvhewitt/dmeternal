@@ -447,7 +447,7 @@ class Character(object):
         # Add bonuses from any equipment...
         for item in self.inventory:
             if item.equipped:
-                it += item.statline.get( stat , 0 )
+                it += item.get_stat( stat )
 
         # Add penalties from stat damage.
         it -= self.stat_damage.get( stat , 0 )
@@ -687,7 +687,7 @@ class Character(object):
 
     def add_attack_enhancements( self, roll, ench ):
         # Add any attack modifiers attached to this enchantment.
-        if ench.ATTACK_ON_HIT:
+        if hasattr( ench, "ATTACK_ON_HIT" ) and ench.ATTACK_ON_HIT:
             roll.on_success[0].on_success.append( ench.ATTACK_ON_HIT )
             roll.on_success[0].on_failure.append( ench.ATTACK_ON_HIT )
 
@@ -738,6 +738,8 @@ class Character(object):
         weapon = self.inventory.get_equip( items.HAND1 )
         if weapon:
             fx = weapon.attackdata.get_effect( self, roll_mod )
+            if weapon.enhancement:
+                self.add_attack_enhancements( fx, weapon.enhancement )
         elif hasattr( self, "ATTACK" ):
             fx = self.ATTACK.get_effect( self, roll_mod )
         else:
