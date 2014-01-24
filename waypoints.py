@@ -6,6 +6,8 @@
 import maps
 import services
 import exploration
+import items
+import traps
 
 class Waypoint( object ):
     TILE = None
@@ -100,16 +102,39 @@ class PuzzleSwitch( Waypoint ):
 
 class SmallChest( Waypoint ):
     TILE = maps.Tile( None, None, maps.SMALL_CHEST )
-    GOLD = 0
+    gold = 0
     ALT_DECOR = maps.SMALL_CHEST_OPEN
+    trap = None
+    HOARD_AMOUNT = 50
     def bump( self, explo ):
+        if self.trap:
+            disarm = self.trap.trigger( explo )
+            if disarm:
+                self.trap = None
+                self.get_the_stuff( explo )
+        else:
+            self.get_the_stuff( explo )
+    def get_the_stuff( self, explo ):
         self.scene.map[self.pos[0]][self.pos[1]].decor = self.ALT_DECOR
-        if self.GOLD:
-            explo.alert( "You find {0} gold pieces.".format( self.GOLD ) )
-            explo.camp.gold += self.GOLD
-            self.GOLD = 0
+        if self.gold:
+            explo.alert( "You find {0} gold pieces.".format( self.gold ) )
+            explo.camp.gold += self.gold
+            self.gold = 0
         ix = exploration.InvExchange( explo.camp.party, self.inventory, explo.view )
         ix( explo.screen )
+    def stock( self, hoard_rank=3 ):
+        self.gold,hoard = items.generate_hoard(hoard_rank,self.HOARD_AMOUNT)
+        self.inventory += hoard
+        self.trap = traps.BladeTrap()
 
+class MediumChest( SmallChest ):
+    TILE = maps.Tile( None, None, maps.MEDIUM_CHEST )
+    ALT_DECOR = maps.MEDIUM_CHEST_OPEN
+    HOARD_AMOUNT = 100
+
+class LargeChest( SmallChest ):
+    TILE = maps.Tile( None, None, maps.LARGE_CHEST )
+    ALT_DECOR = maps.LARGE_CHEST_OPEN
+    HOARD_AMOUNT = 200
 
 

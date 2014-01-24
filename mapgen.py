@@ -67,9 +67,47 @@ class Plasma( object ):
                     pygame.draw.rect(screen,(50,250,100),pygame.Rect(x*2,y*2,2,2) )
 
 
+#  *******************
+#  ***   ANCHORS   ***
+#  *******************
+# Each anchor function takes two rect: a parent and a child.
+# The child is arranged relative to the parent.
+
+def northwest(par,chi):
+    chi.topleft = par.topleft
+
+def north( par,chi ):
+    chi.midtop = par.midtop
+
+def northeast(par,chi):
+    chi.topright = par.topright
+
+def west(par,chi):
+    chi.midleft = par.midleft
+
+def middle( par,chi):
+    chi.center = par.center
+
+def east(par,chi):
+    chi.midright = par.midright
+
+def southwest(par,chi):
+    chi.bottomleft = par.bottomleft
+
+def south( par,chi ):
+    chi.midbottom = par.midbottom
+
+def southeast(par,chi):
+    chi.bottomright = par.bottomright
+
+
+#  *****************
+#  ***   ROOMS   ***
+#  *****************
+
 class Room( object ):
     """A Room is an area on the map. The outer edge is generally a wall."""
-    def __init__( self, width=7, height=7, tags=(), anchor=None ):
+    def __init__( self, width=7, height=7, tags=(), anchor=None, parent=None ):
         self.width = width
         self.height = height
         self.tags = tags
@@ -79,6 +117,8 @@ class Room( object ):
         # special_c lists contents that will be treated specially by the generator.
         self.special_c = dict()
         self.inventory = list()
+        if parent:
+            parent.contents.append( self )
 
     name = "Whatevs"
     def step_two( self, gb ):
@@ -114,6 +154,14 @@ class Room( object ):
         for r in self.contents:
             if r.area:
                 closed_area.append( r.area )
+        # Add rooms with defined anchors next
+        for r in self.contents:
+            if r.anchor:
+                myrect = pygame.Rect( 0, 0, r.width, r.height )
+                r.anchor( self.area, myrect )
+                if myrect.collidelist( closed_area ) == -1:
+                    r.area = myrect
+                    closed_area.append( myrect )
         # Assign areas for unplaced rooms.
         for r in self.contents:
             myrect = pygame.Rect( 0, 0, r.width, r.height )
@@ -373,53 +421,41 @@ class DividedIslandScene( RandomScene ):
         # Divide the map into two segments.
         if random.randint(1,2) == 1:
             horizontal_river = True
-            subzone_height = ( self.height - 8 ) // 2
+            subzone_height = ( self.height - 10 ) // 2
             # Horizontal river
             z1 = Room()
             z1.area = pygame.Rect( 0,0,self.width,subzone_height )
+            z1.special_c["bridge_anchor"] = south
             z2 = Room()
             z2.area = pygame.Rect( 0,0,self.width,subzone_height )
             z2.area.bottomleft = self.area.bottomleft
-            river = pygame.Rect( 0,0,self.width,6 )
+            z2.special_c["bridge_anchor"] = north
+            river = pygame.Rect( 0,0,self.width,7 )
         else:
             horizontal_river = False
-            subzone_width = ( self.width - 8 ) // 2
+            subzone_width = ( self.width - 10 ) // 2
             # Vertical river
             z1 = Room()
             z1.area = pygame.Rect( 0,0,subzone_width,self.height )
+            z1.special_c["bridge_anchor"] = east
             z2 = Room()
             z2.area = pygame.Rect( 0,0,subzone_width,self.height )
             z2.area.topright = self.area.topright
-            river = pygame.Rect( 0,0,6,self.height )
+            z2.special_c["bridge_anchor"] = west
+            river = pygame.Rect( 0,0,7,self.height )
+        if random.randint(1,2) == 1:
+            z1,z2 = z2,z1
         river.center = self.area.center
         self.fill( gb, river, floor=maps.WATER, wall=None )
-        self.fill( gb, river.inflate(2,2), wall=None )
+        self.fill( gb, river.inflate(3,3), wall=None )
 
         # Locate the bridge, before_bridge, and after_bridge rooms, creating them
         # if none currently exist.
-        bridge = self.special_c.get( "bridge", None )
-        if not bridge:
-            bridge = FuzzyRoom()
-            self.special_c["bridge"] = bridge
-            self.contents.append( bridge )
-        before_bridge = self.special_c.get( "before_bridge", None )
-        if not before_bridge:
-            before_bridge = FuzzyRoom()
-            self.special_c["before_bridge"] = before_bridge
-            z1.contents.append( before_bridge )
-        after_bridge = self.special_c.get( "after_bridge", None )
-        if not after_bridge:
-            after_bridge = FuzzyRoom()
-            self.special_c["after_bridge"] = after_bridge
-            z2.contents.append( after_bridge )
-        before_bridge.area = pygame.Rect( 0, 0, before_bridge.width, before_bridge.height )
-        after_bridge.area = pygame.Rect( 0, 0, after_bridge.width, after_bridge.height )
-        if horizontal_river:
-            before_bridge.area.midbottom = z1.area.midbottom
-            after_bridge.area.midtop = z2.area.midtop
-        else:
-            before_bridge.area.midright = z1.area.midright
-            after_bridge.area.midleft = z2.area.midleft
+        bridge = self.special_c.setdefault( "bridge", FuzzyRoom(parent=self) )
+        before_bridge = self.special_c.setdefault( "before_bridge", FuzzyRoom(parent=self) )
+        after_bridge = self.special_c.setdefault( "after_bridge", FuzzyRoom(parent=self) )
+        before_bridge.anchor = z1.special_c["bridge_anchor"]
+        after_bridge.anchor = z2.special_c["bridge_anchor"]
 
         # Go through the remaining rooms, sorting each into either z1 or z2
         z1_turn = True
@@ -427,6 +463,12 @@ class DividedIslandScene( RandomScene ):
             if r is bridge:
                 r.area = pygame.Rect( 0, 0, r.width, r.height )
                 r.area.center = self.area.center
+            elif r is before_bridge:
+                self.contents.remove( r )
+                z1.contents.append( r )
+            elif r is after_bridge:
+                self.contents.remove( r )
+                z2.contents.append( r )
             elif context.ENTRANCE in r.tags:
                 self.contents.remove( r )
                 z1.contents.append( r )

@@ -49,11 +49,11 @@ class Shop( object ):
             elif not it:
                 break
 
-    def make_wares_menu( self, explo, pc, myredraw ):
+    def make_wares_menu( self, explo, myredraw ):
         mymenu = charsheet.RightMenu( explo.screen, predraw = myredraw )
 
         for s in self.wares:
-            if pc.can_equip(s):
+            if self.pc.can_equip(s):
                 mymenu.add_item( str( s ), s )
             else:
                 mymenu.add_item( "#" + str( s ), s )
@@ -65,32 +65,32 @@ class Shop( object ):
         mymenu.quick_keys[ pygame.K_RIGHT ] = 1
         return mymenu
 
-    def buy_items( self, explo, pc ):
+    def buy_items( self, explo ):
         keep_going = True
-        myredraw = charsheet.CharacterViewRedrawer( csheet=charsheet.CharacterSheet(pc, screen=explo.screen, camp=explo.camp), screen=explo.screen, predraw=explo.view, caption="Buy Items" )
-        mymenu = self.make_wares_menu( explo, pc, myredraw )
+        myredraw = charsheet.CharacterViewRedrawer( csheet=self.charsheets[self.pc], screen=explo.screen, predraw=explo.view, caption="Buy Items" )
+        mymenu = self.make_wares_menu( explo, myredraw )
 
         while keep_going:
             it = mymenu.query()
             if it is -1:
-                n = ( explo.camp.party.index(pc) + len( explo.camp.party ) - 1 ) % len( explo.camp.party )
-                pc = explo.camp.party[n]
-                myredraw.csheet = charsheet.CharacterSheet(pc, screen=explo.screen, camp=explo.camp)
-                mymenu = self.make_wares_menu( explo, pc, myredraw )
+                n = ( explo.camp.party.index(self.pc) + len( explo.camp.party ) - 1 ) % len( explo.camp.party )
+                self.pc = explo.camp.party[n]
+                myredraw.csheet = self.charsheets[self.pc]
+                mymenu = self.make_wares_menu( explo, myredraw )
             elif it is 1:
-                n = ( explo.camp.party.index(pc) + 1 ) % len( explo.camp.party )
-                pc = explo.camp.party[n]
-                myredraw.csheet = charsheet.CharacterSheet(pc, screen=explo.screen, camp=explo.camp)
-                mymenu = self.make_wares_menu( explo, pc, myredraw )
+                n = ( explo.camp.party.index(self.pc) + 1 ) % len( explo.camp.party )
+                self.pc = explo.camp.party[n]
+                myredraw.csheet = self.charsheets[self.pc]
+                mymenu = self.make_wares_menu( explo, myredraw )
             elif it:
                 # An item was selected. Deal with it.
                 if it.cost() > explo.camp.gold:
                     myredraw.caption = "You can't afford it!"
-                elif not pc.can_take_item( it ):
+                elif not self.pc.can_take_item( it ) or not self.pc.is_alright():
                     myredraw.caption = "You can't carry it!"
                 else:
                     it2 = copy.copy( it )
-                    pc.inventory.append( it2 )
+                    self.pc.inventory.append( it2 )
                     explo.camp.gold -= it.cost()
                     myredraw.caption = "You have bought {0}.".format(it2)
             else:
@@ -99,17 +99,17 @@ class Shop( object ):
     def sale_price( self, it ):
         return max( it.cost() // 2, 1 )
 
-    def sell_items( self, explo, pc ):
+    def sell_items( self, explo ):
         keep_going = True
-        myredraw = charsheet.CharacterViewRedrawer( csheet=charsheet.CharacterSheet(pc, screen=explo.screen, camp=explo.camp), screen=explo.screen, predraw=explo.view, caption="Sell Items" )
+        myredraw = charsheet.CharacterViewRedrawer( csheet=self.charsheets[self.pc], screen=explo.screen, predraw=explo.view, caption="Sell Items" )
 
         while keep_going:
             mymenu = charsheet.RightMenu( explo.screen, predraw = myredraw )
 
-            for s in pc.inventory:
+            for s in self.pc.inventory:
                 if s.equipped:
                     mymenu.add_item( "*{0} ({1}gp)".format( s, self.sale_price( s )), s )
-                elif pc.can_equip(s):
+                elif self.pc.can_equip(s):
                     mymenu.add_item( "{0} ({1}gp)".format( s, self.sale_price( s ) ), s )
                 else:
                     mymenu.add_item( "#{0} ({1}gp)".format( s, self.sale_price( s ) ), s )
@@ -122,16 +122,16 @@ class Shop( object ):
 
             it = mymenu.query()
             if it is -1:
-                n = ( explo.camp.party.index(pc) + len( explo.camp.party ) - 1 ) % len( explo.camp.party )
-                pc = explo.camp.party[n]
-                myredraw.csheet = charsheet.CharacterSheet(pc, screen=explo.screen, camp=explo.camp)
+                n = ( explo.camp.party.index(self.pc) + len( explo.camp.party ) - 1 ) % len( explo.camp.party )
+                self.pc = explo.camp.party[n]
+                myredraw.csheet = self.charsheets[self.pc]
             elif it is 1:
-                n = ( explo.camp.party.index(pc) + 1 ) % len( explo.camp.party )
-                pc = explo.camp.party[n]
-                myredraw.csheet = charsheet.CharacterSheet(pc, screen=explo.screen, camp=explo.camp)
+                n = ( explo.camp.party.index(self.pc) + 1 ) % len( explo.camp.party )
+                self.pc = explo.camp.party[n]
+                myredraw.csheet = self.charsheets[self.pc]
             elif it:
                 # An item was selected. Deal with it.
-                pc.inventory.remove( it )
+                self.pc.inventory.remove( it )
                 explo.camp.gold += self.sale_price( s )
                 myredraw.caption = "You have sold {0}.".format(it)
                 if it.equipped:
@@ -143,18 +143,18 @@ class Shop( object ):
 
     IDENTIFY_PRICE = 50
 
-    def identify_items( self, explo, pc ):
+    def identify_items( self, explo ):
         keep_going = True
-        myredraw = charsheet.CharacterViewRedrawer( csheet=charsheet.CharacterSheet(pc, screen=explo.screen, camp=explo.camp), screen=explo.screen, predraw=explo.view, caption="Identify Items" )
+        myredraw = charsheet.CharacterViewRedrawer( csheet=self.charsheets[self.pc], screen=explo.screen, predraw=explo.view, caption="Identify Items" )
 
         while keep_going:
             mymenu = charsheet.RightMenu( explo.screen, predraw = myredraw )
 
-            for s in pc.inventory:
+            for s in self.pc.inventory:
                 if not s.identified:
                     if s.equipped:
                         mymenu.add_item( "*{0} ({1}gp)".format( s, self.IDENTIFY_PRICE), s )
-                    elif pc.can_equip(s):
+                    elif self.pc.can_equip(s):
                         mymenu.add_item( "{0} ({1}gp)".format( s, self.IDENTIFY_PRICE ), s )
                     else:
                         mymenu.add_item( "#{0} ({1}gp)".format( s, self.IDENTIFY_PRICE ), s )
@@ -167,13 +167,13 @@ class Shop( object ):
 
             it = mymenu.query()
             if it is -1:
-                n = ( explo.camp.party.index(pc) + len( explo.camp.party ) - 1 ) % len( explo.camp.party )
-                pc = explo.camp.party[n]
-                myredraw.csheet = charsheet.CharacterSheet(pc, screen=explo.screen, camp=explo.camp)
+                n = ( explo.camp.party.index(self.pc) + len( explo.camp.party ) - 1 ) % len( explo.camp.party )
+                self.pc = explo.camp.party[n]
+                myredraw.csheet = self.charsheets[self.pc]
             elif it is 1:
-                n = ( explo.camp.party.index(pc) + 1 ) % len( explo.camp.party )
-                pc = explo.camp.party[n]
-                myredraw.csheet = charsheet.CharacterSheet(pc, screen=explo.screen, camp=explo.camp)
+                n = ( explo.camp.party.index(self.pc) + 1 ) % len( explo.camp.party )
+                self.pc = explo.camp.party[n]
+                myredraw.csheet = self.charsheets[self.pc]
             elif it:
                 # An item was selected. Deal with it.
                 if explo.camp.gold >= self.IDENTIFY_PRICE:
@@ -186,10 +186,10 @@ class Shop( object ):
                 keep_going = False
 
 
-    def enter_shop( self, explo, pc ):
+    def enter_shop( self, explo ):
         """Find out what the PC wants to do."""
         keep_going = True
-        myredraw = charsheet.CharacterViewRedrawer( csheet=charsheet.CharacterSheet(pc, screen=explo.screen, camp=explo.camp), screen=explo.screen, predraw=explo.view, caption=self.caption )
+        myredraw = charsheet.CharacterViewRedrawer( csheet=self.charsheets[self.pc], screen=explo.screen, predraw=explo.view, caption=self.caption )
 
         mymenu = charsheet.RightMenu( explo.screen, predraw = myredraw )
         mymenu.add_item( "Buy Items", self.buy_items )
@@ -204,17 +204,17 @@ class Shop( object ):
         while keep_going:
             it = mymenu.query()
             if it is -1:
-                n = ( explo.camp.party.index(pc) + len( explo.camp.party ) - 1 ) % len( explo.camp.party )
-                pc = explo.camp.party[n]
-                myredraw.csheet = charsheet.CharacterSheet(pc, screen=explo.screen, camp=explo.camp)
+                n = ( explo.camp.party.index(self.pc) + len( explo.camp.party ) - 1 ) % len( explo.camp.party )
+                self.pc = explo.camp.party[n]
+                myredraw.csheet = self.charsheets[self.pc]
             elif it is 1:
-                n = ( explo.camp.party.index(pc) + 1 ) % len( explo.camp.party )
-                pc = explo.camp.party[n]
-                myredraw.csheet = charsheet.CharacterSheet(pc, screen=explo.screen, camp=explo.camp)
+                n = ( explo.camp.party.index(self.pc) + 1 ) % len( explo.camp.party )
+                self.pc = explo.camp.party[n]
+                myredraw.csheet = self.charsheets[self.pc]
             elif it:
                 # A method was selected. Deal with it.
-                it( explo, pc )
-                myredraw.csheet.regenerate_avatar()
+                it( explo )
+                myredraw.csheet = self.charsheets[self.pc]
             else:
                 keep_going = False
 
@@ -224,10 +224,10 @@ class Shop( object ):
             self.update_wares( explo.camp.day - self.last_updated )
             self.last_updated = explo.camp.day
 
-        charsheets = dict()
+        self.charsheets = dict()
         for pc in explo.camp.party:
-            charsheets[ pc ] = charsheet.CharacterSheet( pc , screen=explo.screen, camp=explo.camp )
-        psr = charsheet.PartySelectRedrawer( predraw=explo.view, charsheets=charsheets, screen=explo.screen, caption="Who needs to buy something?" )
+            self.charsheets[ pc ] = charsheet.CharacterSheet( pc , screen=explo.screen, camp=explo.camp )
+        psr = charsheet.PartySelectRedrawer( predraw=explo.view, charsheets=self.charsheets, screen=explo.screen, caption="Who needs to buy something?" )
 
         rpm = charsheet.RightMenu( explo.screen, predraw=psr, add_desc=False )
         psr.menu = rpm
@@ -237,12 +237,15 @@ class Shop( object ):
         rpm.add_alpha_keys()
         rpm.add_item( "Exit", None )
         keep_going = True
+        self.pc = explo.camp.first_living_pc()
 
         while keep_going:
+            rpm.set_item_by_value( self.pc )
             pc = rpm.query()
 
             if pc:
-                self.enter_shop( explo, pc )
+                self.pc = pc
+                self.enter_shop( explo )
             else:
                 keep_going = False
 

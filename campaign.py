@@ -193,8 +193,8 @@ if __name__=='__main__':
     import mapgen
 
     # Set the screen size.
-#    screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
-    screen = pygame.display.set_mode( (800,600) )
+    screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
+#    screen = pygame.display.set_mode( (800,600) )
 #    screen = pygame.display.set_mode( (800,600), pygame.FULLSCREEN )
 
     pygame.init()
@@ -295,9 +295,8 @@ if __name__=='__main__':
 
     myent = waypoints.Waypoint( myscene, (23,13) )
 
-    mychest = waypoints.SmallChest(myscene,(19,12))
-    mychest.GOLD,stuff = items.generate_hoard(8,200)
-    mychest.inventory += stuff
+    mychest = waypoints.LargeChest(myscene,(19,12))
+    mychest.stock( 8 )
 
     otherscene = maps.Scene( 102, 102, sprites={ maps.SPRITE_GROUND: "terrain_ground_cthonic.png", maps.SPRITE_WALL: "terrain_wall_rocks.png",maps.SPRITE_FLOOR: "terrain_floor_gravel.png"} )
 
@@ -322,9 +321,8 @@ if __name__=='__main__':
     room4.special_c["door"] = pdoor
     room2.inventory.append( pswitch )
 
-    mychest = waypoints.SmallChest()
-    mychest.GOLD,stuff = items.generate_hoard(5,120)
-    mychest.inventory += stuff
+    mychest = waypoints.MediumChest()
+    mychest.stock(5)
     room3.inventory.append( mychest )
 
     osgen.contents += (room1,room2,room3,room4)

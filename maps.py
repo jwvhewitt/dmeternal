@@ -191,12 +191,12 @@ SKELETON = SingTerrain( "SKELETON", spritesheet = SPRITE_DECOR, frame = 2 )
 HANGING_SKELETON = OnTheWallTerrain( "HANGING_SKELETON", frame = 3 )
 SWITCH_UP = OnTheWallTerrain( "SWITCH_UP", frame = 19 )
 SWITCH_DOWN = OnTheWallTerrain( "SWITCH_DOWN", frame = 21 )
-SMALL_CHEST = OnTheWallTerrain( "SMALL_CHEST", spritesheet = SPRITE_CHEST, frame = 0, block_walk=True )
-SMALL_CHEST_OPEN = OnTheWallTerrain( "SMALL_CHEST_OPEN", spritesheet = SPRITE_CHEST, frame = 2, block_walk=True )
-MEDIUM_CHEST = OnTheWallTerrain( "MEDIUM_CHEST", spritesheet = SPRITE_CHEST, frame = 4, block_walk=True )
-MEDIUM_CHEST_OPEN = OnTheWallTerrain( "MEDIUM_CHEST_OPEN", spritesheet = SPRITE_CHEST, frame = 6, block_walk=True )
-LARGE_CHEST = OnTheWallTerrain( "LARGE_CHEST", spritesheet = SPRITE_CHEST, frame = 8, block_walk=True )
-LARGE_CHEST_OPEN = OnTheWallTerrain( "LARGE_CHEST_OPEN", spritesheet = SPRITE_CHEST, frame = 10, block_walk=True )
+SMALL_CHEST = VariableTerrain( "SMALL_CHEST", spritesheet = SPRITE_CHEST, frames = (0,1), block_walk=True )
+SMALL_CHEST_OPEN = VariableTerrain( "SMALL_CHEST_OPEN", spritesheet = SPRITE_CHEST, frames = (2,3), block_walk=True )
+MEDIUM_CHEST = VariableTerrain( "MEDIUM_CHEST", spritesheet = SPRITE_CHEST, frames = (4,5), block_walk=True )
+MEDIUM_CHEST_OPEN = VariableTerrain( "MEDIUM_CHEST_OPEN", spritesheet = SPRITE_CHEST, frames = (6,7), block_walk=True )
+LARGE_CHEST = VariableTerrain( "LARGE_CHEST", spritesheet = SPRITE_CHEST, frames = (8,9), block_walk=True )
+LARGE_CHEST_OPEN = VariableTerrain( "LARGE_CHEST_OPEN", spritesheet = SPRITE_CHEST, frames = (10,11), block_walk=True )
 
 
 

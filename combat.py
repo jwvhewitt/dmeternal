@@ -517,6 +517,7 @@ class Combat( object ):
         # PCs stop hiding when combat ends.
         for pc in self.camp.party:
             pc.hidden = False
+            pc.condition.tidy( enchantments.COMBAT )
 
         # Tidy up any combat enchantments.
         for m in self.scene.contents[:]:
