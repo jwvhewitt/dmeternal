@@ -341,7 +341,7 @@ if __name__=='__main__':
     mymon.pos = (55,17)
     myscene.contents.append( mymon )
 
-    mymon = camp.choose_monster(1,2,{(context.MTY_BEAST,context.GEN_UNDEAD): True})
+    mymon = camp.choose_monster(1,3,{context.GEN_UNDEAD: True})
     if mymon:
         mymon = mymon( team=myteam )
         mymon.pos = (57,18)
@@ -360,6 +360,4 @@ if __name__=='__main__':
 
         camp.play( screen )
 
-#        exp = exploration.Explorer( screen, camp )
-#        exp.go()
 

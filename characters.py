@@ -740,6 +740,10 @@ class Character(object):
             fx = weapon.attackdata.get_effect( self, roll_mod )
             if weapon.enhancement:
                 self.add_attack_enhancements( fx, weapon.enhancement )
+            if hasattr( weapon, "AMMOTYPE" ):
+                ammo = self.inventory.get_equip( items.HAND2 )
+                if ammo and ammo.enhancement and ammo.itemtype == weapon.AMMOTYPE:
+                    self.add_attack_enhancements( fx, ammo.enhancement )
         elif hasattr( self, "ATTACK" ):
             fx = self.ATTACK.get_effect( self, roll_mod )
         else:

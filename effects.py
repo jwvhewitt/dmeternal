@@ -120,6 +120,37 @@ class PercentRoll( NoEffect ):
         else:
             return self.on_failure
 
+class SavingThrow( NoEffect ):
+    def __init__(self, roll_skill=stats.AWARENESS, roll_stat=stats.AWARENESS, roll_modifier=0, \
+      on_success=None, on_failure=None, on_no_target=None, anim=None ):
+        self.roll_skill = roll_skill
+        self.roll_stat = roll_stat
+        self.roll_modifier = roll_modifier
+        if not on_success:
+            on_success = list()
+        self.on_success = on_success
+        if not on_failure:
+            on_failure = list()
+        self.on_failure = on_failure
+        if not on_no_target:
+            on_no_target = list()
+        self.on_no_target = on_no_target
+        self.anim = anim
+
+    def handle_effect( self, camp, originator, pos, anims, delay=0 ):
+        """Roll d100 to match a percentile score."""
+        target = camp.scene.get_character_at_spot( pos )
+        if target:
+            tarnum = target.get_stat( self.roll_skill ) + target.get_stat_bonus( self.roll_stat ) + self.roll_modifier
+
+            if random.randint(1,100) <= tarnum:
+                return self.on_success
+            else:
+                return self.on_failure
+        else:
+            return self.on_no_target
+
+
 class HealthDamage( NoEffect ):
     def __init__(self, att_dice=(1,6,0), stat_bonus=None, stat_mod=1, element=None, \
       on_death=None, on_success=None, on_failure=None, anim=None ):
@@ -335,6 +366,8 @@ ANIMAL = {stats.UNDEAD: False, stats.DEMON: False, stats.ELEMENTAL: False, \
     stats.PLANT: False, stats.CONSTRUCT: False}
 
 UNDEAD = {stats.UNDEAD: True }
+UNHOLY = {(stats.UNDEAD,stats.DEMON): True }
+CONSTRUCT = {(stats.CONSTRUCT,stats.BONE): True }
 
 class TargetIs( NoEffect ):
     """An effect that branches depending on if target matches provided pattern."""
@@ -352,20 +385,20 @@ class TargetIs( NoEffect ):
         """Do whatever is required of effect; return list of child effects."""
         target = camp.scene.get_character_at_spot( pos )
         if target:
-            match = True
-            for k,v in self.pat.iteritems():
-                if v:
+#            match = True
+#            for k,v in self.pat.iteritems():
+#                if v:
                     # This key must exist in target's templates.
-                    if k not in target.TEMPLATES:
-                        match = False
-                        break
-                else:
+#                    if k not in target.TEMPLATES:
+#                        match = False
+#                        break
+#                else:
                     # This key must not exist in target's templates.
-                    if k in target.TEMPLATES:
-                        match = False
-                        break
+#                    if k in target.TEMPLATES:
+#                        match = False
+#                        break
 
-            if match:
+            if context.matches_description( target.TEMPLATES, self.pat ):
                 return self.on_true
             else:
                 return self.on_false

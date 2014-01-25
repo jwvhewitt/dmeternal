@@ -68,20 +68,18 @@ class Shop( object ):
     def buy_items( self, explo ):
         keep_going = True
         myredraw = charsheet.CharacterViewRedrawer( csheet=self.charsheets[self.pc], screen=explo.screen, predraw=explo.view, caption="Buy Items" )
-        mymenu = self.make_wares_menu( explo, myredraw )
 
         while keep_going:
+            mymenu = self.make_wares_menu( explo, myredraw )
             it = mymenu.query()
             if it is -1:
                 n = ( explo.camp.party.index(self.pc) + len( explo.camp.party ) - 1 ) % len( explo.camp.party )
                 self.pc = explo.camp.party[n]
                 myredraw.csheet = self.charsheets[self.pc]
-                mymenu = self.make_wares_menu( explo, myredraw )
             elif it is 1:
                 n = ( explo.camp.party.index(self.pc) + 1 ) % len( explo.camp.party )
                 self.pc = explo.camp.party[n]
                 myredraw.csheet = self.charsheets[self.pc]
-                mymenu = self.make_wares_menu( explo, myredraw )
             elif it:
                 # An item was selected. Deal with it.
                 if it.cost() > explo.camp.gold:
@@ -89,7 +87,11 @@ class Shop( object ):
                 elif not self.pc.can_take_item( it ) or not self.pc.is_alright():
                     myredraw.caption = "You can't carry it!"
                 else:
-                    it2 = copy.copy( it )
+                    if it.enhancement:
+                        it2 = it
+                        self.wares.remove( it )
+                    else:
+                        it2 = copy.copy( it )
                     self.pc.inventory.append( it2 )
                     explo.camp.gold -= it.cost()
                     myredraw.caption = "You have bought {0}.".format(it2)
@@ -97,7 +99,10 @@ class Shop( object ):
                 keep_going = False
 
     def sale_price( self, it ):
-        return max( it.cost() // 2, 1 )
+        if it.identified:
+            return max( it.cost() // 2, 1 )
+        else:
+            return max( it.cost(include_enhancement=False) // 2, 1 )
 
     def sell_items( self, explo ):
         keep_going = True
@@ -132,7 +137,10 @@ class Shop( object ):
             elif it:
                 # An item was selected. Deal with it.
                 self.pc.inventory.remove( it )
-                explo.camp.gold += self.sale_price( s )
+                explo.camp.gold += self.sale_price( it )
+                if it.enhancement:
+                    it.identified = True
+                    self.wares.append( it )
                 myredraw.caption = "You have sold {0}.".format(it)
                 if it.equipped:
                     myredraw.csheet.regenerate_avatar()

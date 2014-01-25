@@ -46,10 +46,10 @@ class VariableTerrain( object ):
         self.block_fly = block_fly
         self.frames = frames
     def render( self, screen, dest, view, data ):
-        view.sprites[ self.spritesheet ].render( screen, dest, data )
+        view.sprites[ self.spritesheet ].render( screen, dest, self.frames[ data ] )
     def get_data( self, view, x, y ):
         """Pre-generate display data for this tile."""
-        return self.frames[ view.get_pseudo_random() % len(self.frames) ]
+        return view.get_pseudo_random() % len(self.frames)
 
 
 class GroundTerrain( SingTerrain ):

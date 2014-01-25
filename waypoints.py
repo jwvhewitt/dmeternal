@@ -8,6 +8,7 @@ import services
 import exploration
 import items
 import traps
+import random
 
 class Waypoint( object ):
     TILE = None
@@ -108,7 +109,7 @@ class SmallChest( Waypoint ):
     HOARD_AMOUNT = 50
     def bump( self, explo ):
         if self.trap:
-            disarm = self.trap.trigger( explo )
+            disarm = self.trap.trigger( explo, self.pos )
             if disarm:
                 self.trap = None
                 self.get_the_stuff( explo )
@@ -125,7 +126,8 @@ class SmallChest( Waypoint ):
     def stock( self, hoard_rank=3 ):
         self.gold,hoard = items.generate_hoard(hoard_rank,self.HOARD_AMOUNT)
         self.inventory += hoard
-        self.trap = traps.BladeTrap()
+        if random.randint(1,500) < self.HOARD_AMOUNT:
+            self.trap = traps.choose_trap( hoard_rank )
 
 class MediumChest( SmallChest ):
     TILE = maps.Tile( None, None, maps.MEDIUM_CHEST )

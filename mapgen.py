@@ -106,7 +106,7 @@ def southeast(par,chi):
 #  *****************
 
 class Room( object ):
-    """A Room is an area on the map. The outer edge is generally a wall."""
+    """A Room is an area on the map. This room is nothing but an area."""
     def __init__( self, width=7, height=7, tags=(), anchor=None, parent=None ):
         self.width = width
         self.height = height
@@ -119,8 +119,6 @@ class Room( object ):
         self.inventory = list()
         if parent:
             parent.contents.append( self )
-
-    name = "Whatevs"
     def step_two( self, gb ):
         self.arrange_contents( gb )
         # Prepare any child nodes in self.contents as needed.
@@ -200,8 +198,8 @@ class Room( object ):
         # Step Six: Move items and monsters onto the map.
         # Find a list of good spots for stuff that goes in the open.
         good_spots = list()
-        for x in range( self.area.x+1, self.area.x + self.area.width-1 ):
-            for y in range( self.area.y+1, self.area.y + self.area.height-1 ):
+        for x in range( self.area.x+1, self.area.x + self.area.width-1, 2 ):
+            for y in range( self.area.y+1, self.area.y + self.area.height-1, 2 ):
                 if not gb.map[x][y].blocks_walking():
                     good_spots.append( (x,y) )
 
@@ -451,9 +449,9 @@ class DividedIslandScene( RandomScene ):
 
         # Locate the bridge, before_bridge, and after_bridge rooms, creating them
         # if none currently exist.
-        bridge = self.special_c.setdefault( "bridge", FuzzyRoom(parent=self) )
-        before_bridge = self.special_c.setdefault( "before_bridge", FuzzyRoom(parent=self) )
-        after_bridge = self.special_c.setdefault( "after_bridge", FuzzyRoom(parent=self) )
+        bridge = self.special_c.get( "bridge" ) or self.special_c.setdefault( "bridge", FuzzyRoom(parent=self) )
+        before_bridge = self.special_c.get( "before_bridge" ) or self.special_c.setdefault( "before_bridge", FuzzyRoom(parent=self) )
+        after_bridge = self.special_c.get( "after_bridge" ) or self.special_c.setdefault( "after_bridge", FuzzyRoom(parent=self) )
         before_bridge.anchor = z1.special_c["bridge_anchor"]
         after_bridge.anchor = z2.special_c["bridge_anchor"]
 

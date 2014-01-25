@@ -121,13 +121,13 @@ class Item( object ):
     equipped = False
     shot_anim=None
     enhancement = None
-    def cost( self ):
+    def cost( self, include_enhancement=True ):
         it = 1
         if self.statline:
             it += self.statline.cost()
         if self.attackdata:
             it += self.attackdata.cost()
-        if self.enhancement:
+        if self.enhancement and include_enhancement:
             it += self.enhancement.cost()
         return it
     def stamp_avatar( self, avatar, pc ):
@@ -188,8 +188,11 @@ class Item( object ):
         """Spend this weapon's attack price."""
         pass
     def min_rank( self ):
-#        return min( max( self.cost() // self.itemtype.gp_per_level + 1 , 1 ), 20 )
-        return int( ( -9 + math.sqrt( 81 + 36 * self.cost() * self.itemtype.rank_adjust ) ) / 18 )
+        base_cost = self.cost(include_enhancement=False)
+        mr = int( ( -9 + math.sqrt( 81 + 36 * base_cost * self.itemtype.rank_adjust ) ) / 18 )
+        if self.enhancement:
+            mr += self.enhancement.PLUSRANK
+        return mr
 
     @property
     def slot( self ):
@@ -197,14 +200,14 @@ class Item( object ):
 
 class MissileWeapon( Item ):
     AMMOTYPE = ARROW
-    def cost( self ):
+    def cost( self, include_enhancement=True ):
         it = 1
         if self.statline != None:
             it += self.statline.cost()
         if self.attackdata != None:
             # Missile weapons only pay half normal cost for attackdata.
             it += self.attackdata.cost() // 2
-        if self.enhancement:
+        if self.enhancement and include_enhancement:
             it += self.enhancement.cost()
         return it
     def can_attack( self, user ):
@@ -224,18 +227,25 @@ class Ammo( Item ):
     itemtype = ARROW
     cost_per_shot = 1
 
-    def cost( self ):
+    def cost( self, include_enhancement=True ):
         it = self.cost_per_shot * self.quantity
         if self.statline != None:
             it += self.statline.cost()
         if self.attackdata != None:
             it += self.attackdata.cost()
-        if self.enhancement:
+        if self.enhancement and include_enhancement:
             it += ( self.enhancement.cost() * self.quantity ) // 25
         return it
 
     def __str__( self ):
-        return "{0} [{1}]".format( self.true_name, self.quantity )
+        if self.identified:
+            if self.enhancement:
+                msg = self.enhancement.get_name( self )
+            else:
+                msg = self.true_name
+        else:
+            msg = "?"+self.itemtype.name
+        return "{0} [{1}]".format( msg, self.quantity )
 
     @property
     def mass( self ):
@@ -243,14 +253,14 @@ class Ammo( Item ):
 
 class ManaWeapon( Item ):
     MP_COST = 1
-    def cost( self ):
+    def cost( self, include_enhancement=True ):
         it = 1
         if self.statline != None:
             it += self.statline.cost()
         if self.attackdata != None:
             # Mana weapons only pay 3/4 normal cost for attackdata.
             it += ( self.attackdata.cost() * 3 ) // 4
-        if self.enhancement:
+        if self.enhancement and include_enhancement:
             it += self.enhancement.cost()
         return it
     def stat_desc( self ):
