@@ -40,6 +40,13 @@ class Seeker( Enhancer ):
     AFFECTS = (SWORD, AXE, MACE, DAGGER, STAFF, POLEARM, FARMTOOL, BOW, SLING)
     BONUSES = stats.StatMod({ stats.PHYSICAL_ATTACK: 10 })
 
+class Balanced( Enhancer ):
+    NAMEPAT = "Balanced {0}"
+    DESCPAT = "{0} It is balanced to give +5% attack and +5% defense."
+    PLUSRANK = 2
+    AFFECTS = (SWORD, DAGGER, STAFF)
+    BONUSES = stats.StatMod({ stats.PHYSICAL_ATTACK: 5, stats.PHYSICAL_DEFENSE: 5, stats.NATURAL_DEFENSE: 5 })
+
 class DreadWeapon( Enhancer ):
     NAMEPAT = "Dread {0}"
     DESCPAT = "{0} Targets struck by this weapon may find themselves cursed."
@@ -54,6 +61,23 @@ class Smasher( Enhancer ):
     AFFECTS = (AXE, MACE, STAFF)
     ATTACK_ON_HIT = effects.TargetIs( effects.CONSTRUCT, on_true=(
             effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_ATOMIC, anim=animobs.EarthBoom )
+        ,))
+    BONUSES = stats.StatMod({ stats.PHYSICAL_ATTACK: 5 })
+
+class Lockpick( Enhancer ):
+    NAMEPAT = "Lockpick {0}"
+    DESCPAT = "{0} It contains tools which give +15% to disarm traps."
+    PLUSRANK = 3
+    AFFECTS = (DAGGER,)
+    BONUSES = stats.StatMod({ stats.DISARM_TRAPS: 15 })
+
+class Blessed( Enhancer ):
+    NAMEPAT = "Blessed {0}"
+    DESCPAT = "{0} This weapon does extra damage to unholy creatures."
+    PLUSRANK = 4
+    AFFECTS = (SWORD, MACE, STAFF, POLEARM, ARROW, BULLET)
+    ATTACK_ON_HIT = effects.TargetIs( effects.UNHOLY, on_true=(
+            effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_SOLAR, anim=animobs.YellowExplosion )
         ,))
     BONUSES = stats.StatMod({ stats.PHYSICAL_ATTACK: 5 })
 
@@ -94,7 +118,7 @@ class Sharp( Enhancer ):
 
 class RuneWeapon( Enhancer ):
     NAMEPAT = "Rune {0}"
-    DESCPAT = "{0} Its mystic sigils do an extra 1d8 dark damage, and protect its user against spells."
+    DESCPAT = "{0} Its mystic sigils add 1d8 dark damage and protect its user against spells."
     PLUSRANK = 5
     AFFECTS = (SWORD, AXE, MACE, DAGGER, STAFF, POLEARM, BOW, SLING)
     ATTACK_ON_HIT = effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_LUNAR, anim=animobs.PurpleExplosion )
@@ -102,7 +126,7 @@ class RuneWeapon( Enhancer ):
 
 class HolyWeapon( Enhancer ):
     NAMEPAT = "Holy {0}"
-    DESCPAT = "{0} It does an extra 1d8 holy damage, in addition to disrupting unholy creatures."
+    DESCPAT = "{0} It does an extra 1d8 holy damage and disrupts unholy creatures."
     PLUSRANK = 6
     AFFECTS = (SWORD, AXE, MACE, DAGGER, STAFF, POLEARM, FARMTOOL, BOW, SLING)
     ATTACK_ON_HIT = effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_SOLAR, anim=animobs.YellowExplosion, on_success= (
@@ -123,7 +147,30 @@ class Vorpal( Enhancer ):
     DESCPAT = "{0} It gives a +10% bonus to Critical Hit."
     PLUSRANK = 10
     AFFECTS = (SWORD, AXE, POLEARM, FARMTOOL)
-    BONUSES = stats.StatMod({ stats.CRITICAL_HIT: 10 })
+    BONUSES = stats.StatMod({ stats.PHYSICAL_ATTACK: 5, stats.CRITICAL_HIT: 10 })
+
+#  ****************
+#  ***   AMMO   ***
+#  ****************
+
+class BurningAmmo( Enhancer ):
+    NAMEPAT = "Burning {0}"
+    DESCPAT = "{0} They ignite for an extra 1d4 fire damage."
+    PLUSRANK = 1
+    AFFECTS = (ARROW,BULLET)
+    ATTACK_ON_HIT = effects.HealthDamage( (1,4,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion )
+
+class FreezingAmmo( Enhancer ):
+    NAMEPAT = "Freezing {0}"
+    DESCPAT = "{0} They do an extra 1d4 cold damage and may freeze their target in place."
+    PLUSRANK = 2
+    AFFECTS = (ARROW,BULLET)
+    ATTACK_ON_HIT = effects.HealthDamage( (1,4,0), stat_bonus=None, element=stats.RESIST_COLD, anim=animobs.BlueExplosion, on_success= (
+        effects.OpposedRoll( att_modifier=-20, on_success = (
+            effects.Paralyze( max_duration = 3 )
+        ,) )
+    ,) )
+
 
 #  *******************************
 #  ***   ARMOR  ENHANCEMENTS   ***
@@ -230,7 +277,7 @@ class ShinyShield( Enhancer ):
     DESCPAT = "{0} It provides an additional +5% to aura and defense."
     PLUSRANK = 3
     AFFECTS = (HEAVY_ARMOR,)
-    BONUSES = stats.StatMod({ stats.PHYSICAL_DEFENSE: 5, stats.NATURAL_DEFENSE: 5, stats.MAGIC_DEFENSE: 5 })
+    BONUSES = stats.StatMod({ stats.PHYSICAL_DEFENSE: 5, stats.MAGIC_DEFENSE: 5 })
 
 class ElementalShield( Enhancer ):
     NAMEPAT = "Elemental {0}"
@@ -275,12 +322,12 @@ class ProtectionCloak( Enhancer ):
 #  ***   HEADGEAR   ***
 #  ********************
 
-class SmartHat( Enhancer ):
+class AwareHat( Enhancer ):
     NAMEPAT = "{1} of Awareness"
-    DESCPAT = "{0} It provides a +5% bonus to awareness."
+    DESCPAT = "{0} It provides a +10% bonus to awareness."
     PLUSRANK = 2
     AFFECTS = (HAT,HELM)
-    BONUSES = stats.StatMod({ stats.AWARENESS:5 })
+    BONUSES = stats.StatMod({ stats.AWARENESS:10 })
 
 class SmartHat( Enhancer ):
     NAMEPAT = "{1} of Intelligence"

@@ -14,11 +14,12 @@ class SingType( object ):
     # A singleton itemtype class; use these objects as tokens to indicate
     # the type of items.
     # Also includes misc information related to the itemtype in question.
-    def __init__( self, ident, name, slot = NOSLOT, rank_adjust=1.0 ):
+    def __init__( self, ident, name, slot = NOSLOT, cost_adjust=1.0, rank_adjust=1.0 ):
         # ident should be the module-level name of this object.
         self.ident = ident
         self.name = name
         self.slot = slot
+        self.cost_adjust = cost_adjust
         self.rank_adjust = rank_adjust
     def __str__( self ):
         return self.name
@@ -34,16 +35,16 @@ STAFF = SingType( "STAFF", "Staff", slot = HAND1, rank_adjust=2.0 )
 BOW = SingType( "BOW", "Bow", slot = HAND1 )
 POLEARM = SingType( "POLEARM", "Polearm", slot = HAND1 )
 ARROW = SingType( "ARROW", "Arrow", slot = HAND2 )
-SHIELD = SingType( "SHIELD", "Shield", slot = HAND2, rank_adjust=0.9 )
+SHIELD = SingType( "SHIELD", "Shield", slot = HAND2, cost_adjust=1.5, rank_adjust=0.9 )
 SLING = SingType( "SLING", "Sling", slot = HAND1 )
 BULLET = SingType( "BULLET", "Bullet", slot = HAND2 )
-CLOTHES = SingType( "CLOTHES", "Clothes", slot = BODY )
+CLOTHES = SingType( "CLOTHES", "Clothes", slot = BODY, cost_adjust=1.25 )
 LIGHT_ARMOR = SingType( "LIGHT_ARMOR", "Light Armor", slot = BODY, rank_adjust=0.90 )
 HEAVY_ARMOR = SingType( "HEAVY_ARMOR", "Heavy Armor", slot = BODY, rank_adjust=0.75 )
-HAT = SingType( "HAT", "Hat", slot = HEAD )
-HELM = SingType( "HELM", "Helm", slot = HEAD )
-GLOVE = SingType( "GLOVE", "Gloves", slot = HANDS )
-GAUNTLET = SingType( "GAUNTLET", "Gauntlets", slot = HANDS )
+HAT = SingType( "HAT", "Hat", slot = HEAD, cost_adjust=3.5 )
+HELM = SingType( "HELM", "Helm", slot = HEAD, cost_adjust=3.0 )
+GLOVE = SingType( "GLOVE", "Gloves", slot = HANDS, cost_adjust=4.0 )
+GAUNTLET = SingType( "GAUNTLET", "Gauntlets", slot = HANDS, cost_adjust=3.5 )
 SANDALS = SingType( "SANDALS", "Sandals", slot = FEET )
 SHOES = SingType( "SHOES", "Shoes", slot = FEET )
 BOOTS = SingType( "BOOTS", "Boots", slot = FEET )
@@ -127,6 +128,7 @@ class Item( object ):
             it += self.statline.cost()
         if self.attackdata:
             it += self.attackdata.cost()
+        it = int( it * self.itemtype.cost_adjust )
         if self.enhancement and include_enhancement:
             it += self.enhancement.cost()
         return it
@@ -207,6 +209,7 @@ class MissileWeapon( Item ):
         if self.attackdata != None:
             # Missile weapons only pay half normal cost for attackdata.
             it += self.attackdata.cost() // 2
+        it = int( it * self.itemtype.cost_adjust )
         if self.enhancement and include_enhancement:
             it += self.enhancement.cost()
         return it
@@ -233,6 +236,7 @@ class Ammo( Item ):
             it += self.statline.cost()
         if self.attackdata != None:
             it += self.attackdata.cost()
+        it = int( it * self.itemtype.cost_adjust )
         if self.enhancement and include_enhancement:
             it += ( self.enhancement.cost() * self.quantity ) // 25
         return it
@@ -260,6 +264,7 @@ class ManaWeapon( Item ):
         if self.attackdata != None:
             # Mana weapons only pay 3/4 normal cost for attackdata.
             it += ( self.attackdata.cost() * 3 ) // 4
+        it = int( it * self.itemtype.cost_adjust )
         if self.enhancement and include_enhancement:
             it += self.enhancement.cost()
         return it
@@ -405,7 +410,7 @@ def make_item_magic( item_to_enchant, target_rank ):
         item_to_enchant.enhancement = e()
 
 PREMIUM_TYPES = (SWORD,AXE,MACE,DAGGER,STAFF,BOW,ARROW,SHIELD,POLEARM,SLING,BULLET,
-    LIGHT_ARMOR,HEAVY_ARMOR,HELM,GAUNTLET,LIGHT_ARMOR,HEAVY_ARMOR,SWORD,AXE,MACE)
+    LIGHT_ARMOR,HEAVY_ARMOR,HELM,GAUNTLET,LIGHT_ARMOR,HEAVY_ARMOR,SWORD,AXE,MACE,SHIELD)
 
 def generate_hoard( drop_rank, drop_strength ):
     """Returns a tuple containing gold, list of items."""
@@ -428,8 +433,10 @@ def generate_hoard( drop_rank, drop_strength ):
         else:
             it = choose_item( max_rank = drop_rank )
         if it:
-            if ( it.min_rank() < drop_rank ) and ( random.randint(1,20) < drop_rank ):
+            if ( it.min_rank() < drop_rank ) and ( random.randint(1,20) <= drop_rank ):
                 make_item_magic( it, drop_rank )
+                it.identified = False
+            elif random.randint(1,23) == 5:
                 it.identified = False
             hoard.append( it )
             gp -= it.cost()
