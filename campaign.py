@@ -110,6 +110,30 @@ class Campaign( object ):
         elif backup_list:
             return random.choice( backup_list )
 
+    def build_encounter( self, rank, strength, habitat, team=None ):
+        min_rank = min( int( rank * 0.8 ), 11 )
+        max_rank = rank + 2
+        monsters = list()
+
+        # Determine how many levels of monster to generate.
+        pts = max( ( rank * 200 * strength ) // 100, 1 )
+
+        while pts > 0:
+            mclass = self.choose_monster( min_rank, max_rank, habitat )
+            rel_level = max_rank + 1 - mclass.ENC_LEVEL
+            m_pts = 200 / ( rel_level ** 2 // 12 + rel_level )
+
+            n,pts = divmod( pts , m_pts )
+            if n < 1:
+                n = 1
+                pts = 0
+
+            for t in range( n ):
+                monsters.append( mclass(team) )
+        return monsters
+
+
+
     def place_party( self ):
         """Stick the party close to the waypoint."""
         good_points = list()
@@ -295,6 +319,8 @@ if __name__=='__main__':
 
     myent = waypoints.Waypoint( myscene, (23,13) )
 
+    camp = Campaign( scene=myscene, entrance=myent )
+
     mychest = waypoints.LargeChest(myscene,(19,12))
     mychest.stock( 8 )
 
@@ -320,6 +346,7 @@ if __name__=='__main__':
     pswitch.CALL = pdoor.activate
     room4.special_c["door"] = pdoor
     room2.inventory.append( pswitch )
+    room2.inventory += camp.build_encounter( 1, 100, {context.MTY_HUMANOID: True}, teams.Team(default_reaction=-999) )
 
     mychest = waypoints.MediumChest()
     mychest.stock(5)
@@ -330,7 +357,6 @@ if __name__=='__main__':
     osgen.make()
 
 
-    camp = Campaign( scene=myscene, entrance=myent )
     camp.scenes.append( myscene )
     camp.scenes.append( otherscene )
 
