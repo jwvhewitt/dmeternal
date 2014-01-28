@@ -356,6 +356,14 @@ class PointOfView( object ):
         else:
             return True
 
+class AttackReach( PointOfView ):
+    # This class constructs an attack radius. Like PFOV, but excludes obstacles
+    # and the originator's own tile.
+    def VisitTile( self , x , y ):
+        if self.manhattan or ( self.radius == 1 ) or ( round( math.sqrt( ( x-self.x )**2 + ( y-self.y )**2 ) ) <= self.radius ):
+            if ( x != self.x or y != self.y ) and not self.TileBlocked(x,y):
+                self.tiles.add( ( x , y ) )
+
 class PCPointOfView( PointOfView ):
     # This class also constructs a field of vision, but automatically adds
     # the tiles it sees to the visible area of the map.

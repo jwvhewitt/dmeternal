@@ -27,7 +27,10 @@ class HotMap( object ):
                 for x in range(scene.width) ]
 
         for p in hot_points:
-            self.map[p[0]][p[1]] = 0
+            if len( p ) < 3:
+                self.map[p[0]][p[1]] = 0
+            else:
+                self.map[p[0]][p[1]] = p[2]
 
         if limits:
             lo_x = max( limits.x, 1 )
@@ -94,6 +97,22 @@ class HotMap( object ):
                 heat = self.map[x2][y2]
                 best_d = d
         return best_d
+
+    def clever_downhill_dir( self, exp, pos ):
+        """Return the best direction to move in, avoiding models."""
+        best_d = None
+        random.shuffle( self.DELTA8 )
+        heat = self.map[pos[0]][pos[1]]
+        for d in self.DELTA8:
+            x2 = d[0] + pos[0]
+            y2 = d[1] + pos[1]
+            if exp.scene.on_the_map(x2,y2) and ( self.map[x2][y2] < heat ):
+                target = exp.scene.get_character_at_spot( (x2,y2) )
+                if not target:
+                    heat = self.map[x2][y2]
+                    best_d = d
+        return best_d
+
 
 class PointMap( HotMap ):
     def __init__( self, scene, dest, avoid_models = False, expensive=set() ):

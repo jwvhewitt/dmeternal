@@ -13,6 +13,7 @@ import rpgmenu
 import animobs
 import effects
 import enchantments
+import aibrain
 
 class TacticsRedraw( object ):
     def __init__( self, chara, comba, explo, hmap = None ):
@@ -81,6 +82,8 @@ class Combat( object ):
 
         self.activate_monster( monster_zero )
 
+        self.ai = aibrain.StupidAI()
+
         # Sort based on initiative roll.
         self.active.sort( key = characters.roll_initiative, reverse=True )
 
@@ -131,20 +134,22 @@ class Combat( object ):
                     break
 
     def step( self, explo, chara, hmap ):
-        """Move chara to a better position according to hmap."""
+        """Move chara according to hmap, return True if movement ended."""
         # See if the movement starts in a threatened area- may be attacked if it ends
         # in a threatened area as well.
         threat_area = self.get_threatened_area( chara )
         started_in_threat = chara.pos in threat_area
 
-        best_d = hmap.downhill_dir( chara.pos )
+        best_d = hmap.clever_downhill_dir( explo, chara.pos )
 
         if best_d:
             x2 = best_d[0] + chara.pos[0]
             y2 = best_d[1] + chara.pos[1]
             target = self.scene.get_character_at_spot( (x2,y2) )
 
-            if not target:
+            if explo.scene.map[x2][y2].blocks_walking():
+                return True
+            elif not target:
                 # Move the character.
                 chara.pos = (x2,y2)
                 self.ap_spent[ chara ] += 1 + abs(best_d[0]) + abs(best_d[1])
@@ -215,7 +220,7 @@ class Combat( object ):
             redraw = explo.view
         explo.view.overlays.clear()
         if self.scene.on_the_map( *target.pos ):
-            attack_positions = pfov.PointOfView( self.scene, target.pos[0], target.pos[1], chara.get_attack_reach() ).tiles
+            attack_positions = pfov.AttackReach( self.scene, target.pos[0], target.pos[1], chara.get_attack_reach() ).tiles
             # Remove the positions of models from the goal tiles, so they will be avoided.
             for m in self.scene.contents:
                 if self.scene.is_model(m) and m.pos in attack_positions and m is not chara:
@@ -242,8 +247,7 @@ class Combat( object ):
     def move_and_attack_anyone( self, explo, chara, redraw=None ):
         result = None
         did_attack = False
-        if not redraw:
-            redraw = explo.view
+        redraw = redraw or explo.view
         explo.view.overlays.clear()
         attack_positions = set()
 
@@ -427,7 +431,8 @@ class Combat( object ):
         tacred( explo.screen )
         pygame.display.flip()
 
-        self.move_and_attack_anyone( explo, chara, tacred )
+#        self.move_and_attack_anyone( explo, chara, tacred )
+        self.ai.act( explo, chara, tacred )
 
         # If very far from nearest PC, deactivate.
         for m in self.scene.contents:
