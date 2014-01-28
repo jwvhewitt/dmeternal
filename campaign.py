@@ -116,7 +116,7 @@ class Campaign( object ):
         monsters = list()
 
         # Determine how many levels of monster to generate.
-        pts = max( ( rank * 200 * strength ) // 100, 1 )
+        pts = max( ( rank * random.randint(150,250) * strength ) // 100, 1 )
 
         while pts > 0:
             mclass = self.choose_monster( min_rank, max_rank, habitat )

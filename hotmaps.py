@@ -30,7 +30,7 @@ class HotMap( object ):
             if len( p ) < 3:
                 self.map[p[0]][p[1]] = 0
             else:
-                self.map[p[0]][p[1]] = p[2]
+                self.map[p[0]][p[1]] = min( p[2], self.map[p[0]][p[1]] )
 
         if limits:
             lo_x = max( limits.x, 1 )

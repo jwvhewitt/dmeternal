@@ -82,7 +82,7 @@ class Combat( object ):
 
         self.activate_monster( monster_zero )
 
-        self.ai = aibrain.StupidAI()
+        self.ai = aibrain.CurvyAI()
 
         # Sort based on initiative roll.
         self.active.sort( key = characters.roll_initiative, reverse=True )

@@ -251,7 +251,7 @@ class InvulnerableArmor( Enhancer ):
     DESCPAT = "{0} It provides 25% protection against slashing, piercing, and crushing attacks."
     PLUSRANK = 7
     AFFECTS = (CLOTHES, LIGHT_ARMOR, HEAVY_ARMOR, SHIELD)
-    BONUSES = stats.StatMod({ stats.RESIST_SLASHING:25, stats.RESIST_CRUSHING:25, stats.RESIST_PIERCING:25 })
+    BONUSES = stats.StatMod({ stats.PHYSICAL_DEFENSE: 5, stats.NATURAL_DEFENSE: 5, stats.RESIST_SLASHING:25, stats.RESIST_CRUSHING:25, stats.RESIST_PIERCING:25 })
 
 class RuneArmor( Enhancer ):
     NAMEPAT = "Rune {0}"
@@ -324,10 +324,10 @@ class ProtectionCloak( Enhancer ):
 
 class AwareHat( Enhancer ):
     NAMEPAT = "{1} of Awareness"
-    DESCPAT = "{0} It provides a +10% bonus to awareness."
+    DESCPAT = "{0} It provides a +20% bonus to awareness."
     PLUSRANK = 2
     AFFECTS = (HAT,HELM)
-    BONUSES = stats.StatMod({ stats.AWARENESS:10 })
+    BONUSES = stats.StatMod({ stats.AWARENESS:20 })
 
 class SmartHat( Enhancer ):
     NAMEPAT = "{1} of Intelligence"
