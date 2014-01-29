@@ -1,6 +1,5 @@
 
 import stats
-#from spells import SOLAR, EARTH, WATER, FIRE, AIR, LUNAR
 import spells
 import random
 import image
@@ -9,6 +8,7 @@ import dialogue
 import teams
 import effects
 import animobs
+import aibrain
 
 
 class Level( object ):
@@ -401,6 +401,7 @@ class Character(object):
     team = None
     hidden = False
     holy_signs_used = 0
+    COMBAT_AI = aibrain.BasicAI()
 
     def __init__( self, name = "", species = None, gender = stats.NEUTER, statline=None ):
         self.name = name
@@ -666,10 +667,11 @@ class Character(object):
 
     def is_enemy( self, camp, other ):
         """Return True if other is an enemy of this model."""
-        if self.is_hostile( camp ):
-            return not other.is_hostile( camp )
-        else:
-            return other.is_hostile( camp )
+        if other and hasattr( other, "is_hostile" ):
+            if self.is_hostile( camp ):
+                return not other.is_hostile( camp )
+            else:
+                return other.is_hostile( camp )
 
     KUNG_FU_DAMAGE = ( ( 1, 2, 0, 0 ),
         ( 1, 2, 0, 0 ),( 1, 3, 0, 0 ),( 1, 4, 0, 0 ),( 1, 6, 0, 0 ),( 1, 8, 0, 0 ),

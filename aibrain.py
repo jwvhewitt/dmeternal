@@ -1,22 +1,23 @@
 import pfov
 import pygame
 import pygwrap
-import characters
 import random
 import enchantments
 import hotmaps
+import stats
 
-class FlatAI( object ):
-    """This AI type treats all enemies as identical."""
+class BasicAI( object ):
+    """The default AI. It treats all enemies as identical."""
     AVOID_FIELDS = True
     AVOID_THREAT = True
     DOES_SEARCH = True
+    SEARCH_INT = 19
 
     def attack_from_here( self, explo, comba, chara, redraw ):
         candidates = list()
         legal_tiles = pfov.PointOfView( explo.scene, chara.pos[0], chara.pos[1], chara.get_attack_reach() ).tiles
         for m in explo.scene.contents:
-            if isinstance( m, characters.Character ) and chara.is_enemy( explo.camp, m ) and m.pos in legal_tiles and not m.hidden:
+            if chara.is_enemy( explo.camp, m ) and m.pos in legal_tiles and not m.hidden:
                 candidates.append( m )
         if candidates:
             target = random.choice( candidates )
@@ -34,7 +35,7 @@ class FlatAI( object ):
 
         # Add the targets.
         for m in explo.scene.contents:
-            if isinstance( m, characters.Character ) and chara.is_enemy( explo.camp, m ) and not m.hidden:
+            if chara.is_enemy( explo.camp, m ) and not m.hidden:
                 attack_positions.update( pfov.AttackReach( explo.scene, m.pos[0], m.pos[1], reach ).tiles )
             elif isinstance( m, enchantments.Field ) and self.AVOID_FIELDS:
                 expensive_points.add( m.pos )
@@ -57,10 +58,11 @@ class FlatAI( object ):
         explo.view.overlays.clear()
         attack_positions, hmap = self.get_attack_map( explo, chara, reach )
 
-        while comba.ap_spent[ chara ] < chara.get_move():
+        while comba.ap_spent[ chara ] < chara.get_move() and chara.is_alright():
             result = comba.step( explo, chara, hmap )
             if result or ( chara.pos in attack_positions and comba.ap_spent[ chara ] >= chara.get_move() ):
-                did_action = self.attack_from_here( explo, comba, chara, redraw )
+                if chara.is_alright():
+                    did_action = self.attack_from_here( explo, comba, chara, redraw )
                 break
 
             redraw( explo.screen )
@@ -72,17 +74,23 @@ class FlatAI( object ):
     def act( self, explo, chara, redraw=None ):
         acted = self.move_for_action( explo, chara, chara.get_attack_reach(), self.attack_from_here, redraw )
 
-        if not acted:
-            if self.DOES_SEARCH and explo.camp.fight.num_enemies_hiding( chara ) and random.randint(0,19) <= chara.get_stat( stats.INTELLIGENCE ):
+        if chara.is_alright() and not acted:
+            if self.DOES_SEARCH and explo.camp.fight.num_enemies_hiding( chara ) and random.randint(0,self.SEARCH_INT) <= chara.get_stat( stats.INTELLIGENCE ):
                 # There are hiding enemies. Attempt to spot them.
                 explo.camp.fight.attempt_awareness( explo, chara )
             elif chara.can_use_stealth() and not chara.hidden:
                 explo.camp.fight.attempt_stealth( explo, chara )
 
-class CurvyAI( FlatAI ):
+class AdvancedAI( BasicAI ):
     """This AI type treats different enemies as different."""
-    HEAT_MAX = 25
-    HEAT_STEP = 5
+    # 5/20 is fairly extreme- monsters will go a long way around to reach
+    # 4/16 is pretty good for STEP/MAX- behavior will be evident, not extreme.
+    # 4/12 seems to work okay, a bit less evident than above.
+    HEAT_MAX = 12
+    HEAT_STEP = 4
+    # Weird name for a constant... the random factor determining whether this
+    # monster will attack a random enemy or the most appropriate enemy.
+    SMART_ATTACK_INT = 20
     def get_attack_map( self, explo, chara, reach ):
         """Return the attack positions and hotmap for this character."""
         comba = explo.camp.fight
@@ -95,7 +103,7 @@ class CurvyAI( FlatAI ):
         # Get a list of targets.
         enemies = list()
         for m in explo.scene.contents:
-            if isinstance( m, characters.Character ) and chara.is_enemy( explo.camp, m ) and not m.hidden:
+            if chara.is_enemy( explo.camp, m ) and not m.hidden:
                 enemies.append( m )
             elif isinstance( m, enchantments.Field ) and self.AVOID_FIELDS:
                 expensive_points.add( m.pos )
@@ -121,9 +129,9 @@ class CurvyAI( FlatAI ):
                     attack_positions.add( p )
                     hmap_goals.add( p + (m_heat,) )
             if m_heat < self.HEAT_MAX:
-                m_heat += self.HEAT_STEP
+                m_heat = min( m_heat + self.HEAT_STEP, self.HEAT_MAX )
 
-        hmap = hotmaps.HotMap( explo.scene, attack_positions, avoid_models=True, expensive=expensive_points )
+        hmap = hotmaps.HotMap( explo.scene, hmap_goals, avoid_models=True, expensive=expensive_points )
 
         return (attack_positions,hmap)
 
@@ -131,16 +139,37 @@ class CurvyAI( FlatAI ):
         candidates = list()
         legal_tiles = pfov.PointOfView( explo.scene, chara.pos[0], chara.pos[1], chara.get_attack_reach() ).tiles
         for m in explo.scene.contents:
-            if isinstance( m, characters.Character ) and chara.is_enemy( explo.camp, m ) and m.pos in legal_tiles and not m.hidden:
+            if chara.is_enemy( explo.camp, m ) and m.pos in legal_tiles and not m.hidden:
                 candidates.append( m )
         if candidates:
-            candidates.sort( key=self.get_target_heat )
-            target = candidates[0]
+            if random.randint(0,self.SMART_ATTACK_INT) <= chara.get_stat( stats.INTELLIGENCE ):
+                candidates.sort( key=self.get_target_heat )
+                target = candidates[0]
+            else:
+                target = random.choice( candidates )
             comba.attack( explo, chara, target, redraw )
             return True
 
     def get_target_heat( self, target ):
         # The lower the return value, the more desirable this target.
-        return hash( target )
+        return target.current_hp()
+
+#  *******************************
+#  ***   SPECIFIC  AI  TYPES   ***
+#  *******************************
+
+class BrainDeadAI( BasicAI ):
+    """For zombies, slimes- ignores hazardous conditions."""
+    AVOID_FIELDS = False
+    AVOID_THREAT = False
+    DOES_SEARCH = True
+    SEARCH_INT = 99
+
+class SteadyAI( BasicAI ):
+    """For golems- walks in a straight line, but can avoid threatened area."""
+    AVOID_FIELDS = False
+    AVOID_THREAT = True
+    DOES_SEARCH = True
+
 
 

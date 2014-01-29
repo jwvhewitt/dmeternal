@@ -113,7 +113,7 @@ class Campaign( object ):
     def build_encounter( self, rank, strength, habitat, team=None ):
         min_rank = min( int( rank * 0.8 ), 11 )
         max_rank = rank + 2
-        monsters = list()
+        horde = list()
 
         # Determine how many levels of monster to generate.
         pts = max( ( rank * random.randint(150,250) * strength ) // 100, 1 )
@@ -129,8 +129,8 @@ class Campaign( object ):
                 pts = 0
 
             for t in range( n ):
-                monsters.append( mclass(team) )
-        return monsters
+                horde.append( mclass(team) )
+        return horde
 
 
 
@@ -217,8 +217,8 @@ if __name__=='__main__':
     import mapgen
 
     # Set the screen size.
-    screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
-#    screen = pygame.display.set_mode( (800,600) )
+#    screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
+    screen = pygame.display.set_mode( (800,600) )
 #    screen = pygame.display.set_mode( (800,600), pygame.FULLSCREEN )
 
     pygame.init()
@@ -346,7 +346,7 @@ if __name__=='__main__':
     pswitch.CALL = pdoor.activate
     room4.special_c["door"] = pdoor
     room2.inventory.append( pswitch )
-    room2.inventory += camp.build_encounter( 1, 100, {context.MTY_HUMANOID: True}, teams.Team(default_reaction=-999) )
+    room2.inventory += camp.build_encounter( 1, 100, {context.GEN_UNDEAD: True}, teams.Team(default_reaction=-999) )
 
     mychest = waypoints.MediumChest()
     mychest.stock(5)

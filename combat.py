@@ -82,8 +82,6 @@ class Combat( object ):
 
         self.activate_monster( monster_zero )
 
-        self.ai = aibrain.CurvyAI()
-
         # Sort based on initiative roll.
         self.active.sort( key = characters.roll_initiative, reverse=True )
 
@@ -244,44 +242,6 @@ class Combat( object ):
 
         return result
 
-    def move_and_attack_anyone( self, explo, chara, redraw=None ):
-        result = None
-        did_attack = False
-        redraw = redraw or explo.view
-        explo.view.overlays.clear()
-        attack_positions = set()
-
-        expensive_points = self.get_threatened_area( chara )
-        for m in self.scene.contents:
-            if isinstance( m, characters.Character ) and chara.is_enemy( self.camp, m ) and not m.hidden:
-                attack_positions.add( m.pos )
-            elif isinstance( m, enchantments.Field ):
-                expensive_points.add( m.pos )
-
-        hmap = hotmaps.HotMap( self.scene, attack_positions, avoid_models=True, expensive=expensive_points )
-
-        while self.ap_spent[ chara ] < chara.get_move():
-            result = self.step( explo, chara, hmap )
-            if chara in self.camp.party:
-                self.scene.update_pc_position( chara )
-            if result:
-                if isinstance( result, characters.Character ) and chara.is_enemy( self.camp, result ):
-                    self.attack( explo, chara, result, redraw )
-                    did_attack = True
-                break
-
-            redraw( explo.screen )
-            pygame.display.flip()
-            pygwrap.anim_delay()
-
-        if not did_attack:
-            if self.num_enemies_hiding( chara ):
-                # There are hiding enemies. Attempt to spot them.
-                self.attempt_awareness( explo, chara )
-            elif chara.can_use_stealth() and not chara.hidden:
-                self.attempt_stealth( explo, chara )
-
-        return result
 
     def end_turn( self, chara ):
         """End this character's turn."""
@@ -431,8 +391,7 @@ class Combat( object ):
         tacred( explo.screen )
         pygame.display.flip()
 
-#        self.move_and_attack_anyone( explo, chara, tacred )
-        self.ai.act( explo, chara, tacred )
+        chara.COMBAT_AI.act( explo, chara, tacred )
 
         # If very far from nearest PC, deactivate.
         for m in self.scene.contents:
