@@ -90,7 +90,7 @@ class AdvancedAI( BasicAI ):
     HEAT_STEP = 4
     # Weird name for a constant... the random factor determining whether this
     # monster will attack a random enemy or the most appropriate enemy.
-    SMART_ATTACK_INT = 20
+    SMART_ATTACK_INT = 30
     def get_attack_map( self, explo, chara, reach ):
         """Return the attack positions and hotmap for this character."""
         comba = explo.camp.fight
@@ -152,7 +152,7 @@ class AdvancedAI( BasicAI ):
 
     def get_target_heat( self, target ):
         # The lower the return value, the more desirable this target.
-        return target.current_hp()
+        return hash( target )
 
 #  *******************************
 #  ***   SPECIFIC  AI  TYPES   ***
@@ -170,6 +170,16 @@ class SteadyAI( BasicAI ):
     AVOID_FIELDS = False
     AVOID_THREAT = True
     DOES_SEARCH = True
+
+class GhoulAI( AdvancedAI ):
+    AVOID_FIELDS = False
+    AVOID_THREAT = True
+    DOES_SEARCH = True
+    HEAT_MAX = 10
+    HEAT_STEP = 4
+    def get_target_heat( self, target ):
+        # Ghouls prefer to attack priests and the wounded.
+        return ( -target.get_stat(stats.HOLY_SIGN), ( target.current_hp() * 100 ) // target.max_hp(), target.get_defense(), target.max_hp(), target.get_stat(stats.CHARISMA) )
 
 
 

@@ -31,7 +31,8 @@ class NoEffect( object ):
         # drawn on top of the base anim.
         next_fx = self.handle_effect( camp, originator, pos, o_anims, o_delay )
         for nfx in next_fx:
-            nfx( camp, originator, pos, anims, delay )
+            anims = nfx( camp, originator, pos, anims, delay )
+        return anims
 
 class PhysicalAttackRoll( NoEffect ):
     def __init__(self, att_skill=stats.PHYSICAL_ATTACK, att_stat=stats.REFLEXES, \

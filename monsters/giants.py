@@ -12,7 +12,7 @@ class Ogre( base.Monster ):
     FRAME = 1
     TEMPLATES = ()
     MOVE_POINTS = 10
-    GP_VALUE = 60
+    GP_VALUE = 35
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.MTY_HUMANOID,
      context.MTY_FIGHTER, context.GEN_GIANT )
     ENC_LEVEL = 4

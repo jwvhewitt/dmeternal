@@ -690,8 +690,7 @@ class Character(object):
     def add_attack_enhancements( self, roll, ench ):
         # Add any attack modifiers attached to this enchantment.
         if hasattr( ench, "ATTACK_ON_HIT" ) and ench.ATTACK_ON_HIT:
-            roll.on_success[0].on_success.append( ench.ATTACK_ON_HIT )
-            roll.on_success[0].on_failure.append( ench.ATTACK_ON_HIT )
+            roll.on_success.append( ench.ATTACK_ON_HIT )
 
     def unarmed_attack_effect( self, roll_mod=0 ):
         """Return the attackdata for this character's unarmed strikes."""
