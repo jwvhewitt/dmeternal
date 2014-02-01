@@ -197,46 +197,50 @@ class Room( object ):
         self.contents = list()
         # special_c lists contents that will be treated specially by the generator.
         self.special_c = dict()
-        self.inventory = list()
         if parent:
             parent.contents.append( self )
     def step_two( self, gb ):
         self.arrange_contents( gb )
         # Prepare any child nodes in self.contents as needed.
         for r in self.contents:
-            r.step_two( gb )
+            if isinstance( r, Room ):
+                r.step_two( gb )
     def step_three( self, gb ):
         self.connect_contents( gb )
         # Prepare any child nodes in self.contents as needed.
         for r in self.contents:
-            r.step_three( gb )
+            if isinstance( r, Room ):
+                r.step_three( gb )
     def step_four( self, gb ):
         if self.mutate:
             self.mutate( gb, self.area )
         # Prepare any child nodes in self.contents as needed.
         for r in self.contents:
-            r.step_four( gb )
+            if isinstance( r, Room ):
+                r.step_four( gb )
     def step_five( self, gb ):
         self.render( gb )
         # Prepare any child nodes in self.contents as needed.
         for r in self.contents:
-            r.step_five( gb )
+            if isinstance( r, Room ):
+                r.step_five( gb )
     def step_six( self, gb ):
         self.deploy( gb )
         # Prepare any child nodes in self.contents as needed.
         for r in self.contents:
-            r.step_six( gb )
+            if isinstance( r, Room ):
+                r.step_six( gb )
 
     def arrange_contents( self, gb ):
         # Step Two: Arrange subcomponents within this area.
         closed_area = list()
         # Add already placed rooms to the closed_area list.
         for r in self.contents:
-            if r.area:
+            if hasattr( r, "area" ) and r.area:
                 closed_area.append( r.area )
         # Add rooms with defined anchors next
         for r in self.contents:
-            if r.anchor:
+            if hasattr( r, "anchor" ) and r.anchor:
                 myrect = pygame.Rect( 0, 0, r.width, r.height )
                 r.anchor( self.area, myrect )
                 if myrect.collidelist( closed_area ) == -1:
@@ -244,23 +248,31 @@ class Room( object ):
                     closed_area.append( myrect )
         # Assign areas for unplaced rooms.
         for r in self.contents:
-            myrect = pygame.Rect( 0, 0, r.width, r.height )
-            count = 0
-            while ( count < 1000 ) and not r.area:
-                myrect.x = random.choice( range( self.area.x , self.area.x + self.area.width - r.width ) )
-                myrect.y = random.choice( range( self.area.y , self.area.y + self.area.height - r.height ) )
-                if myrect.collidelist( closed_area ) == -1:
-                    r.area = myrect
-                    closed_area.append( myrect )
-                count += 1
+            if hasattr( r, "area" ):
+                myrect = pygame.Rect( 0, 0, r.width, r.height )
+                count = 0
+                while ( count < 1000 ) and not r.area:
+                    myrect.x = random.choice( range( self.area.x , self.area.x + self.area.width - r.width ) )
+                    myrect.y = random.choice( range( self.area.y , self.area.y + self.area.height - r.height ) )
+                    if myrect.collidelist( closed_area ) == -1:
+                        r.area = myrect
+                        closed_area.append( myrect )
+                    count += 1
 
     def connect_contents( self, gb ):
         # Step Three: Connect all rooms in contents, making trails on map.
         # For this one, I'm just gonna straight line connect the contents in
         # a circle.
-        if self.contents:
-            prev = self.contents[-1]
-            for r in self.contents:
+        # Generate list of rooms.
+        myrooms = list()
+        for r in self.contents:
+            if hasattr( r, "area" ):
+                myrooms.append( r )
+
+        # Process them
+        if myrooms:
+            prev = myrooms[-1]
+            for r in myrooms:
                 # Connect r to prev
                 self.draw_L_connection( gb, r.area.centerx, r.area.centery, prev.area.centerx, prev.area.centery )
 #                self.draw_direct_connection( gb, r.area.centerx, r.area.centery, prev.area.centerx, prev.area.centery )
@@ -283,6 +295,11 @@ class Room( object ):
                 if not gb.map[x][y].blocks_walking():
                     good_spots.append( (x,y) )
 
+        # First pass- execute any deploy methods in any contents.
+        for i in self.contents[:]:
+            if hasattr( i, "predeploy" ):
+                i.predeploy( gb, self )
+
         # Find a list of good walls for stuff that must be mounted on a wall.
         good_walls = list()
         for x in range( self.area.x + 1, self.area.x + self.area.width - 1 ):
@@ -292,23 +309,16 @@ class Room( object ):
             if gb.map[self.area.x][y].wall == maps.BASIC_WALL and gb.map[self.area.x][y-1].wall and gb.map[self.area.x][y+1].wall and not gb.map[self.area.x+1][y].blocks_walking():
                 good_walls.append((self.area.x,y ))
 
-        for i in self.inventory:
-            if hasattr( i, "ATTACH_TO_WALL" ) and i.ATTACH_TO_WALL and good_walls:
-                p = random.choice( good_walls )
-                good_walls.remove( p )
-                if hasattr( i, "place" ):
+        for i in self.contents:
+            if hasattr( i, "place" ):
+                if hasattr( i, "ATTACH_TO_WALL" ) and i.ATTACH_TO_WALL and good_walls:
+                    p = random.choice( good_walls )
+                    good_walls.remove( p )
                     i.place( gb, p )
                 else:
-                    i.pos = p
-                    gb.contents.append( i )
-            else:
-                p = random.choice( good_spots )
-                good_spots.remove( p )
-                if hasattr( i, "place" ):
+                    p = random.choice( good_spots )
+                    good_spots.remove( p )
                     i.place( gb, p )
-                else:
-                    i.pos = p
-                    gb.contents.append( i )
 
 
     def fill( self, gb, dest, floor=-1, wall=-1, decor=-1 ):
@@ -359,16 +369,21 @@ class FuzzyRoom( Room ):
     """A room without hard walls, with default ground floors."""
     def render( self, gb ):
         # Step Five: Actually draw the room, taking into account terrain already on map.
-        for x in range( self.area.x, self.area.x + self.area.width ):
-            for y in range( self.area.y, self.area.y + self.area.height ):
+        for x in range( self.area.x+1, self.area.x + self.area.width-1 ):
+            for y in range( self.area.y+1, self.area.y + self.area.height-1 ):
                 self.draw_fuzzy_ground( gb, x, y )
 
 class SharpRoom( Room ):
     """A room with hard walls, with BASIC_FLOOR floors."""
     def deal_with_empties( self, gb, empties ):
+        """Fill this line with a wall, leaving at least one door or opening."""
         p2 = random.choice( empties )
         empties.remove( p2 )
         gb.map[p2[0]][p2[1]].wall = maps.OPEN_DOOR
+        if len( empties ) > random.randint(1,6):
+            p2 = random.choice( empties )
+            empties.remove( p2 )
+            gb.map[p2[0]][p2[1]].wall = maps.OPEN_DOOR
         for pp in empties:
             gb.map[pp[0]][pp[1]].wall = maps.BASIC_WALL
         del empties[:]

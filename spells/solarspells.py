@@ -4,6 +4,7 @@ import targetarea
 import enchantments
 import animobs
 import stats
+import invocations
 
 # CIRCLE 1
 

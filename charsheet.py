@@ -9,7 +9,7 @@ from spells import COLORS, COLOR_NAME, Spell
 EL_NAME = ( "Light", "Heavy", "Severe" )
 def encumberance_desc( pc, show_ceiling=True ):
     """Return a string describing this PC's encumberance level."""
-    mass = sum( i.mass for i in pc.inventory )
+    mass = sum( i.mass for i in pc.contents )
     ec = pc.get_encumberance_ceilings()
     el = pc.encumberance_level()
     if show_ceiling:

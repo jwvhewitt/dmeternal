@@ -4,6 +4,7 @@ import targetarea
 import enchantments
 import animobs
 import stats
+import invocations
 
 # CIRCLE ONE
 
@@ -13,7 +14,8 @@ FREEZE_FOE = Spell( "FREEZE_FOE", "Freeze Foe",
         effects.Paralyze( max_duration = 3 )
     ,), on_failure =(
         effects.NoEffect( anim=animobs.SmallBoom )
-    ,) ), rank=1, gems={WATER:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.BlueComet )
+    ,) ), rank=1, gems={WATER:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.BlueComet,
+    ai_tar=invocations.vs_enemy )
 
 RESTORE_FLUIDITY = Spell( "RESTORE_FLUIDITY", "Restore Fluidity",
     "This spell restores mobility to an ally who has been paralyzed or sedated.",
@@ -30,7 +32,8 @@ WINTER_WIND = Spell( "WINTER_WIND", "Winter Wind",
         effects.HealthDamage( (2,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_COLD, anim=animobs.BlueCloud )
     ,), on_failure = (
         effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_COLD, anim=animobs.BlueCloud )
-    ,) ), rank=3, gems={WATER:2}, com_tar=targetarea.Cone(reach=8) )
+    ,) ), rank=3, gems={WATER:2}, com_tar=targetarea.Cone(reach=8),
+    ai_tar=invocations.vs_enemy )
 
 
 

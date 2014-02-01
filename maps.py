@@ -8,6 +8,9 @@ import collections
 import pygwrap
 import enchantments
 import items
+import context
+import random
+import monsters
 
 # Enumerated constants for sprite sheets.
 SPRITE_GROUND, SPRITE_WALL, SPRITE_BORDER, SPRITE_INTERIOR, SPRITE_FLOOR, SPRITE_DECOR, SPRITE_CHEST = range( 7 )
@@ -223,13 +226,16 @@ DEFAULT_SPRITES = { SPRITE_GROUND: "terrain_ground_forest.png", \
 
 class Scene( object ):
     DELTA8 = ( (-1,-1), (0,-1), (1,-1), (-1,0), (1,0), (-1,1), (0,1), (1,1) )
-    def __init__(self,width=128,height=128,sprites=None):
+    def __init__(self,width=128,height=128,sprites=None,biome=None,setting=None,desctags=()):
         self.width = width
         self.height = height
         self.contents = []
         self.sprites = DEFAULT_SPRITES.copy()
         if sprites:
             self.sprites.update( sprites )
+        self.biome=biome
+        self.setting=setting
+        self.desctags = desctags
         # Fill the map with empty tiles
         self.map = [[ Tile()
             for y in range(height) ]
@@ -238,6 +244,40 @@ class Scene( object ):
     def on_the_map( self , x , y ):
         # Returns true if on the map, false otherwise
         return ( ( x >= 0 ) and ( x < self.width ) and ( y >= 0 ) and ( y < self.height ) )
+
+    def get_encounter_request( self ):
+        # Return the basic encounter request.
+        req = dict()
+        # Add biome.
+        req[ (context.HAB_EVERY,self.biome or context.HAB_EVERY) ] = True
+        # Add setting.
+        req[ (context.SET_EVERY,self.setting or context.SET_EVERY) ] = True
+        # Add optional descriptors.
+        if self.biome:
+            req[self.biome] = context.MAYBE
+        if self.setting:
+            req[self.setting] = context.MAYBE
+        for t in self.desctags:
+            req[t] = context.MAYBE
+        return req
+
+    def choose_monster( self, min_rank, max_rank, habitat=None ):
+        """Choose a random monster class as close to max_rank as possible."""
+        possible_list = list()
+        backup_list = list()
+        if not habitat:
+            habitat = self.get_encounter_request()
+        for m in monsters.MONSTER_LIST:
+            if m.ENC_LEVEL <= max_rank:
+                n = context.matches_description( m.HABITAT, habitat )
+                if n:
+                    backup_list += (m,) * m.ENC_LEVEL
+                    if m.ENC_LEVEL >= min_rank:
+                        possible_list += (m,) * n
+        if possible_list:
+            return random.choice( possible_list )
+        elif backup_list:
+            return random.choice( backup_list )
 
     def get_floor( self, x, y ):
         """Safely return floor of tile x,y, or None if off map."""

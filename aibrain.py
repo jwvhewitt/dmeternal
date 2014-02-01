@@ -12,6 +12,7 @@ class BasicAI( object ):
     AVOID_THREAT = True
     DOES_SEARCH = True
     SEARCH_INT = 19
+    TECHNIQUE_CHANCE = 50
 
     def attack_from_here( self, explo, comba, chara, redraw ):
         candidates = list()
@@ -23,6 +24,37 @@ class BasicAI( object ):
             target = random.choice( candidates )
             comba.attack( explo, chara, target, redraw )
             return True
+
+    def invoke_from_here( self, explo, comba, chara, redraw ):
+        # self.tech must have already been set.
+        target = None
+        if self.tech.com_tar.AUTOMATIC:
+            target = chara.pos
+        else:
+            candidates = list()
+            legal_tiles = self.tech.com_tar.get_targets( explo.camp, chara.pos )
+            for m in explo.scene.contents:
+                if self.tech.ai_tar( explo.camp, chara, m ) > 0 and m.pos in legal_tiles and not m.hidden:
+                    candidates.append( m.pos )
+            if candidates:
+                target = random.choice( candidates )
+        if target:
+            if target and self.tech.shot_anim:
+                shot = self.tech.shot_anim( chara.pos, target )
+            else:
+                shot = None
+            if self.tech.com_tar.delay_from < 0:
+                delay_point = chara.pos
+            elif self.tech.com_tar.delay_from > 0 and target:
+                delay_point = target
+            else:
+                delay_point = None
+
+            explo.invoke_effect( self.tech.fx, chara, self.tech.com_tar.get_area( explo.camp,chara.pos,target), opening_anim = shot, delay_point = delay_point )
+            self.tech.pay_invocation_price( chara )
+            comba.end_turn( chara )
+            return True
+
 
     def get_attack_map( self, explo, chara, reach ):
         """Return the attack positions and hotmap for this character."""
@@ -49,20 +81,19 @@ class BasicAI( object ):
 
         return (attack_positions,hmap)
 
-    def move_for_action( self, explo, chara, reach, action, redraw=None ):
+    def move_for_action( self, explo, chara, action, act_positions, hmap, redraw=None ):
         # Just move towards nearest enemy and try to use the provided action.
         comba = explo.camp.fight
         redraw = redraw or explo.view
         did_action = False
 
         explo.view.overlays.clear()
-        attack_positions, hmap = self.get_attack_map( explo, chara, reach )
 
         while comba.ap_spent[ chara ] < chara.get_move() and chara.is_alright():
             result = comba.step( explo, chara, hmap )
-            if result or ( chara.pos in attack_positions and comba.ap_spent[ chara ] >= chara.get_move() ):
+            if result or ( chara.pos in act_positions and comba.ap_spent[ chara ] >= chara.get_move() ):
                 if chara.is_alright():
-                    did_action = self.attack_from_here( explo, comba, chara, redraw )
+                    did_action = action( explo, comba, chara, redraw )
                 break
 
             redraw( explo.screen )
@@ -71,9 +102,51 @@ class BasicAI( object ):
 
         return did_action
 
-    def act( self, explo, chara, redraw=None ):
-        acted = self.move_for_action( explo, chara, chara.get_attack_reach(), self.attack_from_here, redraw )
+    def get_tech_map( self, explo, chara, reach ):
+        """Return the attack positions and hotmap for this character."""
+        comba = explo.camp.fight
+        attack_positions = set()
+        if self.AVOID_THREAT:
+            expensive_points = comba.get_threatened_area( chara )
+        else:
+            expensive_points = set()
 
+        # Add the targets.
+        for m in explo.scene.contents:
+            if self.tech.ai_tar( explo.camp, chara, m ) > 0 and not m.hidden:
+                attack_positions.update( pfov.AttackReach( explo.scene, m.pos[0], m.pos[1], reach ).tiles )
+            elif isinstance( m, enchantments.Field ) and self.AVOID_FIELDS:
+                expensive_points.add( m.pos )
+
+        # Remove models from goal squares to prevent weird behavior.
+        for m in explo.scene.contents:
+            if explo.scene.is_model(m) and m.pos in attack_positions and m is not chara:
+                attack_positions.remove( m.pos )
+
+        hmap = hotmaps.HotMap( explo.scene, attack_positions, avoid_models=True, expensive=expensive_points )
+
+        return (attack_positions,hmap)
+
+    def try_technique_use( self, explo, chara, redraw=None ):
+        techs = chara.get_invocations( True )
+        if techs:
+            tech = random.choice( techs )
+            if tech.ai_tar:
+                self.tech = tech
+                if tech.com_tar.AUTOMATIC:
+                    return self.invoke_from_here(explo, explo.camp.fight, chara, redraw )
+                else:
+                    ap,hmap = self.get_tech_map( explo, chara, tech.com_tar.reach )
+                    return self.move_for_action( explo, chara, self.invoke_from_here, ap, hmap, redraw )
+
+    def act( self, explo, chara, redraw=None ):
+        if random.randint(1,100) <= self.TECHNIQUE_CHANCE:
+            acted = self.try_technique_use( explo, chara, redraw )
+        else:
+            acted = False
+        if chara.is_alright() and not acted:
+            attack_positions, hmap = self.get_attack_map( explo, chara, chara.get_attack_reach() )
+            acted = self.move_for_action( explo, chara, self.attack_from_here, attack_positions, hmap, redraw )
         if chara.is_alright() and not acted:
             if self.DOES_SEARCH and explo.camp.fight.num_enemies_hiding( chara ) and random.randint(0,self.SEARCH_INT) <= chara.get_stat( stats.INTELLIGENCE ):
                 # There are hiding enemies. Attempt to spot them.
@@ -164,6 +237,7 @@ class BrainDeadAI( BasicAI ):
     AVOID_THREAT = False
     DOES_SEARCH = True
     SEARCH_INT = 99
+    TECHNIQUE_CHANCE = 20
 
 class SteadyAI( BasicAI ):
     """For golems- walks in a straight line, but can avoid threatened area."""

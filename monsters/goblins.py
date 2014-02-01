@@ -14,8 +14,8 @@ class Goblin( base.Monster ):
     MOVE_POINTS = 12
     VOICE = dialogue.voice.ORCISH
     GP_VALUE = 5
-    HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.MTY_HUMANOID,
-     context.MTY_THIEF, context.GEN_GOBLIN )
+    HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
+     context.MTY_HUMANOID, context.MTY_THIEF, context.GEN_GOBLIN )
     ENC_LEVEL = 1
 
 

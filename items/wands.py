@@ -3,7 +3,7 @@ import animobs
 from . import ManaWeapon,Attack,WAND
 
 class FireWand( ManaWeapon ):
-    true_name = "Wand of Fire"
+    true_name = "Fire Wand"
     true_desc = ""
     itemtype = WAND
     MP_COST = 1
@@ -15,7 +15,7 @@ class FireWand( ManaWeapon ):
     shot_anim = animobs.Fireball
 
 class IceWand( ManaWeapon ):
-    true_name = "Wand of Ice"
+    true_name = "Ice Wand"
     true_desc = ""
     itemtype = WAND
     MP_COST = 1
@@ -27,7 +27,7 @@ class IceWand( ManaWeapon ):
     shot_anim = animobs.BlueComet
 
 class AcidWand( ManaWeapon ):
-    true_name = "Wand of Acid"
+    true_name = "Acid Wand"
     true_desc = ""
     itemtype = WAND
     MP_COST = 1
@@ -39,7 +39,7 @@ class AcidWand( ManaWeapon ):
     shot_anim = animobs.GreenSpray
 
 class LightningWand( ManaWeapon ):
-    true_name = "Wand of Lightning"
+    true_name = "Lightning Wand"
     true_desc = ""
     itemtype = WAND
     MP_COST = 1
@@ -51,7 +51,7 @@ class LightningWand( ManaWeapon ):
     shot_anim = animobs.Lightning
 
 class TelekinesisWand( ManaWeapon ):
-    true_name = "Wand of Telekinesis"
+    true_name = "Telekinesis Wand"
     true_desc = ""
     itemtype = WAND
     MP_COST = 1

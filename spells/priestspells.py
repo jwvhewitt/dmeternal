@@ -5,6 +5,7 @@ import enchantments
 import animobs
 import stats
 import context
+import invocations
 
 # Priests get AIR, SOLAR, and WATER magic. These spells use a mixture of two
 # or more of those colors.
@@ -31,6 +32,7 @@ BLIZZARD = Spell( "BLIZZARD", "Blizzard",
             on_failure= (effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_WIND, anim=animobs.Blizzard),),
             on_death= (effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_WIND, anim=animobs.Blizzard),),
      )
-    ,) ), rank=4, gems={WATER:1,AIR:1}, com_tar=targetarea.Blast(radius=4, delay_from=1) )
+    ,) ), rank=4, gems={WATER:1,AIR:1}, com_tar=targetarea.Blast(radius=4, delay_from=1),
+    ai_tar=invocations.vs_enemy )
 
 

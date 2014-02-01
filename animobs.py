@@ -287,6 +287,11 @@ class DragonFire( AnimOb ):
     def __init__(self, pos=(0,0), loop=0, delay=1 ):
         super(DragonFire, self).__init__(sprite_name="fx_dragonfire.png",pos=pos,start_frame=0,end_frame=9,loop=loop,ticks_per_frame=1, delay=delay)
 
+# fx_spark.png
+class Spark( AnimOb ):
+    def __init__(self, pos=(0,0), loop=1, delay=1 ):
+        super(Spark, self).__init__(sprite_name="fx_spark.png",pos=pos,start_frame=0,end_frame=3,loop=loop,ticks_per_frame=1, delay=delay)
+
 
 # fx_nuclear.png
 

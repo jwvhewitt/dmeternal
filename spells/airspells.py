@@ -4,6 +4,7 @@ import targetarea
 import enchantments
 import animobs
 import stats
+import invocations
 
 # CIRCLE ONE
 
@@ -26,8 +27,8 @@ PROBE = Spell( "PROBE", "Probe",
 THUNDER_STRIKE = Spell( "THUNDER_STRIKE", "Thunder Strike",
     "A bolt of lightning strikes all in its path for 3d6 damage.",
     effects.OpposedRoll( on_success = (
-        effects.HealthDamage( (3,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_LIGHTNING, anim=animobs.BlueZap )
+        effects.HealthDamage( (3,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_LIGHTNING, anim=animobs.Spark )
     ,), on_failure = (
-        effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_LIGHTNING, anim=animobs.BlueZap )
-    ,) ), rank=3, gems={AIR:1}, com_tar=targetarea.Line() )
+        effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_LIGHTNING, anim=animobs.Spark )
+    ,) ), rank=3, gems={AIR:1}, com_tar=targetarea.Line(), ai_tar=invocations.vs_enemy )
 

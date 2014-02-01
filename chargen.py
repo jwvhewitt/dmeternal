@@ -48,8 +48,8 @@ def give_starting_equipment( pc ):
 
     for k,item in default.iteritems():
         if pc.can_equip( item ):
-            pc.inventory.append( item )
-            pc.inventory.equip( item )
+            pc.contents.append( item )
+            pc.contents.equip( item )
 
 def choose_gender( screen, redraw ):
     """Return the gender chosen by the player."""

@@ -135,7 +135,7 @@ class InvExchange( object ):
             rmenu.quick_keys[ pygame.K_RIGHT ] = 1
             rmenu.quick_keys[ "/" ] = 2
 
-            for it in pc.inventory:
+            for it in pc.contents:
                 if it.equipped:
                     lmenu.add_item( "*"+str( it ), it )
                 elif not pc.can_equip( it ):
@@ -168,13 +168,13 @@ class InvExchange( object ):
             elif it:
                 # An item was selected. Transfer.
                 if use_left_menu:
-                    pc.inventory.unequip( it )
+                    pc.contents.unequip( it )
                     if not it.equipped:
-                        pc.inventory.remove( it )
+                        pc.contents.remove( it )
                         self.ilist.append( it )
                 elif pc.can_take_item( it ) and pc.is_alright():
                     self.ilist.remove( it )
-                    pc.inventory.append( it )
+                    pc.contents.append( it )
             else:
                 keep_going = False
         return self.ilist
@@ -236,11 +236,11 @@ class Explorer( object ):
             if isinstance( m, characters.Character ) and not m.is_alright():
                 self.scene.contents.remove( m )
                 # Drop all held items.
-                for i in m.inventory[:]:
-                    m.inventory.remove(i)
-                    i.pos = m.pos
-                    i.equipped = False
-                    self.scene.contents.append( i )
+                for i in m.contents[:]:
+                    if hasattr( i, "place" ):
+                        m.contents.remove(i)
+                        i.equipped = False
+                        i.place( self.scene, m.pos )
 
     SELECT_AREA_CAPTION_ZONE = pygame.Rect( 32, 32, 300, 15 )
     def select_area( self, origin, aoegen, caption = None ):
@@ -370,17 +370,16 @@ class Explorer( object ):
             self.view.regenerate_avatars( self.camp.party )
 
     def equip_item( self, it, pc, redraw ):
-        pc.inventory.equip( it )
+        pc.contents.equip( it )
 
     def unequip_item( self, it, pc, redraw ):
-        pc.inventory.unequip( it )
+        pc.contents.unequip( it )
 
     def drop_item( self, it, pc, redraw ):
-        pc.inventory.unequip( it )
+        pc.contents.unequip( it )
         if not it.equipped:
-            pc.inventory.remove( it )
-            it.pos = pc.pos
-            self.scene.contents.append( it )
+            pc.contents.remove( it )
+            it.place( self.scene, pc.pos )
 
     def trade_item( self, it, pc, redraw ):
         """Trade this item to another character."""
@@ -393,11 +392,11 @@ class Explorer( object ):
 
         opc = mymenu.query()
         if opc:
-            pc.inventory.unequip( it )
+            pc.contents.unequip( it )
             if not it.equipped:
                 if opc.can_take_item( it ):
-                    pc.inventory.remove( it )
-                    opc.inventory.append( it )
+                    pc.contents.remove( it )
+                    opc.contents.append( it )
                 else:
                     self.alert( "{0} can't carry any more.".format( str( opc ) ) )
 
@@ -469,7 +468,7 @@ class Explorer( object ):
 
         while keep_going:
             mymenu = charsheet.RightMenu( self.screen, predraw = myredraw )
-            for i in pc.inventory:
+            for i in pc.contents:
                 if i.equipped:
                     mymenu.add_item( "*" + str( i ) , i )
                 elif not pc.can_equip( i ):
@@ -533,8 +532,8 @@ class Explorer( object ):
                             break
                     if in_sight:
                         react = m.get_reaction( self.camp )
-                        if react < teams.FRIENDLY_THRESHOLD:
-                            if react < teams.ENEMY_THRESHOLD:
+                        if react < characters.FRIENDLY_THRESHOLD:
+                            if react < characters.ENEMY_THRESHOLD:
                                 anims = [ animobs.SpeakAttack(m.pos,loop=16), ]
                                 animobs.handle_anim_sequence( self.screen, self.view, anims )
                                 self.camp.activate_monster( m )
@@ -616,28 +615,28 @@ class Explorer( object ):
                     else:
                         # If YouTube comments were as good as these comments, we'd all have ponies by now.
                         animobpos = self.view.mouse_tile
-                        ao_pro = animobs.GreenSpray(self.camp.first_living_pc().pos,self.view.mouse_tile )
-                        anims = [ ao_pro, ]
+#                        ao_pro = animobs.GreenSpray(self.camp.first_living_pc().pos,self.view.mouse_tile )
+#                        anims = [ ao_pro, ]
 #                        ao_pro.children.append( animobs.Pearl( pos=animobpos ) )
 
 
-                        area = pfov.PointOfView( self.scene, animobpos[0], animobpos[1], 5 )
-                        for a in area.tiles:
-                            ao = animobs.SnowCloud( pos=a )
+#                        area = pfov.PointOfView( self.scene, animobpos[0], animobpos[1], 5 )
+#                        for a in area.tiles:
+#                            ao = animobs.SnowCloud( pos=a )
 #                            ao = animobs.BlueCloud( pos=a, delay=self.scene.distance(a,animobpos ) * 2 + 1 )
 #                            ao.y_off = -25 + 5 * ( abs( a[0]-animobpos[0] ) + abs( a[1]-animobpos[1] ) )
-                            ao_pro.children.append( ao )
+#                            ao_pro.children.append( ao )
 
 #                        animobpos = self.view.mouse_tile
-#                        pcpos = self.camp.first_living_pc().pos
-#                        anims = list()
+                        pcpos = self.camp.first_living_pc().pos
+                        anims = list()
 
 #                        area = pfov.Cone( self.scene, pcpos, animobpos ).tiles
-#                        area = animobs.get_line( pcpos[0], pcpos[1], animobpos[0], animobpos[1] )
-#                        area.remove( pcpos )
-#                        for a in area:
-#                            ao = animobs.DragonFire( pos=a, delay=self.scene.distance(a,pcpos ) + 1 )
-#                            anims.append( ao )
+                        area = animobs.get_line( pcpos[0], pcpos[1], animobpos[0], animobpos[1] )
+                        area.remove( pcpos )
+                        for a in area:
+                            ao = animobs.Spark( pos=a, delay=self.scene.distance(a,pcpos ) + 1 )
+                            anims.append( ao )
 #                        for a in self.scene.contents:
 #                            if a.pos in area:
 #                                ao = animobs.Caption( str(random.randint(5,27)), a.pos, delay=self.scene.distance(a.pos,pcpos ) + 1 )

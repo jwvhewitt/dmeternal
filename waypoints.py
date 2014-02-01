@@ -17,7 +17,7 @@ class Waypoint( object ):
         """Place this waypoint in a scene."""
         if scene:
             self.place( scene, pos )
-        self.inventory = list()
+        self.contents = list()
 
     def place( self, scene, pos ):
         self.scene = scene
@@ -121,11 +121,11 @@ class SmallChest( Waypoint ):
             explo.alert( "You find {0} gold pieces.".format( self.gold ) )
             explo.camp.gold += self.gold
             self.gold = 0
-        ix = exploration.InvExchange( explo.camp.party, self.inventory, explo.view )
+        ix = exploration.InvExchange( explo.camp.party, self.contents, explo.view )
         ix( explo.screen )
     def stock( self, hoard_rank=3 ):
         self.gold,hoard = items.generate_hoard(hoard_rank,self.HOARD_AMOUNT)
-        self.inventory += hoard
+        self.contents += hoard
         if random.randint(1,500) < self.HOARD_AMOUNT:
             self.trap = traps.choose_trap( hoard_rank )
 

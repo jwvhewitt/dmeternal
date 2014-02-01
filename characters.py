@@ -5,10 +5,15 @@ import random
 import image
 import items
 import dialogue
-import teams
 import effects
 import animobs
 import aibrain
+
+# Reaction score constants
+FRIENDLY_THRESHOLD = 25
+ENEMY_THRESHOLD = -25
+SAFELY_FRIENDLY = 100
+SAFELY_ENEMY = -100
 
 
 class Level( object ):
@@ -395,7 +400,7 @@ class CappedModifierList( list ):
             if hasattr( thing, "dispel" ) and dispel_this in thing.dispel:
                 self.remove( thing )
 
-class Character(object):
+class Character( stats.PhysicalThing ):
     FRAME = 0
     TEMPLATES = ()
     team = None
@@ -416,7 +421,7 @@ class Character(object):
             self.hair = random.choice( species.HAIRSTYLE[gender] )
         else:
             self.hair = -1
-        self.inventory = items.Backpack()
+        self.contents = items.Backpack()
         self.xp = 0
         self.beard = 0
         self.hp_damage = 0
@@ -446,7 +451,7 @@ class Character(object):
             it += l.bonuses.get( stat, 0 )
 
         # Add bonuses from any equipment...
-        for item in self.inventory:
+        for item in self.contents:
             if item.equipped:
                 it += item.get_stat( stat )
 
@@ -468,7 +473,7 @@ class Character(object):
 
     def encumberance_level( self ):
         """Return value from 0 to 2 denoting severity of encumberance."""
-        mass = sum( i.mass for i in self.inventory )
+        mass = sum( i.mass for i in self.contents )
         ec = self.get_encumberance_ceilings()
         if mass < ec[0]:
             return 0
@@ -479,7 +484,7 @@ class Character(object):
 
     def can_take_item( self, thing ):
         """Return True if this character can take this item."""
-        mass = sum( i.mass for i in self.inventory )
+        mass = sum( i.mass for i in self.contents )
         return ( mass + thing.mass ) <= self.get_encumberance_ceilings()[2]
 
     def can_use_stealth( self ):
@@ -551,7 +556,7 @@ class Character(object):
         # Generate an image for this character.
         avatar = image.Image( frame_width = 54, frame_height = 54 )
         # Add each layer in turn.
-        item = self.inventory.get_equip( items.BACK )
+        item = self.contents.get_equip( items.BACK )
         if item:
             item.stamp_avatar( avatar , self )
 
@@ -562,7 +567,7 @@ class Character(object):
 
         # Add the equipment layers in order, feet to just before head.
         for es in range( items.FEET, items.HEAD ):
-            item = self.inventory.get_equip( es )
+            item = self.contents.get_equip( es )
             if item:
                 item.stamp_avatar( avatar , self )
 
@@ -575,7 +580,7 @@ class Character(object):
             img.render( avatar.bitmap , frame = self.beard - 1 )
 
         # Now finally add the head equipment.
-        item = self.inventory.get_equip( items.HEAD )
+        item = self.contents.get_equip( items.HEAD )
         if item:
             item.stamp_avatar( avatar , self )
 
@@ -615,9 +620,9 @@ class Character(object):
         else:
             # If adding a new level, unequip items.
             self.mr_level = level
-            for i in self.inventory:
+            for i in self.contents:
                 if not self.can_equip( i ):
-                    self.inventory.unequip( i )
+                    self.contents.unequip( i )
 
         level.advance( pc = self )
 
@@ -663,7 +668,7 @@ class Character(object):
 
     def is_hostile( self, camp ):
         """Return True if this character is hostile to the party."""
-        return self.get_reaction( camp ) < teams.ENEMY_THRESHOLD
+        return self.get_reaction( camp ) < ENEMY_THRESHOLD
 
     def is_enemy( self, camp, other ):
         """Return True if other is an enemy of this model."""
@@ -672,6 +677,14 @@ class Character(object):
                 return not other.is_hostile( camp )
             else:
                 return other.is_hostile( camp )
+
+    def is_ally( self, camp, other ):
+        """Return True if other is an ally of this model."""
+        if other and hasattr( other, "is_hostile" ):
+            if self.is_hostile( camp ):
+                return other.is_hostile( camp )
+            else:
+                return not other.is_hostile( camp )
 
     KUNG_FU_DAMAGE = ( ( 1, 2, 0, 0 ),
         ( 1, 2, 0, 0 ),( 1, 3, 0, 0 ),( 1, 4, 0, 0 ),( 1, 6, 0, 0 ),( 1, 8, 0, 0 ),
@@ -723,7 +736,7 @@ class Character(object):
 
     def get_attack_reach( self ):
         """Return the tile distance at which this character can attack."""
-        weapon = self.inventory.get_equip( items.HAND1 )
+        weapon = self.contents.get_equip( items.HAND1 )
         if weapon:
             return weapon.attackdata.reach
         elif hasattr( self, "ATTACK" ):
@@ -736,13 +749,13 @@ class Character(object):
         if self.hidden:
             # Sneak attacks get +20% bonus
             roll_mod += 20
-        weapon = self.inventory.get_equip( items.HAND1 )
+        weapon = self.contents.get_equip( items.HAND1 )
         if weapon:
             fx = weapon.attackdata.get_effect( self, roll_mod )
             if weapon.enhancement:
                 self.add_attack_enhancements( fx, weapon.enhancement )
             if hasattr( weapon, "AMMOTYPE" ):
-                ammo = self.inventory.get_equip( items.HAND2 )
+                ammo = self.contents.get_equip( items.HAND2 )
                 if ammo and ammo.enhancement and ammo.itemtype == weapon.AMMOTYPE:
                     self.add_attack_enhancements( fx, ammo.enhancement )
         elif hasattr( self, "ATTACK" ):
@@ -755,14 +768,14 @@ class Character(object):
         return fx
 
     def get_attack_shot_anim( self ):
-        weapon = self.inventory.get_equip( items.HAND1 )
+        weapon = self.contents.get_equip( items.HAND1 )
         if weapon:
             return weapon.shot_anim
         else:
             return None
 
     def can_attack( self ):
-        weapon = self.inventory.get_equip( items.HAND1 )
+        weapon = self.contents.get_equip( items.HAND1 )
         if weapon:
             return weapon.can_attack( self )
         else:
@@ -770,14 +783,14 @@ class Character(object):
 
     def can_attack_of_opportunity( self ):
         """Return True if this character can perform an attack of opportunity."""
-        weapon = self.inventory.get_equip( items.HAND1 )
+        weapon = self.contents.get_equip( items.HAND1 )
         if weapon and weapon.itemtype in (items.BOW, items.SLING, items.WAND ):
             return False
         else:
             return self.can_attack()
 
     def spend_attack_price( self ):
-        weapon = self.inventory.get_equip( items.HAND1 )
+        weapon = self.contents.get_equip( items.HAND1 )
         if weapon:
             weapon.spend_attack_price( self )
 
@@ -791,7 +804,10 @@ class Character(object):
 
     def xp_value( self ):
         # Sum of the xp values of all held levels.
-        return sum( l.XP_VALUE * l.rank for l in self.levels )
+        it = sum( l.XP_VALUE * l.rank for l in self.levels )
+        if hasattr( self, "ENC_LEVEL" ) and self.ENC_LEVEL > self.rank():
+            it += ( self.ENC_LEVEL - self.rank() ) * 75
+        return it
 
     def has_template( self, temp ):
         return ( temp in self.TEMPLATES ) or ( self.species and temp in self.species.TEMPLATES )
@@ -830,6 +846,19 @@ class Character(object):
                 self.techniques.append( s )
             else:
                 break
+
+    def get_invocations( self, in_combat=False ):
+        ilist = list()
+        for t in self.techniques:
+            if t.can_be_invoked( self, in_combat = in_combat ):
+                ilist.append( t )
+        for i in self.contents:
+            if i.equipped and i.enhancement:
+                for t in i.enhancement.TECH:
+                    if t.can_be_invoked( self, in_combat = in_combat ):
+                        ilist.append( t )
+        return ilist
+
 
 def roll_initiative( pc ):
     """Convenience function for making initiative rolls."""

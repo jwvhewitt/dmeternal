@@ -13,8 +13,9 @@ class Ogre( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 10
     GP_VALUE = 35
-    HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.MTY_HUMANOID,
-     context.MTY_FIGHTER, context.GEN_GIANT )
+    HABITAT = ( context.HAB_EVERY, context.HAB_FOREST,
+     context.SET_EVERY, context.SET_RENFAN,
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GIANT )
     ENC_LEVEL = 4
 
     ATTACK = items.Attack( (1,10,0), element = stats.RESIST_CRUSHING )

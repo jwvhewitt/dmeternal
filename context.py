@@ -31,20 +31,23 @@ ENTRANCE, GOAL = range( 2 )
 # and should match at least one more tag in the scene description. If a monster
 # of a given kind is requested it should match that too.
 #
-# Habitat Tags
+# Habitat Tags- Linked to map generator
 HAB_EVERY, HAB_FOREST, HAB_CAVE = range( 3 )
 
-# Description Tags
-DES_EARTH, DES_AIR, DES_WATER, DES_FIRE, DES_SOLAR, DES_LUNAR = range(100,106)
+# Setting Tags
+SET_EVERY, SET_RENFAN = range( 100,102 )
+
+# Description Tags- Linked to sprite set and maybe map generator
+DES_EARTH, DES_AIR, DES_WATER, DES_FIRE, DES_SOLAR, DES_LUNAR = range(200,206)
 
 # Type Tags
-MTY_BEAST, MTY_HUMANOID, MTY_FIGHTER, MTY_THIEF, MTY_PRIEST, MTY_MAGE = range(200,206)
+MTY_BEAST, MTY_HUMANOID, MTY_FIGHTER, MTY_THIEF, MTY_PRIEST, MTY_MAGE = range(300,306)
 
 # Genus Tags. Note that these don't necessarily correspond to templates- a
 #  necromancer monster may be grouped with the undead, despite not being undead
 #  itself. Also a monster can have more than one genus because around here we
 #  believe in multiple inheritence.
-GEN_GIANT, GEN_GOBLIN, GEN_CHAOS, GEN_UNDEAD, GEN_NATURE = range( 300,305 )
+GEN_GIANT, GEN_GOBLIN, GEN_CHAOS, GEN_UNDEAD, GEN_NATURE, GEN_DRAGON = range( 400,406 )
 
 def matches_description( context_set, desc_request ):
     # context_set is a list of context tags.

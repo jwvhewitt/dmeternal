@@ -10,6 +10,12 @@
 # know.
 #
 
+class PhysicalThing( object ):
+    """A thing that can be placed on the map."""
+    def place( self, scene, pos ):
+        scene.contents.append( self )
+        self.pos = pos
+
 class SingStat( object ):
     # A singleton stat class; use these objects as tokens for whatever.
     # Also includes misc information related to the stat in question.

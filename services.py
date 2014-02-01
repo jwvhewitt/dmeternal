@@ -92,7 +92,7 @@ class Shop( object ):
                         self.wares.remove( it )
                     else:
                         it2 = copy.copy( it )
-                    self.pc.inventory.append( it2 )
+                    self.pc.contents.append( it2 )
                     explo.camp.gold -= it.cost()
                     myredraw.caption = "You have bought {0}.".format(it2)
             else:
@@ -111,7 +111,7 @@ class Shop( object ):
         while keep_going:
             mymenu = charsheet.RightMenu( explo.screen, predraw = myredraw )
 
-            for s in self.pc.inventory:
+            for s in self.pc.contents:
                 if s.equipped:
                     mymenu.add_item( "*{0} ({1}gp)".format( s, self.sale_price( s )), s )
                 elif self.pc.can_equip(s):
@@ -136,7 +136,7 @@ class Shop( object ):
                 myredraw.csheet = self.charsheets[self.pc]
             elif it:
                 # An item was selected. Deal with it.
-                self.pc.inventory.remove( it )
+                self.pc.contents.remove( it )
                 explo.camp.gold += self.sale_price( it )
                 if it.enhancement:
                     it.identified = True
@@ -158,7 +158,7 @@ class Shop( object ):
         while keep_going:
             mymenu = charsheet.RightMenu( explo.screen, predraw = myredraw )
 
-            for s in self.pc.inventory:
+            for s in self.pc.contents:
                 if not s.identified:
                     if s.equipped:
                         mymenu.add_item( "*{0} ({1}gp)".format( s, self.IDENTIFY_PRICE), s )

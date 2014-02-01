@@ -9,6 +9,7 @@ from . import SWORD, AXE, MACE, DAGGER, STAFF, POLEARM, BOW, ARROW, SHIELD, \
     SLING, BULLET, CLOTHES, LIGHT_ARMOR, HEAVY_ARMOR, HAT, HELM, GLOVE, GAUNTLET, \
     SANDALS, SHOES, BOOTS, CLOAK, HOLYSYMBOL, WAND, FARMTOOL
 import enchantments
+import spells
 
 class Enhancer( object ):
     NAMEPAT = "Enhanced {0}"
@@ -16,7 +17,10 @@ class Enhancer( object ):
     PLUSRANK = 2
     AFFECTS = ()
     BONUSES = stats.StatMod()
+    # Attack Enhancements- for weapons & ammo only
     ATTACK_ON_HIT = None
+    # Techniques- list of invocations
+    TECH = ()
     def get_name( self, it ):
         return self.NAMEPAT.format( it.true_name, it.itemtype.name )
     def cost( self ):
@@ -25,6 +29,27 @@ class Enhancer( object ):
 #  ********************************
 #  ***   WEAPON  ENHANCEMENTS   ***
 #  ********************************
+
+class ProtectionStaff( Enhancer ):
+    NAMEPAT = "{0} of Protection"
+    DESCPAT = "{0} It allows its user to cast Shield of Wind."
+    PLUSRANK = 1
+    AFFECTS = (STAFF,WAND)
+    TECH = (spells.airspells.AIR_ARMOR,)
+
+class BlessingStaff( Enhancer ):
+    NAMEPAT = "{0} of Blessing"
+    DESCPAT = "{0} It allows its user to cast Blessing."
+    PLUSRANK = 1
+    AFFECTS = (STAFF,WAND)
+    TECH = (spells.solarspells.BLESSING,)
+
+class CursingStaff( Enhancer ):
+    NAMEPAT = "{0} of Cursing"
+    DESCPAT = "{0} It allows its user to cast Curse."
+    PLUSRANK = 1
+    AFFECTS = (STAFF,WAND)
+    TECH = (spells.lunarspells.CURSE,)
 
 class Defender( Enhancer ):
     NAMEPAT = "Defender {0}"
@@ -46,6 +71,13 @@ class Balanced( Enhancer ):
     PLUSRANK = 2
     AFFECTS = (SWORD, DAGGER, STAFF)
     BONUSES = stats.StatMod({ stats.PHYSICAL_ATTACK: 5, stats.PHYSICAL_DEFENSE: 5, stats.NATURAL_DEFENSE: 5 })
+
+class HealingStaff( Enhancer ):
+    NAMEPAT = "{0} of Healing"
+    DESCPAT = "{0} It allows its user to cast Minor Cure."
+    PLUSRANK = 2
+    AFFECTS = (STAFF,WAND)
+    TECH = (spells.solarspells.MINOR_CURE,)
 
 class DreadWeapon( Enhancer ):
     NAMEPAT = "Dread {0}"
@@ -118,7 +150,7 @@ class Sharp( Enhancer ):
 
 class RuneWeapon( Enhancer ):
     NAMEPAT = "Rune {0}"
-    DESCPAT = "{0} Its mystic sigils add 1d8 dark damage and protect its user against spells."
+    DESCPAT = "{0} It crackles with eldritch fire, doing an extra 1d8 dark damage."
     PLUSRANK = 5
     AFFECTS = (SWORD, AXE, MACE, DAGGER, STAFF, POLEARM, BOW, SLING)
     ATTACK_ON_HIT = effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_LUNAR, anim=animobs.PurpleExplosion )
@@ -227,7 +259,7 @@ class SturdyArmor( Enhancer ):
 
 class WardedArmor( Enhancer ):
     NAMEPAT = "Warded {0}"
-    DESCPAT = "{0} It is covered in protective runes which give +10% to aura."
+    DESCPAT = "{0} It is covered in protective sigils which give +10% to aura."
     PLUSRANK = 5
     AFFECTS = (CLOTHES, LIGHT_ARMOR, HEAVY_ARMOR)
     BONUSES = stats.StatMod({ stats.MAGIC_DEFENSE: 10 })
@@ -269,14 +301,14 @@ class SturdyShield( Enhancer ):
     NAMEPAT = "Sturdy {0}"
     DESCPAT = "{0} It is reinforced to provide an additional +5% to defense."
     PLUSRANK = 2
-    AFFECTS = (CLOTHES, LIGHT_ARMOR, HEAVY_ARMOR)
+    AFFECTS = (SHIELD,)
     BONUSES = stats.StatMod({ stats.PHYSICAL_DEFENSE: 5 })
 
 class ShinyShield( Enhancer ):
     NAMEPAT = "Shiny {0}"
     DESCPAT = "{0} It provides an additional +5% to aura and defense."
     PLUSRANK = 3
-    AFFECTS = (HEAVY_ARMOR,)
+    AFFECTS = (SHIELD,)
     BONUSES = stats.StatMod({ stats.PHYSICAL_DEFENSE: 5, stats.MAGIC_DEFENSE: 5 })
 
 class ElementalShield( Enhancer ):
@@ -291,7 +323,7 @@ class ElementalShield( Enhancer ):
 #  *******************************
 
 class DefenseCloak( Enhancer ):
-    NAMEPAT = "{1} of Defense"
+    NAMEPAT = "{0} of Defense"
     DESCPAT = "{0} It has been enhanced to provide +5% to defense."
     PLUSRANK = 2
     AFFECTS = (CLOAK,)
@@ -305,7 +337,7 @@ class ElvenCloak( Enhancer ):
     BONUSES = stats.StatMod({ stats.MAGIC_DEFENSE: 5, stats.STEALTH: 5 })
 
 class HealthCloak( Enhancer ):
-    NAMEPAT = "{1} of Health"
+    NAMEPAT = "{0} of Health"
     DESCPAT = "{0} It provides a +2 bonus to toughness."
     PLUSRANK = 5
     AFFECTS = (CLOAK,CLOTHES)
@@ -324,10 +356,18 @@ class ProtectionCloak( Enhancer ):
 
 class AwareHat( Enhancer ):
     NAMEPAT = "{1} of Awareness"
-    DESCPAT = "{0} It provides a +20% bonus to awareness."
+    DESCPAT = "{0} It provides a +20% bonus to awareness and allows use of the Probe spell."
     PLUSRANK = 2
     AFFECTS = (HAT,HELM)
     BONUSES = stats.StatMod({ stats.AWARENESS:20 })
+    TECH = (spells.airspells.PROBE,)
+
+class TrickHat( Enhancer ):
+    NAMEPAT = "{0} of Tricks"
+    DESCPAT = "{0} Critters may be magically summoned from the hat."
+    PLUSRANK = 3
+    AFFECTS = (HAT,)
+    TECH = (spells.earthspells.CALL_CRITTER,)
 
 class SmartHat( Enhancer ):
     NAMEPAT = "{1} of Intelligence"
@@ -355,12 +395,33 @@ class SturdyHat( Enhancer ):
 #  ***   GLOVES  AND  GAUNTLETS   ***
 #  **********************************
 
+class HandyGlove( Enhancer ):
+    NAMEPAT = "Handy {0}"
+    DESCPAT = "{0} They provide a +10% bonus to disarm traps."
+    PLUSRANK = 1
+    AFFECTS = (GLOVE,GAUNTLET)
+    BONUSES = stats.StatMod({ stats.DISARM_TRAPS:10 })
+
 class PunchingGlove( Enhancer ):
     NAMEPAT = "{1} of Punching"
     DESCPAT = "{0} They provide a +5% bonus to kung fu."
-    PLUSRANK = 3
+    PLUSRANK = 2
     AFFECTS = (GLOVE,)
     BONUSES = stats.StatMod({ stats.KUNG_FU:5 })
+
+class SpikyGlove( Enhancer ):
+    NAMEPAT = "Spiky {0}"
+    DESCPAT = "{0} They provide a +5% bonus to attack."
+    PLUSRANK = 3
+    AFFECTS = (GLOVE,GAUNTLET)
+    BONUSES = stats.StatMod({ stats.PHYSICAL_ATTACK: 5 })
+
+class SpellcraftGlove( Enhancer ):
+    NAMEPAT = "{1} of Spellcraft"
+    DESCPAT = "{0} They provide a +5% bonus to magic."
+    PLUSRANK = 3
+    AFFECTS = (GLOVE,)
+    BONUSES = stats.StatMod({ stats.MAGIC_ATTACK: 5 })
 
 class StrengthGlove( Enhancer ):
     NAMEPAT = "{1} of Might"
@@ -395,19 +456,26 @@ class ForgeGlove( Enhancer ):
 #  ***   FOOTWEAR   ***
 #  ********************
 
+class FleetShoe( Enhancer ):
+    NAMEPAT = "Fleet {0}"
+    DESCPAT = "{0} They provide a +5% bonus to natural defense."
+    PLUSRANK = 1
+    AFFECTS = (SANDALS,)
+    BONUSES = stats.StatMod({ stats.NATURAL_DEFENSE:5 })
+
+class SilenceShoe( Enhancer ):
+    NAMEPAT = "Silent {1}"
+    DESCPAT = "{0} They provide a +5% bonus to stealth."
+    PLUSRANK = 2
+    AFFECTS = (SHOES,SANDALS,BOOTS)
+    BONUSES = stats.StatMod({ stats.STEALTH:5 })
+
 class KickingShoe( Enhancer ):
     NAMEPAT = "{1} of Kicking"
     DESCPAT = "{0} They provide a +5% bonus to kung fu."
     PLUSRANK = 3
     AFFECTS = (SHOES,SANDALS,BOOTS)
     BONUSES = stats.StatMod({ stats.KUNG_FU:5 })
-
-class SilenceShoe( Enhancer ):
-    NAMEPAT = "Silent {1}"
-    DESCPAT = "{0} They provide a +5% bonus to stealth."
-    PLUSRANK = 4
-    AFFECTS = (SHOES,SANDALS,BOOTS)
-    BONUSES = stats.StatMod({ stats.STEALTH:5 })
 
 class ReflexShoe( Enhancer ):
     NAMEPAT = "{1} of Speed"

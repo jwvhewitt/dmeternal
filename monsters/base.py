@@ -95,10 +95,12 @@ class Monster( characters.Character ):
     ATTACK = None
     MOVE_POINTS = 10
     ENC_LEVEL = 1
+    TECHNIQUES = ()
 
     def __init__( self, team = None ):
         super(Monster, self).__init__( name=self.name, statline=self.statline )
         self.team = team
+        self.techniques += self.TECHNIQUES
         self.init_monster()
 
     def init_monster( self ):

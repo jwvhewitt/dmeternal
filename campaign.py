@@ -25,7 +25,6 @@ import glob
 import pickle
 import stats
 import combat
-import monsters
 import context
 import random
 import waypoints
@@ -94,45 +93,6 @@ class Campaign( object ):
         else:
             self.fight = combat.Combat( self, mon )
 
-    def choose_monster( self, min_rank, max_rank, habitat ):
-        """Choose a random monster as close to max_rank as possible."""
-        possible_list = list()
-        backup_list = list()
-        for m in monsters.MONSTER_LIST:
-            if m.ENC_LEVEL <= max_rank:
-                n = context.matches_description( m.HABITAT, habitat )
-                if n:
-                    backup_list += (m,) * m.ENC_LEVEL
-                    if m.ENC_LEVEL >= min_rank:
-                        possible_list += (m,) * n
-        if possible_list:
-            return random.choice( possible_list )
-        elif backup_list:
-            return random.choice( backup_list )
-
-    def build_encounter( self, rank, strength, habitat, team=None ):
-        min_rank = min( int( rank * 0.8 ), 11 )
-        max_rank = rank + 2
-        horde = list()
-
-        # Determine how many levels of monster to generate.
-        pts = max( ( rank * random.randint(150,250) * strength ) // 100, 1 )
-
-        while pts > 0:
-            mclass = self.choose_monster( min_rank, max_rank, habitat )
-            rel_level = max_rank + 1 - mclass.ENC_LEVEL
-            m_pts = 200 / ( rel_level ** 2 // 12 + rel_level )
-
-            n,pts = divmod( pts , m_pts )
-            if n < 1:
-                n = 1
-                pts = 0
-
-            for t in range( n ):
-                horde.append( mclass(team) )
-        return horde
-
-
 
     def place_party( self ):
         """Stick the party close to the waypoint."""
@@ -170,7 +130,6 @@ class Campaign( object ):
             elif not exp.no_quit:
                 # If the player quit in exploration mode, exit to main menu.
                 break
-
 
 
 def load_party( screen ):
@@ -215,6 +174,7 @@ if __name__=='__main__':
     import teams
     import spells
     import mapgen
+    import monsters
 
     # Set the screen size.
 #    screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
@@ -225,7 +185,7 @@ if __name__=='__main__':
     pygwrap.init()
     rpgmenu.init()
 
-    myscene = maps.Scene( 100 , 100, sprites={maps.SPRITE_WALL: "terrain_wall_lightstone.png"} )
+    myscene = maps.Scene( 100 , 100, sprites={maps.SPRITE_WALL: "terrain_wall_lightstone.png"}, biome=context.HAB_FOREST, setting=context.SET_RENFAN )
     for x in range( myscene.width ):
         for y in range( myscene.height ):
             if random.randint(1,3) != 1:
@@ -253,7 +213,8 @@ if __name__=='__main__':
     i = items.gloves.BracersOfDefense()
     i.pos = (24,17)
     myscene.contents.append( i )
-    i = items.bows.Longbow()
+    i = items.hats.MageHat()
+    i.enhancement = items.enhancers.TrickHat()
     i.pos = (24,17)
     myscene.contents.append( i )
     i = items.bows.Shortbow()
@@ -279,7 +240,7 @@ if __name__=='__main__':
 
 
     myroom = pygame.Rect(21,12,12,20)
-    myteam = teams.Team(default_reaction=teams.SAFELY_FRIENDLY, home=myroom)
+    myteam = teams.Team(default_reaction=characters.SAFELY_FRIENDLY, home=myroom)
 
     mygob = monsters.generate_npc( species = characters.Orc, team=myteam )
     mygob.pos = (27,12)
@@ -324,7 +285,8 @@ if __name__=='__main__':
     mychest = waypoints.LargeChest(myscene,(19,12))
     mychest.stock( 8 )
 
-    otherscene = maps.Scene( 102, 102, sprites={ maps.SPRITE_GROUND: "terrain_ground_cthonic.png", maps.SPRITE_WALL: "terrain_wall_rocks.png",maps.SPRITE_FLOOR: "terrain_floor_gravel.png"} )
+    otherscene = maps.Scene( 102, 102, sprites={ maps.SPRITE_GROUND: "terrain_ground_cthonic.png", maps.SPRITE_WALL: "terrain_wall_rocks.png",maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
+        biome=context.HAB_CAVE, setting=context.SET_RENFAN, desctags=(context.DES_FIRE,) )
 
     stairs_1 = waypoints.SpiralStairsDown( myscene, (19,25) )
     stairs_2 = waypoints.SpiralStairsUp()
@@ -336,7 +298,7 @@ if __name__=='__main__':
 
     osgen = mapgen.DividedIslandScene( otherscene )
     room1 = mapgen.FuzzyRoom( tags=(context.ENTRANCE,) )
-    room1.inventory.append( stairs_2 )
+    room1.contents.append( stairs_2 )
     room2 = mapgen.SharpRoom( tags=(context.ENTRANCE,) )
     room3 = mapgen.FuzzyRoom( tags=(context.GOAL,) )
     room4 = mapgen.BottleneckRoom()
@@ -345,12 +307,13 @@ if __name__=='__main__':
     pswitch = waypoints.PuzzleSwitch()
     pswitch.CALL = pdoor.activate
     room4.special_c["door"] = pdoor
-    room2.inventory.append( pswitch )
-    room2.inventory += camp.build_encounter( 1, 100, {context.GEN_UNDEAD: True}, teams.Team(default_reaction=-999) )
+    room2.contents.append( pswitch )
+    myteam = teams.Team(default_reaction=-999)
+    room2.contents.append( myteam )
 
     mychest = waypoints.MediumChest()
     mychest.stock(5)
-    room3.inventory.append( mychest )
+    room3.contents.append( mychest )
 
     osgen.contents += (room1,room2,room3,room4)
 
@@ -363,11 +326,11 @@ if __name__=='__main__':
 
     myroom = pygame.Rect(50,12,10,10)
     myteam = teams.Team(default_reaction=-999, home=myroom)
-    mymon = monsters.giants.Ogre( team=myteam )
+    mymon = monsters.animals.SwampDragonfly( team=myteam )
     mymon.pos = (55,17)
     myscene.contents.append( mymon )
 
-    mymon = camp.choose_monster(1,3,{context.GEN_UNDEAD: True})
+    mymon = myscene.choose_monster(1,3,myscene.get_encounter_request())
     if mymon:
         mymon = mymon( team=myteam )
         mymon.pos = (57,18)

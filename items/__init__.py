@@ -82,6 +82,10 @@ class Attack( object ):
             it = ( it * 4 ) // 5
         if not self.damage_mod:
             it = ( it * 4 ) // 5
+        # "extra_effect" is generally used for monster attacks, but if used for
+        # a PC weapon we'll guesstimate and double cost.
+        if self.extra_effect:
+            it = it * 2
         # Multiply by element cost.
         it *= self.element.element_cost_mod
         return it
@@ -117,7 +121,7 @@ class Attack( object ):
         return roll
 
 
-class Item( object ):
+class Item( stats.PhysicalThing ):
     true_name = "Item"
     true_desc = ""
     statline = stats.StatMod()
@@ -223,14 +227,14 @@ class MissileWeapon( Item ):
         return it
     def can_attack( self, user ):
         """Return True if this weapon can be used to attack right now."""
-        h2 = user.inventory.get_equip( HAND2 )
+        h2 = user.contents.get_equip( HAND2 )
         return h2 and h2.itemtype == self.AMMOTYPE
     def spend_attack_price( self, user ):
         """Spend this weapon's attack price."""
-        h2 = user.inventory.get_equip( HAND2 )
+        h2 = user.contents.get_equip( HAND2 )
         h2.quantity += -1
         if h2.quantity < 1:
-            user.inventory.remove( h2 )
+            user.contents.remove( h2 )
 
 class Ammo( Item ):
     quantity = 20
@@ -441,13 +445,14 @@ def generate_hoard( drop_rank, drop_strength ):
         else:
             it = choose_item( max_rank = drop_rank )
         if it:
-            if ( it.min_rank() < drop_rank ) and ( random.randint(1,20) <= drop_rank ):
+            delta_rank = drop_rank - it.min_rank()
+            if random.randint(1,10) <= delta_rank:
                 make_item_magic( it, drop_rank )
                 it.identified = False
             elif random.randint(1,23) == 5:
                 it.identified = False
             hoard.append( it )
-            gp -= it.cost()
+            gp -= max( it.cost()//2 , 1 )
         tries += 1
 
     return (max(gp,0),hoard)

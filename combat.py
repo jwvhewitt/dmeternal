@@ -302,9 +302,9 @@ class Combat( object ):
         mymenu = rpgmenu.PopUpMenu( explo.screen, explo.view )
 
         # Add the techniques.
-        for t in chara.techniques:
-            if t.can_be_invoked( chara, in_combat = True ):
-                mymenu.add_item( str( t ), t )
+        techs = chara.get_invocations( True )
+        for t in techs:
+            mymenu.add_item( t.menu_str(), t )
         mymenu.sort()
         mymenu.add_alpha_keys()
 

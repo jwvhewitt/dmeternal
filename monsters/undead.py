@@ -16,7 +16,8 @@ class Skeleton( base.Monster ):
     MOVE_POINTS = 12
     VOICE = None
     GP_VALUE = 5
-    HABITAT = ( context.HAB_EVERY, context.DES_LUNAR, context.GEN_UNDEAD )
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.DES_LUNAR, context.GEN_UNDEAD )
     ENC_LEVEL = 2
 
     COMBAT_AI = aibrain.SteadyAI()
@@ -37,7 +38,8 @@ class Zombie( base.Monster ):
     MOVE_POINTS = 8
     VOICE = None
     GP_VALUE = 5
-    HABITAT = ( context.HAB_EVERY, context.DES_LUNAR, context.GEN_UNDEAD )
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.DES_LUNAR, context.GEN_UNDEAD )
     ENC_LEVEL = 3
 
     COMBAT_AI = aibrain.BrainDeadAI()
@@ -58,7 +60,8 @@ class Ghoul( base.Monster ):
     MOVE_POINTS = 10
     VOICE = None
     GP_VALUE = 50
-    HABITAT = ( context.HAB_EVERY, context.DES_LUNAR, context.GEN_UNDEAD )
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.DES_LUNAR, context.GEN_UNDEAD )
     ENC_LEVEL = 5
 
     COMBAT_AI = aibrain.GhoulAI()
