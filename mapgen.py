@@ -501,9 +501,9 @@ class DividedIslandScene( RandomScene ):
         myplasma = Plasma()
         for x in range( self.width ):
             for y in range( self.height ):
-                if myplasma.map[x][y] < 0.25:
+                if myplasma.map[x][y] < 0.15:
                     gb.map[x][y].floor = maps.WATER
-                elif myplasma.map[x][y] < 0.5:
+                elif myplasma.map[x][y] < 0.7:
                     gb.map[x][y].floor = maps.LOGROUND
                     gb.map[x][y].wall = True
                 else:
@@ -588,6 +588,42 @@ class DividedIslandScene( RandomScene ):
         self.draw_direct_connection( gb, after_bridge.area.centerx, after_bridge.area.centery, bridge.area.centerx, bridge.area.centery )
 
     mutate = CellMutator(noise_throttle=100)
+
+class EdgeOfCivilization( RandomScene ):
+    """Civilized rooms connected to road; other rooms just connected by loground."""
+    def prepare( self, gb ):
+        # Step one- we're going to use a plasma map to set water/lo/hi ground.
+        # Fill all non-water tiles with True walls for now.
+        myplasma = Plasma()
+        for x in range( self.width ):
+            for y in range( self.height ):
+                if myplasma.map[x][y] < 0.15:
+                    gb.map[x][y].floor = maps.WATER
+                elif myplasma.map[x][y] < 0.6:
+                    gb.map[x][y].floor = maps.LOGROUND
+                    gb.map[x][y].wall = True
+                else:
+                    gb.map[x][y].floor = maps.HIGROUND
+                    gb.map[x][y].wall = True
+
+    def arrange_contents( self, gb ):
+        # Run a road along one edge of the map. Stick everything else in a
+        # sub-rect to arrange there.
+        pass
+
+    def connect_contents( self, gb ):
+        # Connect all uncivilized areas with LOGROUND first. Then, connect the
+        # civilized areas with HIGROUND to the road.
+        pass
+
+    mutate = CellMutator()
+
+    def convert_true_walls( self ):
+        for x in range( self.width ):
+            for y in range( self.height ):
+                if self.gb.map[x][y].wall == True:
+                    self.gb.map[x][y].wall = maps.BASIC_WALL
+
 
 if __name__ == '__main__':
     pygame.init()

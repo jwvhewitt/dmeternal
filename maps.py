@@ -262,7 +262,7 @@ class Scene( object ):
         return req
 
     def choose_monster( self, min_rank, max_rank, habitat=None ):
-        """Choose a random monster class as close to max_rank as possible."""
+        """Choose a random monster class as close to range as possible."""
         possible_list = list()
         backup_list = list()
         if not habitat:
@@ -273,7 +273,7 @@ class Scene( object ):
                 if n:
                     backup_list += (m,) * m.ENC_LEVEL
                     if m.ENC_LEVEL >= min_rank:
-                        possible_list += (m,) * n
+                        possible_list += (m,) * max( n * 2 - 3, 1 )
         if possible_list:
             return random.choice( possible_list )
         elif backup_list:
