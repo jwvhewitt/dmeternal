@@ -41,7 +41,8 @@ class GiantRat( base.Monster ):
     MOVE_POINTS = 12
     VOICE = None
     GP_VALUE = 0
-    HABITAT = ( context.HAB_CAVE, context.SET_EVERY, context.DES_LUNAR,
+    HABITAT = ( context.HAB_CAVE, context.SET_EVERY,
+    context.DES_LUNAR, context.DES_CIVILIZED,
      context.MTY_BEAST, context.GEN_NATURE )
     ENC_LEVEL = 1
 
@@ -85,7 +86,8 @@ class MadDog( base.Monster ):
     MOVE_POINTS = 10
     VOICE = None
     GP_VALUE = 0
-    HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.MTY_BEAST, context.GEN_CHAOS )
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.DES_CIVILIZED,
+     context.MTY_BEAST, context.GEN_CHAOS )
     ENC_LEVEL = 2
 
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_PIERCING )

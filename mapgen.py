@@ -338,13 +338,14 @@ class Room( object ):
                     if decor != -1:
                         gb.map[x][y].decor = decor
 
-    def draw_fuzzy_ground( self, gb, x, y, pen=maps.HIGROUND ):
+    FUZZY_FILL_TERRAIN = maps.HIGROUND
+    def draw_fuzzy_ground( self, gb, x, y ):
         # In general, just erase the wall to expose the floor underneath,
         # adding a floor if need be.
         if gb.on_the_map(x,y):
             gb.map[x][y].wall = None
             if gb.map[x][y].blocks_walking():
-                gb.map[x][y].floor = maps.HIGROUND
+                gb.map[x][y].floor = self.FUZZY_FILL_TERRAIN
 
     def probably_blocks_movement( self, gb, x, y ):
         if not gb.on_the_map(x,y):
@@ -444,10 +445,6 @@ class BottleneckRoom( Room ):
         door_wp = self.special_c.get( "door", None )
         if door_wp:
             door_wp.place( gb, (x,y) )
-
-class HiRoadRoom( Room ):
-    """Civilized sub-rooms are connected with HiGround; others with LoGround."""
-
 
 class RandomScene( Room ):
     """The blueprint for a scene."""
@@ -608,7 +605,7 @@ class EdgeOfCivilization( RandomScene ):
             for y in range( self.height ):
                 if myplasma.map[x][y] < 0.15:
                     gb.map[x][y].floor = maps.WATER
-                elif myplasma.map[x][y] < 0.6:
+                elif myplasma.map[x][y] < 0.75:
                     gb.map[x][y].floor = maps.LOGROUND
                     gb.map[x][y].wall = True
                 else:
@@ -617,30 +614,41 @@ class EdgeOfCivilization( RandomScene ):
 
     def arrange_contents( self, gb ):
         # Run a road along one edge of the map. Stick everything else in a
-        # sub-rect to arrange there.
-        pass
+        # sub-rect to arrange there. Keep track of the civilized areas.
+        self.wilds = Room( width=self.width-10, height=self.height, anchor=west, parent=self )
+        self.wilds.FUZZY_FILL_TERRAIN = maps.LOGROUND
+
+        self.civilized_bits = list()
+        for r in self.contents[:]:
+            if r is not self.wilds:
+                self.contents.remove( r )
+                self.wilds.append( r )
+                if context.CIVILIZED in r.tags:
+                    self.civilized_bits.append( r )
+
+        # Create the road.
+        road = pygame.Rect( self.area.x + self.area.width - 10, self.area.y, 7, self.area.height )
+        self.fill( gb, river, floor=maps.HIGROUND, wall=None )
+        self.fill( gb, river.inflate(4,0), wall=None )
+
+        self.roadbits = list()
+        for y in range(10):
+            x = self.area.x + self.area.width - 10 + random(0,2)
+            roadseg = Room( width=5, height=self.height//10, parent=self)
+            roadseg.area = pygame.Rect( x, y*roadseg.height, roadseg.width, roadseg.height )
+            self.roadbits.append( roadseg )
+
+    def find_distance_to_key( self, ulroom ):
+        return round( math.sqrt( ( self.key_room.area.centerx-ulroom.area.centerx )**2 + ( self.key_room.area.centery-ulroom.area.centery )**2 ) )
 
     def connect_contents( self, gb ):
-        # Connect all uncivilized areas with LOGROUND first. Then, connect the
-        # civilized areas with HIGROUND to the road.
-        myrooms = list()
-        for r in self.contents:
-            if hasattr( r, "area" ):
-                myrooms.append( r )
-
-        # Process them
-        if myrooms:
-            prev = myrooms[-1]
-            for r in myrooms:
-                # Connect r to prev
-                if self.DO_DIRECT_CONNECTIONS:
-                    self.draw_direct_connection( gb, r.area.centerx, r.area.centery, prev.area.centerx, prev.area.centery )
-                else:
-                    self.draw_L_connection( gb, r.area.centerx, r.area.centery, prev.area.centerx, prev.area.centery )
-
-
-                # r becomes the new prev
-                prev = r
+        # Connect all civilized areas with HIGROUND.
+        connected = self.roadbits
+        for r in self.civilized_bits:
+            self.key_room = r
+            connected.sort( key=self.find_distance_to_key )
+            self.draw_road_connection( gb, r.area.centerx, r.area.centery, connected[0].area.centerx, connected[0].area.centery )
+            connected.append( r )
 
     mutate = CellMutator()
 
@@ -649,6 +657,11 @@ class EdgeOfCivilization( RandomScene ):
             for y in range( self.height ):
                 if self.gb.map[x][y].wall == True:
                     self.gb.map[x][y].wall = maps.BASIC_WALL
+
+    def draw_road_connection( self, gb, x1,y1,x2,y2 ):
+        path = animobs.get_line( x1,y1,x2,y2 )
+        for p in path:
+            self.fill( gb, pygame.Rect(p[0]-1,p[1]-1,3,3), floor=maps.HIGROUND, wall=None )
 
 
 if __name__ == '__main__':

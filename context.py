@@ -21,7 +21,7 @@ MAYBE = 999
 # ***   RANDOM  MAP  TAGS   ***
 # *****************************
 
-ENTRANCE, GOAL = range( 2 )
+ENTRANCE, GOAL, CIVILIZED = range( 3 )
 
 # **************************************
 # ***   Monster  Description  Tags   ***
@@ -38,7 +38,8 @@ HAB_EVERY, HAB_FOREST, HAB_CAVE = range( 3 )
 SET_EVERY, SET_RENFAN = range( 100,102 )
 
 # Description Tags- Linked to sprite set and maybe map generator
-DES_EARTH, DES_AIR, DES_WATER, DES_FIRE, DES_SOLAR, DES_LUNAR = range(200,206)
+DES_EARTH, DES_AIR, DES_WATER, DES_FIRE, DES_SOLAR, DES_LUNAR, \
+  DES_CIVILIZED = range(200,207)
 
 # Type Tags
 MTY_BEAST, MTY_HUMANOID, MTY_FIGHTER, MTY_THIEF, MTY_PRIEST, MTY_MAGE = range(300,306)
