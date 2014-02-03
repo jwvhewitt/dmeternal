@@ -195,8 +195,9 @@ class Explorer( object ):
 
         # Update the view of all party members.
         for pc in camp.party:
-            x,y = pc.pos
-            pfov.PCPointOfView( camp.scene, x, y, 15 )
+            if pc.pos and pc.is_alright():
+                x,y = pc.pos
+                pfov.PCPointOfView( camp.scene, x, y, 15 )
 
         # Hide any monsters who can manage it.
         for m in self.scene.contents:

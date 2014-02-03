@@ -259,6 +259,8 @@ class Room( object ):
                         closed_area.append( myrect )
                     count += 1
 
+    DO_DIRECT_CONNECTIONS = False
+
     def connect_contents( self, gb ):
         # Step Three: Connect all rooms in contents, making trails on map.
         # For this one, I'm just gonna straight line connect the contents in
@@ -274,8 +276,11 @@ class Room( object ):
             prev = myrooms[-1]
             for r in myrooms:
                 # Connect r to prev
-                self.draw_L_connection( gb, r.area.centerx, r.area.centery, prev.area.centerx, prev.area.centery )
-#                self.draw_direct_connection( gb, r.area.centerx, r.area.centery, prev.area.centerx, prev.area.centery )
+                if self.DO_DIRECT_CONNECTIONS:
+                    self.draw_direct_connection( gb, r.area.centerx, r.area.centery, prev.area.centerx, prev.area.centery )
+                else:
+                    self.draw_L_connection( gb, r.area.centerx, r.area.centery, prev.area.centerx, prev.area.centery )
+
 
                 # r becomes the new prev
                 prev = r
@@ -333,7 +338,7 @@ class Room( object ):
                     if decor != -1:
                         gb.map[x][y].decor = decor
 
-    def draw_fuzzy_ground( self, gb, x, y ):
+    def draw_fuzzy_ground( self, gb, x, y, pen=maps.HIGROUND ):
         # In general, just erase the wall to expose the floor underneath,
         # adding a floor if need be.
         if gb.on_the_map(x,y):
@@ -439,6 +444,10 @@ class BottleneckRoom( Room ):
         door_wp = self.special_c.get( "door", None )
         if door_wp:
             door_wp.place( gb, (x,y) )
+
+class HiRoadRoom( Room ):
+    """Civilized sub-rooms are connected with HiGround; others with LoGround."""
+
 
 class RandomScene( Room ):
     """The blueprint for a scene."""
@@ -614,7 +623,24 @@ class EdgeOfCivilization( RandomScene ):
     def connect_contents( self, gb ):
         # Connect all uncivilized areas with LOGROUND first. Then, connect the
         # civilized areas with HIGROUND to the road.
-        pass
+        myrooms = list()
+        for r in self.contents:
+            if hasattr( r, "area" ):
+                myrooms.append( r )
+
+        # Process them
+        if myrooms:
+            prev = myrooms[-1]
+            for r in myrooms:
+                # Connect r to prev
+                if self.DO_DIRECT_CONNECTIONS:
+                    self.draw_direct_connection( gb, r.area.centerx, r.area.centery, prev.area.centerx, prev.area.centery )
+                else:
+                    self.draw_L_connection( gb, r.area.centerx, r.area.centery, prev.area.centerx, prev.area.centery )
+
+
+                # r becomes the new prev
+                prev = r
 
     mutate = CellMutator()
 
