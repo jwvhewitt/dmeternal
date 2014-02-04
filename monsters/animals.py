@@ -135,7 +135,7 @@ class WoodBeetle( base.Monster ):
 
 class FireBeetle( base.Monster ):
     name = "Fire Beetle"
-    statline = { stats.STRENGTH: 10, stats.TOUGHNESS: 11, stats.REFLEXES: 11, \
+    statline = { stats.STRENGTH: 10, stats.TOUGHNESS: 9, stats.REFLEXES: 8, \
         stats.INTELLIGENCE: 1, stats.PIETY: 1, stats.CHARISMA: 1 }
     SPRITENAME = "monster_bugs.png"
     FRAME = 8
@@ -234,7 +234,7 @@ class SwampDragonfly( base.Monster ):
 
     TECHNIQUES = ( invocations.MPInvocation( "Acid Breath",
       effects.OpposedRoll( att_skill=stats.PHYSICAL_ATTACK, att_stat=stats.REFLEXES, att_modifier=10, def_stat=stats.REFLEXES, on_success = (
-        effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_ACID, anim=animobs.GreenExplosion )
+        effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_ACID, anim=animobs.GreenExplosion )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
       ,) ), com_tar=targetarea.SingleTarget(), shot_anim=animobs.GreenSpray, ai_tar=invocations.vs_enemy, mp_cost=3

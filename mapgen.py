@@ -604,12 +604,12 @@ class EdgeOfCivilization( RandomScene ):
     def prepare( self, gb ):
         # Step one- we're going to use a plasma map to set water/lo/hi ground.
         # Fill all non-water tiles with True walls for now.
-        myplasma = Plasma()
+        self.plasma = Plasma()
         for x in range( self.width ):
             for y in range( self.height ):
-                if myplasma.map[x][y] < 0.15:
+                if self.plasma.map[x][y] < 0.15:
                     gb.map[x][y].floor = maps.WATER
-                elif myplasma.map[x][y] < 0.75:
+                elif self.plasma.map[x][y] < 0.75:
                     gb.map[x][y].floor = maps.LOGROUND
                     gb.map[x][y].wall = True
                 else:
@@ -632,9 +632,7 @@ class EdgeOfCivilization( RandomScene ):
                     self.civilized_bits.append( r )
 
         # Create the road.
-        road = pygame.Rect( self.area.x + self.area.width - 10, self.area.y, 7, self.area.height )
-        self.fill( gb, road, floor=maps.HIGROUND, wall=None )
-        self.fill( gb, road.inflate(4,0), wall=None )
+        self.road = pygame.Rect( self.area.x + self.area.width - 10, self.area.y, 7, self.area.height )
 
         self.roadbits = list()
         for y in range(10):
@@ -646,6 +644,12 @@ class EdgeOfCivilization( RandomScene ):
     def connect_contents( self, gb ):
         # Connect all civilized areas with HIGROUND.
         connected = self.roadbits
+        r_prev = connected[0]
+        for r in connected[1:]:
+            self.draw_road_connection( gb, r.area.centerx, r.area.centery, r_prev.area.centerx, r_prev.area.centery )
+            r_prev = r            
+        self.draw_road_connection( gb, connected[0].area.centerx, connected[0].area.centery, self.road.centerx, self.road.top )
+        self.draw_road_connection( gb, connected[-1].area.centerx, connected[-1].area.centery, self.road.centerx, self.road.bottom )
         for r in self.civilized_bits:
             connected.sort( key=r.find_distance_to )
             self.draw_road_connection( gb, r.area.centerx, r.area.centery, connected[0].area.centerx, connected[0].area.centery )
@@ -653,22 +657,44 @@ class EdgeOfCivilization( RandomScene ):
 
     mutate = CellMutator()
 
-    def convert_true_walls( self ):
-        for x in range( self.width ):
-            for y in range( self.height ):
-                if self.gb.map[x][y].wall == True:
-                    self.gb.map[x][y].wall = maps.BASIC_WALL
-
     def draw_road_connection( self, gb, x1,y1,x2,y2 ):
         path = animobs.get_line( x1,y1,x2,y2 )
         for p in path:
-            self.fill( gb, pygame.Rect(p[0]-1,p[1]-1,3,3), floor=maps.HIGROUND, wall=None )
+            self.fill( gb, pygame.Rect(p[0]-2,p[1]-2,5,5), wall=None )
+            self.fill( gb, pygame.Rect(p[0]-1,p[1]-1,3,3), floor=maps.HIGROUND )
+
+    def water_nearby( self, x, y ):
+        """Return True if a water tile is adjacent."""
+        found_water = False
+        for d in self.gb.DELTA8:
+            if self.gb.get_floor( x + d[0], y + d[1] ) is maps.WATER:
+                found_water = True
+                break
+        return found_water
+
+    def four_true_walls( self, x, y ):
+        """Return True if this tile is upper left corner of block of four True walls."""
+        return (self.gb.get_wall(x+1,y) is True) and (self.gb.get_wall(x+1,y+1) is True) and (self.gb.get_wall(x,y+1) is True)
 
     def convert_true_walls( self ):
         for x in range( self.width ):
             for y in range( self.height ):
                 if self.gb.map[x][y].wall == True:
-                    self.gb.map[x][y].wall = maps.TREES
+                    if x%3 == 0 and y%3 == 0 and self.four_true_walls(x,y) and random.triangular(0.3,1.0,0.90) < self.plasma.map[x][y]:
+                        self.gb.map[x][y].wall = maps.MOUNTAIN_TOP
+                        self.gb.map[x+1][y].wall = maps.MOUNTAIN_RIGHT
+                        self.gb.map[x][y+1].wall = maps.MOUNTAIN_LEFT
+                        self.gb.map[x+1][y+1].wall = maps.MOUNTAIN_BOTTOM
+                    elif self.water_nearby( x, y ):
+                        if random.randint(1,3) != 2:
+                            self.gb.map[x][y].wall = maps.ROCKS
+                        else:
+                            self.gb.map[x][y].wall = None
+                    else:
+                        if self.plasma.map[x][y] < 0.85:
+                            self.gb.map[x][y].wall = maps.TREES
+                        else:
+                            self.gb.map[x][y].wall = maps.ROCKS
 
 
 if __name__ == '__main__':

@@ -38,7 +38,7 @@ class SingTerrain( object ):
     def __reduce__( self ):
         return self.ident
 
-class VariableTerrain( object ):
+class VariableTerrain( SingTerrain ):
     # A singleton terrain class; use these objects as tokens for maps.
     def __init__( self, ident, spritesheet = SPRITE_FLOOR, block_vision = False, block_walk = False, block_fly = False, frames = (0,1,) ):
         # ident should be the module-level name of this stat.
@@ -203,7 +203,8 @@ MOUNTAIN_RIGHT = SingTerrain( "MOUNTAIN_RIGHT", block_walk = True, frame = 61 )
 MOUNTAIN_BOTTOM = SingTerrain( "MOUNTAIN_BOTTOM", block_walk = True, frame = 62 )
 SPIRAL_STAIRS_UP = SingTerrain( "SPIRAL_STAIRS_UP", block_walk = True, spritesheet=SPRITE_INTERIOR, frame=0 )
 SPIRAL_STAIRS_DOWN = SingTerrain( "SPIRAL_STAIRS_DOWN", block_walk = True, spritesheet=SPRITE_INTERIOR, frame=1 )
-TREES = CrowdTerrain( "TREES", inner_frames = (54,67,68,69,67,68,69), outer_frames = (51,52,53,63,64,65,66) )
+ROCKS = VariableTerrain( "ROCKS", spritesheet = SPRITE_GROUND, block_walk=True, frames = (23,24,25,26,27) )
+TREES = CrowdTerrain( "TREES", inner_frames = (51,52,53,54,55), outer_frames = (63,64,65,66,67,68,69) )
 
 # DECOR TYPES
 BOOKSHELF = OnTheWallTerrain( "BOOKSHELF", frame = 13, block_walk=True )
