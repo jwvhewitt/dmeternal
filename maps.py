@@ -165,6 +165,25 @@ class OnTheWallTerrain( SingTerrain ):
         else:
             return 0
 
+class CrowdTerrain( SingTerrain ):
+    def __init__( self, ident, spritesheet = SPRITE_GROUND, block_vision = False, block_walk = True, block_fly = True, inner_frames = (0,1), outer_frames=(2,3) ):
+        # ident should be the module-level name of this stat.
+        self.ident = ident
+        self.spritesheet = spritesheet
+        self.block_vision = block_vision
+        self.block_walk = block_walk
+        self.block_fly = block_fly
+        self.inner_frames = inner_frames
+        self.outer_frames = outer_frames
+    def render( self, screen, dest, view, data ):
+        view.sprites[ self.spritesheet ].render( screen, dest, data )
+    def get_data( self, view, x, y ):
+        """Pre-generate display data for this tile- facing offset."""
+        if view.space_nearby( x, y ):
+            return self.outer_frames[ view.get_pseudo_random() % len(self.outer_frames) ]
+        else:
+            return self.inner_frames[ view.get_pseudo_random() % len(self.inner_frames) ]
+
 # GROUND TYPES
 WATER = WaterTerrain( "WATER", frame = 56 )
 LOGROUND = GroundTerrain( "LOGROUND", frame = 28, edge = WATER )
@@ -184,6 +203,7 @@ MOUNTAIN_RIGHT = SingTerrain( "MOUNTAIN_RIGHT", block_walk = True, frame = 61 )
 MOUNTAIN_BOTTOM = SingTerrain( "MOUNTAIN_BOTTOM", block_walk = True, frame = 62 )
 SPIRAL_STAIRS_UP = SingTerrain( "SPIRAL_STAIRS_UP", block_walk = True, spritesheet=SPRITE_INTERIOR, frame=0 )
 SPIRAL_STAIRS_DOWN = SingTerrain( "SPIRAL_STAIRS_DOWN", block_walk = True, spritesheet=SPRITE_INTERIOR, frame=1 )
+TREES = CrowdTerrain( "TREES", inner_frames = (54,67,68,69,67,68,69), outer_frames = (51,52,53,63,64,65,66) )
 
 # DECOR TYPES
 BOOKSHELF = OnTheWallTerrain( "BOOKSHELF", frame = 13, block_walk=True )
@@ -457,6 +477,15 @@ class SceneView( object ):
     def space_to_south( self, x, y ):
         """Return True if no wall in tile to south."""
         return not self.scene.get_wall( x , y + 1 )
+
+    def space_nearby( self, x, y ):
+        """Return True if a tile without a wall is adjacent."""
+        found_space = False
+        for d in self.scene.DELTA8:
+            if not self.scene.get_wall( x + d[0], y + d[1] ):
+                found_space = True
+                break
+        return found_space
 
     def get_pseudo_random( self ):
         self.seed = ( 73 * self.seed + 101 ) % 1024

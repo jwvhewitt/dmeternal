@@ -4,6 +4,7 @@ import context
 import animobs
 import maps
 import waypoints
+import math
 
 class Plasma( object ):
     """Creates a plasma; cels have value from 0.0 to 1.0."""
@@ -370,6 +371,9 @@ class Room( object ):
         self.draw_direct_connection( gb, x1, y1, cx, cy )
         self.draw_direct_connection( gb, x2, y2, cx, cy )
 
+    def find_distance_to( self, oroom ):
+        return round( math.sqrt( ( self.area.centerx-oroom.area.centerx )**2 + ( self.area.centery-oroom.area.centery )**2 ) )
+
 
 class FuzzyRoom( Room ):
     """A room without hard walls, with default ground floors."""
@@ -616,37 +620,34 @@ class EdgeOfCivilization( RandomScene ):
         # Run a road along one edge of the map. Stick everything else in a
         # sub-rect to arrange there. Keep track of the civilized areas.
         self.wilds = Room( width=self.width-10, height=self.height, anchor=west, parent=self )
+        self.wilds.area = pygame.Rect( 0, 0, self.wilds.width, self.wilds.height )
         self.wilds.FUZZY_FILL_TERRAIN = maps.LOGROUND
 
         self.civilized_bits = list()
         for r in self.contents[:]:
             if r is not self.wilds:
                 self.contents.remove( r )
-                self.wilds.append( r )
+                self.wilds.contents.append( r )
                 if context.CIVILIZED in r.tags:
                     self.civilized_bits.append( r )
 
         # Create the road.
         road = pygame.Rect( self.area.x + self.area.width - 10, self.area.y, 7, self.area.height )
-        self.fill( gb, river, floor=maps.HIGROUND, wall=None )
-        self.fill( gb, river.inflate(4,0), wall=None )
+        self.fill( gb, road, floor=maps.HIGROUND, wall=None )
+        self.fill( gb, road.inflate(4,0), wall=None )
 
         self.roadbits = list()
         for y in range(10):
-            x = self.area.x + self.area.width - 10 + random(0,2)
+            x = self.area.x + self.area.width - 10 + random.randint(0,2)
             roadseg = Room( width=5, height=self.height//10, parent=self)
             roadseg.area = pygame.Rect( x, y*roadseg.height, roadseg.width, roadseg.height )
             self.roadbits.append( roadseg )
-
-    def find_distance_to_key( self, ulroom ):
-        return round( math.sqrt( ( self.key_room.area.centerx-ulroom.area.centerx )**2 + ( self.key_room.area.centery-ulroom.area.centery )**2 ) )
 
     def connect_contents( self, gb ):
         # Connect all civilized areas with HIGROUND.
         connected = self.roadbits
         for r in self.civilized_bits:
-            self.key_room = r
-            connected.sort( key=self.find_distance_to_key )
+            connected.sort( key=r.find_distance_to )
             self.draw_road_connection( gb, r.area.centerx, r.area.centery, connected[0].area.centerx, connected[0].area.centery )
             connected.append( r )
 
@@ -662,6 +663,12 @@ class EdgeOfCivilization( RandomScene ):
         path = animobs.get_line( x1,y1,x2,y2 )
         for p in path:
             self.fill( gb, pygame.Rect(p[0]-1,p[1]-1,3,3), floor=maps.HIGROUND, wall=None )
+
+    def convert_true_walls( self ):
+        for x in range( self.width ):
+            for y in range( self.height ):
+                if self.gb.map[x][y].wall == True:
+                    self.gb.map[x][y].wall = maps.TREES
 
 
 if __name__ == '__main__':

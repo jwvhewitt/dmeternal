@@ -56,6 +56,14 @@ class SpiralStairsUp( Waypoint ):
         else:
             explo.alert( "You have just bumped the stairs. Woohoo!" )
 
+class StairsUp( SpiralStairsUp ):
+    TILE = maps.Tile( None, maps.STAIRS_UP, None )
+    ATTACH_TO_WALL = True
+
+class StairsDown( SpiralStairsUp ):
+    TILE = maps.Tile( None, maps.STAIRS_DOWN, None )
+    ATTACH_TO_WALL = True
+
 class SpiralStairsDown( Waypoint ):
     TILE = maps.Tile( None, maps.SPIRAL_STAIRS_DOWN, None )
     destination = None

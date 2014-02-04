@@ -196,8 +196,7 @@ if __name__=='__main__':
     for x in range( 5 ):
         for y in range( 12 ):
             myscene.map[x+14][y+10].wall = maps.BASIC_WALL
-    myscene.map[21][16].wall = maps.CLOSED_DOOR
-    myscene.map[16][21].wall = maps.STAIRS_UP
+    myscene.map[16][21].wall = maps.CLOSED_DOOR
 
     for y in range( 16 ):
         myscene.map[34][y+5].floor = maps.WATER
@@ -319,9 +318,32 @@ if __name__=='__main__':
 
     osgen.make()
 
+    scene3 = maps.Scene( 102, 102, 
+        biome=context.HAB_FOREST, setting=context.SET_RENFAN, desctags=(context.DES_CIVILIZED,) )
+    stairs_1 = waypoints.StairsDown( myscene, (21,16) )
+    stairs_2 = waypoints.SpiralStairsUp()
+    stairs_1.destination = scene3
+    stairs_1.otherside = stairs_2
+    stairs_2.destination = myscene
+    stairs_2.otherside = stairs_1
+
+
+    osgen2 = mapgen.EdgeOfCivilization( scene3 )
+    room1 = mapgen.FuzzyRoom( tags=(context.CIVILIZED,), anchor=mapgen.east, parent=osgen2 )
+    room1.contents.append( stairs_2 )
+    room2 = mapgen.FuzzyRoom( parent=osgen2 )
+    myteam = teams.Team(default_reaction=-999)
+    room2.contents.append( myteam )
+    room3 = mapgen.FuzzyRoom( tags=(context.CIVILIZED,), parent=osgen2 )
+    mychest = waypoints.MediumChest()
+    mychest.stock(5)
+    room3.contents.append( mychest )
+    osgen2.make()
+
 
     camp.scenes.append( myscene )
     camp.scenes.append( otherscene )
+    camp.scenes.append( scene3 )
 
 
     myroom = pygame.Rect(50,12,10,10)
