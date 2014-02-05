@@ -338,8 +338,11 @@ if __name__=='__main__':
     mychest = waypoints.MediumChest()
     mychest.stock(5)
     room3.contents.append( mychest )
-    osgen2.make()
+    room4 = mapgen.FuzzyRoom( width=10,height=12,tags=(context.CIVILIZED,), parent=osgen2 )
+    room5 = mapgen.BuildingRoom( width=7,height=9,tags=(context.CIVILIZED,), parent=room4 )
+    room5.name = "The Test Suite"
 
+    osgen2.make()
 
     camp.scenes.append( myscene )
     camp.scenes.append( otherscene )

@@ -427,6 +427,14 @@ class SharpRoom( Room ):
         self.draw_wall( gb, animobs.get_line( self.area.x+1,self.area.y+self.area.height-1,self.area.x+self.area.width-2,self.area.y+self.area.height-1 ), (0,1) )
         self.draw_wall( gb, animobs.get_line( self.area.x+self.area.width-1,self.area.y+1,self.area.x+self.area.width-1,self.area.y+self.area.height-2 ), (1,0) )
 
+class BuildingRoom( Room ):
+    """A solid block of BASIC_WALLs."""
+    def render( self, gb ):
+        # Fill the floor with HIGROUND, and clear room interior
+        self.fill( gb, self.area, floor=maps.HIGROUND, wall = None )
+        self.fill( gb, self.area.inflate(-2,-2), wall=maps.BASIC_WALL )
+
+
 class BottleneckRoom( Room ):
     """A room that blocks passage, aside from one door."""
     def render( self, gb ):
