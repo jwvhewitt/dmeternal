@@ -427,6 +427,39 @@ class SharpRoom( Room ):
         self.draw_wall( gb, animobs.get_line( self.area.x+1,self.area.y+self.area.height-1,self.area.x+self.area.width-2,self.area.y+self.area.height-1 ), (0,1) )
         self.draw_wall( gb, animobs.get_line( self.area.x+self.area.width-1,self.area.y+1,self.area.x+self.area.width-1,self.area.y+self.area.height-2 ), (1,0) )
 
+class CastleRoom( Room ):
+    """A setup for a walled city."""
+    MIN_SIZE = 7
+    def split( self, subr ):
+        """Split this subregion recursively, returning list of rects."""
+        if subr.width <= self.MIN_SIZE*2 and subr.height <= self.MIN_SIZE*2:
+            return [subr,]
+        elif subr.width > self.MIN_SIZE*2 and ( random.randint(1,2)==1 or subr.height <= self.MIN_SIZE*2 ):
+            dw = random.randint( self.MIN_SIZE, subr.width - self.MIN_SIZE )
+            return ( self.split( pygame.Rect(subr.x,subr.y,dw,subr.height) ) +
+                self.split( pygame.Rect(subr.x+dw,subr.y,subr.width-dw,subr.height) ) )
+        else: 
+            dh = random.randint( self.MIN_SIZE, subr.height - self.MIN_SIZE )
+            return ( self.split( pygame.Rect(subr.x,subr.y,subr.width,dh) ) +
+                self.split( pygame.Rect(subr.x,subr.y+dh,subr.width,subr.height-dh) ) )
+
+    def arrange_contents( self, gb ):
+        # Step Two: Arrange subcomponents within this area.
+        cells = self.split( self.area.inflate(-6,-6) )
+        for r in self.contents:
+            if hasattr( r, "area" ):
+                a = random.choice( cells )
+                cells.remove( a )
+                r.area = a
+
+
+    def connect_contents( self, gb ):
+        # Step Three: Connect all rooms in contents. Just bulldoze the neighborhood.
+        self.fill( gb, self.area.inflate(2,2), floor=maps.HIGROUND, wall=None )
+
+    def render( self, gb ):
+        pass
+
 class BuildingRoom( Room ):
     """A solid block of BASIC_WALLs."""
     def render( self, gb ):
@@ -484,7 +517,6 @@ class BuildingRoom( Room ):
             for x in range( self.area.x+2, self.area.x + self.area.width-2, 2 ):
                 if (x,y) in good_spots:
                     gb.map[x][y].decor = win
-
             x = self.area.x + self.area.width - 2
             for y in range( self.area.y+2, self.area.y + self.area.height-2, 2 ):
                 if (x,y) in good_spots:

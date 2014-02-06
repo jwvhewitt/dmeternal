@@ -338,11 +338,14 @@ if __name__=='__main__':
     mychest = waypoints.MediumChest()
     mychest.stock(5)
     room3.contents.append( mychest )
-    room4 = mapgen.FuzzyRoom( width=10,height=12,tags=(context.CIVILIZED,), parent=osgen2 )
-    room5 = mapgen.BuildingRoom( width=7,height=9,tags=(context.CIVILIZED,), parent=room4 )
+    room4 = mapgen.CastleRoom( width=25,height=25,tags=(context.CIVILIZED,), parent=osgen2 )
+    room5 = mapgen.BuildingRoom( tags=(context.CIVILIZED,), parent=room4 )
     room5.special_c[ "door" ] = waypoints.GateDoor()
     room5.special_c[ "window" ] = maps.SMALL_WINDOW
     room5.special_c[ "sign1" ] = maps.ANKH_SIGN
+
+    mapgen.BuildingRoom( tags=(context.CIVILIZED,), parent=room4 )
+    mapgen.BuildingRoom( tags=(context.CIVILIZED,), parent=room4 )
 
     osgen2.make()
 
