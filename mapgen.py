@@ -433,6 +433,62 @@ class BuildingRoom( Room ):
         # Fill the floor with HIGROUND, and clear room interior
         self.fill( gb, self.area, floor=maps.HIGROUND, wall = None )
         self.fill( gb, self.area.inflate(-2,-2), wall=maps.BASIC_WALL )
+    def deploy( self, gb ):
+        # Step Six: Move items and monsters onto the map.
+        # Find a list of good spots for stuff that goes in the open.
+        good_spots = list()
+        for x in range( self.area.x+2, self.area.x + self.area.width-2 ):
+            good_spots.append( (x,self.area.y + self.area.height - 2) )
+        for y in range( self.area.y+2, self.area.y + self.area.height-2 ):
+            good_spots.append( (self.area.x + self.area.width - 2,y) )
+
+        # First pass- execute any deploy methods in any contents.
+        for i in self.contents[:]:
+            if hasattr( i, "predeploy" ):
+                i.predeploy( gb, self )
+
+        # Deploy Door, Sign1, and Sign2 as appropriate.
+        door = self.special_c.get( "door", None )
+        sign1 = self.special_c.get( "sign1", None )
+        sign2 = self.special_c.get( "sign2", None )
+        if random.randint(1,2) == 1:
+            sign1,sign2 = sign2,sign1
+        if random.randint(1,2) == 1:
+            x = self.area.x + self.area.width//2
+            y = self.area.y + self.area.height - 2
+            d = (1,0)
+        else:
+            x = self.area.x + self.area.width - 2
+            y = self.area.y + self.area.height//2
+            d = (0,1)
+        if door:
+            door.place( gb, (x,y) )
+            good_spots.remove( (x,y) )
+        if sign1:
+            sign1.place( gb, (x+d[0],y+d[1]) )
+            good_spots.remove( (x+d[0],y+d[1]) )
+        if sign2:
+            sign2.place( gb, (x-d[0],y-d[1]) )
+            good_spots.remove( (x-d[0],y-d[1]) )
+
+        for i in self.contents:
+            if hasattr( i, "place" ):
+                p = random.choice( good_spots )
+                good_spots.remove( p )
+                i.place( gb, p )
+
+        # Finally, add windows, if appropriate.
+        win = self.special_c.get( "window", None )
+        if win:
+            y = self.area.y + self.area.height - 2
+            for x in range( self.area.x+2, self.area.x + self.area.width-2, 2 ):
+                if (x,y) in good_spots:
+                    gb.map[x][y].decor = win
+
+            x = self.area.x + self.area.width - 2
+            for y in range( self.area.y+2, self.area.y + self.area.height-2, 2 ):
+                if (x,y) in good_spots:
+                    gb.map[x][y].decor = win
 
 
 class BottleneckRoom( Room ):

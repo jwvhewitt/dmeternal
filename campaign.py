@@ -340,7 +340,8 @@ if __name__=='__main__':
     room3.contents.append( mychest )
     room4 = mapgen.FuzzyRoom( width=10,height=12,tags=(context.CIVILIZED,), parent=osgen2 )
     room5 = mapgen.BuildingRoom( width=7,height=9,tags=(context.CIVILIZED,), parent=room4 )
-    room5.name = "The Test Suite"
+    room5.special_c[ "door" ] = waypoints.GateDoor()
+    room5.special_c[ "window" ] = maps.SMALL_WINDOW
 
     osgen2.make()
 

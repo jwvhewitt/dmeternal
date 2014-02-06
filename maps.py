@@ -221,7 +221,12 @@ MEDIUM_CHEST = VariableTerrain( "MEDIUM_CHEST", spritesheet = SPRITE_CHEST, fram
 MEDIUM_CHEST_OPEN = VariableTerrain( "MEDIUM_CHEST_OPEN", spritesheet = SPRITE_CHEST, frames = (6,7), block_walk=True )
 LARGE_CHEST = VariableTerrain( "LARGE_CHEST", spritesheet = SPRITE_CHEST, frames = (8,9), block_walk=True )
 LARGE_CHEST_OPEN = VariableTerrain( "LARGE_CHEST_OPEN", spritesheet = SPRITE_CHEST, frames = (10,11), block_walk=True )
-
+KEG = SingTerrain( "KEG", spritesheet = SPRITE_DECOR, frame = 23, block_walk = True )
+SMALL_WINDOW = OnTheWallTerrain( "SMALL_WINDOW", frame = 24 )
+BRIGHT_WINDOW = OnTheWallTerrain( "BRIGHT_WINDOW", frame = 26 )
+DARK_WINDOW = OnTheWallTerrain( "DARK_WINDOW", frame = 28 )
+CASTLE_WINDOW = OnTheWallTerrain( "CASTLE_WINDOW", frame = 30 )
+STAINED_GLASS = OnTheWallTerrain( "STAINED_GLASS", frame = 32 )
 
 
 class Tile( object ):

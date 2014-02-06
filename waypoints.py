@@ -45,6 +45,17 @@ class Bookshelf( Waypoint ):
     def bump( self, explo ):
         self.LIBRARY( explo )
 
+class GateDoor( Waypoint ):
+    TILE = maps.Tile( None, maps.CLOSED_DOOR, None )
+    destination = None
+    otherside = None
+    def bump( self, explo ):
+        if self.destination and self.otherside:
+            explo.camp.destination = self.destination
+            explo.camp.entrance = self.otherside
+        else:
+            explo.alert( "This door doesn't seem to go anywhere." )
+
 class SpiralStairsUp( Waypoint ):
     TILE = maps.Tile( None, maps.SPIRAL_STAIRS_UP, None )
     destination = None
