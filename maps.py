@@ -33,6 +33,9 @@ class SingTerrain( object ):
     def get_data( self, view, x, y ):
         """Pre-generate display data for this tile."""
         return None
+    def place( self, scene, pos ):
+        if scene.on_the_map( *pos ):
+            scene.map[pos[0]][pos[1]].decor = self
     def __str__( self ):
         return self.ident
     def __reduce__( self ):
@@ -227,6 +230,8 @@ BRIGHT_WINDOW = OnTheWallTerrain( "BRIGHT_WINDOW", frame = 26 )
 DARK_WINDOW = OnTheWallTerrain( "DARK_WINDOW", frame = 28 )
 CASTLE_WINDOW = OnTheWallTerrain( "CASTLE_WINDOW", frame = 30 )
 STAINED_GLASS = OnTheWallTerrain( "STAINED_GLASS", frame = 32 )
+SWORD_SIGN = OnTheWallTerrain( "SWORD_SIGN", frame = 34 )
+ANKH_SIGN = OnTheWallTerrain( "ANKH_SIGN", frame = 36 )
 
 
 class Tile( object ):

@@ -342,6 +342,7 @@ if __name__=='__main__':
     room5 = mapgen.BuildingRoom( width=7,height=9,tags=(context.CIVILIZED,), parent=room4 )
     room5.special_c[ "door" ] = waypoints.GateDoor()
     room5.special_c[ "window" ] = maps.SMALL_WINDOW
+    room5.special_c[ "sign1" ] = maps.ANKH_SIGN
 
     osgen2.make()
 
