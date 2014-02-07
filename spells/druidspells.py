@@ -12,6 +12,14 @@ import invocations
 
 # CIRCLE ONE
 
+ACID_SPRAY = Spell( "ACID_SPRAY", "Acid Spray",
+    "A stream of acid sprays forth, burning enemies for 1d6 damage. This spell has a short range but can affect several targets.",
+    effects.OpposedRoll( on_success = (
+        effects.HealthDamage( (1,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_ACID, anim=animobs.GreenExplosion )
+    ,), on_failure = (
+        effects.HealthDamage( (1,2,0), stat_bonus=None, element=stats.RESIST_ACID, anim=animobs.GreenExplosion )
+    ,) ), rank=1, gems={FIRE:1,EARTH:1}, com_tar=targetarea.Cone(reach=3), ai_tar=invocations.vs_enemy )
+
 
 # CIRCLE TWO
 

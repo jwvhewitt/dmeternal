@@ -427,8 +427,8 @@ class SharpRoom( Room ):
         self.draw_wall( gb, animobs.get_line( self.area.x+1,self.area.y+self.area.height-1,self.area.x+self.area.width-2,self.area.y+self.area.height-1 ), (0,1) )
         self.draw_wall( gb, animobs.get_line( self.area.x+self.area.width-1,self.area.y+1,self.area.x+self.area.width-1,self.area.y+self.area.height-2 ), (1,0) )
 
-class CastleRoom( Room ):
-    """A setup for a walled city."""
+class VillageRoom( Room ):
+    """A setup for an open city."""
     MIN_SIZE = 7
     def split( self, subr ):
         """Split this subregion recursively, returning list of rects."""
@@ -445,6 +445,24 @@ class CastleRoom( Room ):
 
     def arrange_contents( self, gb ):
         # Step Two: Arrange subcomponents within this area.
+        cells = self.split( self.area.inflate(-2,-2) )
+        for r in self.contents:
+            if hasattr( r, "area" ):
+                a = random.choice( cells )
+                cells.remove( a )
+                r.area = a
+
+    def connect_contents( self, gb ):
+        # Step Three: Connect all rooms in contents. Just bulldoze the neighborhood.
+        self.fill( gb, self.area.inflate(2,2), floor=maps.HIGROUND, wall=None )
+
+    def render( self, gb ):
+        self.fill( gb, self.area, floor=maps.HIGROUND, wall=None )
+
+class CastleRoom( VillageRoom ):
+    """A setup for a walled city."""
+    def arrange_contents( self, gb ):
+        # Step Two: Arrange subcomponents within this area.
         cells = self.split( self.area.inflate(-6,-6) )
         for r in self.contents:
             if hasattr( r, "area" ):
@@ -452,13 +470,48 @@ class CastleRoom( Room ):
                 cells.remove( a )
                 r.area = a
 
-
     def connect_contents( self, gb ):
         # Step Three: Connect all rooms in contents. Just bulldoze the neighborhood.
-        self.fill( gb, self.area.inflate(2,2), floor=maps.HIGROUND, wall=None )
+        self.fill( gb, self.area.inflate(4,4), floor=maps.HIGROUND, wall=None )
 
     def render( self, gb ):
-        pass
+        self.fill( gb, self.area.inflate(2,2), floor=maps.HIGROUND, wall=None )
+        # Draw the walls.
+        xpips = range( self.area.x+2, self.area.x + self.area.width-2 )
+        midx = self.area.x + self.area.width // 2
+        xpips.remove( midx )
+        xpips.remove( midx-1 )
+        xpips.remove( midx+1 )
+        for x in xpips:
+            gb.map[x][self.area.y+1].wall = maps.BASIC_WALL
+            gb.map[x][self.area.y+self.area.height-2].wall = maps.BASIC_WALL
+            if x % 3 == 0:
+                gb.map[x][self.area.y+1].decor = maps.CASTLE_WINDOW
+                gb.map[x][self.area.y+self.area.height-2].decor = maps.CASTLE_WINDOW
+        ypips = range( self.area.y+2, self.area.y + self.area.height-2 )
+        midy = self.area.y + self.area.height // 2
+        ypips.remove( midy )
+        ypips.remove( midy-1 )
+        ypips.remove( midy+1 )
+        for y in ypips:
+            gb.map[self.area.x+1][y].wall = maps.BASIC_WALL
+            gb.map[self.area.x+self.area.width-2][y].wall = maps.BASIC_WALL
+            if y % 3 == 0:
+                gb.map[self.area.x+1][y].decor = maps.CASTLE_WINDOW
+                gb.map[self.area.x+self.area.width-2][y].decor = maps.CASTLE_WINDOW
+        self.fill( gb, pygame.Rect(self.area.x,self.area.y,2,2), wall=maps.BASIC_WALL, decor=None)
+        self.fill( gb, pygame.Rect(self.area.x+self.area.width-2,self.area.y,2,2), wall=maps.BASIC_WALL, decor=None)
+        self.fill( gb, pygame.Rect(self.area.x,self.area.y+self.area.height-2,2,2), wall=maps.BASIC_WALL, decor=None)
+        self.fill( gb, pygame.Rect(self.area.x+self.area.width-2,self.area.y+self.area.height-2,2,2), wall=maps.BASIC_WALL, decor=None)
+        self.fill( gb, pygame.Rect(midx-3,self.area.y,2,2), wall=maps.BASIC_WALL, decor=None)
+        self.fill( gb, pygame.Rect(midx+2,self.area.y,2,2), wall=maps.BASIC_WALL, decor=None)
+        self.fill( gb, pygame.Rect(midx-3,self.area.y+self.area.height-2,2,2), wall=maps.BASIC_WALL, decor=None)
+        self.fill( gb, pygame.Rect(midx+2,self.area.y+self.area.height-2,2,2), wall=maps.BASIC_WALL, decor=None)
+        self.fill( gb, pygame.Rect(self.area.x,midy-3,2,2), wall=maps.BASIC_WALL, decor=None)
+        self.fill( gb, pygame.Rect(self.area.x,midy+2,2,2), wall=maps.BASIC_WALL, decor=None)
+        self.fill( gb, pygame.Rect(self.area.x+self.area.width-2,midy-3,2,2), wall=maps.BASIC_WALL, decor=None)
+        self.fill( gb, pygame.Rect(self.area.x+self.area.width-2,midy+2,2,2), wall=maps.BASIC_WALL, decor=None)
+
 
 class BuildingRoom( Room ):
     """A solid block of BASIC_WALLs."""

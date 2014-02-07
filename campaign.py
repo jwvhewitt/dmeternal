@@ -177,8 +177,8 @@ if __name__=='__main__':
     import monsters
 
     # Set the screen size.
-#    screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
-    screen = pygame.display.set_mode( (800,600) )
+    screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
+#    screen = pygame.display.set_mode( (800,600) )
 #    screen = pygame.display.set_mode( (800,600), pygame.FULLSCREEN )
 
     pygame.init()
@@ -196,7 +196,8 @@ if __name__=='__main__':
     for x in range( 5 ):
         for y in range( 12 ):
             myscene.map[x+14][y+10].wall = maps.BASIC_WALL
-    myscene.map[16][21].wall = maps.CLOSED_DOOR
+#    myscene.map[16][21].wall = maps.CLOSED_DOOR
+    waypoints.Bookshelf( myscene, (21,15) )
 
     for y in range( 16 ):
         myscene.map[34][y+5].floor = maps.WATER
@@ -318,9 +319,9 @@ if __name__=='__main__':
 
     osgen.make()
 
-    scene3 = maps.Scene( 102, 102, 
+    scene3 = maps.Scene( 102, 102, sprites={maps.SPRITE_WALL: "terrain_wall_lightbrick.png"},
         biome=context.HAB_FOREST, setting=context.SET_RENFAN, desctags=(context.DES_CIVILIZED,) )
-    stairs_1 = waypoints.StairsDown( myscene, (21,16) )
+    stairs_1 = waypoints.GateDoor( myscene, (21,16) )
     stairs_2 = waypoints.SpiralStairsUp()
     stairs_1.destination = scene3
     stairs_1.otherside = stairs_2
@@ -341,10 +342,13 @@ if __name__=='__main__':
     room4 = mapgen.CastleRoom( width=25,height=25,tags=(context.CIVILIZED,), parent=osgen2 )
     room5 = mapgen.BuildingRoom( tags=(context.CIVILIZED,), parent=room4 )
     room5.special_c[ "door" ] = waypoints.GateDoor()
-    room5.special_c[ "window" ] = maps.SMALL_WINDOW
+    room5.special_c[ "window" ] = maps.STAINED_GLASS
     room5.special_c[ "sign1" ] = maps.ANKH_SIGN
 
-    mapgen.BuildingRoom( tags=(context.CIVILIZED,), parent=room4 )
+    r7 = mapgen.BuildingRoom( tags=(context.CIVILIZED,), parent=room4 )
+    r7.special_c[ "door" ] = waypoints.GateDoor()
+    r7.special_c[ "window" ] = maps.SMALL_WINDOW
+    r7.special_c[ "sign1" ] = maps.SWORD_SIGN
     mapgen.BuildingRoom( tags=(context.CIVILIZED,), parent=room4 )
 
     osgen2.make()
