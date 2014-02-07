@@ -736,6 +736,8 @@ class DividedIslandScene( RandomScene ):
                 z2.contents.append( r )
                 z1_turn = True
 
+
+
         self.contents += (z1,z2)
 
     def connect_contents( self, gb ):
@@ -844,6 +846,13 @@ class EdgeOfCivilization( RandomScene ):
                             self.gb.map[x][y].wall = maps.TREES
                         else:
                             self.gb.map[x][y].wall = maps.ROCKS
+
+class BuildingScene( RandomScene ):
+    """This is the inside of a building."""
+    def prepare( self, gb ):
+        # Step one- Fill with True walls and basic floor.
+        self.fill( gb, self.area, floor=maps.BASIC_FLOOR, wall=True )
+
 
 
 if __name__ == '__main__':

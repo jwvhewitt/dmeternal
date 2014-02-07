@@ -339,7 +339,7 @@ if __name__=='__main__':
     mychest = waypoints.MediumChest()
     mychest.stock(5)
     room3.contents.append( mychest )
-    room4 = mapgen.CastleRoom( width=25,height=25,tags=(context.CIVILIZED,), parent=osgen2 )
+    room4 = mapgen.CastleRoom( width=32,height=32,tags=(context.CIVILIZED,), parent=osgen2 )
     room5 = mapgen.BuildingRoom( tags=(context.CIVILIZED,), parent=room4 )
     room5.special_c[ "door" ] = waypoints.GateDoor()
     room5.special_c[ "window" ] = maps.STAINED_GLASS
