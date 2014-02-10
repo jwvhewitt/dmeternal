@@ -182,6 +182,34 @@ class CellMutator( object ):
                     elif ( temp[x][y] == self.WALL_ON ) and self.wall_wont_block( gb, x, y ):
                         gb.map[x][y].wall = True
 
+#  ********************************
+#  ***   INTERIOR  DECORATORS   ***
+#  ********************************
+# Not to be confused with Python function decorators... these add decor and
+# props to a scene.
+
+class BuildingDec( object ):
+    """Add windows + signs of inhabitation to a (sharp) room."""
+    def __init__( self, win = maps.SMALL_WINDOW ):
+        self.win = win
+    def windowize( self, gb, area ):
+        y1 = area.y
+        y2 = area.y + area.height - 1
+        for x in range( area.x+1, area.x + area.width-1, 4 ):
+            if gb.get_wall(x,y1) == maps.BASIC_WALL and not gb.map[x][y1].decor:
+                gb.map[x][y1].decor = self.win
+            if gb.get_wall(x,y2) == maps.BASIC_WALL and not gb.map[x][y2].decor:
+                gb.map[x][y2].decor = self.win
+        x1 = area.x
+        x2 = area.x + area.width - 1
+        for y in range( area.y+1, area.y + area.height-1, 4 ):
+            if gb.get_wall(x1,y) == maps.BASIC_WALL and not gb.map[x1][y].decor:
+                gb.map[x1][y].decor = self.win
+            if gb.get_wall(x2,y) == maps.BASIC_WALL and not gb.map[x2][y].decor:
+                gb.map[x2][y].decor = self.win
+
+    def __call__( self, gb, area ):
+        self.windowize(gb,area)
 
 #  *****************
 #  ***   ROOMS   ***
@@ -231,6 +259,13 @@ class Room( object ):
         for r in self.contents:
             if isinstance( r, Room ):
                 r.step_six( gb )
+    def step_seven( self, gb ):
+        if self.decorate:
+            self.decorate( gb, self.area )
+        # Prepare any child nodes in self.contents as needed.
+        for r in self.contents:
+            if isinstance( r, Room ):
+                r.step_seven( gb )
 
     def arrange_contents( self, gb ):
         # Step Two: Arrange subcomponents within this area.
@@ -241,7 +276,7 @@ class Room( object ):
                 closed_area.append( r.area )
         # Add rooms with defined anchors next
         for r in self.contents:
-            if hasattr( r, "anchor" ) and r.anchor:
+            if hasattr( r, "anchor" ) and r.anchor and hasattr(r,"area"):
                 myrect = pygame.Rect( 0, 0, r.width, r.height )
                 r.anchor( self.area, myrect )
                 if myrect.collidelist( closed_area ) == -1:
@@ -287,6 +322,7 @@ class Room( object ):
                 prev = r
 
     mutate = None
+    decorate = None
 
     def render( self, gb ):
         # Step Five: Actually draw the room, taking into account terrain already on map.
@@ -317,7 +353,15 @@ class Room( object ):
 
         for i in self.contents:
             if hasattr( i, "place" ):
-                if hasattr( i, "ATTACH_TO_WALL" ) and i.ATTACH_TO_WALL and good_walls:
+                if hasattr( i, "anchor" ):
+                    myrect = pygame.Rect(0,0,1,1)
+                    i.anchor( self.area, myrect )
+                    i.place( gb, (myrect.x,myrect.y) )
+                    if (myrect.x,myrect.y) in good_walls:
+                        good_walls.remove( (myrect.x,myrect.y) )
+                    if (myrect.x,myrect.y) in good_spots:
+                        good_spots.remove( (myrect.x,myrect.y) )
+                elif hasattr( i, "ATTACH_TO_WALL" ) and i.ATTACH_TO_WALL and good_walls:
                     p = random.choice( good_walls )
                     good_walls.remove( p )
                     i.place( gb, p )
@@ -626,6 +670,7 @@ class RandomScene( Room ):
         self.gb.validate_terrain()
 
         self.step_six( self.gb ) # Deploy for self, then children
+        self.step_seven( self.gb ) # Decorate for self, then children
 
         return self.gb
 

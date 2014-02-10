@@ -32,7 +32,7 @@ ENTRANCE, GOAL, CIVILIZED = range( 3 )
 # of a given kind is requested it should match that too.
 #
 # Habitat Tags- Linked to map generator
-HAB_EVERY, HAB_FOREST, HAB_CAVE = range( 3 )
+HAB_EVERY, HAB_FOREST, HAB_CAVE, HAB_BUILDING = range( 4 )
 
 # Setting Tags
 SET_EVERY, SET_RENFAN = range( 100,102 )

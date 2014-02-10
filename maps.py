@@ -42,7 +42,6 @@ class SingTerrain( object ):
         return self.ident
 
 class VariableTerrain( SingTerrain ):
-    # A singleton terrain class; use these objects as tokens for maps.
     def __init__( self, ident, spritesheet = SPRITE_FLOOR, block_vision = False, block_walk = False, block_fly = False, frames = (0,1,) ):
         # ident should be the module-level name of this stat.
         self.ident = ident
@@ -168,6 +167,24 @@ class OnTheWallTerrain( SingTerrain ):
         else:
             return 0
 
+class OnTheWallVariable( SingTerrain ):
+    def __init__( self, ident, spritesheet = SPRITE_DECOR, block_vision = False, block_walk = False, block_fly = False, frames = (0,1) ):
+        # ident should be the module-level name of this stat.
+        self.ident = ident
+        self.spritesheet = spritesheet
+        self.block_vision = block_vision
+        self.block_walk = block_walk
+        self.block_fly = block_fly
+        self.frames = frames
+    def render( self, screen, dest, view, data ):
+        view.sprites[ self.spritesheet ].render( screen, dest, data )
+    def get_data( self, view, x, y ):
+        """Pre-generate display data for this tile- facing offset."""
+        if view.space_to_south( x, y ):
+            return self.frames[ view.get_pseudo_random() % len( self.frames ) ] + 1
+        else:
+            return self.frames[ view.get_pseudo_random() % len( self.frames ) ]
+
 class CrowdTerrain( SingTerrain ):
     def __init__( self, ident, spritesheet = SPRITE_GROUND, block_vision = False, block_walk = True, block_fly = True, inner_frames = (0,1), outer_frames=(2,3) ):
         # ident should be the module-level name of this stat.
@@ -210,20 +227,21 @@ ROCKS = VariableTerrain( "ROCKS", spritesheet = SPRITE_GROUND, block_walk=True, 
 TREES = CrowdTerrain( "TREES", inner_frames = (51,52,53,54,55), outer_frames = (63,64,65,66,67,68,69) )
 
 # DECOR TYPES
-BOOKSHELF = OnTheWallTerrain( "BOOKSHELF", frame = 13, block_walk=True )
 PUDDLE = SingTerrain( "PUDDLE", frame = 58 )
+
 SKULL = SingTerrain( "SKULL", spritesheet = SPRITE_DECOR, frame = 0 )
 BONE = SingTerrain( "BONE", spritesheet = SPRITE_DECOR, frame = 1 )
 SKELETON = SingTerrain( "SKELETON", spritesheet = SPRITE_DECOR, frame = 2 )
 HANGING_SKELETON = OnTheWallTerrain( "HANGING_SKELETON", frame = 3 )
+PORTRAIT = OnTheWallTerrain( "PORTRAIT", frame = 5 )
+SUN_PICTURE = OnTheWallTerrain( "SUN_PICTURE", frame = 7 )
+MOON_PICTURE = OnTheWallTerrain( "MOON_PICTURE", frame = 9 )
+LANDSCAPE_PICTURE = OnTheWallTerrain( "LANDSCAPE_PICTURE", frame = 11 )
+BOOKSHELF = OnTheWallTerrain( "BOOKSHELF", frame = 13, block_walk=True )
+MESSAGE_SIGN = OnTheWallTerrain( "MESSAGE_SIGN", frame = 15 )
+FIREPLACE = OnTheWallTerrain( "HANGING_SKELETON", frame = 17 )
 SWITCH_UP = OnTheWallTerrain( "SWITCH_UP", frame = 19 )
 SWITCH_DOWN = OnTheWallTerrain( "SWITCH_DOWN", frame = 21 )
-SMALL_CHEST = VariableTerrain( "SMALL_CHEST", spritesheet = SPRITE_CHEST, frames = (0,1), block_walk=True )
-SMALL_CHEST_OPEN = VariableTerrain( "SMALL_CHEST_OPEN", spritesheet = SPRITE_CHEST, frames = (2,3), block_walk=True )
-MEDIUM_CHEST = VariableTerrain( "MEDIUM_CHEST", spritesheet = SPRITE_CHEST, frames = (4,5), block_walk=True )
-MEDIUM_CHEST_OPEN = VariableTerrain( "MEDIUM_CHEST_OPEN", spritesheet = SPRITE_CHEST, frames = (6,7), block_walk=True )
-LARGE_CHEST = VariableTerrain( "LARGE_CHEST", spritesheet = SPRITE_CHEST, frames = (8,9), block_walk=True )
-LARGE_CHEST_OPEN = VariableTerrain( "LARGE_CHEST_OPEN", spritesheet = SPRITE_CHEST, frames = (10,11), block_walk=True )
 KEG = SingTerrain( "KEG", spritesheet = SPRITE_DECOR, frame = 23, block_walk = True )
 SMALL_WINDOW = OnTheWallTerrain( "SMALL_WINDOW", frame = 24 )
 BRIGHT_WINDOW = OnTheWallTerrain( "BRIGHT_WINDOW", frame = 26 )
@@ -232,6 +250,15 @@ CASTLE_WINDOW = OnTheWallTerrain( "CASTLE_WINDOW", frame = 30 )
 STAINED_GLASS = OnTheWallTerrain( "STAINED_GLASS", frame = 32 )
 SWORD_SIGN = OnTheWallTerrain( "SWORD_SIGN", frame = 34 )
 ANKH_SIGN = OnTheWallTerrain( "ANKH_SIGN", frame = 36 )
+CURTAIN = OnTheWallTerrain( "CURTAIN", frame = 38 )
+WALL_WEAPON_RACK = OnTheWallVariable( "WALL_WEAPON_RACK", frames = (40,42,44,46,48,50,52) )
+
+SMALL_CHEST = VariableTerrain( "SMALL_CHEST", spritesheet = SPRITE_CHEST, frames = (0,1), block_walk=True )
+SMALL_CHEST_OPEN = VariableTerrain( "SMALL_CHEST_OPEN", spritesheet = SPRITE_CHEST, frames = (2,3), block_walk=True )
+MEDIUM_CHEST = VariableTerrain( "MEDIUM_CHEST", spritesheet = SPRITE_CHEST, frames = (4,5), block_walk=True )
+MEDIUM_CHEST_OPEN = VariableTerrain( "MEDIUM_CHEST_OPEN", spritesheet = SPRITE_CHEST, frames = (6,7), block_walk=True )
+LARGE_CHEST = VariableTerrain( "LARGE_CHEST", spritesheet = SPRITE_CHEST, frames = (8,9), block_walk=True )
+LARGE_CHEST_OPEN = VariableTerrain( "LARGE_CHEST_OPEN", spritesheet = SPRITE_CHEST, frames = (10,11), block_walk=True )
 
 
 class Tile( object ):

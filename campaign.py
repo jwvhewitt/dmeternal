@@ -177,8 +177,8 @@ if __name__=='__main__':
     import monsters
 
     # Set the screen size.
-    screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
-#    screen = pygame.display.set_mode( (800,600) )
+#    screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
+    screen = pygame.display.set_mode( (800,600) )
 #    screen = pygame.display.set_mode( (800,600), pygame.FULLSCREEN )
 
     pygame.init()
@@ -209,24 +209,6 @@ if __name__=='__main__':
         i = random.choice( items.ITEM_LIST )()
         i.pos = (23,17)
         myscene.contents.append( i )
-
-    i = items.gloves.BracersOfDefense()
-    i.pos = (24,17)
-    myscene.contents.append( i )
-    i = items.hats.MageHat()
-    i.enhancement = items.enhancers.TrickHat()
-    i.pos = (24,17)
-    myscene.contents.append( i )
-    i = items.bows.Shortbow()
-    i.pos = (24,17)
-    myscene.contents.append( i )
-    i = items.maces.TitanHammer()
-    i.pos = (24,17)
-    myscene.contents.append( i )
-    i = items.wands.TelekinesisWand()
-    i.pos = (24,17)
-    myscene.contents.append( i )
-
 
     myscene.map[25][10].wall = maps.MOUNTAIN_TOP
     myscene.map[25][11].wall = maps.MOUNTAIN_LEFT
@@ -328,6 +310,15 @@ if __name__=='__main__':
     stairs_2.destination = myscene
     stairs_2.otherside = stairs_1
 
+    scene4 = maps.Scene( 50,50, sprites={maps.SPRITE_FLOOR: "terrain_floor_wood.png" },
+        biome=context.HAB_BUILDING, setting=context.SET_RENFAN, desctags=(context.DES_CIVILIZED,) )
+    gate_1 = waypoints.GateDoor()
+    gate_2 = waypoints.GateDoor()
+    gate_1.destination = scene4
+    gate_1.otherside = gate_2
+    gate_2.destination = scene3
+    gate_2.otherside = gate_1
+
 
     osgen2 = mapgen.EdgeOfCivilization( scene3 )
     room1 = mapgen.FuzzyRoom( tags=(context.CIVILIZED,), anchor=mapgen.east, parent=osgen2 )
@@ -346,12 +337,20 @@ if __name__=='__main__':
     room5.special_c[ "sign1" ] = maps.ANKH_SIGN
 
     r7 = mapgen.BuildingRoom( tags=(context.CIVILIZED,), parent=room4 )
-    r7.special_c[ "door" ] = waypoints.GateDoor()
+    r7.special_c[ "door" ] = gate_1
     r7.special_c[ "window" ] = maps.SMALL_WINDOW
     r7.special_c[ "sign1" ] = maps.SWORD_SIGN
     mapgen.BuildingRoom( tags=(context.CIVILIZED,), parent=room4 )
 
     osgen2.make()
+
+    osgen3 = mapgen.BuildingScene( scene4 )
+    room1 = mapgen.SharpRoom( tags=(context.CIVILIZED,), anchor=mapgen.south, parent=osgen3 )
+    room1.contents.append( gate_2 )
+    gate_2.anchor = mapgen.south
+    room1.decorate = mapgen.BuildingDec()
+    osgen3.make()
+
 
     camp.scenes.append( myscene )
     camp.scenes.append( otherscene )

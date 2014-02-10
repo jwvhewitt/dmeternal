@@ -28,7 +28,7 @@ After that, you can load up to four characters in campaign.py:
 
 You will find your party on a mostly empty map. Here are the things you can do:
 - Talk to the NPCs, though they don't have much to say right now.
-- Check out the big treasure chest.
+- Check out the big treasure chest. There may be magic items!
 - See if there's anything useful lying on the ground.
 - There are some monsters on the other side of the river.
 - The door in the building leads to the Edge of Civilization map, containing
