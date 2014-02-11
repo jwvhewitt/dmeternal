@@ -1,5 +1,6 @@
 
 class Plot( object ):
+    """The building block of the adventure."""
 
 
 class PlotRequest( object ):
