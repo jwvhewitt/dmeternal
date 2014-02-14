@@ -42,7 +42,7 @@ class GiantRat( base.Monster ):
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.HAB_CAVE, context.HAB_BUILDING, context.SET_EVERY,
-    context.DES_LUNAR, context.DES_CIVILIZED,
+    context.DES_EARTH, context.DES_CIVILIZED,
      context.MTY_BEAST, context.GEN_NATURE )
     ENC_LEVEL = 1
 

@@ -37,12 +37,12 @@ HAB_EVERY, HAB_FOREST, HAB_CAVE, HAB_BUILDING = range( 4 )
 # Setting Tags
 SET_EVERY, SET_RENFAN = range( 100,102 )
 
-# Description Tags- Linked to sprite set and maybe map generator
+# Description Tags- Linked to map sprite set and maybe map generator
 DES_EARTH, DES_AIR, DES_WATER, DES_FIRE, DES_SOLAR, DES_LUNAR, \
   DES_CIVILIZED = range(200,207)
 
 # Type Tags
-MTY_BEAST, MTY_HUMANOID, MTY_FIGHTER, MTY_THIEF, MTY_PRIEST, MTY_MAGE = range(300,306)
+MTY_BEAST, MTY_HUMANOID, MTY_FIGHTER, MTY_THIEF, MTY_PRIEST, MTY_MAGE, MTY_UNDEAD = range(300,307)
 
 # Genus Tags. Note that these don't necessarily correspond to templates- a
 #  necromancer monster may be grouped with the undead, despite not being undead
