@@ -42,7 +42,10 @@ DES_EARTH, DES_AIR, DES_WATER, DES_FIRE, DES_SOLAR, DES_LUNAR, \
   DES_CIVILIZED = range(200,207)
 
 # Type Tags
-MTY_BEAST, MTY_HUMANOID, MTY_FIGHTER, MTY_THIEF, MTY_PRIEST, MTY_MAGE, MTY_UNDEAD = range(300,307)
+#  MTY_UNDEAD can be summoned by Necromancer spells
+#  MTY_CREATURE can be summoned by Druid spells
+MTY_BEAST, MTY_HUMANOID, MTY_FIGHTER, MTY_THIEF, MTY_PRIEST, MTY_MAGE, \
+    MTY_UNDEAD, MTY_CREATURE = range(300,308)
 
 # Genus Tags. Note that these don't necessarily correspond to templates- a
 #  necromancer monster may be grouped with the undead, despite not being undead

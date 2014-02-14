@@ -23,7 +23,8 @@ class GiantBat( base.Monster ):
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.HAB_CAVE, context.SET_EVERY, context.SET_RENFAN,
-     context.DES_LUNAR, context.MTY_BEAST, context.GEN_NATURE )
+     context.DES_LUNAR,
+     context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
     ENC_LEVEL = 1
 
     ATTACK = items.Attack( (1,4,0), element = stats.RESIST_PIERCING )
@@ -43,7 +44,7 @@ class GiantRat( base.Monster ):
     GP_VALUE = 0
     HABITAT = ( context.HAB_CAVE, context.HAB_BUILDING, context.SET_EVERY,
     context.DES_EARTH, context.DES_CIVILIZED,
-     context.MTY_BEAST, context.GEN_NATURE )
+     context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
     ENC_LEVEL = 1
 
     ATTACK = items.Attack( (1,4,0), element = stats.RESIST_PIERCING )
@@ -63,7 +64,7 @@ class DireNewt( base.Monster ):
     GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.HAB_CAVE,
      context.SET_RENFAN, context.DES_WATER, 
-     context.MTY_BEAST, context.GEN_NATURE )
+     context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
     ENC_LEVEL = 1
 
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING )
@@ -87,7 +88,7 @@ class MadDog( base.Monster ):
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.DES_CIVILIZED,
-     context.MTY_BEAST, context.GEN_CHAOS )
+     context.MTY_BEAST, context.MTY_CREATURE, context.GEN_CHAOS )
     ENC_LEVEL = 2
 
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_PIERCING )
@@ -106,7 +107,7 @@ class CaveAnt( base.Monster ):
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.HAB_CAVE, context.SET_EVERY, context.DES_EARTH, \
-     context.MTY_BEAST, context.GEN_NATURE )
+     context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
     ENC_LEVEL = 2
 
     ATTACK = items.Attack( (1,6,1), element = stats.RESIST_ACID )
@@ -125,7 +126,7 @@ class WoodBeetle( base.Monster ):
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.SET_EVERY,
-     context.MTY_BEAST, context.GEN_NATURE )
+     context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
     ENC_LEVEL = 2
 
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING )
@@ -144,7 +145,7 @@ class FireBeetle( base.Monster ):
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.DES_FIRE,
-     context.MTY_BEAST )
+     context.MTY_BEAST, context.MTY_CREATURE )
     ENC_LEVEL = 2
 
     ATTACK = items.Attack( (1,3,0), element = stats.RESIST_PIERCING,
@@ -164,7 +165,7 @@ class Jackal( base.Monster ):
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.SET_EVERY,
-     context.MTY_BEAST, context.DES_LUNAR, context.GEN_NATURE )
+     context.MTY_BEAST, context.MTY_CREATURE, context.DES_LUNAR, context.GEN_NATURE )
     ENC_LEVEL = 2
 
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING )
@@ -188,7 +189,7 @@ class Wolf( base.Monster ):
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.SET_EVERY, context.SET_RENFAN,
-     context.MTY_BEAST, context.GEN_NATURE )
+     context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
     ENC_LEVEL = 3
 
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_PIERCING )
@@ -206,7 +207,8 @@ class GiantFrog( base.Monster ):
     MOVE_POINTS = 12
     VOICE = None
     GP_VALUE = 0
-    HABITAT = ( context.HAB_CAVE, context.SET_EVERY, context.DES_WATER, context.MTY_BEAST, \
+    HABITAT = ( context.HAB_CAVE, context.SET_EVERY, context.DES_WATER,
+     context.MTY_BEAST, context.MTY_CREATURE,
      context.GEN_NATURE )
     ENC_LEVEL = 3
 
@@ -227,7 +229,7 @@ class SwampDragonfly( base.Monster ):
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.SET_EVERY, context.DES_EARTH,
-     context.MTY_BEAST, context.GEN_DRAGON )
+     context.MTY_BEAST, context.MTY_CREATURE, context.GEN_DRAGON )
     ENC_LEVEL = 3
 
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING )
@@ -259,7 +261,7 @@ class BlackBear( base.Monster ):
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.SET_EVERY, context.SET_RENFAN,
-     context.MTY_BEAST, context.GEN_NATURE )
+     context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
     ENC_LEVEL = 4
 
     ATTACK = items.Attack( (1,10,0), element = stats.RESIST_SLASHING )
@@ -278,7 +280,7 @@ class FireBat( base.Monster ):
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.HAB_CAVE, context.SET_EVERY, context.DES_FIRE,
-     context.DES_LUNAR, context.MTY_BEAST )
+     context.DES_LUNAR, context.MTY_BEAST, context.MTY_CREATURE )
     ENC_LEVEL = 4
 
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING )
@@ -310,7 +312,7 @@ class DireWolf( base.Monster ):
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.SET_EVERY, context.SET_RENFAN,
-     context.MTY_BEAST, context.GEN_NATURE, 
+     context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE, 
      context.GEN_GOBLIN )
     ENC_LEVEL = 5
 
@@ -333,7 +335,8 @@ class Lion( base.Monster ):
     MOVE_POINTS = 12
     VOICE = None
     GP_VALUE = 0
-    HABITAT = ( context.SET_EVERY, context.DES_SOLAR, context.MTY_BEAST, context.GEN_NATURE )
+    HABITAT = ( context.SET_EVERY, context.DES_SOLAR,
+     context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
     ENC_LEVEL = 6
 
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )
@@ -356,7 +359,7 @@ class GrizzlyBear( base.Monster ):
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.SET_EVERY, context.SET_RENFAN,
-     context.MTY_BEAST, context.GEN_NATURE )
+     context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
     ENC_LEVEL = 7
 
     ATTACK = items.Attack( (2,6,0), element = stats.RESIST_SLASHING )
@@ -375,7 +378,7 @@ class GiantEagle( base.Monster ):
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.SET_EVERY, context.SET_RENFAN,
-     context.MTY_BEAST, context.GEN_NATURE,
+     context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE,
      context.DES_AIR, context.DES_SOLAR )
     ENC_LEVEL = 7
 
@@ -399,7 +402,7 @@ class GreatStag( base.Monster ):
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.SET_EVERY, context.SET_RENFAN,
-     context.MTY_BEAST, context.GEN_NATURE )
+     context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
     ENC_LEVEL = 8
 
     ATTACK = items.Attack( (1,12,0), element = stats.RESIST_PIERCING )
@@ -418,7 +421,7 @@ class Crocodile( base.Monster ):
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.SET_EVERY,
-     context.DES_WATER, context.MTY_BEAST, context.GEN_NATURE )
+     context.DES_WATER, context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
     ENC_LEVEL = 8
 
     ATTACK = items.Attack( (1,12,0), element = stats.RESIST_PIERCING )
