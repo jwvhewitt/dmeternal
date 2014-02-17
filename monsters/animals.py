@@ -120,7 +120,7 @@ class WoodBeetle( base.Monster ):
     statline = { stats.STRENGTH: 10, stats.TOUGHNESS: 14, stats.REFLEXES: 8, \
         stats.INTELLIGENCE: 1, stats.PIETY: 1, stats.CHARISMA: 1 }
     SPRITENAME = "monster_bugs.png"
-    FRAME = 11
+    FRAME = 10
     TEMPLATES = (stats.BUG,)
     MOVE_POINTS = 8
     VOICE = None
@@ -245,6 +245,48 @@ class SwampDragonfly( base.Monster ):
     def init_monster( self ):
         self.levels.append( base.Beast( 2, self ) )
 
+class BoringBeetle( base.Monster ):
+    name = "Boring Beetle"
+    statline = { stats.STRENGTH: 10, stats.TOUGHNESS: 14, stats.REFLEXES: 8, \
+        stats.INTELLIGENCE: 1, stats.PIETY: 1, stats.CHARISMA: 1 }
+    SPRITENAME = "monster_bugs.png"
+    FRAME = 11
+    TEMPLATES = (stats.BUG,)
+    MOVE_POINTS = 8
+    VOICE = None
+    GP_VALUE = 0
+    HABITAT = ( context.HAB_CAVE, context.SET_EVERY,
+     context.DES_EARTH,
+     context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
+    ENC_LEVEL = 3
+
+    ATTACK = items.Attack( (1,4,0), element = stats.RESIST_PIERCING,
+     extra_effect=effects.HealthDamage( (1,4,0), stat_bonus=None, element=stats.RESIST_ACID, anim=animobs.GreenExplosion ))
+
+    def init_monster( self ):
+        self.levels.append( base.Beast( 3, self ) )
+
+class WaterBeetle( base.Monster ):
+    name = "Water Beetle"
+    statline = { stats.STRENGTH: 10, stats.TOUGHNESS: 14, stats.REFLEXES: 8, \
+        stats.INTELLIGENCE: 1, stats.PIETY: 1, stats.CHARISMA: 1 }
+    SPRITENAME = "monster_bugs.png"
+    FRAME = 12
+    TEMPLATES = (stats.BUG,stats.WATER)
+    MOVE_POINTS = 8
+    VOICE = None
+    GP_VALUE = 0
+    HABITAT = ( context.SET_EVERY,
+     context.DES_WATER,
+     context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
+    ENC_LEVEL = 3
+
+    ATTACK = items.Attack( (1,4,0), element = stats.RESIST_PIERCING,
+     extra_effect=effects.HealthDamage( (1,4,0), stat_bonus=None, element=stats.RESIST_POISON, anim=animobs.GreenBoom ))
+
+    def init_monster( self ):
+        self.levels.append( base.Beast( 3, self ) )
+
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  4   ***
@@ -252,7 +294,7 @@ class SwampDragonfly( base.Monster ):
 
 class BlackBear( base.Monster ):
     name = "Black Bear"
-    statline = { stats.STRENGTH: 18, stats.TOUGHNESS: 16, stats.REFLEXES: 10, \
+    statline = { stats.STRENGTH: 15, stats.TOUGHNESS: 16, stats.REFLEXES: 10, \
         stats.INTELLIGENCE: 3, stats.PIETY: 8, stats.CHARISMA: 6 }
     SPRITENAME = "monster_animals.png"
     FRAME = 14
@@ -269,6 +311,27 @@ class BlackBear( base.Monster ):
     def init_monster( self ):
         self.levels.append( base.Beast( 4, self ) )
 
+class GiantLizard( base.Monster ):
+    name = "Giant Lizard"
+    statline = { stats.STRENGTH: 15, stats.TOUGHNESS: 13, stats.REFLEXES: 9, \
+        stats.INTELLIGENCE: 1, stats.PIETY: 9, stats.CHARISMA: 1 }
+    SPRITENAME = "monster_default.png"
+    FRAME = 48
+    TEMPLATES = (stats.REPTILE,)
+    MOVE_POINTS = 10
+    VOICE = None
+    GP_VALUE = 0
+    HABITAT = ( context.HAB_CAVE, context.SET_EVERY,
+     context.MTY_BEAST, context.MTY_CREATURE,
+     context.GEN_NATURE )
+    ENC_LEVEL = 4
+
+    ATTACK = items.Attack( (1,10,0), element = stats.RESIST_PIERCING )
+
+    def init_monster( self ):
+        self.levels.append( base.Beast( 4, self ) )
+
+
 class FireBat( base.Monster ):
     name = "Fire Bat"
     statline = { stats.STRENGTH: 10, stats.TOUGHNESS: 10, stats.REFLEXES: 14, \
@@ -283,7 +346,7 @@ class FireBat( base.Monster ):
      context.DES_LUNAR, context.MTY_BEAST, context.MTY_CREATURE )
     ENC_LEVEL = 4
 
-    ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING )
+    ATTACK = items.Attack( (2,4,0), element = stats.RESIST_PIERCING )
 
     TECHNIQUES = ( invocations.MPInvocation( "Fire Breath",
       effects.OpposedRoll( att_skill=stats.PHYSICAL_ATTACK, att_stat=stats.REFLEXES, att_modifier=10, def_stat=stats.REFLEXES, on_success = (
@@ -295,6 +358,35 @@ class FireBat( base.Monster ):
 
     def init_monster( self ):
         self.levels.append( base.Beast( 2, self ) )
+
+class IceFox( base.Monster ):
+    name = "Ice Fox"
+    statline = { stats.STRENGTH: 9, stats.TOUGHNESS: 11, stats.REFLEXES: 13, \
+        stats.INTELLIGENCE: 3, stats.PIETY: 9, stats.CHARISMA: 15 }
+    SPRITENAME = "monster_animals.png"
+    FRAME = 27
+    TEMPLATES = (stats.ICE,)
+    MOVE_POINTS = 10
+    VOICE = None
+    GP_VALUE = 0
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.DES_ICE,
+     context.MTY_BEAST, context.MTY_CREATURE,
+     context.GEN_NATURE )
+    ENC_LEVEL = 4
+
+    ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING )
+
+    TECHNIQUES = ( invocations.MPInvocation( "Frost Breath",
+        effects.OpposedRoll( att_skill=stats.PHYSICAL_ATTACK, att_stat=stats.REFLEXES, def_stat=stats.REFLEXES, on_success = (
+            effects.HealthDamage( (1,6,0), stat_bonus=stats.TOUGHNESS, element=stats.RESIST_COLD, anim=animobs.BlueCloud )
+        ,), on_failure = (
+            effects.HealthDamage( (1,3,0), stat_bonus=None, element=stats.RESIST_COLD, anim=animobs.BlueCloud )
+        ,) ), com_tar=targetarea.Cone(reach=4), ai_tar=invocations.vs_enemy, mp_cost=2
+      ), )
+
+    def init_monster( self ):
+        self.levels.append( base.Beast( 3, self ) )
 
 
 #  *******************************
@@ -320,6 +412,36 @@ class DireWolf( base.Monster ):
 
     def init_monster( self ):
         self.levels.append( base.Beast( 5, self ) )
+
+class LightningBug( base.Monster ):
+    name = "Lightning Bug"
+    statline = { stats.STRENGTH: 10, stats.TOUGHNESS: 13, stats.REFLEXES: 12, \
+        stats.INTELLIGENCE: 1, stats.PIETY: 12, stats.CHARISMA: 1, \
+        stats.RESIST_LIGHTNING: 150 }
+    SPRITENAME = "monster_bugs.png"
+    FRAME = 13
+    TEMPLATES = (stats.BUG,)
+    MOVE_POINTS = 14
+    VOICE = None
+    GP_VALUE = 0
+    HABITAT = ( context.HAB_FOREST, context.HAB_CAVE, context.SET_EVERY,
+     context.DES_AIR,
+     context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
+    ENC_LEVEL = 5
+
+    ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING )
+
+    TECHNIQUES = ( invocations.MPInvocation( "Zap",
+      effects.OpposedRoll( att_skill=stats.PHYSICAL_ATTACK, att_stat=stats.REFLEXES, def_stat=stats.REFLEXES, on_success = (
+        effects.HealthDamage( (2,6,0), stat_bonus=stats.TOUGHNESS, element=stats.RESIST_LIGHTNING, anim=animobs.Spark )
+      ,), on_failure = (
+        effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_LIGHTNING, anim=animobs.Spark )
+      ,) ), com_tar=targetarea.Line(reach=6), ai_tar=invocations.vs_enemy, mp_cost=3
+    ), )
+
+    def init_monster( self ):
+        self.levels.append( base.Beast( 4, self ) )
+
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  6   ***
@@ -391,24 +513,26 @@ class GiantEagle( base.Monster ):
 #  ***   ENCOUNTER  LEVEL  8   ***
 #  *******************************
 
-class GreatStag( base.Monster ):
-    name = "Great Stag"
-    statline = { stats.STRENGTH: 14, stats.TOUGHNESS: 15, stats.REFLEXES: 17, \
-        stats.INTELLIGENCE: 3, stats.PIETY: 19, stats.CHARISMA: 16 }
+class DireYak( base.Monster ):
+    name = "Dire Yak"
+    statline = { stats.STRENGTH: 18, stats.TOUGHNESS: 14, stats.REFLEXES: 10, \
+        stats.INTELLIGENCE: 2, stats.PIETY: 12, stats.CHARISMA: 1 }
     SPRITENAME = "monster_animals.png"
-    FRAME = 20
+    FRAME = 10
     TEMPLATES = ()
-    MOVE_POINTS = 14
+    MOVE_POINTS = 10
     VOICE = None
     GP_VALUE = 0
-    HABITAT = ( context.HAB_FOREST, context.SET_EVERY, context.SET_RENFAN,
-     context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
+    HABITAT = ( context.HAB_CAVE, context.SET_EVERY,
+     context.DES_ICE,
+     context.MTY_BEAST, context.MTY_CREATURE,
+     context.GEN_NATURE )
     ENC_LEVEL = 8
 
-    ATTACK = items.Attack( (1,12,0), element = stats.RESIST_PIERCING )
+    ATTACK = items.Attack( (1,10,0), element = stats.RESIST_PIERCING )
 
     def init_monster( self ):
-        self.levels.append( base.Beast( 8, self ) )
+        self.levels.append( base.Beast( 9, self ) )
 
 class Crocodile( base.Monster ):
     name = "Crocodile"
@@ -433,6 +557,46 @@ class Crocodile( base.Monster ):
 #  ***   ENCOUNTER  LEVEL  9   ***
 #  *******************************
 
+class GreatStag( base.Monster ):
+    name = "Great Stag"
+    statline = { stats.STRENGTH: 15, stats.TOUGHNESS: 14, stats.REFLEXES: 17, \
+        stats.INTELLIGENCE: 3, stats.PIETY: 19, stats.CHARISMA: 16 }
+    SPRITENAME = "monster_animals.png"
+    FRAME = 20
+    TEMPLATES = ()
+    MOVE_POINTS = 14
+    VOICE = None
+    GP_VALUE = 0
+    HABITAT = ( context.HAB_FOREST, context.SET_EVERY, context.SET_RENFAN,
+     context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
+    ENC_LEVEL = 9
+
+    ATTACK = items.Attack( (2,8,0), element = stats.RESIST_PIERCING )
+
+    def init_monster( self ):
+        self.levels.append( base.Beast( 9, self ) )
+
+class PolarBear( base.Monster ):
+    name = "Polar Bear"
+    statline = { stats.STRENGTH: 20, stats.TOUGHNESS: 18, stats.REFLEXES: 12, \
+        stats.INTELLIGENCE: 3, stats.PIETY: 10, stats.CHARISMA: 6 }
+    SPRITENAME = "monster_animals.png"
+    FRAME = 16
+    TEMPLATES = ()
+    MOVE_POINTS = 10
+    VOICE = None
+    GP_VALUE = 0
+    HABITAT = ( context.SET_EVERY, context.SET_RENFAN,
+     context.DES_ICE,
+     context.MTY_BEAST, context.MTY_CREATURE,
+     context.GEN_NATURE )
+    ENC_LEVEL = 9
+
+    ATTACK = items.Attack( (2,6,0), element = stats.RESIST_SLASHING )
+
+    def init_monster( self ):
+        self.levels.append( base.Beast( 9, self ) )
+
 
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  10   ***
@@ -445,6 +609,29 @@ class Crocodile( base.Monster ):
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  12   ***
 #  ********************************
+
+class CaveBear( base.Monster ):
+    name = "Cave Bear"
+    statline = { stats.STRENGTH: 20, stats.TOUGHNESS: 20, stats.REFLEXES: 12, \
+        stats.INTELLIGENCE: 1, stats.PIETY: 12, stats.CHARISMA: 6, \
+        stats.RESIST_SLASHING: 25, stats.RESIST_PIERCING: 25, stats.RESIST_CRUSHING: 25 }
+    SPRITENAME = "monster_animals.png"
+    FRAME = 28
+    TEMPLATES = ()
+    MOVE_POINTS = 10
+    VOICE = None
+    GP_VALUE = 0
+    HABITAT = ( context.HAB_CAVE, context.SET_EVERY,
+     context.DES_EARTH,
+     context.MTY_BEAST, context.MTY_CREATURE,
+     context.GEN_NATURE )
+    ENC_LEVEL = 12
+
+    ATTACK = items.Attack( (3,6,0), element = stats.RESIST_SLASHING )
+
+    def init_monster( self ):
+        self.levels.append( base.Beast( 9, self ) )
+
 
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  13   ***

@@ -39,7 +39,7 @@ SET_EVERY, SET_RENFAN = range( 100,102 )
 
 # Description Tags- Linked to map sprite set and maybe map generator
 DES_EARTH, DES_AIR, DES_WATER, DES_FIRE, DES_SOLAR, DES_LUNAR, \
-  DES_CIVILIZED = range(200,207)
+  DES_ICE, DES_CIVILIZED = range(200,208)
 
 # Type Tags
 #  MTY_UNDEAD can be summoned by Necromancer spells
