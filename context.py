@@ -17,6 +17,15 @@ PRESENT = True
 ABSENT = False
 MAYBE = 999
 
+# ************************
+# ***   PROPP  STATE   ***
+# ************************
+# The Propp State describes the progression of the main storyline. Note that the
+# state can only move forward- no backpedaling.
+
+PROPP_NONE, PROPP_ABSENTATION, PROPP_INTERDICTION, PROPP_VIOLATION = range( 4 )
+
+
 # *****************************
 # ***   RANDOM  MAP  TAGS   ***
 # *****************************

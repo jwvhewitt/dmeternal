@@ -1,27 +1,25 @@
+import context
 
-class PlotRequest( object ):
-    def __init__( self, label, pdata ):
-        self.label = label
-        self.pdata = pdata
-    def matches( self, plot ):
-        all_ok = True
-        if self.label == plot.LABEL:
-            # This is a plot of the correct type. See what else checks out.
-            for k,v in plot.REQUIRES:
-
-            return all_ok
+class PlotState( object ):
+    """For passing state information to subplots."""
+    def __init__( self, propp=0, setting=context.SET_EVERY, chapter=1, level=1, elements={} ):
+        self.propp = propp
+        self.setting = setting
+        self.chapter = chapter
+        self.level = level
+        self.elements = elements
 
 class Plot( object ):
     """The building block of the adventure."""
     LABEL = ""
     REQUIRES = dict()
-    def __init__( self, nart, parel ):
+    def __init__( self, nart, pstate ):
         """Initialize + install this plot, or set self.ok to False"""
         # nart = The Narrative object
         # parel = The parent elements
 
         # Confirm/locate all requested elements.
-        self.elements = parel.copy()
+        self.elements = pstate.elements.copy()
 
 
         # Create new elements, do custom manipulations.

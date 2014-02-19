@@ -343,7 +343,7 @@ class FireBat( base.Monster ):
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.HAB_CAVE, context.SET_EVERY, context.DES_FIRE,
-     context.DES_LUNAR, context.MTY_BEAST, context.MTY_CREATURE )
+     context.DES_LUNAR, context.MTY_BEAST )
     ENC_LEVEL = 4
 
     ATTACK = items.Attack( (2,4,0), element = stats.RESIST_PIERCING )
@@ -357,7 +357,7 @@ class FireBat( base.Monster ):
     ), )
 
     def init_monster( self ):
-        self.levels.append( base.Beast( 2, self ) )
+        self.levels.append( base.Beast( 3, self ) )
 
 class IceFox( base.Monster ):
     name = "Ice Fox"
@@ -386,7 +386,36 @@ class IceFox( base.Monster ):
       ), )
 
     def init_monster( self ):
-        self.levels.append( base.Beast( 3, self ) )
+        self.levels.append( base.Beast( 4, self ) )
+
+class FireWeasel( base.Monster ):
+    name = "Fire Weasel"
+    statline = { stats.STRENGTH: 9, stats.TOUGHNESS: 9, stats.REFLEXES: 15, \
+        stats.INTELLIGENCE: 3, stats.PIETY: 14, stats.CHARISMA: 9 }
+    SPRITENAME = "monster_animals.png"
+    FRAME = 29
+    TEMPLATES = (stats.FIRE,)
+    MOVE_POINTS = 10
+    VOICE = None
+    GP_VALUE = 0
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.DES_FIRE,
+     context.MTY_BEAST, context.MTY_CREATURE,
+     context.GEN_NATURE )
+    ENC_LEVEL = 4
+
+    ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING )
+
+    TECHNIQUES = ( invocations.MPInvocation( "Fire Breath",
+        effects.OpposedRoll( att_skill=stats.PHYSICAL_ATTACK, att_stat=stats.REFLEXES, def_stat=stats.REFLEXES, on_success = (
+            effects.HealthDamage( (1,6,0), stat_bonus=stats.TOUGHNESS, element=stats.RESIST_FIRE, anim=animobs.RedCloud )
+        ,), on_failure = (
+            effects.HealthDamage( (1,3,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.RedCloud )
+        ,) ), com_tar=targetarea.Cone(reach=4), ai_tar=invocations.vs_enemy, mp_cost=3
+      ), )
+
+    def init_monster( self ):
+        self.levels.append( base.Beast( 4, self ) )
 
 
 #  *******************************
