@@ -12,19 +12,20 @@ class PlotState( object ):
 class Plot( object ):
     """The building block of the adventure."""
     LABEL = ""
-    REQUIRES = dict()
     def __init__( self, nart, pstate ):
         """Initialize + install this plot, or set self.ok to False"""
         # nart = The Narrative object
-        # parel = The parent elements
+        # pstate = The current plot state
 
         # Confirm/locate all requested elements.
+        # Start with a copy of the plot state elements.
         self.elements = pstate.elements.copy()
 
 
         # Create new elements, do custom manipulations.
 
         # Add needed subplots.
+        self.subplots = list()
 
         # If failure, delete currently added subplots.
 
@@ -32,7 +33,10 @@ class Plot( object ):
     def remove( self ):
         """Remove this plot, including subplots and new elements, from campaign."""
 
-
+    @classmethod
+    def matches( self, pstate ):
+        """Returns True if this plot matches the current plot state."""
+        return False
 
 
 
