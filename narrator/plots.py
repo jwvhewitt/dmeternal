@@ -17,6 +17,8 @@ class Plot( object ):
         # nart = The Narrative object
         # pstate = The current plot state
 
+        self.failed = False
+
         # Confirm/locate all requested elements.
         # Start with a copy of the plot state elements.
         self.elements = pstate.elements.copy()
