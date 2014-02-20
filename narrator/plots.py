@@ -2,7 +2,7 @@ import context
 
 class PlotState( object ):
     """For passing state information to subplots."""
-    def __init__( self, propp=0, setting=context.SET_EVERY, chapter=1, level=1, elements={} ):
+    def __init__( self, propp=0, setting=None, chapter=1, level=1, elements={} ):
         self.propp = propp
         self.setting = setting
         self.chapter = chapter
@@ -12,12 +12,21 @@ class PlotState( object ):
 class Plot( object ):
     """The building block of the adventure."""
     LABEL = ""
+    propp = 0
+    setting = False
+    chapter = False
+    level = False
     def __init__( self, nart, pstate ):
         """Initialize + install this plot, or set self.ok to False"""
         # nart = The Narrative object
         # pstate = The current plot state
-
         self.failed = False
+
+        # Inherit the plot state.
+        self.propp = max( self.propp, pstate.propp )
+        self.setting = self.setting or pstate.setting
+        self.chapter = pstate.chapter
+        self.level = pstate.level
 
         # Confirm/locate all requested elements.
         # Start with a copy of the plot state elements.
