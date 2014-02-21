@@ -21,14 +21,15 @@ class Narrative( object ):
             if sp.matches( pstate ):
                 candidates.append( sp )
         if candidates:
-            while candidates:
+            cp = None
+            while candidates and not cp:
                 cpc = random.choice( candidates )
                 candidates.remove( cpc )
-                cp = cpc(self,pstate)
-                if not cp.failed:
-                    break
-            if not cp.failed:
-                return cp
+                try:
+                    cp = cpc(self,pstate)
+                except plots.PlotError:
+                    cp = None
+            return cp
 
     def build( self ):
         """Build finished campaign from this narrative."""
