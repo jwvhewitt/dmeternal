@@ -12,7 +12,9 @@
 
 class PhysicalThing( object ):
     """A thing that can be placed on the map."""
-    def place( self, scene, pos ):
+    def place( self, scene, pos=None ):
+        if hasattr( self, "container" ):
+            self.container.remove( self )
         scene.contents.append( self )
         self.pos = pos
 

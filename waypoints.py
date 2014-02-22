@@ -9,6 +9,7 @@ import exploration
 import items
 import traps
 import random
+import container
 
 class Waypoint( object ):
     TILE = None
@@ -17,12 +18,14 @@ class Waypoint( object ):
         """Place this waypoint in a scene."""
         if scene:
             self.place( scene, pos )
-        self.contents = list()
+        self.contents = container.ContainerList()
 
-    def place( self, scene, pos ):
+    def place( self, scene, pos=None ):
+        if hasattr( self, "container" ):
+            self.container.remove( self )
         self.scene = scene
         scene.contents.append( self )
-        if scene.on_the_map( *pos ):
+        if pos and scene.on_the_map( *pos ):
             self.pos = pos
             if self.TILE:
                 if self.TILE.floor:

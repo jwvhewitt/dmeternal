@@ -5,6 +5,7 @@ import effects
 import animobs
 import random
 import math
+import container
 
 # Enumerated constants for the item slots.
 # Note that these are defined in the order in which they're applied to avatar.
@@ -457,7 +458,7 @@ def generate_hoard( drop_rank, drop_strength ):
 
     return (max(gp,0),hoard)
 
-class Backpack( list ):
+class Backpack( container.ContainerList ):
     def get_equip( self , slot ):
         requested_item = None
         for i in self:

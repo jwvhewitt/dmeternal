@@ -11,6 +11,7 @@ import items
 import context
 import random
 import monsters
+import container
 
 # Enumerated constants for sprite sheets.
 SPRITE_GROUND, SPRITE_WALL, SPRITE_BORDER, SPRITE_INTERIOR, SPRITE_FLOOR, SPRITE_DECOR, SPRITE_CHEST = range( 7 )
@@ -287,7 +288,7 @@ class Scene( object ):
     def __init__(self,width=128,height=128,sprites=None,biome=None,setting=None,desctags=()):
         self.width = width
         self.height = height
-        self.contents = []
+        self.contents = container.ContainerList()
         self.sprites = DEFAULT_SPRITES.copy()
         if sprites:
             self.sprites.update( sprites )

@@ -5,6 +5,7 @@ import animobs
 import maps
 import waypoints
 import math
+import container
 
 class Plasma( object ):
     """Creates a plasma; cels have value from 0.0 to 1.0."""
@@ -223,7 +224,7 @@ class Room( object ):
         self.tags = tags
         self.anchor = anchor
         self.area = None
-        self.contents = list()
+        self.contents = container.ContainerList()
         # special_c lists contents that will be treated specially by the generator.
         self.special_c = dict()
         if parent:

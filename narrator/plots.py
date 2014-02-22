@@ -21,8 +21,9 @@ class PlotState( object ):
         for k,v in oplot.elements.iteritems():
             if isinstance( k, str ) and len(k)>0 and k[0]!="_":
                 self.elements[k] = v
+        return self
 
-        
+
 
 class Plot( object ):
     """The building block of the adventure."""
@@ -48,15 +49,42 @@ class Plot( object ):
         allok = self.custom_init( nart )
 
         # If failure, delete currently added subplots + raise error.
-        if not allok:
+        if hasattr( self, "fail" ) or not allok:
+            self.remove( nart )
             raise PlotError
+
+    def add_sub_plot( self, nart, splabel, spstate=None, ident=None ):
+        if not spstate:
+            spstate = PlotState().based_on(self)
+        if not ident:
+            ident = "_autoident_{0}".format( len( self.subplots ) )
+        sp = nart.generate_sub_plot( spstate, splabel )
+        if not sp:
+            self.fail = True
+        else:
+            self.subplots[ident] = sp
+        return sp
+
+    def register_element( self, ident, ele ):
+        self.elements[ident] = ele
+        if not hasattr( ele, "plot" ):
+            ele.plot = self
 
     def custom_init( self, nart ):
         """Return True if everything ok, or False otherwise."""
         return True
 
-    def remove( self ):
+    def remove( self, nart ):
         """Remove this plot, including subplots and new elements, from campaign."""
+        # First, remove all subplots.
+        for sp in self.subplots.itervalues():
+            sp.remove( nart )
+        # Next, remove any elements created by this plot.
+
+    def display( self, lead="" ):
+        print lead + str( self.__class__ )
+        for sp in self.subplots.itervalues():
+            sp.display(lead+" ")
 
     @classmethod
     def matches( self, pstate ):
