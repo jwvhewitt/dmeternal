@@ -650,6 +650,7 @@ class RandomScene( Room ):
         super(RandomScene,self).__init__( myscene.width, myscene.height )
         self.gb = myscene
         self.area = pygame.Rect(0,0,myscene.width,myscene.height)
+        self.contents = myscene.contents
 
     def convert_true_walls( self ):
         for x in range( self.width ):
@@ -673,7 +674,15 @@ class RandomScene( Room ):
         self.step_six( self.gb ) # Deploy for self, then children
         self.step_seven( self.gb ) # Decorate for self, then children
 
+        self.clean_contents()
+
         return self.gb
+
+    def clean_contents( self ):
+        # Remove unimportant things from the contents.
+        for t in self.gb.contents[:]:
+            if not hasattr( t, "pos" ):
+                self.gb.contents.remove( t )
 
     def prepare( self, gb ):
         # Step one- we're going to use a plasma map to set water/lo/hi ground.

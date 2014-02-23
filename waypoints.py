@@ -21,7 +21,7 @@ class Waypoint( object ):
         self.contents = container.ContainerList()
 
     def place( self, scene, pos=None ):
-        if hasattr( self, "container" ):
+        if hasattr( self, "container" ) and self.container:
             self.container.remove( self )
         self.scene = scene
         scene.contents.append( self )

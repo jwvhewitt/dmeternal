@@ -103,11 +103,18 @@ class Lockpick( Enhancer ):
     AFFECTS = (DAGGER,)
     BONUSES = stats.StatMod({ stats.DISARM_TRAPS: 15 })
 
+class OrcishWeapon( Enhancer ):
+    NAMEPAT = "Orcish {0}"
+    DESCPAT = "{0} Its heavy construction does an extra 1d4 crushing damage."
+    PLUSRANK = 3
+    AFFECTS = (SWORD, DAGGER, POLEARM, FARMTOOL)
+    ATTACK_ON_HIT = effects.HealthDamage( (1,4,0), stat_bonus=None, element=stats.RESIST_CRUSHING, anim=animobs.BloodSplat )
+
 class Blessed( Enhancer ):
     NAMEPAT = "Blessed {0}"
     DESCPAT = "{0} This weapon does extra damage to unholy creatures."
     PLUSRANK = 4
-    AFFECTS = (SWORD, MACE, STAFF, POLEARM, ARROW, BULLET)
+    AFFECTS = (SWORD, MACE, STAFF, POLEARM)
     ATTACK_ON_HIT = effects.TargetIs( effects.UNHOLY, on_true=(
             effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_SOLAR, anim=animobs.YellowExplosion )
         ,))
@@ -117,28 +124,28 @@ class Flaming( Enhancer ):
     NAMEPAT = "Flaming {0}"
     DESCPAT = "{0} It glows with magical fire that does an extra 1d8 damage."
     PLUSRANK = 4
-    AFFECTS = (SWORD, AXE, MACE, DAGGER, STAFF, POLEARM, FARMTOOL, ARROW, BULLET)
+    AFFECTS = (SWORD, AXE, MACE, DAGGER, STAFF, POLEARM, FARMTOOL)
     ATTACK_ON_HIT = effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion )
 
 class Frost( Enhancer ):
     NAMEPAT = "Frost {0}"
     DESCPAT = "{0} It shimmers with magical cold that does an extra 1d8 damage."
     PLUSRANK = 4
-    AFFECTS = (SWORD, AXE, MACE, DAGGER, STAFF, POLEARM, FARMTOOL, ARROW, BULLET)
+    AFFECTS = (SWORD, AXE, MACE, DAGGER, STAFF, POLEARM, FARMTOOL)
     ATTACK_ON_HIT = effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_COLD, anim=animobs.BlueExplosion )
 
 class Slimy( Enhancer ):
     NAMEPAT = "Slimy {0}"
     DESCPAT = "{0} It does an extra 1d8 acid damage."
     PLUSRANK = 4
-    AFFECTS = (SWORD, AXE, MACE, DAGGER, STAFF, POLEARM, FARMTOOL, ARROW, BULLET)
+    AFFECTS = (SWORD, AXE, MACE, DAGGER, STAFF, POLEARM, FARMTOOL)
     ATTACK_ON_HIT = effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_ACID, anim=animobs.GreenExplosion )
 
 class Shocking( Enhancer ):
     NAMEPAT = "Shocking {0}"
     DESCPAT = "{0} It calls magical lightning that does an extra 1d8 damage."
     PLUSRANK = 4
-    AFFECTS = (SWORD, AXE, MACE, DAGGER, STAFF, POLEARM, FARMTOOL, ARROW, BULLET)
+    AFFECTS = (SWORD, AXE, MACE, DAGGER, STAFF, POLEARM, FARMTOOL)
     ATTACK_ON_HIT = effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_LIGHTNING, anim=animobs.BlueZap )
 
 class Sharp( Enhancer ):
@@ -146,21 +153,30 @@ class Sharp( Enhancer ):
     DESCPAT = "{0} It gives a +5% bonus to Critical Hit."
     PLUSRANK = 5
     AFFECTS = (SWORD, AXE, POLEARM, FARMTOOL)
-    BONUSES = stats.StatMod({ stats.CRITICAL_HIT: 5 })
+    BONUSES = stats.StatMod({ stats.PHYSICAL_ATTACK: 5, stats.CRITICAL_HIT: 5 })
 
 class RuneWeapon( Enhancer ):
     NAMEPAT = "Rune {0}"
     DESCPAT = "{0} It crackles with eldritch fire, doing an extra 1d8 dark damage."
     PLUSRANK = 5
-    AFFECTS = (SWORD, AXE, MACE, DAGGER, STAFF, POLEARM, BOW, SLING)
+    AFFECTS = (SWORD, AXE, MACE, DAGGER, STAFF, POLEARM)
     ATTACK_ON_HIT = effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_LUNAR, anim=animobs.PurpleExplosion )
     BONUSES = stats.StatMod({ stats.MAGIC_DEFENSE: 5 })
+
+class RuneBow( Enhancer ):
+    NAMEPAT = "Rune {0}"
+    DESCPAT = "{0} It crackles with eldritch power, shielding its user from harm."
+    PLUSRANK = 5
+    AFFECTS = (BOW, SLING)
+    BONUSES = stats.StatMod({ stats.PHYSICAL_ATTACK: 10, stats.MAGIC_DEFENSE: 10,
+     stats.PHYSICAL_DEFENSE: 10, stats.NATURAL_DEFENSE: 10 })
+    TECH = (spells.lunarspells.WIZARD_MISSILE,)
 
 class HolyWeapon( Enhancer ):
     NAMEPAT = "Holy {0}"
     DESCPAT = "{0} It does an extra 1d8 holy damage and disrupts unholy creatures."
     PLUSRANK = 6
-    AFFECTS = (SWORD, AXE, MACE, DAGGER, STAFF, POLEARM, FARMTOOL, BOW, SLING)
+    AFFECTS = (SWORD, AXE, MACE, DAGGER, STAFF, POLEARM, FARMTOOL)
     ATTACK_ON_HIT = effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_SOLAR, anim=animobs.YellowExplosion, on_success= (
         effects.TargetIs( effects.UNHOLY, on_true=(
             effects.OpposedRoll( att_stat=stats.PIETY, att_modifier=-20, on_success=(
@@ -173,6 +189,22 @@ class HolyWeapon( Enhancer ):
         ,) ) 
         ),))
     BONUSES = stats.StatMod({ stats.PHYSICAL_ATTACK: 5, stats.RESIST_LUNAR: 10 })
+
+class HolyBow( Enhancer ):
+    NAMEPAT = "Holy {0}"
+    DESCPAT = "{0} A hit from this weapon may disrupt unholy creatures."
+    PLUSRANK = 6
+    AFFECTS = (BOW, SLING)
+    ATTACK_ON_HIT = effects.TargetIs( effects.UNHOLY, on_true=(
+            effects.OpposedRoll( att_stat=stats.PIETY, att_modifier=-10, on_success=(
+                effects.InstaKill( anim=animobs.CriticalHit )
+            ,), on_failure=(
+                effects.OpposedRoll( att_modifier=10, on_success = (
+                    effects.Paralyze( max_duration = 3 )
+                ,)
+            ,),)
+        ,) ) )
+    BONUSES = stats.StatMod({ stats.PHYSICAL_ATTACK: 10, stats.RESIST_LUNAR: 10 })
 
 class Vorpal( Enhancer ):
     NAMEPAT = "Vorpal {0}"
@@ -202,6 +234,22 @@ class FreezingAmmo( Enhancer ):
             effects.Paralyze( max_duration = 3 )
         ,) )
     ,) )
+
+class BlessedAmmo( Enhancer ):
+    NAMEPAT = "Blessed {0}"
+    DESCPAT = "{0} They do extra damage to unholy creatures."
+    PLUSRANK = 2
+    AFFECTS = (ARROW, BULLET)
+    ATTACK_ON_HIT = effects.TargetIs( effects.UNHOLY, on_true=(
+            effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_SOLAR, anim=animobs.YellowExplosion )
+        ,))
+
+class AcidAmmo( Enhancer ):
+    NAMEPAT = "Acid {0}"
+    DESCPAT = "{0} They do an extra 1d6 acid damage."
+    PLUSRANK = 3
+    AFFECTS = (ARROW,BULLET)
+    ATTACK_ON_HIT = effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_ACID, anim=animobs.GreenExplosion )
 
 
 #  *******************************
@@ -423,6 +471,14 @@ class SpellcraftGlove( Enhancer ):
     AFFECTS = (GLOVE,)
     BONUSES = stats.StatMod({ stats.MAGIC_ATTACK: 5 })
 
+class FireGlove( Enhancer ):
+    NAMEPAT = "{0} of Fire"
+    DESCPAT = "{0} The user may project an arc of fire from the fingertips."
+    PLUSRANK = 4
+    AFFECTS = (GLOVE,GAUNTLET)
+    BONUSES = stats.StatMod({ stats.RESIST_FIRE: 10 })
+    TECH = (spells.magespells.FIRE_ARC,)
+
 class StrengthGlove( Enhancer ):
     NAMEPAT = "{1} of Might"
     DESCPAT = "{0} They provide a +2 bonus to strength."
@@ -503,19 +559,19 @@ class WinterShoe( Enhancer ):
 #  ***   HOLYSYMBOLS  AND  WANDS   ***
 #  ***********************************
 
-class Evoca( Enhancer ):
-    NAMEPAT = "Evoca {0}"
-    DESCPAT = "{0} It aids spellcasting, providing +5% to magic."
-    PLUSRANK = 4
-    AFFECTS = (WAND,HOLYSYMBOL)
-    BONUSES = stats.StatMod({ stats.MAGIC_ATTACK: 5 })
-
 class Ajura( Enhancer ):
     NAMEPAT = "Ajura {0}"
     DESCPAT = "{0} It aids counterspells, providing +5% to aura."
     PLUSRANK = 3
     AFFECTS = (WAND,HOLYSYMBOL)
     BONUSES = stats.StatMod({ stats.MAGIC_DEFENSE: 5 })
+
+class Evoca( Enhancer ):
+    NAMEPAT = "Evoca {0}"
+    DESCPAT = "{0} It aids spellcasting, providing +5% to magic."
+    PLUSRANK = 4
+    AFFECTS = (WAND,HOLYSYMBOL)
+    BONUSES = stats.StatMod({ stats.MAGIC_ATTACK: 5 })
 
 
 #  *************************

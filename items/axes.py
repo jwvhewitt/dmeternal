@@ -83,6 +83,6 @@ class Pickaxe( Item ):
     avatar_image = "avatar_axe.png"
     avatar_frame = 8
     mass = 60
-    attackdata = Attack( (1,6,1) )
+    attackdata = Attack( (1,6,1), element=stats.RESIST_PIERCING )
 
 
