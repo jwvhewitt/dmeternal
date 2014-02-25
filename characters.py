@@ -616,7 +616,7 @@ class Character( stats.PhysicalThing ):
 
         # If advancing same level, get stat bonus.
         if level is self.mr_level:
-            self.statline[ random.randint( 0,5 ) ] += 1
+            self.statline[ random.choice( stats.PRIMARY_STATS ) ] += 1
         else:
             # If adding a new level, unequip items.
             self.mr_level = level

@@ -35,8 +35,9 @@ class Container(object):
     to be used to simplify implementation of list and dict containers.
     """
     def _set_container(self, item):
-        if hasattr( item, "container" ) and item.container is not None:
-            raise ContainerError("Item %s was added to container %s but was already in container %s" % (item, self, item.container))
+        if hasattr( item, "container" ) and item.container not in (None,self):
+#            raise ContainerError("Item %s was added to container %s but was already in container %s" % (item, self, item.container))
+            item.container.remove( item )
         item.container = self
     def _unset_container(self, item):
         if item.container is not self:

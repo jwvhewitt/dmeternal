@@ -39,8 +39,15 @@ You will find your party on a mostly empty map. Here are the things you can do:
 - Press "s" to access the debugging store at any time. Useful for identifying
   potentially magic items.
 
-My goal right now is just to create all the elements which will be required for
-a proper random level. 
+New! You can check out the current progress on the random story/world builder
+by running tp.py:
+
+    python tp.py
+
+Right now, it generates a scene kind of like campaign.py's edge of civ map,
+but without any monsters or treasure. Take a look in the narrator package to
+see what's going on under the hood. Maybe try adding some content of your own?
+
 
 COMMANDS
 ========

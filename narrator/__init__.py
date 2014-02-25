@@ -10,6 +10,7 @@ class Narrative( object ):
     """The builder class which constructs a campaign."""
     def __init__( self, pstate ):
         self.camp = campaign.Campaign()
+        self.generators = list()
         # Add the seed plot.
         self.story = self.generate_sub_plot( pstate, "INTRO_1" )
 
@@ -33,7 +34,9 @@ class Narrative( object ):
 
     def build( self ):
         """Build finished campaign from this narrative."""
-
+        for g in self.generators:
+            g.make()
+        self.story.cleanup()
 
 # The list of plots will be stored as a dictionary based on label.
 PLOT_LIST = collections.defaultdict( list )

@@ -352,8 +352,9 @@ class Room( object ):
             if gb.map[self.area.x][y].wall == maps.BASIC_WALL and gb.map[self.area.x][y-1].wall and gb.map[self.area.x][y+1].wall and not gb.map[self.area.x+1][y].blocks_walking():
                 good_walls.append((self.area.x,y ))
 
-        for i in self.contents:
-            if hasattr( i, "place" ):
+        for i in self.contents[:]:
+            # Only place contents which can be placed, but haven't yet.
+            if hasattr( i, "place" ) and not ( hasattr(i,"pos") and i.pos ):
                 if hasattr( i, "anchor" ):
                     myrect = pygame.Rect(0,0,1,1)
                     i.anchor( self.area, myrect )
@@ -602,7 +603,7 @@ class BuildingRoom( Room ):
             sign2.place( gb, (x-d[0],y-d[1]) )
             good_spots.remove( (x-d[0],y-d[1]) )
 
-        for i in self.contents:
+        for i in self.contents[:]:
             if hasattr( i, "place" ):
                 p = random.choice( good_spots )
                 good_spots.remove( p )
@@ -682,6 +683,8 @@ class RandomScene( Room ):
         # Remove unimportant things from the contents.
         for t in self.gb.contents[:]:
             if not hasattr( t, "pos" ):
+                if isinstance( t, maps.Scene ):
+                    t.parent_scene = self.gb
                 self.gb.contents.remove( t )
 
     def prepare( self, gb ):
@@ -831,7 +834,7 @@ class EdgeOfCivilization( RandomScene ):
 
         self.civilized_bits = list()
         for r in self.contents[:]:
-            if r is not self.wilds:
+            if hasattr(r,"area") and r is not self.wilds:
                 self.contents.remove( r )
                 self.wilds.contents.append( r )
                 if context.CIVILIZED in r.tags:

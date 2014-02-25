@@ -602,6 +602,9 @@ class Explorer( object ):
                         self.cast_explo_spell(0)
                     elif gdi.unicode == u"s":
                         self.shop( self )
+                    elif gdi.unicode == u"*":
+                        for pc in self.camp.party:
+                            pc.advance( pc.mr_level.__class__ )
 
                 elif gdi.type == pygame.QUIT:
                     self.no_quit = False
