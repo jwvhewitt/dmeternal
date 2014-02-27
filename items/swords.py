@@ -101,7 +101,7 @@ class Flamberge( Item ):
 
 class SilverShortsword( Item ):
     true_name = "Silver Shortsword"
-    true_desc = "This blade was forged to slay unholy creatures. Its light weight favors reflexes over brute strength."
+    true_desc = "This blade was forged to slay unholy creatures. It favors reflexes."
     itemtype = SWORD
     avatar_image = "avatar_sword.png"
     avatar_frame = 28
@@ -111,7 +111,7 @@ class SilverShortsword( Item ):
 
 class SilverLongsword( Item ):
     true_name = "Silver Longsword"
-    true_desc = "This silver blade was forged with protective runes, to do battle against unholy creatures."
+    true_desc = "This silver blade was forged to do battle against unholy creatures."
     itemtype = SWORD
     avatar_image = "avatar_sword.png"
     avatar_frame = 6

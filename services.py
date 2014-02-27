@@ -12,7 +12,7 @@ GENERAL_STORE = ( items.SWORD, items.AXE, items.MACE, items.DAGGER, items.STAFF,
     items.CLOAK, items.FARMTOOL )
 
 class Shop( object ):
-    def __init__( self, ware_types = GENERAL_STORE, allow_misc=True, allow_magic=False, caption="Shop", rank=3, num_items=30 ):
+    def __init__( self, ware_types = GENERAL_STORE, allow_misc=True, allow_magic=False, caption="Shop", rank=3, num_items=25 ):
         self.wares = list()
         self.ware_types = ware_types
         self.allow_misc = allow_misc

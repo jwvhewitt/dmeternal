@@ -36,7 +36,7 @@ class Narrative( object ):
         """Build finished campaign from this narrative."""
         for g in self.generators:
             g.make()
-        self.story.cleanup()
+        self.story.install( self )
 
 # The list of plots will be stored as a dictionary based on label.
 PLOT_LIST = collections.defaultdict( list )

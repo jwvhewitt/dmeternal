@@ -148,9 +148,13 @@ def build_conversation( start,npc_offers ):
                 # Search the npc_offers first.
                 o = find_offer_to_match_cue( c , npc_offers )
                 if o:
-                    exc = copy.deepcopy( o )
+                    # NPC offers don't get copied, since they are made specifically
+                    # for this conversation.
+                    exc = o
                     npc_offers.remove( o )
                 else:
+                    # Standard offers do get copied, because they have to be
+                    # shared around.
                     exc = find_std_offer_to_match_cue( c , npc_offers )
 
                 # We now have an exchange. Find the cue it will replace.
@@ -250,8 +254,14 @@ def converse( exp, pc, npc, conversation ):
             mymenu.add_item( "[Continue]", None )
         else:
             mymenu.sort()
+        nextfx = coff.effect
 
         coff = mymenu.query()
+
+        if nextfx:
+            nextfx( exp )
+
+
 
 def split_words_and_punctuation( in_text ):
     """Split the string by whitespace, removing punctuation with it."""

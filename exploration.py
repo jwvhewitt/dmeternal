@@ -351,7 +351,9 @@ class Explorer( object ):
         anims = [ animobs.SpeakHello(pos=pc.pos), animobs.SpeakHello(pos=target.pos)]
         animobs.handle_anim_sequence( self.screen, self.view, anims )
 
-        offers = [ dialogue.O1, dialogue.O2 ]
+        offers = list()
+        for p in self.camp.active_plots():
+            offers += p.get_dialogue_offers( target )
         convo = dialogue.build_conversation( dialogue.CUE_HELLO , offers )
         dialogue.converse( self, pc, target, convo )
 
@@ -542,6 +544,11 @@ class Explorer( object ):
                             else:
                                 anims = [ animobs.SpeakAngry(m.pos,loop=16), ]
                                 animobs.handle_anim_sequence( self.screen, self.view, anims )
+
+    def check_trigger( self, trigger, thing=None ):
+        # Something is happened that plots may need to react to.
+        for p in self.camp.active_plots():
+            p.handle_trigger( self, trigger, thing )
 
     def keep_exploring( self ):
         return self.camp.first_living_pc() and self.no_quit and not pygwrap.GOT_QUIT and not self.camp.destination

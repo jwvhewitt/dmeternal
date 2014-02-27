@@ -295,6 +295,7 @@ class Scene( object ):
         self.biome=biome
         self.setting=setting
         self.desctags = desctags
+        self.scripts = list()
         # Fill the map with empty tiles
         self.map = [[ Tile()
             for y in range(height) ]

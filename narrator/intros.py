@@ -6,11 +6,15 @@ import maps
 import mapgen
 import waypoints
 import monsters
+import dialogue
+import services
 
 class LightOfTheMacguffin( Plot ):
     LABEL = "INTRO_1"
     propp = context.PROPP_INTERDICTION
     setting = context.SET_RENFAN
+    active = True
+    scope = True
     @classmethod
     def matches( self, pstate ):
         """Requires the setting to be None or RenFan."""
@@ -24,6 +28,7 @@ class LightOfTheMacguffin( Plot ):
 
 class OurMacguffinIsGone( Plot ):
     LABEL = "INTRO_2"
+    scope = True
     @classmethod
     def matches( self, pstate ):
         """Requires the propp to be INTERDICTION, MACGUFFIN to exist."""
@@ -56,9 +61,9 @@ class CityOnEdgeOfCiv( Plot ):
 
 class GenericWeaponShop( Plot ):
     LABEL = "CITY_WEAPONSHOP"
+    active = True
+    scope = "_INTERIOR"
     def custom_init( self, nart ):
-        city = self.elements.get( "CITY" )
-
         exterior = mapgen.BuildingRoom( tags=(context.CIVILIZED,) )
         exterior.special_c[ "window" ] = maps.SMALL_WINDOW
         exterior.special_c[ "sign1" ] = maps.SWORD_SIGN
@@ -88,6 +93,19 @@ class GenericWeaponShop( Plot ):
         int_mainroom.contents.append( npc )
         self.register_element( "SHOPKEEPER", npc )
 
+        self.shop = services.Shop( rank=self.level+2 )
+
         return True
+
+    def SHOPKEEPER_offers( self ):
+        # Return list of shopkeeper offers.
+        ol = list()
+        ol.append( dialogue.Offer( "This is my shop. There is not much here yet." ,
+         context = context.ContextTag([context.SHOP,context.WEAPON]), effect=self.shop ) )
+        return ol
+
+
+
+
 
 

@@ -34,6 +34,10 @@ class Plot( object ):
     setting = False
     chapter = 1
     level = 1
+    active = False
+    # Set scope to the scene identifier of the scene this plot's scripts are
+    # attached to, or True for this plot to have global scope.
+    scope = None
     def __init__( self, nart, pstate ):
         """Initialize + install this plot, or raise PlotError"""
         # nart = The Narrative object
@@ -113,16 +117,40 @@ class Plot( object ):
             if e in d:
                 d.remove( e )
 
-    def cleanup( self ):
-        """Plot generation complete. Remove temporary data."""
+    def install( self, nart ):
+        """Plot generation complete. Mesh plot with campaign."""
         for sp in self.subplots.itervalues():
-            sp.cleanup()
+            sp.install( nart )
         del self.move_records
+        if self.scope:
+            dest = self.elements.get( self.scope )
+            if dest and hasattr( dest, "scripts" ):
+                dest.scripts.append( self )
+            else:
+                nart.camp.scripts.append( self )
 
     def display( self, lead="" ):
         print lead + str( self.__class__ )
         for sp in self.subplots.itervalues():
             sp.display(lead+" ")
+
+    def handle_trigger( self, explo, trigger, thing=None ):
+        """A trigger has been tripped; make this plot react if appropriate."""
+        # The trigger handler will be a method of this plot. If a thing is
+        # involved, and that thing is an element, the handler's id will be
+        # "[element ident]_[trigger type]". If no thing is involved, the
+        # trigger handler will be "t_[trigger type]".
+        # Trigger handler methods take the Exploration as a parameter.
+        if thing:
+            idlist = self.get_element_idents( thing )
+            for label in idlist:
+                handler = getattr( self, "{0}_{1}".format( label, trigger ), None )
+                if handler:
+                    handler( explo )
+        else:
+            handler = getattr( self, "t_{0}".format( trigger ), None )
+            if handler:
+                handler( explo )
 
     def get_dialogue_offers( self, npc ):
         """Get any dialogue offers this plot has for npc."""

@@ -37,11 +37,12 @@ class Campaign( object ):
     """A general holder for all the stuff that goes into a DME campaign."""
     def __init__( self, name = "BobDwarf19", scene=None, entrance=None ):
         self.name = name
-        self.party = []
+        self.party = list()
         self.scene = scene
         self.entrance = entrance
         self.destination = None
-        self.scenes = []
+        self.scenes = list()
+        self.scripts = list()
         self.fight = None
         self.gold = 300
         self.day = 1
@@ -130,6 +131,14 @@ class Campaign( object ):
             elif not exp.no_quit:
                 # If the player quit in exploration mode, exit to main menu.
                 break
+
+    def active_plots( self ):
+        for p in self.scene.scripts:
+            if p.active:
+                yield p
+        for p in self.scripts:
+            if p.active:
+                yield p
 
 
 def load_party( screen ):
