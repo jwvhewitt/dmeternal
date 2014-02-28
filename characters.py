@@ -430,7 +430,7 @@ class Character( stats.PhysicalThing ):
         self.techniques = CappedModifierList()
         self.condition = CappedModifierList()
 
-    def get_stat( self , stat ):
+    def get_stat( self , stat, include_extras=True ):
         if stat == None:
             return 0
 
@@ -442,27 +442,29 @@ class Character( stats.PhysicalThing ):
             for l in self.species.TEMPLATES:
                 it += l.bonuses.get( stat, 0 )
 
-        # Add bonuses from any earned classes...
-        for l in self.levels:
-            it += l.get_stat( stat )
-
         # Add bonuses from any templates...
         for l in self.TEMPLATES:
             it += l.bonuses.get( stat, 0 )
 
-        # Add bonuses from any equipment...
-        for item in self.contents:
-            if item.equipped:
-                it += item.get_stat( stat )
+        if include_extras:
+            # Add bonuses from any earned classes...
+            for l in self.levels:
+                it += l.get_stat( stat )
 
-        # Add penalties from stat damage.
-        it -= self.stat_damage.get( stat , 0 )
 
-        # Add bonuses/penalties from conditions.
-        it += self.condition.get_stat( stat )
+            # Add bonuses from any equipment...
+            for item in self.contents:
+                if item.equipped:
+                    it += item.get_stat( stat )
 
-        # Add bonuses from currently prepared techniques.
-        it += self.techniques.get_stat( stat )
+            # Add penalties from stat damage.
+            it -= self.stat_damage.get( stat , 0 )
+
+            # Add bonuses/penalties from conditions.
+            it += self.condition.get_stat( stat )
+
+            # Add bonuses from currently prepared techniques.
+            it += self.techniques.get_stat( stat )
 
         return it
 

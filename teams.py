@@ -44,7 +44,8 @@ class Team( object ):
 
     def predeploy( self, gb, room ):
         self.home = room.area
-        room.contents += self.build_encounter( gb, self.rank, self.strength, self.habitat )
+        if self.strength:
+            room.contents += self.build_encounter( gb, self.rank, self.strength, self.habitat )
 
     def on_guard( self ):
         """Returns True if monster isn't definitely friendly."""

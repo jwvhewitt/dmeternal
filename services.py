@@ -259,7 +259,7 @@ class Shop( object ):
 
 
 class Library( object ):
-    def __init__( self, spell_list = spells.SPELL_LIST, caption="Library" ):
+    def __init__( self, spell_list = None, caption="Library" ):
         self.spell_list = spell_list
         self.caption = caption
 
@@ -267,10 +267,12 @@ class Library( object ):
         keep_going = True
         myredraw = charsheet.CharacterViewRedrawer( csheet=charsheet.CharacterSheet(pc, screen=explo.screen, camp=explo.camp), screen=explo.screen, predraw=explo.view, caption="Learn New Spell" )
 
+        sl = self.spell_list or spells.SPELL_LIST
+
         while keep_going:
             mymenu = charsheet.RightMenu( explo.screen, predraw = myredraw )
 
-            for s in self.spell_list:
+            for s in sl:
                 if s.can_be_learned( pc ) and s not in pc.techniques:
                     mymenu.add_item( str( s ), s )
             mymenu.sort()

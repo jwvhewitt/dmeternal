@@ -189,6 +189,24 @@ PT_DATABASE = {
         PTEntry( "It's" ),
         PTEntry( "It'z", { voice.KITTEH: True } ),
         ),
+    "Knowledge": (
+        PTEntry( "Smarts", { voice.STUPID: True } ),
+        PTEntry( "Information", { voice.SMART: True } ),
+        PTEntry( "Enlightenment", { voice.ELVEN: True, voice.STUPID: False } ),
+        PTEntry( "Know-wotz", { voice.ORCISH: True } ),
+        PTEntry( "Know-how", { voice.DWARVEN: True } ),
+        PTEntry( "Informashun", { voice.KITTEH: True } ),
+        PTEntry( "Gnosis", { voice.GREEK: True } ),
+       ),
+    "knowledge": (
+        PTEntry( "smarts", { voice.STUPID: True } ),
+        PTEntry( "information", { voice.SMART: True } ),
+        PTEntry( "enlightenment", { voice.ELVEN: True, voice.STUPID: False } ),
+        PTEntry( "know-wotz", { voice.ORCISH: True } ),
+        PTEntry( "know-how", { voice.DWARVEN: True } ),
+        PTEntry( "informashun", { voice.KITTEH: True } ),
+        PTEntry( "gnosis", { voice.GREEK: True } ),
+       ),
     "leader":   (
         PTEntry( "archon", { voice.GREEK: True } ),
         PTEntry( "boss", { voice.ORCISH: True } ),
@@ -198,6 +216,9 @@ PT_DATABASE = {
         PTEntry( "Lemme", { voice.STUPID: True } ),
         PTEntry( "Allow me to", { voice.SMART: True } ),
         PTEntry( "I can", { voice.KITTEH: True } ),
+        ),
+    "Let me know": (
+        PTEntry( "Tell me" ),
         ),
     "little":   (
         PTEntry( "littul", { voice.KITTEH: True } ),
@@ -218,6 +239,12 @@ PT_DATABASE = {
         ),
     "me":   (
         PTEntry( "meh", { voice.KITTEH: True } ),
+        ),
+    "more powerful": (
+        PTEntry( "ruffer", { voice.ORCISH: True } ),
+        PTEntry( "stronger", { voice.DRACONIAN: True } ),
+        PTEntry( "powuhfuller", { voice.KITTEH: True } ),
+        PTEntry( "bigger", { voice.STUPID: True } ),
         ),
     "much":   (
         PTEntry( "mutch", { voice.KITTEH: True } ),
@@ -258,6 +285,11 @@ PT_DATABASE = {
         ),
     "poisonous":   (
         PTEntry( "toxic", { voice.GREEK: True } ),
+        ),
+    "power": (
+        PTEntry( "potential", { voice.DWARVEN: True } ),
+        PTEntry( "strength", { voice.DRACONIAN: True } ),
+        PTEntry( "powehs", { voice.KITTEH: True } ),
         ),
     "riddle":   (
         PTEntry( "enigma", { voice.GREEK: True } ),

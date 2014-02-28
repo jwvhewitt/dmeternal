@@ -50,6 +50,14 @@ class Line( object ):
         tiles.remove( origin )
         return tiles
 
+class SelfOnly( object ):
+    """Just the originator."""
+    AUTOMATIC = True
+    def __init__( self, delay_from=0 ):
+        self.delay_from = delay_from
+    def get_area( self, camp, origin, target ):
+        return ( origin, )
+
 class SelfCentered( object ):
     """A circle centered on originator."""
     AUTOMATIC = True

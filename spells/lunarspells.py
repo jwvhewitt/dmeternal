@@ -19,4 +19,21 @@ WIZARD_MISSILE = Spell( "WIZARD_MISSILE", "Wizard Missile",
     effects.HealthDamage((1,6,0), stat_bonus=None, element=stats.RESIST_LUNAR, anim=animobs.PurpleExplosion ),
     rank=1, gems={LUNAR:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.WizardMissile, ai_tar=invocations.vs_enemy )
 
+# CIRCLE TWO
+
+# CIRCLE 3
+
+# CIRCLE 4
+
+# CIRCLE 5
+
+# CIRCLE 6
+
+# CIRCLE 7
+
+# CIRCLE 8
+
+# CIRCLE 9
+
+
 

@@ -20,7 +20,7 @@ class FireproofCloak( NormalCloak ):
     true_name = "Fireproof Cloak"
     true_desc = "A thick cloak made of a fireproof material."
     avatar_frame = 7
-    statline = stats.StatMod({ stats.STEALTH: 5, stats.RESIST_FIRE: 25 })
+    statline = stats.StatMod({ stats.RESIST_COLD: 5, stats.RESIST_FIRE: 25 })
 
 class WeatherproofCloak( NormalCloak ):
     true_name = "Weatherproof Cloak"

@@ -47,6 +47,12 @@ def generate_npc( species=None, job=None, gender=None, rank=None, team=None ):
         choices = chargen.get_possible_levels( npc ) + chargen.get_possible_levels( npc, NPC_CLASSES )
         job = random.choice( choices )
 
+    if not chargen.can_take_level( npc, job ):
+        tries = 100
+        while ( tries > 0 ) and not chargen.can_take_level( npc, job ):
+            npc.roll_stats()
+            tries += -1
+
     ji = job( rank=rank, pc=npc )
     npc.levels.append( ji )
     chargen.give_starting_equipment( npc )

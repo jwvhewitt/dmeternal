@@ -41,6 +41,9 @@ class Waypoint( object ):
         # Perform this waypoint's special action.
         pass
 
+class Anvil( Waypoint ):
+    TILE = maps.Tile( None, None, maps.ANVIL )
+
 class Bookshelf( Waypoint ):
     TILE = maps.Tile( None, None, maps.BOOKSHELF )
     ATTACH_TO_WALL = True

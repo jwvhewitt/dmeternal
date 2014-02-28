@@ -70,15 +70,18 @@ def choose_species( screen, redraw ):
     redraw.caption = "Select this character's species."
     return rpm.query()
 
+def can_take_level( pc, job ):
+    is_legal = True
+    for k,v in job.requirements.iteritems():
+        if pc.get_stat( k, include_extras=False ) < v:
+            is_legal = False
+    return is_legal
+
 def get_possible_levels( pc, source=characters.PC_CLASSES ):
     """ Return a list of levels the PC qualifies for."""
     pl = []
     for l in source:
-        is_legal = True
-        for k,v in l.requirements.iteritems():
-            if pc.get_stat( k ) < v:
-                is_legal = False
-        if is_legal:
+        if can_take_level( pc, l ):
             pl.append( l )
     return pl
 

@@ -299,7 +299,7 @@ if __name__=='__main__':
     pswitch.CALL = pdoor.activate
     room4.special_c["door"] = pdoor
     room2.contents.append( pswitch )
-    myteam = teams.Team(default_reaction=-999)
+    myteam = teams.Team(default_reaction=-999,habitat=otherscene.get_encounter_request())
     room2.contents.append( myteam )
 
     mychest = waypoints.MediumChest()
@@ -333,7 +333,7 @@ if __name__=='__main__':
     room1 = mapgen.FuzzyRoom( tags=(context.CIVILIZED,), anchor=mapgen.east, parent=osgen2 )
     room1.contents.append( stairs_2 )
     room2 = mapgen.FuzzyRoom( parent=osgen2 )
-    myteam = teams.Team(default_reaction=-999)
+    myteam = teams.Team(default_reaction=-999,habitat=scene3.get_encounter_request())
     room2.contents.append( myteam )
     room3 = mapgen.FuzzyRoom( tags=(context.CIVILIZED,), parent=osgen2 )
     mychest = waypoints.MediumChest()

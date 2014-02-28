@@ -14,7 +14,8 @@ import monsters
 import container
 
 # Enumerated constants for sprite sheets.
-SPRITE_GROUND, SPRITE_WALL, SPRITE_BORDER, SPRITE_INTERIOR, SPRITE_FLOOR, SPRITE_DECOR, SPRITE_CHEST = range( 7 )
+SPRITE_GROUND, SPRITE_WALL, SPRITE_BORDER, SPRITE_INTERIOR, SPRITE_FLOOR, \
+ SPRITE_DECOR, SPRITE_CHEST, SPRITE_SIGNS = range( 8 )
 
 class SingTerrain( object ):
     # A singleton terrain class; use these objects as tokens for maps.
@@ -249,10 +250,27 @@ BRIGHT_WINDOW = OnTheWallTerrain( "BRIGHT_WINDOW", frame = 26 )
 DARK_WINDOW = OnTheWallTerrain( "DARK_WINDOW", frame = 28 )
 CASTLE_WINDOW = OnTheWallTerrain( "CASTLE_WINDOW", frame = 30 )
 STAINED_GLASS = OnTheWallTerrain( "STAINED_GLASS", frame = 32 )
-SWORD_SIGN = OnTheWallTerrain( "SWORD_SIGN", frame = 34 )
-ANKH_SIGN = OnTheWallTerrain( "ANKH_SIGN", frame = 36 )
+WALL_CRATES = OnTheWallVariable( "WALL_CRATES", frames = (34,36) )
 CURTAIN = OnTheWallTerrain( "CURTAIN", frame = 38 )
 WALL_WEAPON_RACK = OnTheWallVariable( "WALL_WEAPON_RACK", frames = (40,42,44,46,48,50,52) )
+WELL = SingTerrain( "WELL", spritesheet = SPRITE_DECOR, frame = 54, block_walk=True )
+CART = SingTerrain( "CART", spritesheet = SPRITE_DECOR, frame = 55, block_walk=True )
+PROVISIONS = OnTheWallVariable( "PROVISIONS", frames = (56,58,60) )
+HIGH_SHELF = OnTheWallVariable( "HIGH_SHELF", frames = (62,64) )
+ANVIL = SingTerrain( "ANVIL", spritesheet = SPRITE_DECOR, frame = 66, block_walk=True )
+DESK = SingTerrain( "DESK", spritesheet = SPRITE_DECOR, frame = 67, block_walk=True )
+FORGE = WaterTerrain( "FORGE", frame = 68, spritesheet = SPRITE_DECOR )
+
+SWORD_SIGN = OnTheWallTerrain( "SWORD_SIGN", spritesheet=SPRITE_SIGNS, frame = 0 )
+ANKH_SIGN = OnTheWallTerrain( "ANKH_SIGN", spritesheet=SPRITE_SIGNS, frame = 2 )
+BOOK_SIGN = OnTheWallTerrain( "BOOK_SIGN", spritesheet=SPRITE_SIGNS, frame = 4 )
+DRINK_SIGN = OnTheWallTerrain( "DRINK_SIGN", spritesheet=SPRITE_SIGNS, frame = 6 )
+SHIELD_SIGN = OnTheWallTerrain( "SHIELD_SIGN", spritesheet=SPRITE_SIGNS, frame = 8 )
+WEAPONS_SIGN = OnTheWallTerrain( "WEAPONS_SIGN", spritesheet=SPRITE_SIGNS, frame = 10 )
+POTION_SIGN = OnTheWallTerrain( "POTION_SIGN", spritesheet=SPRITE_SIGNS, frame = 12 )
+BOW_SIGN = OnTheWallTerrain( "BOW_SIGN", spritesheet=SPRITE_SIGNS, frame = 14 )
+TOWER_SIGN = OnTheWallTerrain( "TOWER_SIGN", spritesheet=SPRITE_SIGNS, frame = 16 )
+
 
 SMALL_CHEST = VariableTerrain( "SMALL_CHEST", spritesheet = SPRITE_CHEST, frames = (0,1), block_walk=True )
 SMALL_CHEST_OPEN = VariableTerrain( "SMALL_CHEST_OPEN", spritesheet = SPRITE_CHEST, frames = (2,3), block_walk=True )
@@ -281,7 +299,8 @@ DEFAULT_SPRITES = { SPRITE_GROUND: "terrain_ground_forest.png", \
     SPRITE_INTERIOR: "terrain_int_default.png", \
     SPRITE_FLOOR: "terrain_floor_gravel.png", \
     SPRITE_DECOR: "terrain_decor.png", \
-    SPRITE_CHEST: "terrain_chest_wood.png" }
+    SPRITE_CHEST: "terrain_chest_wood.png", \
+    SPRITE_SIGNS: "terrain_signs_default.png" }
 
 class Scene( object ):
     DELTA8 = ( (-1,-1), (0,-1), (1,-1), (-1,0), (1,0), (-1,1), (0,1), (1,1) )

@@ -46,6 +46,8 @@ def harvest( mod ):
         if inspect.isclass( o ) and issubclass( o , Plot ) and o is not Plot:
             PLOT_LIST[ o.LABEL ].append( o )
 
+import citystuff
 import intros
+harvest( citystuff )
 harvest( intros )
 

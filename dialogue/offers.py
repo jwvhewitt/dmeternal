@@ -2,6 +2,10 @@ import context
 from context import ContextTag
 from base import Cue, Offer, Reply
 
+#  *****************
+#  ***   HELLO   ***
+#  *****************
+
 HELLO_BASIC = Offer( msg = "Hello." , context = ContextTag( [context.HELLO] ) )
 
 HELLO_INFO = Offer( msg = "They say that information is the greatest weapon. I have something you may want to know." ,
@@ -29,3 +33,14 @@ HELLO_SHOPKEEPER_WITH_INFO = Offer( msg = "Hello. Are you going to buy something
                     destination = Cue( ContextTag( [context.INFO] ) ) ),
                   ]
         )
+
+HELLO_SERVICE = Offer( msg = "Hello. Can I help you with anything?" ,
+        context = ContextTag( [context.HELLO,context.SERVICE] ) ,
+        replies = [ Reply( "Yes, I need your services." , destination = Cue( ContextTag( [context.SERVICE] ) ) ) ] )
+
+HELLO_LIBRARY = Offer( msg = "Welcome to the library. Let me know if you need any help." ,
+        context = ContextTag( [context.HELLO,context.SERVICE] ) ,
+        replies = [ Reply( "I need some new spells." , destination = Cue( ContextTag( [context.SERVICE,context.LIBRARY] ) ) ) ] )
+
+
+

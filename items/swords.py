@@ -68,7 +68,7 @@ class Katana( Item ):
     avatar_image = "avatar_sword.png"
     avatar_frame = 5
     mass = 45
-    attackdata = Attack( (1,10,0) )
+    attackdata = Attack( (1,12,0) )
 
 class Claymore( Item ):
     true_name = "Claymore"

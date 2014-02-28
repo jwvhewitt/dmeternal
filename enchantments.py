@@ -21,6 +21,15 @@ class AirArmor( Enchantment ):
     def __init__( self ):
         super(AirArmor, self).__init__(statline=stats.StatMod({stats.PHYSICAL_DEFENSE:5,stats.MAGIC_DEFENSE:5,stats.NATURAL_DEFENSE:5}),dispel=(COMBAT,MAGIC))
 
+class ArmorDamage( Enchantment ):
+    def __init__( self ):
+        super(ArmorDamage, self).__init__(statline=stats.StatMod({stats.PHYSICAL_DEFENSE:-10,stats.NATURAL_DEFENSE:-10}),dispel=(COMBAT))
+
+class BlessedWepEn( Enchantment ):
+    def __init__( self ):
+        super(BlessedWepEn, self).__init__(statline=stats.StatMod({stats.PHYSICAL_ATTACK:10,stats.PHYSICAL_DEFENSE:5,stats.NATURAL_DEFENSE:5,stats.MAGIC_DEFENSE:5}),dispel=(COMBAT,MAGIC))
+    ATTACK_ON_HIT = effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_SOLAR, anim=animobs.YellowExplosion )
+
 class BlessingEn( Enchantment ):
     def __init__( self ):
         super(BlessingEn, self).__init__(statline=stats.StatMod({stats.PHYSICAL_ATTACK:5,stats.MAGIC_ATTACK:5,stats.KUNG_FU:5}),dispel=(COMBAT,MAGIC))
