@@ -28,4 +28,9 @@ SHOCK_SPHERE = Spell( "SHOCK_SPHERE", "Shock Sphere",
     ,) ) ,) ), rank=1, gems={AIR:1,LUNAR:1}, com_tar=targetarea.SelfCentered(radius=1,exclude_middle=True), mpfudge=-2,
     ai_tar=invocations.vs_enemy )
 
+# CIRCLE TWO
+
+# CIRCLE THREE
+
+
 

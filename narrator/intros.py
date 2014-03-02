@@ -11,6 +11,14 @@ import services
 import teams
 import characters
 
+""" The INTRO is divided into two parts. INTRO_1 sets the setting and maybe
+    also changes the Propp state. INTRO_2 is the branch to the first chapter;
+    it may further alter the story state, and is responsible for setting up the
+    starting city + campaign entrance position via the LOCALE subplot.
+
+    The INTRO creates both the LOCALE and the COMPLICATION.
+"""
+
 class LightOfTheMacguffin( Plot ):
     LABEL = "INTRO_1"
     propp = context.PROPP_INTERDICTION
@@ -72,19 +80,6 @@ class CityOnEdgeOfCiv( Plot ):
 
         return True
 
-class BasicEncounter( Plot ):
-    LABEL = "ENCOUNTER"
-    active = True
-    @classmethod
-    def matches( self, pstate ):
-        """Requires the SCENE to exist."""
-        return pstate.elements.get("SCENE")
-    def custom_init( self, nart ):
-        room = mapgen.FuzzyRoom()
-        room.contents.append( teams.Team(default_reaction=-999, rank=self.level, 
-          habitat=self.elements.get("SCENE").get_encounter_request() ) )
-        self.register_element( "_ROOM", room, dident="SCENE" )
-        return True
 
 
 

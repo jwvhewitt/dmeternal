@@ -660,8 +660,13 @@ class BottleneckRoom( Room ):
         if door_wp:
             door_wp.place( gb, (x,y) )
 
+#  *****************************
+#  ***   SCENE  GENERATORS   ***
+#  *****************************
+
 class RandomScene( Room ):
     """The blueprint for a scene."""
+    DEFAULT_ROOM = FuzzyRoom
     def __init__( self, myscene ):
         super(RandomScene,self).__init__( myscene.width, myscene.height )
         self.gb = myscene
@@ -922,6 +927,7 @@ class EdgeOfCivilization( RandomScene ):
 
 class BuildingScene( RandomScene ):
     """This is the inside of a building."""
+    DEFAULT_ROOM = SharpRoom
     def prepare( self, gb ):
         # Step one- Fill with True walls and basic floor.
         self.fill( gb, self.area, floor=maps.BASIC_FLOOR, wall=True )

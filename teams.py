@@ -28,18 +28,49 @@ class Team( object ):
         # Determine how many points of monster to generate.
         pts = max( ( random.randint(150,250) * strength ) // 100, 1 )
 
-        while pts > 0:
-            mclass = gb.choose_monster( min_rank, max_rank, habitat )
+        mclass = gb.choose_monster( min_rank, max_rank, habitat )
+        while pts > 0 and mclass:
             rel_level = max_rank + 1 - mclass.ENC_LEVEL
             m_pts = 200 / ( rel_level ** 2 // 12 + rel_level )
 
-            n,pts = divmod( pts , m_pts )
+            # Determine what companions this monster might get.
+            if hasattr( mclass, "COMPANIONS" ):
+                candidates = list()
+                for c in mclass.COMPANIONS:
+                    if c.ENC_LEVEL >= min_rank and c.ENC_LEVEL <= max_rank:
+                        candidates += (c,c)
+                if candidates:
+                    nextmon = random.choice( candidates )
+                else:
+                    nextmon = None
+            else:
+                nextmon = None
+
+            # Determine the number of monsters to spawn.
+            if hasattr( mclass, "LONER" ) and nextmon:
+                n = 1
+            elif nextmon:
+                # There's another monster coming up.
+                max_n = pts//m_pts
+                if max_n > 1:
+                    n = random.randint( 1, max_n )
+                else:
+                    n = max_n
+            else:
+                # This monster type is all we have. Spend all points on it.
+                n,pts = divmod( pts , m_pts )
+                if random.randint( 0, m_pts ) <= pts:
+                    n += 1
+
+            pts -= n * m_pts
+
             if n < 1:
                 n = 1
                 pts = 0
 
             for t in range( n ):
                 horde.append( mclass(self) )
+            mclass = nextmon
         return horde
 
     def predeploy( self, gb, room ):

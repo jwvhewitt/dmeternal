@@ -21,4 +21,15 @@ BURNING_WEAPON = Spell( "BURNING_WEAPON", "Burning Weapon",
     effects.Enchant( enchantments.FireWepEn, anim=animobs.RedSparkle ),
     rank=1, gems={FIRE:1}, com_tar=targetarea.SinglePartyMember() )
 
+# CIRCLE 2
+
+# CIRCLE 3
+
+EXPLOSION = Spell( "EXPLOSION", "Explosion",
+    "Causes a magical explosion which does 2d6 fire damage to all targets within 3 tiles.",
+    effects.OpposedRoll( on_success = (
+        effects.HealthDamage( (2,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.RedCloud )
+    ,), on_failure = (
+        effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.RedCloud )
+    ,) ), rank=3, gems={FIRE:2}, com_tar=targetarea.Blast(radius=3), ai_tar=invocations.vs_enemy )
 

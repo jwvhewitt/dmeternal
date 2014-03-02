@@ -21,11 +21,29 @@ WIZARD_MISSILE = Spell( "WIZARD_MISSILE", "Wizard Missile",
 
 # CIRCLE TWO
 
+SLEEP = Spell( "SLEEP", "Sleep",
+    "Causes living creatures in a 2 tile radius to fall asleep.",
+    effects.TargetIs( pat=effects.ANIMAL, anim=animobs.PurpleSparkle, on_true = (
+        effects.OpposedRoll( att_modifier=0, on_success = (
+            effects.CauseSleep(),
+        ))
+    ,) ), rank=2, gems={LUNAR:2}, com_tar=targetarea.Blast(radius=2), ai_tar=invocations.vs_enemy )
+
 # CIRCLE 3
+
 
 # CIRCLE 4
 
 # CIRCLE 5
+
+DEEP_SLEEP = Spell( "DEEP_SLEEP", "Deep Sleep",
+    "Causes living creatures in a 4 tile radius to fall asleep.",
+    effects.TargetIs( pat=effects.ANIMAL, anim=animobs.PurpleSparkle, on_true = (
+        effects.OpposedRoll( att_modifier=10, on_success = (
+            effects.CauseSleep(),
+        ))
+    ,) ), rank=5, gems={LUNAR:2}, com_tar=targetarea.Blast(radius=4), ai_tar=invocations.vs_enemy )
+
 
 # CIRCLE 6
 

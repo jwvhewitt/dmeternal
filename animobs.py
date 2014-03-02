@@ -180,6 +180,10 @@ class ArmorUp( AnimOb ):
     def __init__(self, pos=(0,0), loop=2, delay=1 ):
         super(ArmorUp, self).__init__(sprite_name="fx_spells.png",pos=pos,start_frame=24,end_frame=31,loop=loop,ticks_per_frame=1, delay=delay)
 
+class FallAsleep( AnimOb ):
+    def __init__(self, pos=(0,0), loop=0, delay=1 ):
+        super(FallAsleep, self).__init__(sprite_name="fx_spells.png",pos=pos,start_frame=32,end_frame=46,loop=loop,ticks_per_frame=1, delay=delay)
+
 # fx_explosion.png
 
 class OrangeExplosion( AnimOb ):

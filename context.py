@@ -54,11 +54,11 @@ DES_EARTH, DES_AIR, DES_WATER, DES_FIRE, DES_SOLAR, DES_LUNAR, \
 #  MTY_UNDEAD can be summoned by Necromancer spells
 #  MTY_CREATURE can be summoned by Druid spells
 MTY_BEAST, MTY_HUMANOID, MTY_FIGHTER, MTY_THIEF, MTY_PRIEST, MTY_MAGE, \
-    MTY_UNDEAD, MTY_CREATURE = range(300,308)
+    MTY_UNDEAD, MTY_CREATURE, MTY_LEADER = range(300,309)
 
 # Genus Tags. Note that these don't necessarily correspond to templates- a
 #  necromancer monster may be grouped with the undead, despite not being undead
-#  itself. Also a monster can have more than one genus because around here we
+#  itself. Also a monster can have more than one genus because in Python we
 #  believe in multiple inheritence.
 GEN_GIANT, GEN_GOBLIN, GEN_CHAOS, GEN_UNDEAD, GEN_NATURE, GEN_DRAGON = range( 400,406 )
 

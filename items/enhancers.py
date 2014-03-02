@@ -251,6 +251,16 @@ class AcidAmmo( Enhancer ):
     AFFECTS = (ARROW,BULLET)
     ATTACK_ON_HIT = effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_ACID, anim=animobs.GreenExplosion )
 
+class SleepySand( Enhancer ):
+    NAMEPAT = "Sleepysand {0}"
+    DESCPAT = "{0} They may put the target to sleep."
+    PLUSRANK = 3
+    AFFECTS = (BULLET,)
+    ATTACK_ON_HIT = effects.TargetIs( pat=effects.ANIMAL, on_true = (
+        effects.OpposedRoll( att_modifier=50, on_success = (
+            effects.CauseSleep(),
+        )),))
+
 
 #  *******************************
 #  ***   ARMOR  ENHANCEMENTS   ***

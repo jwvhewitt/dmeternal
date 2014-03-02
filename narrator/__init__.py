@@ -32,6 +32,14 @@ class Narrative( object ):
                     cp = None
             return cp
 
+    def get_map_generator( self, gb ):
+        mygen = None
+        for mg in self.generators:
+            if mg.gb == gb:
+                mygen = mg
+                break
+        return mygen
+
     def build( self ):
         """Build finished campaign from this narrative."""
         for g in self.generators:
@@ -47,7 +55,9 @@ def harvest( mod ):
             PLOT_LIST[ o.LABEL ].append( o )
 
 import citystuff
+import encounters
 import intros
 harvest( citystuff )
+harvest( encounters )
 harvest( intros )
 

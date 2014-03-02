@@ -262,10 +262,21 @@ PT_DATABASE = {
         PTEntry( "mai", { voice.KITTEH: True } ),
         PTEntry( "meh", { voice.KITTEH: True } ),
         ),
-    "need":   (
-        PTEntry( "needs", { voice.DRACONIAN: True } ),
-        PTEntry( "needz", { voice.KITTEH: True } ),
-        PTEntry( "require", { voice.STUPID: False } ),
+    "need a":   (
+        PTEntry( "desire a", { voice.DRACONIAN: True } ),
+        PTEntry( "needz a", { voice.KITTEH: True } ),
+        PTEntry( "require a", { voice.STUPID: False } ),
+        ),
+    "need some":   (
+        PTEntry( "desire some", { voice.DRACONIAN: True } ),
+        PTEntry( "needz sum", { voice.KITTEH: True } ),
+        PTEntry( "require some", { voice.STUPID: False } ),
+        ),
+    "need to":   (
+        PTEntry( "must", { voice.DWARVEN: True } ),
+        PTEntry( "needz to", { voice.KITTEH: True } ),
+        PTEntry( "really should", { voice.HURTHISH: True } ),
+        PTEntry( "should" ),
         ),
     "no !":   (
         PTEntry( "noes!", { voice.KITTEH: True } ),

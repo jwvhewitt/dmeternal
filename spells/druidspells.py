@@ -49,8 +49,29 @@ CALL_MONSTER = Spell( "CALL_MONSTER", "Call Monster",
     effects.CallMonster( {context.MTY_CREATURE: True, context.DES_EARTH: context.MAYBE, context.GEN_NATURE: context.MAYBE, context.DES_SOLAR: context.MAYBE}, 10, anim=animobs.OrangeSparkle ),
     rank=5, gems={EARTH:2,SOLAR:2}, com_tar=targetarea.SingleTarget(reach=2), mpfudge = 10 )
 
+# CIRCLE SIX
+
+CALL_BEHEMOTH = Spell( "CALL_BEHEMOTH", "Call Behemoth",
+    "This spell will summon a very powerful monster to fight on your behaf.",
+    effects.CallMonster( {context.MTY_CREATURE: True, context.DES_EARTH: context.MAYBE, context.GEN_NATURE: context.MAYBE, context.DES_SOLAR: context.MAYBE}, 12, anim=animobs.OrangeSparkle ),
+    rank=6, gems={EARTH:2,SOLAR:2}, com_tar=targetarea.SingleTarget(reach=2), mpfudge = 12 )
+
+
+# CIRCLE SEVEN
+
+CALL_COLOSSUS = Spell( "CALL_COLOSSUS", "Call Colossus",
+    "This spell will summon an extremely powerful monster to fight on your behaf.",
+    effects.CallMonster( {context.MTY_CREATURE: True, context.DES_EARTH: context.MAYBE, context.GEN_NATURE: context.MAYBE, context.DES_SOLAR: context.MAYBE}, 14, anim=animobs.OrangeSparkle ),
+    rank=7, gems={EARTH:2,SOLAR:2}, com_tar=targetarea.SingleTarget(reach=2), mpfudge = 14 )
+
 
 # CIRCLE EIGHT
+
+CALL_JUGGERNAUT = Spell( "CALL_JUGGERNAUT", "Call Juggernaut",
+    "This spell will summon a nigh-unstoppable monster to fight on your behaf.",
+    effects.CallMonster( {context.MTY_CREATURE: True, context.DES_EARTH: context.MAYBE, context.GEN_NATURE: context.MAYBE, context.DES_SOLAR: context.MAYBE}, 16, anim=animobs.OrangeSparkle ),
+    rank=8, gems={EARTH:3,SOLAR:2}, com_tar=targetarea.SingleTarget(reach=3), mpfudge = 16 )
+
 
 NATURAL_DISASTER = Spell( "NATURAL_DISASTER", "Natural Disaster",
     "Causes massive fire damage in a five tile radius.",
@@ -60,6 +81,13 @@ NATURAL_DISASTER = Spell( "NATURAL_DISASTER", "Natural Disaster",
         effects.HealthDamage( (10,6,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.Nuclear )
     ,) ), rank=8, gems={EARTH:2,FIRE:3}, com_tar=targetarea.Blast(radius=5, delay_from=1), shot_anim=animobs.BigMeteor,
     ai_tar=invocations.vs_enemy )
+
+# CIRCLE NINE
+
+CALL_LEVIATHAN = Spell( "CALL_LEVIATHAN", "Call Leviathan",
+    "This spell will summon a legendary monster to fight on your behaf.",
+    effects.CallMonster( {context.MTY_CREATURE: True, context.DES_EARTH: context.MAYBE, context.GEN_NATURE: context.MAYBE, context.DES_SOLAR: context.MAYBE}, 18, anim=animobs.OrangeSparkle ),
+    rank=9, gems={EARTH:3,SOLAR:3}, com_tar=targetarea.SingleTarget(reach=4), mpfudge = 20 )
 
 
 

@@ -382,7 +382,7 @@ class IceFox( base.Monster ):
             effects.HealthDamage( (1,6,0), stat_bonus=stats.TOUGHNESS, element=stats.RESIST_COLD, anim=animobs.BlueCloud )
         ,), on_failure = (
             effects.HealthDamage( (1,3,0), stat_bonus=None, element=stats.RESIST_COLD, anim=animobs.BlueCloud )
-        ,) ), com_tar=targetarea.Cone(reach=4), ai_tar=invocations.vs_enemy, mp_cost=2
+        ,) ), com_tar=targetarea.Cone(reach=4), ai_tar=invocations.vs_enemy, mp_cost=3
       ), )
 
     def init_monster( self ):

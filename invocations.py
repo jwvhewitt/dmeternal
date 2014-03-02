@@ -14,6 +14,14 @@ def vs_enemy( camp, user, target ):
     else:
         return 0
 
+def vs_wounded_ally( camp, user, target ):
+    if user.is_enemy( camp, target ):
+        return -1
+    elif user.is_ally( camp, target ) and ( target.current_hp() < target.max_hp() ):
+        return 1
+    else:
+        return 0
+
 
 # Base invocation gear.
 
@@ -48,9 +56,9 @@ class MPInvocation( Invocation ):
 
     def can_be_invoked( self, chara, in_combat=False ):
         if in_combat:
-            return self.com_tar and self.fx and chara.current_mp >= self.mp_cost
+            return self.com_tar and self.fx and chara.current_mp() >= self.mp_cost
         else:
-            return self.exp_tar and self.fx and chara.current_mp >= self.mp_cost
+            return self.exp_tar and self.fx and chara.current_mp() >= self.mp_cost
 
     def pay_invocation_price( self, chara ):
        chara.mp_damage += self.mp_cost

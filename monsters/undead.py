@@ -54,10 +54,34 @@ class Skeleton( base.Monster ):
      context.MTY_UNDEAD, 
      context.DES_LUNAR, context.GEN_UNDEAD )
     ENC_LEVEL = 2
+    COMPANIONS = (SkeletalHound,)
 
     COMBAT_AI = aibrain.SteadyAI()
 
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_CRUSHING )
+
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 2, self ) )
+
+class SkeletonWithDagger( base.Monster ):
+    name = "Skeleton"
+    statline = { stats.STRENGTH: 10, stats.TOUGHNESS: 10, stats.REFLEXES: 10, \
+        stats.INTELLIGENCE: 10, stats.PIETY: 10, stats.CHARISMA: 1 }
+    SPRITENAME = "monster_undead.png"
+    FRAME = 1
+    TEMPLATES = (stats.UNDEAD,stats.BONE)
+    MOVE_POINTS = 12
+    VOICE = None
+    GP_VALUE = 10
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.SET_RENFAN,
+     context.MTY_UNDEAD, 
+     context.DES_LUNAR, context.GEN_UNDEAD )
+    ENC_LEVEL = 2
+    COMPANIONS = (Skeleton,)
+
+    COMBAT_AI = aibrain.SteadyAI()
+
+    ATTACK = items.Attack( (1,6,0), element = stats.RESIST_SLASHING )
 
     def init_monster( self ):
         self.levels.append( base.Humanoid( 2, self ) )
@@ -89,6 +113,30 @@ class Zombie( base.Monster ):
     def init_monster( self ):
         self.levels.append( base.Humanoid( 3, self ) )
 
+class SkeletonWithMorningstar( base.Monster ):
+    name = "Skeleton"
+    statline = { stats.STRENGTH: 10, stats.TOUGHNESS: 10, stats.REFLEXES: 10, \
+        stats.INTELLIGENCE: 10, stats.PIETY: 10, stats.CHARISMA: 1 }
+    SPRITENAME = "monster_undead.png"
+    FRAME = 3
+    TEMPLATES = (stats.UNDEAD,stats.BONE)
+    MOVE_POINTS = 12
+    VOICE = None
+    GP_VALUE = 15
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.SET_RENFAN,
+     context.MTY_UNDEAD, 
+     context.DES_LUNAR, context.GEN_UNDEAD )
+    ENC_LEVEL = 3
+    COMPANIONS = (Skeleton,SkeletonWithDagger)
+
+    COMBAT_AI = aibrain.SteadyAI()
+
+    ATTACK = items.Attack( (1,8,0), element = stats.RESIST_CRUSHING )
+
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 3, self ) )
+
+
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  4   ***
 #  *******************************
@@ -112,6 +160,7 @@ class Ghoul( base.Monster ):
      context.MTY_UNDEAD, 
      context.DES_LUNAR, context.GEN_UNDEAD )
     ENC_LEVEL = 5
+    COMPANIONS = (Zombie,)
 
     COMBAT_AI = aibrain.GhoulAI()
 

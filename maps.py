@@ -261,6 +261,10 @@ ANVIL = SingTerrain( "ANVIL", spritesheet = SPRITE_DECOR, frame = 66, block_walk
 DESK = SingTerrain( "DESK", spritesheet = SPRITE_DECOR, frame = 67, block_walk=True )
 FORGE = WaterTerrain( "FORGE", frame = 68, spritesheet = SPRITE_DECOR )
 
+DRESSER = OnTheWallTerrain( "DRESSER", block_walk=True, spritesheet=SPRITE_INTERIOR, frame = 6 )
+BENCH = OnTheWallTerrain( "BENCH", block_walk=True, spritesheet=SPRITE_INTERIOR, frame = 8 )
+TABLE = SingTerrain( "TABLE", block_walk=True, spritesheet=SPRITE_INTERIOR, frame = 10 )
+
 SWORD_SIGN = OnTheWallTerrain( "SWORD_SIGN", spritesheet=SPRITE_SIGNS, frame = 0 )
 ANKH_SIGN = OnTheWallTerrain( "ANKH_SIGN", spritesheet=SPRITE_SIGNS, frame = 2 )
 BOOK_SIGN = OnTheWallTerrain( "BOOK_SIGN", spritesheet=SPRITE_SIGNS, frame = 4 )

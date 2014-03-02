@@ -270,6 +270,26 @@ class Paralyze( NoEffect ):
 
         return self.children
 
+class CauseSleep( NoEffect ):
+    """Set the Sleep status to True."""
+    def __init__(self, children=(), anim=animobs.FallAsleep ):
+        if not children:
+            children = list()
+        self.children = children
+        self.anim = anim
+
+    def handle_effect( self, camp, originator, pos, anims, delay=0 ):
+        """Do whatever is required of effect; return list of child effects."""
+        target = camp.scene.get_character_at_spot( pos )
+        if target:
+            # Start by activating the target.
+            camp.activate_monster( target )
+
+            if camp.fight:
+                camp.fight.cstat[target].asleep = True
+
+        return self.children
+
 
 class Enchant( NoEffect ):
     """Adds an enchantment to the target's condition list."""

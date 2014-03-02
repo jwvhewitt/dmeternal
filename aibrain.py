@@ -131,7 +131,7 @@ class BasicAI( object ):
         techs = chara.get_invocations( True )
         if techs:
             tech = random.choice( techs )
-            if tech.ai_tar:
+            if tech.ai_tar and tech.can_be_invoked( chara, True ):
                 self.tech = tech
                 if tech.com_tar.AUTOMATIC:
                     return self.invoke_from_here(explo, explo.camp.fight, chara, redraw )
@@ -245,6 +245,10 @@ class SteadyAI( BasicAI ):
     AVOID_THREAT = True
     DOES_SEARCH = True
 
+class BasicTechnicalAI( BasicAI ):
+    """Basic AI with a high technique use chance- for archers + mages."""
+    TECHNIQUE_CHANCE = 90
+
 class GhoulAI( AdvancedAI ):
     AVOID_FIELDS = False
     AVOID_THREAT = True
@@ -254,6 +258,13 @@ class GhoulAI( AdvancedAI ):
     def get_target_heat( self, target ):
         # Ghouls prefer to attack priests and the wounded.
         return ( -target.get_stat(stats.HOLY_SIGN), ( target.current_hp() * 100 ) // target.max_hp(), target.get_defense(), target.max_hp(), target.get_stat(stats.CHARISMA) )
+
+class GoblinKingAI( AdvancedAI ):
+    HEAT_MAX = 10
+    HEAT_STEP = 4
+    TECHNIQUE_CHANCE = 75
+    def get_target_heat( self, target ):
+        return ( -target.get_stat(stats.MAGIC_ATTACK), ( target.current_mp() * 100 ) // target.max_mp(), target.get_defense(), target.get_stat(stats.CHARISMA) )
 
 
 
