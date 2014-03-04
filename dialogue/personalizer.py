@@ -52,6 +52,8 @@ class PTEntry( object ):
 PT_DATABASE = {
     "a lot":   (
         PTEntry( "lotz", { voice.KITTEH: True } ),
+        PTEntry( "plenty" ),
+        PTEntry( "tons", { voice.HURTHISH: True } ),
         ),
     "am looking for": (
         PTEntry( "seek", { voice.DRACONIAN: True } ),
@@ -86,9 +88,18 @@ PT_DATABASE = {
     "Can I have":   (
         PTEntry( "I can haz", { voice.KITTEH: True, voice.SMART: False } ),
         ),
+    "Can I help you":   (
+        PTEntry( "Do you need help" ),
+        PTEntry( "Shall I assist you", { voice.DRACONIAN: True } ),
+        ),
     "cat":   (
         PTEntry( "kitteh", { voice.KITTEH: True } ),
         ),
+    "come back tomorrow": (
+        PTEntry( "come back later" ),
+        PTEntry( "come back next year", { voice.GNOMIC: True } ),
+        PTEntry( "better luck next time", { voice.GNOMIC: True } ),
+       ),
     'different':   (
         PTEntry( "divergent", { voice.SMART: True } ),
         PTEntry( "not the same", { voice.STUPID: True } ),
@@ -101,6 +112,9 @@ PT_DATABASE = {
         ),
     "do you want":   (
         PTEntry( "may you be wanting", { voice.HURTHISH: True } ),
+        ),
+    "enjoy":   (
+        PTEntry( "savor", { voice.DRACONIAN: True } ),
         ),
     "eternity":   (
         PTEntry( "eternitys", { voice.KITTEH: True } ),
@@ -116,6 +130,7 @@ PT_DATABASE = {
         ),
     "forever":   (
         PTEntry( "furevur", { voice.KITTEH: True } ),
+        PTEntry( "til never", { voice.GNOMIC: True } ),
         ),
     "have":   (
         PTEntry( "'ave", { voice.ORCISH: True } ),
@@ -149,6 +164,7 @@ PT_DATABASE = {
         PTEntry( "Greetingss,", { voice.DRACONIAN: True } ),
         PTEntry( "Lali-ho,", { voice.DWARVEN: True } ),
         PTEntry( "Oh hai there,", { voice.KITTEH: True } ),
+        PTEntry( "Hullo,", { voice.HURTHISH: True } ),
         ),
     "here":   (
         PTEntry( "'ere", { voice.ORCISH: True } ),
@@ -180,6 +196,9 @@ PT_DATABASE = {
         PTEntry( "informashun", { voice.KITTEH: True } ),
         PTEntry( "gnosis", { voice.GREEK: True } ),
        ),
+    "in stock .": (
+        PTEntry( "right here." ),
+        ),
     "is not": (
         PTEntry( "isn't" ),
         PTEntry( "ain't", { voice.STUPID: True } ),
@@ -197,6 +216,7 @@ PT_DATABASE = {
         PTEntry( "Know-how", { voice.DWARVEN: True } ),
         PTEntry( "Informashun", { voice.KITTEH: True } ),
         PTEntry( "Gnosis", { voice.GREEK: True } ),
+        PTEntry( "Book learning", { voice.HURTHISH: True } ),
        ),
     "knowledge": (
         PTEntry( "smarts", { voice.STUPID: True } ),
@@ -206,6 +226,7 @@ PT_DATABASE = {
         PTEntry( "know-how", { voice.DWARVEN: True } ),
         PTEntry( "informashun", { voice.KITTEH: True } ),
         PTEntry( "gnosis", { voice.GREEK: True } ),
+        PTEntry( "book learning", { voice.HURTHISH: True } ),
        ),
     "leader":   (
         PTEntry( "archon", { voice.GREEK: True } ),
@@ -219,6 +240,17 @@ PT_DATABASE = {
         ),
     "Let me know": (
         PTEntry( "Tell me" ),
+        PTEntry( "Spit it out", { voice.ORCISH: True } ),
+        PTEntry( "Holler", { voice.HURTHISH: True } ),
+        ),
+    "let me know": (
+        PTEntry( "tell me" ),
+        PTEntry( "inform me", { voice.SMART: True } ),
+        PTEntry( "just holler", { voice.HURTHISH: True } ),
+        ),
+    "library":   (
+        PTEntry( "book place", { voice.STUPID: True } ),
+        PTEntry( "lyceum", { voice.GREEK: True } ),
         ),
     "little":   (
         PTEntry( "littul", { voice.KITTEH: True } ),
@@ -241,10 +273,12 @@ PT_DATABASE = {
         PTEntry( "meh", { voice.KITTEH: True } ),
         ),
     "more powerful": (
+        PTEntry( "stronger" ),
         PTEntry( "ruffer", { voice.ORCISH: True } ),
         PTEntry( "stronger", { voice.DRACONIAN: True } ),
         PTEntry( "powuhfuller", { voice.KITTEH: True } ),
         PTEntry( "bigger", { voice.STUPID: True } ),
+        PTEntry( "scarier", { voice.HURTHISH: True } ),
         ),
     "much":   (
         PTEntry( "mutch", { voice.KITTEH: True } ),
@@ -266,11 +300,13 @@ PT_DATABASE = {
         PTEntry( "desire a", { voice.DRACONIAN: True } ),
         PTEntry( "needz a", { voice.KITTEH: True } ),
         PTEntry( "require a", { voice.STUPID: False } ),
+        PTEntry( "want a", { voice.HURTHISH: True } ),
         ),
     "need some":   (
         PTEntry( "desire some", { voice.DRACONIAN: True } ),
         PTEntry( "needz sum", { voice.KITTEH: True } ),
         PTEntry( "require some", { voice.STUPID: False } ),
+        PTEntry( "want some", { voice.HURTHISH: True } ),
         ),
     "need to":   (
         PTEntry( "must", { voice.DWARVEN: True } ),
@@ -298,12 +334,33 @@ PT_DATABASE = {
         PTEntry( "toxic", { voice.GREEK: True } ),
         ),
     "power": (
+        PTEntry( "strength" ),
         PTEntry( "potential", { voice.DWARVEN: True } ),
         PTEntry( "strength", { voice.DRACONIAN: True } ),
         PTEntry( "powehs", { voice.KITTEH: True } ),
         ),
+    "powerful": (
+        PTEntry( "hurty", { voice.ORCISH: True } ),
+        PTEntry( "frightening", { voice.HURTHISH: True, voice.STUPID: False } ),
+        PTEntry( "scary", { voice.HURTHISH: True } ),
+        PTEntry( "dangerous" ),
+        ),
+    "probably": (
+        PTEntry( "maybe" ),
+        PTEntry( "definitely", { voice.DWARVEN: True } ),
+        PTEntry( "potentially", { voice.GNOMIC: True } ),
+        PTEntry( "rilly", { voice.ORCISH: True } ),
+        PTEntry( "surely", { voice.DRACONIAN: True } ),
+        PTEntry( "downright", { voice.HURTHISH: True } ),
+        ),
     "riddle":   (
         PTEntry( "enigma", { voice.GREEK: True } ),
+        PTEntry( "quizzy question", { voice.HURTHISH: True } ),
+        ),
+    "right now": (
+        PTEntry( "at present", { voice.SMART: True } ),
+        PTEntry( "today", { voice.GNOMIC: True } ),
+        PTEntry( "ere an now", { voice.ORCISH: True } ),
         ),
     "sea": (
         PTEntry( "whale-road", { voice.DWARVEN: True } ),
@@ -329,12 +386,20 @@ PT_DATABASE = {
         PTEntry( "forge-front", { voice.DWARVEN: True } ),
         PTEntry( "boutique", { voice.ELVEN: True } ),
        ),
+    "some": (
+        PTEntry( "ssome", { voice.DRACONIAN: True } ),
+       ),
     "something": (
         PTEntry( "wotever", { voice.ORCISH: True } ),
         PTEntry( "somethin'", { voice.KITTEH: True } ),
        ),
     "sun": (
         PTEntry( "sky-candle", { voice.DWARVEN: True } ),
+       ),
+    "than others .": (
+        PTEntry( "than the rest." ),
+        PTEntry( "den woteva.", { voice.ORCISH: True } ),
+        PTEntry( "than all get-out.", { voice.HURTHISH: True } ),
        ),
     "That": (
         PTEntry( "Dat", { voice.ORCISH: True } ),
@@ -406,9 +471,15 @@ PT_DATABASE = {
         PTEntry( "products", { voice.SMART: True } ),
         PTEntry( "shinies", { voice.KITTEH: True } ),
         ),
+    "We":   (
+        PTEntry( "Us lot", { voice.ORCISH: True } ),
+        PTEntry( "We's", { voice.KITTEH: True } ),
+        PTEntry( "I", { voice.DRACONIAN: True } ),
+        ),
     "weak":   (
         PTEntry( "anemic", { voice.GREEK: True } ),
         PTEntry( "unfit", { voice.DRACONIAN: True } ),
+        PTEntry( "unstrong", { voice.ELVEN: True } ),
         ),
     "weapon": (
         PTEntry( "foe-smiter", { voice.DWARVEN: True } ),
@@ -422,6 +493,7 @@ PT_DATABASE = {
     "Welcome": (
         PTEntry( "Lali-ho", { voice.DWARVEN: True } ),
         PTEntry( "O hai", { voice.KITTEH: True } ),
+        PTEntry( "Come on in", { voice.HURTHISH: True } ),
        ),
     "Welcome to": (
         PTEntry( "Git over ere to", { voice.ORCISH: True } ),
@@ -434,6 +506,9 @@ PT_DATABASE = {
         ),
     "wisdom":   (
         PTEntry( "philosophy", { voice.GREEK: True } ),
+        PTEntry( "sense", { voice.DRACONIAN: True } ),
+        PTEntry( "sagacity", { voice.DRACONIAN: True, voice.SMART: True } ),
+        PTEntry( "prudence", { voice.DWARVEN: True } ),
         ),
     "with":   (
         PTEntry( "wif", { voice.KITTEH: True } ),

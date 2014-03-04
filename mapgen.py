@@ -191,6 +191,7 @@ class CellMutator( object ):
 
 class BuildingDec( object ):
     """Add windows + signs of inhabitation to a (sharp) room."""
+    WALL_DECOR = ()
     def __init__( self, win = maps.SMALL_WINDOW ):
         self.win = win
     def windowize( self, gb, area ):
@@ -210,22 +211,26 @@ class BuildingDec( object ):
                 gb.map[x2][y].decor = self.win
 
     def __call__( self, gb, area ):
+        if self.WALL_DECOR:
+            for x in range( area.x+1, area.x + area.width-1 ):
+                if gb.get_wall(x,area.y) == maps.BASIC_WALL and random.randint(1,3)==1 and not gb.map[x][area.y].decor:
+                    random.choice( self.WALL_DECOR ).place( gb, (x,area.y) )
+            for y in range( area.y+1, area.y + area.height-1 ):
+                if gb.get_wall(area.x,y) == maps.BASIC_WALL and random.randint(1,3)==1 and not gb.map[area.x][y].decor:
+                    gb.map[area.x][y].decor = random.choice( self.WALL_DECOR )
         self.windowize(gb,area)
 
 class WeaponShopDec( BuildingDec ):
     """Add windows + signs of inhabitation to a (sharp) room."""
     WALL_DECOR = ( maps.WALL_WEAPON_RACK, maps.WALL_WEAPON_RACK, maps.WALL_CRATES )
-    def __init__( self, win = maps.SMALL_WINDOW ):
-        self.win = win
-    def __call__( self, gb, area ):
-        for x in range( area.x+1, area.x + area.width-1 ):
-            if gb.get_wall(x,area.y) == maps.BASIC_WALL and random.randint(1,3)==1 and not gb.map[x][area.y].decor:
-                random.choice( self.WALL_DECOR ).place( gb, (x,area.y) )
-        for y in range( area.y+1, area.y + area.height-1 ):
-            if gb.get_wall(area.x,y) == maps.BASIC_WALL and random.randint(1,3)==1 and not gb.map[area.x][y].decor:
-                gb.map[area.x][y].decor = random.choice( self.WALL_DECOR )
-        self.windowize(gb,area)
 
+class GeneralStoreDec( BuildingDec ):
+    """Add windows + signs of inhabitation to a (sharp) room."""
+    WALL_DECOR = ( maps.PROVISIONS, maps.PROVISIONS, maps.WALL_CRATES, maps.WALL_WEAPON_RACK )
+
+class LibraryDec( BuildingDec ):
+    """Add windows + signs of inhabitation to a (sharp) room."""
+    WALL_DECOR = ( maps.PORTRAIT, maps.LANDSCAPE_PICTURE, maps.HIGH_SHELF, maps.BENCH )
 
 #  *****************
 #  ***   ROOMS   ***

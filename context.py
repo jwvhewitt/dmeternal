@@ -1,7 +1,7 @@
 
 # Conversation Tags
 
-HELLO,SHOP,SERVICE,WEAPON,INFO,HINT,LIBRARY = range(7)
+HELLO,SHOP,SERVICE,GENERALSTORE,WEAPON,INFO,HINT,LIBRARY = range(8)
 
 
 class ContextTag( tuple ):

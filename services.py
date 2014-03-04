@@ -257,15 +257,17 @@ class Shop( object ):
             else:
                 keep_going = False
 
+        del self.charsheets
+
 
 class Library( object ):
     def __init__( self, spell_list = None, caption="Library" ):
         self.spell_list = spell_list
         self.caption = caption
 
-    def learn_spell( self, explo, pc ):
+    def learn_spell( self, explo ):
         keep_going = True
-        myredraw = charsheet.CharacterViewRedrawer( csheet=charsheet.CharacterSheet(pc, screen=explo.screen, camp=explo.camp), screen=explo.screen, predraw=explo.view, caption="Learn New Spell" )
+        myredraw = charsheet.CharacterViewRedrawer( csheet=self.charsheets[ self.pc ], screen=explo.screen, predraw=explo.view, caption="Learn New Spell" )
 
         sl = self.spell_list or spells.SPELL_LIST
 
@@ -273,7 +275,7 @@ class Library( object ):
             mymenu = charsheet.RightMenu( explo.screen, predraw = myredraw )
 
             for s in sl:
-                if s.can_be_learned( pc ) and s not in pc.techniques:
+                if s.can_be_learned( self.pc ) and s not in self.pc.techniques:
                     mymenu.add_item( str( s ), s )
             mymenu.sort()
             mymenu.add_alpha_keys()
@@ -284,26 +286,26 @@ class Library( object ):
 
             it = mymenu.query()
             if it is -1:
-                n = ( explo.camp.party.index(pc) + len( explo.camp.party ) - 1 ) % len( explo.camp.party )
-                pc = explo.camp.party[n]
-                myredraw.csheet = charsheet.CharacterSheet(pc, screen=explo.screen, camp=explo.camp)
+                n = ( explo.camp.party.index(self.pc) + len( explo.camp.party ) - 1 ) % len( explo.camp.party )
+                self.pc = explo.camp.party[n]
+                myredraw.csheet = self.charsheets[ self.pc ]
             elif it is 1:
-                n = ( explo.camp.party.index(pc) + 1 ) % len( explo.camp.party )
-                pc = explo.camp.party[n]
-                myredraw.csheet = charsheet.CharacterSheet(pc, screen=explo.screen, camp=explo.camp)
+                n = ( explo.camp.party.index(self.pc) + 1 ) % len( explo.camp.party )
+                self.pc = explo.camp.party[n]
+                myredraw.csheet = self.charsheets[ self.pc ]
             elif it:
                 # A spell was selected. Deal with it.
-                pc.techniques.append( it )
+                self.pc.techniques.append( it )
             else:
                 keep_going = False
 
-    def discard_spell( self, explo, pc ):
+    def discard_spell( self, explo ):
         keep_going = True
-        myredraw = charsheet.CharacterViewRedrawer( csheet=charsheet.CharacterSheet(pc, screen=explo.screen, camp=explo.camp), screen=explo.screen, predraw=explo.view, caption="Discard Known Spell" )
+        myredraw = charsheet.CharacterViewRedrawer( csheet=self.charsheets[ self.pc ], screen=explo.screen, predraw=explo.view, caption="Discard Known Spell" )
 
         while keep_going:
             mymenu = charsheet.RightMenu( explo.screen, predraw = myredraw )
-            for s in pc.techniques:
+            for s in self.pc.techniques:
                 if isinstance( s, spells.Spell ):
                     mymenu.add_item( str( s ), s )
             mymenu.sort()
@@ -315,23 +317,23 @@ class Library( object ):
 
             it = mymenu.query()
             if it is -1:
-                n = ( explo.camp.party.index(pc) + len( explo.camp.party ) - 1 ) % len( explo.camp.party )
-                pc = explo.camp.party[n]
-                myredraw.csheet = charsheet.CharacterSheet(pc, screen=explo.screen, camp=explo.camp)
+                n = ( explo.camp.party.index(self.pc) + len( explo.camp.party ) - 1 ) % len( explo.camp.party )
+                self.pc = explo.camp.party[n]
+                myredraw.csheet = self.charsheets[ self.pc ]
             elif it is 1:
-                n = ( explo.camp.party.index(pc) + 1 ) % len( explo.camp.party )
-                pc = explo.camp.party[n]
-                myredraw.csheet = charsheet.CharacterSheet(pc, screen=explo.screen, camp=explo.camp)
+                n = ( explo.camp.party.index(self.pc) + 1 ) % len( explo.camp.party )
+                self.pc = explo.camp.party[n]
+                myredraw.csheet = self.charsheets[ self.pc ]
             elif it:
                 # A spell was selected. Deal with it.
-                pc.techniques.remove( it )
+                self.pc.techniques.remove( it )
             else:
                 keep_going = False
 
-    def enter_library( self, explo, pc ):
+    def enter_library( self, explo ):
         """Find out what the PC wants to do."""
         keep_going = True
-        myredraw = charsheet.CharacterViewRedrawer( csheet=charsheet.CharacterSheet(pc, screen=explo.screen, camp=explo.camp), screen=explo.screen, predraw=explo.view, caption=self.caption )
+        myredraw = charsheet.CharacterViewRedrawer( csheet=self.charsheets[ self.pc ], screen=explo.screen, predraw=explo.view, caption=self.caption )
 
         mymenu = charsheet.RightMenu( explo.screen, predraw = myredraw )
         mymenu.add_item( "Learn New Spell", self.learn_spell )
@@ -345,25 +347,26 @@ class Library( object ):
         while keep_going:
             it = mymenu.query()
             if it is -1:
-                n = ( explo.camp.party.index(pc) + len( explo.camp.party ) - 1 ) % len( explo.camp.party )
-                pc = explo.camp.party[n]
-                myredraw.csheet = charsheet.CharacterSheet(pc, screen=explo.screen, camp=explo.camp)
+                n = ( explo.camp.party.index(self.pc) + len( explo.camp.party ) - 1 ) % len( explo.camp.party )
+                self.pc = explo.camp.party[n]
+                myredraw.csheet = self.charsheets[ self.pc ]
             elif it is 1:
-                n = ( explo.camp.party.index(pc) + 1 ) % len( explo.camp.party )
-                pc = explo.camp.party[n]
-                myredraw.csheet = charsheet.CharacterSheet(pc, screen=explo.screen, camp=explo.camp)
+                n = ( explo.camp.party.index(self.pc) + 1 ) % len( explo.camp.party )
+                self.pc = explo.camp.party[n]
+                myredraw.csheet = self.charsheets[ self.pc ]
             elif it:
                 # A method was selected. Deal with it.
-                it( explo, pc )
+                it( explo )
+                myredraw.csheet = self.charsheets[ self.pc ]
             else:
                 keep_going = False
 
 
     def __call__( self, explo ):
-        charsheets = dict()
+        self.charsheets = dict()
         for pc in explo.camp.party:
-            charsheets[ pc ] = charsheet.CharacterSheet( pc , screen=explo.screen, camp=explo.camp )
-        psr = charsheet.PartySelectRedrawer( predraw=explo.view, charsheets=charsheets, screen=explo.screen, caption="Who needs to change spells?" )
+            self.charsheets[ pc ] = charsheet.CharacterSheet( pc , screen=explo.screen, camp=explo.camp )
+        psr = charsheet.PartySelectRedrawer( predraw=explo.view, charsheets=self.charsheets, screen=explo.screen, caption="Who needs to change spells?" )
 
         rpm = charsheet.RightMenu( explo.screen, predraw=psr, add_desc=False )
         psr.menu = rpm
@@ -378,7 +381,10 @@ class Library( object ):
             pc = rpm.query()
 
             if pc:
-                self.enter_library( explo, pc )
+                self.pc = pc
+                self.enter_library( explo )
             else:
                 keep_going = False
+
+        del self.charsheets
 

@@ -25,6 +25,12 @@ HELLO_WEAPON_SHOPKEEPER = Offer( msg = "Looking for a new weapon? I have just wh
                     destination = Cue( ContextTag( [context.SHOP,context.WEAPON] ) ) ) ]
         )
 
+HELLO_GENERAL_SHOPKEEPER = Offer( msg = "Whatever you need, I probably have it in stock. If you do not see it right now, come back tomorrow." ,
+        context = ContextTag( [context.HELLO,context.SHOP,context.WEAPON] ) ,
+        replies = [ Reply( "We could use some new equipment." ,
+                    destination = Cue( ContextTag( [context.SHOP,context.GENERALSTORE] ) ) ) ]
+        )
+
 HELLO_SHOPKEEPER_WITH_INFO = Offer( msg = "Hello. Are you going to buy something, or is there something else you want?" ,
         context = ContextTag( [context.HELLO] ) ,
         replies = [ Reply( "I would like to see your wares." ,
