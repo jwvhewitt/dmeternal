@@ -11,21 +11,27 @@ GENERAL_STORE = ( items.SWORD, items.AXE, items.MACE, items.DAGGER, items.STAFF,
     items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES, items.BOOTS,
     items.CLOAK, items.FARMTOOL )
 
+WEAPON_STORE = ( items.SWORD, items.AXE, items.MACE, items.DAGGER, items.STAFF,
+    items.BOW, items.POLEARM, items.ARROW, items.SLING, items.BULLET,
+    items.FARMTOOL )
+
 class Shop( object ):
-    def __init__( self, ware_types = GENERAL_STORE, allow_misc=True, allow_magic=False, caption="Shop", rank=3, num_items=25 ):
+    def __init__( self, ware_types = GENERAL_STORE, allow_misc=True, allow_magic=False, caption="Shop", magic_chance=50, rank=3, num_items=25 ):
         self.wares = list()
         self.ware_types = ware_types
         self.allow_misc = allow_misc
         self.allow_magic = allow_magic
+        self.magic_chance = magic_chance
         self.caption = caption
         self.rank = rank
         self.num_items = num_items
         self.last_updated = -1
 
-    def update_wares( self, days ):
+    def update_wares( self, explo ):
         # Once a day the wares get updated. Delete some items, make sure that
         # there's at least one item of every ware_type, and then fill up the
         # store to full capacity.
+        days = explo.camp.day - self.last_updated
         for n in range( random.randint(0,4) + days ):
             if self.wares:
                 it = random.choice( self.wares )
@@ -33,18 +39,29 @@ class Shop( object ):
             else:
                 break
 
+        # The store rank tracks the party rank, but doesn't quite keep up.
+        rank = max( self.rank, ( self.rank + explo.camp.party_rank() ) // 2 )
+
         needed_wares = list( self.ware_types )
         for i in self.wares:
             if i.itemtype in needed_wares:
                 needed_wares.remove( i.itemtype )
 
         for w in needed_wares:
-            it = items.choose_item( w, self.rank )
+            it = items.choose_item( w, rank )
             if it:
                 self.wares.append( it )
+        tries = 0
         while len( self.wares ) < self.num_items:
-            it = items.choose_item( None, self.rank )
+            tries += 1
+            if self.allow_misc or tries > 1000:
+                itype = None
+            else:
+                itype = random.choice( self.ware_types )
+            it = items.choose_item( itype, rank )
             if it and not any( i.true_name == it.true_name for i in self.wares ):
+                if self.allow_magic and it.min_rank() < rank and random.randint(1,100)<=self.magic_chance:
+                    items.make_item_magic( it, rank )
                 self.wares.append( it )
             elif not it:
                 break
@@ -229,7 +246,7 @@ class Shop( object ):
 
     def __call__( self, explo ):
         if explo.camp.day > self.last_updated:
-            self.update_wares( explo.camp.day - self.last_updated )
+            self.update_wares( explo )
             self.last_updated = explo.camp.day
 
         self.charsheets = dict()

@@ -156,7 +156,7 @@ class GenericWeaponShop( Plot ):
         int_mainroom.contents.append( npc )
         self.register_element( "SHOPKEEPER", npc )
 
-        self.shop = services.Shop( rank=self.level+2 )
+        self.shop = services.Shop( ware_types=services.WEAPON_STORE, rank=self.level+2, allow_misc=False, allow_magic=True )
 
         return True
 

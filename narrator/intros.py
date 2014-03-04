@@ -71,6 +71,7 @@ class CityOnEdgeOfCiv( Plot ):
         self.register_element( "ENTRANCE", myent )
 
         self.add_sub_plot( nart, "CITY_GENERALSTORE" )
+        self.add_sub_plot( nart, "CITY_WEAPONSHOP" )
         self.add_sub_plot( nart, "CITY_LIBRARY" )
         self.add_sub_plot( nart, "ENCOUNTER" )
         self.add_sub_plot( nart, "ENCOUNTER" )

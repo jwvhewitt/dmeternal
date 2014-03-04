@@ -64,6 +64,10 @@ class Campaign( object ):
                 total += 1
         return total
 
+    def party_rank( self ):
+        total = sum( pc.rank() for pc in self.party )
+        return total/len(self.party)
+
     def party_spokesperson( self ):
         """Return the PC with the highest charisma."""
         flp = None
@@ -243,6 +247,7 @@ if __name__=='__main__':
 
     mymon = monsters.generate_npc( species = characters.Reptal, team=myteam )
     mymon.pos = (30,17)
+
     myscene.contents.append( mymon )
 
     mymon = monsters.generate_npc( species = characters.Elf, team=myteam )
