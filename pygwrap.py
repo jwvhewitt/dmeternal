@@ -27,6 +27,8 @@ ITALICFONT = None
 BIGFONT = None
 ANIMFONT = None
 
+TEXT_COLOR = (240,240,50)
+
 INIT_DONE = False
 
 # The FPS the game runs at.
@@ -174,7 +176,7 @@ def wrap_multi_line(text, font, maxwidth):
     return list(lines)
 
 
-def render_text(font, text, width, color = (240,240,50), justify = -1 ):
+def render_text(font, text, width, color = TEXT_COLOR, justify = -1 ):
     # Return an image with prettyprinted text.
     lines = wrap_multi_line( text , font , width )
 
@@ -195,7 +197,7 @@ def render_text(font, text, width, color = (240,240,50), justify = -1 ):
     s.set_colorkey((0,0,0),pygame.RLEACCEL)
     return s
 
-def draw_text( screen , font , text , rect , color = (240,240,50), justify=-1 ):
+def draw_text( screen , font , text , rect , color = TEXT_COLOR, justify=-1 ):
     # Draw some text to the screen with the provided options.
     myimage = render_text( font , text , rect.width , color , justify )
     if justify == 0:
@@ -211,7 +213,7 @@ def draw_text( screen , font , text , rect , color = (240,240,50), justify=-1 ):
 
 ALLOWABLE_CHARACTERS = u'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890()-=_+,.?"'
 
-def input_string( screen , font = None, redrawer = None, prompt = "Enter text below", prompt_color = (255,255,255), input_color = (240,240,50), border=default_border ):
+def input_string( screen , font = None, redrawer = None, prompt = "Enter text below", prompt_color = (255,255,255), input_color = TEXT_COLOR, border=default_border ):
     # Input a string from the user.
     it = []
     keep_going = True

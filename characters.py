@@ -8,6 +8,7 @@ import dialogue
 import effects
 import animobs
 import aibrain
+import collections
 
 # Reaction score constants
 FRIENDLY_THRESHOLD = 25
@@ -426,7 +427,7 @@ class Character( stats.PhysicalThing ):
         self.beard = 0
         self.hp_damage = 0
         self.mp_damage = 0
-        self.stat_damage = dict()
+        self.stat_damage = collections.defaultdict(int)
         self.techniques = CappedModifierList()
         self.condition = CappedModifierList()
 

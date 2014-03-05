@@ -50,10 +50,12 @@ class CharacterSheet( pygame.Rect ):
         myimg.render( mybmp, frame=self.pc.FRAME )
         self.img = pygame.transform.scale2x( mybmp )
 
-    def just_print( self, screen, x, y, text1, text2, width=120 ):
+    def just_print( self, screen, x, y, text1, text2, width=120, color=pygwrap.TEXT_COLOR ):
         """Do proper justification for stat line at x,y."""
-        pygwrap.draw_text( screen, pygwrap.SMALLFONT, text1, pygame.Rect( x, y, width, 20 ), justify = -1 )
-        pygwrap.draw_text( screen, pygwrap.SMALLFONT, text2, pygame.Rect( x, y, width, 20 ), justify = 1 )
+        if text1:
+            pygwrap.draw_text( screen, pygwrap.SMALLFONT, text1, pygame.Rect( x, y, width, 20 ), justify = -1, color=color )
+        if text2:
+            pygwrap.draw_text( screen, pygwrap.SMALLFONT, text2, pygame.Rect( x, y, width, 20 ), justify = 1, color=color )
 
     def render( self, screen ):
         pygwrap.default_border.render( screen , self )
@@ -73,7 +75,14 @@ class CharacterSheet( pygame.Rect ):
         # Column 1 - Basic info
         y = self.y + self.BODY_Y
         for s in stats.PRIMARY_STATS:
-            self.just_print( screen, self.x, y, s.name+":", str( max( self.pc.get_stat(s) , 1 ) ) )
+            self.just_print( screen, self.x, y, s.name+":", "" )
+            current_val = self.pc.get_stat(s)
+            normal_val = self.pc.get_stat(s,False)
+            if current_val < normal_val:
+                self.just_print( screen, self.x, y, "", str( max( current_val , 1 ) ), color=(240,50,0) )
+            else:
+                self.just_print( screen, self.x, y, "", str( max( current_val , 1 ) ) )
+
             y += pygwrap.SMALLFONT.get_linesize()
 
         y += pygwrap.SMALLFONT.get_linesize()

@@ -32,6 +32,7 @@ import pfov
 import exploration
 import pygwrap
 import enchantments
+import collections
 
 
 class Campaign( object ):
@@ -189,6 +190,20 @@ def load_party( screen ):
 
     return party
 
+def fix_characters():
+    file_list = glob.glob( util.user_dir( "c_*.sav" ) )
+    for fname in file_list:
+        f = open( fname, "rb" )
+        pc = pickle.load( f )
+        f.close()
+
+        pc.stat_damage = collections.defaultdict(int)
+
+        f = open( util.user_dir( "c_" + pc.name + ".sav" ) , "wb" )
+        pickle.dump( pc , f, -1 )
+        f.close()
+
+
 if __name__=='__main__':
     import pygame
     import rpgmenu
@@ -208,6 +223,8 @@ if __name__=='__main__':
     pygame.init()
     pygwrap.init()
     rpgmenu.init()
+
+    fix_characters()
 
     myscene = maps.Scene( 100 , 100, sprites={maps.SPRITE_WALL: "terrain_wall_lightstone.png"}, biome=context.HAB_FOREST, setting=context.SET_RENFAN )
     for x in range( myscene.width ):
@@ -384,7 +401,7 @@ if __name__=='__main__':
 
     myroom = pygame.Rect(50,12,10,10)
     myteam = teams.Team(default_reaction=-999, home=myroom)
-    mymon = monsters.animals.IceFox( team=myteam )
+    mymon = monsters.animals.GiantRat( team=myteam )
     mymon.pos = (55,17)
     myscene.contents.append( mymon )
 

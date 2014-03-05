@@ -235,18 +235,38 @@ class LibraryDec( BuildingDec ):
 class BedroomDec( BuildingDec ):
     """Add windows + signs of inhabitation to a (sharp) room."""
     WALL_DECOR = ( maps.LANDSCAPE_PICTURE, maps.HIGH_SHELF, maps.BENCH, maps.DRESSER )
+    def all_clear( self, gb, area, point ):
+        """Return true if no walls or decor in area, no map contents in point."""
+        ok = True
+        for x in range( area.x, area.x + area.width ):
+            for y in range( area.y, area.y + area.height ):
+                if gb.get_wall(x,y) or gb.get_decor(x,y):
+                    ok = False
+                    break
+        if ok:
+            if any( m.pos == point for m in gb.contents if hasattr(m,"pos") ):
+                ok = False
+        return ok
     def __call__( self, gb, area ):
+        beds = random.randint(2,5)
         if self.WALL_DECOR:
             for x in range( area.x+1, area.x + area.width-1 ):
-                if gb.get_wall(x,area.y) == maps.BASIC_WALL and random.randint(1,3)==1 and not gb.map[x][area.y].decor:
-                    random.choice( self.WALL_DECOR ).place( gb, (x,area.y) )
+                if gb.get_wall(x,area.y) == maps.BASIC_WALL and not gb.map[x][area.y].decor:
+                    if beds > 0 and self.all_clear(gb,pygame.Rect(x-1,area.y+1,3,2),(x,area.y+1)) and random.randint(1,4)==1:
+                        gb.map[x][area.y].decor = maps.BED_HEAD
+                        gb.map[x][area.y+1].decor = maps.BED_FOOT
+                        beds += -1
+                    elif random.randint(1,3)==1:
+                        random.choice( self.WALL_DECOR ).place( gb, (x,area.y) )
             for y in range( area.y+1, area.y + area.height-1 ):
-                if gb.get_wall(area.x,y) == maps.BASIC_WALL and random.randint(1,3)==1 and not gb.map[area.x][y].decor:
-                    gb.map[area.x][y].decor = random.choice( self.WALL_DECOR )
+                if gb.get_wall(area.x,y) == maps.BASIC_WALL and not gb.map[area.x][y].decor:
+                    if beds > 0 and self.all_clear(gb,pygame.Rect(area.x+1,y-1,2,3),(area.x+1,y)) and random.randint(1,2)==1:
+                        gb.map[area.x][y].decor = maps.BED_HEAD
+                        gb.map[area.x+1][y].decor = maps.BED_FOOT
+                        beds += -1
+                    elif random.randint(1,3)==1:
+                        random.choice( self.WALL_DECOR ).place( gb, (x,area.y) )
         self.windowize(gb,area)
-
-        gb.map[area.x+1][area.y].decor = maps.BED_HEAD
-        gb.map[area.x+1][area.y+1].decor = maps.BED_FOOT
 
 #  *****************
 #  ***   ROOMS   ***
