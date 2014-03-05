@@ -30,3 +30,7 @@ HELLO_TO_LIBRARY = Reply( "I need to research spells.",
             destination = Cue( ContextTag([context.SERVICE,context.LIBRARY])),
             context = ContextTag([context.HELLO]) )
 
+HELLO_TO_INN = Reply( "We need a room for the night.",
+            destination = Cue( ContextTag([context.SERVICE,context.INN])),
+            context = ContextTag([context.HELLO]) )
+

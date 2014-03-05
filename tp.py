@@ -21,6 +21,7 @@ if __name__=='__main__':
 
     # Set the screen size.
     screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
+#    screen = pygame.display.set_mode( (800,600) )
     pygame.init()
     pygwrap.init()
     rpgmenu.init()
@@ -29,7 +30,6 @@ if __name__=='__main__':
     camp = nart.camp
 
     camp.party = campaign.load_party( screen )
-
 
     if camp.party:
         for pc in camp.party:

@@ -187,6 +187,44 @@ class OnTheWallVariable( SingTerrain ):
         else:
             return self.frames[ view.get_pseudo_random() % len( self.frames ) ]
 
+class BedHeadTerrain( SingTerrain ):
+    def __init__( self, ident, spritesheet = SPRITE_INTERIOR, block_vision = False, block_walk = False, block_fly = False, frame = 0, partner=None ):
+        # ident should be the module-level name of this stat.
+        self.ident = ident
+        self.spritesheet = spritesheet
+        self.block_vision = block_vision
+        self.block_walk = block_walk
+        self.block_fly = block_fly
+        self.frame = frame
+        self.partner = partner
+    def render( self, screen, dest, view, data ):
+        view.sprites[ self.spritesheet ].render( screen, dest, self.frame + data )
+    def get_data( self, view, x, y ):
+        """Pre-generate display data for this tile- facing offset."""
+        if view.scene.get_decor( x, y+1 ) == self.partner:
+            return 1
+        else:
+            return 0
+
+class BedFootTerrain( SingTerrain ):
+    def __init__( self, ident, spritesheet = SPRITE_INTERIOR, block_vision = False, block_walk = False, block_fly = False, frame = 0, partner=None ):
+        # ident should be the module-level name of this stat.
+        self.ident = ident
+        self.spritesheet = spritesheet
+        self.block_vision = block_vision
+        self.block_walk = block_walk
+        self.block_fly = block_fly
+        self.frame = frame
+        self.partner = partner
+    def render( self, screen, dest, view, data ):
+        view.sprites[ self.spritesheet ].render( screen, dest, self.frame + data )
+    def get_data( self, view, x, y ):
+        """Pre-generate display data for this tile- facing offset."""
+        if view.scene.get_decor( x, y-1 ) == self.partner:
+            return 1
+        else:
+            return 0
+
 class CrowdTerrain( SingTerrain ):
     def __init__( self, ident, spritesheet = SPRITE_GROUND, block_vision = False, block_walk = True, block_fly = True, inner_frames = (0,1), outer_frames=(2,3) ):
         # ident should be the module-level name of this stat.
@@ -260,6 +298,10 @@ HIGH_SHELF = OnTheWallVariable( "HIGH_SHELF", frames = (62,64) )
 ANVIL = SingTerrain( "ANVIL", spritesheet = SPRITE_DECOR, frame = 66, block_walk=True )
 DESK = SingTerrain( "DESK", spritesheet = SPRITE_DECOR, frame = 67, block_walk=True )
 FORGE = WaterTerrain( "FORGE", frame = 68, spritesheet = SPRITE_DECOR )
+
+BED_HEAD = BedHeadTerrain( "BED_HEAD", block_walk=True, frame=2 )
+BED_FOOT = BedFootTerrain( "BED_FOOT", block_walk=True, frame=4, partner=BED_HEAD )
+BED_HEAD.partner = BED_FOOT
 
 DRESSER = OnTheWallTerrain( "DRESSER", block_walk=True, spritesheet=SPRITE_INTERIOR, frame = 6 )
 BENCH = OnTheWallTerrain( "BENCH", block_walk=True, spritesheet=SPRITE_INTERIOR, frame = 8 )
@@ -373,6 +415,13 @@ class Scene( object ):
         """Safely return wall of tile x,y, or None if off map."""
         if self.on_the_map(x,y):
             return self.map[x][y].wall
+        else:
+            return None
+
+    def get_decor( self, x, y ):
+        """Safely return decor of tile x,y, or None if off map."""
+        if self.on_the_map(x,y):
+            return self.map[x][y].decor
         else:
             return None
 

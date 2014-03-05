@@ -51,6 +51,42 @@ class CursingStaff( Enhancer ):
     AFFECTS = (STAFF,WAND)
     TECH = (spells.lunarspells.CURSE,)
 
+class OrcishWeapon( Enhancer ):
+    NAMEPAT = "Orcish {0}"
+    DESCPAT = "{0} Its heavy construction does an extra 1d4 crushing damage."
+    PLUSRANK = 1
+    AFFECTS = (SWORD, DAGGER, POLEARM, FARMTOOL)
+    ATTACK_ON_HIT = effects.HealthDamage( (1,4,0), stat_bonus=None, element=stats.RESIST_CRUSHING, anim=animobs.BloodSplat )
+    BONUSES = stats.StatMod({ stats.PHYSICAL_ATTACK: -5 })
+
+class DwarvenWeapon( Enhancer ):
+    NAMEPAT = "Dwarven {0}"
+    DESCPAT = "{0} Its fine craftsmanship provides +5% to attack."
+    PLUSRANK = 1
+    AFFECTS = (SWORD, MACE, POLEARM, STAFF)
+    BONUSES = stats.StatMod({ stats.PHYSICAL_ATTACK: 5 })
+
+class ElvenWeapon( Enhancer ):
+    NAMEPAT = "Elven {0}"
+    DESCPAT = "{0} It has been balanced for parrying, providing +5% to defense."
+    PLUSRANK = 1
+    AFFECTS = (SWORD,DAGGER,STAFF)
+    BONUSES = stats.StatMod({ stats.PHYSICAL_DEFENSE: 5, stats.NATURAL_DEFENSE: 5 })
+
+class ElvenBow( Enhancer ):
+    NAMEPAT = "Elven {0}"
+    DESCPAT = "{0} Its elegant craftsmanship provides +5% to attack."
+    PLUSRANK = 1
+    AFFECTS = (BOW,)
+    BONUSES = stats.StatMod({ stats.PHYSICAL_ATTACK: 5 })
+
+class HurthlingSling( Enhancer ):
+    NAMEPAT = "Hurthling {0}"
+    DESCPAT = "{0} It gives +5% to attack."
+    PLUSRANK = 1
+    AFFECTS = (SLING,)
+    BONUSES = stats.StatMod({ stats.PHYSICAL_ATTACK: 5 })
+
 class Defender( Enhancer ):
     NAMEPAT = "Defender {0}"
     DESCPAT = "{0} It has been enchanted to provide +10% defense."
@@ -102,13 +138,6 @@ class Lockpick( Enhancer ):
     PLUSRANK = 3
     AFFECTS = (DAGGER,)
     BONUSES = stats.StatMod({ stats.DISARM_TRAPS: 15 })
-
-class OrcishWeapon( Enhancer ):
-    NAMEPAT = "Orcish {0}"
-    DESCPAT = "{0} Its heavy construction does an extra 1d4 crushing damage."
-    PLUSRANK = 3
-    AFFECTS = (SWORD, DAGGER, POLEARM, FARMTOOL)
-    ATTACK_ON_HIT = effects.HealthDamage( (1,4,0), stat_bonus=None, element=stats.RESIST_CRUSHING, anim=animobs.BloodSplat )
 
 class Blessed( Enhancer ):
     NAMEPAT = "Blessed {0}"

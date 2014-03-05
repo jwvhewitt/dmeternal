@@ -48,5 +48,8 @@ HELLO_LIBRARY = Offer( msg = "Welcome to the library. Let me know if you need an
         context = ContextTag( [context.HELLO,context.SERVICE] ) ,
         replies = [ Reply( "I need some new spells." , destination = Cue( ContextTag( [context.SERVICE,context.LIBRARY] ) ) ) ] )
 
+HELLO_INNKEEPER = Offer( msg = "Welcome to the inn. Are you planning to spend the night?" ,
+        context = ContextTag( [context.HELLO,context.SERVICE] ) ,
+        replies = [ Reply( "That depends on the price." , destination = Cue( ContextTag( [context.SERVICE,context.INN] ) ) ) ] )
 
 

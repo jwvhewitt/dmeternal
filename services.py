@@ -16,7 +16,7 @@ WEAPON_STORE = ( items.SWORD, items.AXE, items.MACE, items.DAGGER, items.STAFF,
     items.FARMTOOL )
 
 class Shop( object ):
-    def __init__( self, ware_types = GENERAL_STORE, allow_misc=True, allow_magic=False, caption="Shop", magic_chance=50, rank=3, num_items=25 ):
+    def __init__( self, ware_types = GENERAL_STORE, allow_misc=True, allow_magic=False, caption="Shop", magic_chance=20, rank=3, num_items=25 ):
         self.wares = list()
         self.ware_types = ware_types
         self.allow_misc = allow_misc
@@ -26,6 +26,12 @@ class Shop( object ):
         self.rank = rank
         self.num_items = num_items
         self.last_updated = -1
+
+    def generate_item( self, itype, rank ):
+        it = items.choose_item( itype, rank )
+        if it and self.allow_magic and it.min_rank() < rank and random.randint(1,100)<=self.magic_chance:
+            items.make_item_magic( it, rank )
+        return it
 
     def update_wares( self, explo ):
         # Once a day the wares get updated. Delete some items, make sure that
@@ -48,7 +54,7 @@ class Shop( object ):
                 needed_wares.remove( i.itemtype )
 
         for w in needed_wares:
-            it = items.choose_item( w, rank )
+            it = self.generate_item( w, rank )
             if it:
                 self.wares.append( it )
         tries = 0
@@ -58,10 +64,8 @@ class Shop( object ):
                 itype = None
             else:
                 itype = random.choice( self.ware_types )
-            it = items.choose_item( itype, rank )
-            if it and not any( i.true_name == it.true_name for i in self.wares ):
-                if self.allow_magic and it.min_rank() < rank and random.randint(1,100)<=self.magic_chance:
-                    items.make_item_magic( it, rank )
+            it = self.generate_item( itype, rank )
+            if it and not any( str( i ) == str( it ) for i in self.wares ):
                 self.wares.append( it )
             elif not it:
                 break
@@ -393,8 +397,10 @@ class Library( object ):
         rpm.add_alpha_keys()
         rpm.add_item( "Exit", None )
         keep_going = True
+        self.pc = explo.camp.first_living_pc()
 
         while keep_going:
+            rpm.set_item_by_value( self.pc )
             pc = rpm.query()
 
             if pc:
@@ -404,4 +410,32 @@ class Library( object ):
                 keep_going = False
 
         del self.charsheets
+
+
+class Inn( object ):
+    def __init__( self, cost_per_night = 20, caption="Inn" ):
+        self.cost_per_night = cost_per_night
+        self.caption = caption
+
+    def __call__( self, explo ):
+        pc = explo.camp.party_spokesperson()
+        myredraw = charsheet.CharacterViewRedrawer( csheet=charsheet.CharacterSheet( pc , screen=explo.screen, camp=explo.camp ), screen=explo.screen, predraw=explo.view, caption=self.caption )
+
+        rpm = charsheet.RightMenu( explo.screen, predraw=myredraw )
+        mydesc = "It will cost {0}gp to stay the night.".format( self.cost_per_night )
+        rpm.add_item( "Stay the night.", True, mydesc )
+        rpm.add_item( "Not right now.", False, mydesc )
+        rpm.add_alpha_keys()
+
+        stay = rpm.query()
+
+        if stay:
+            if explo.camp.gold > self.cost_per_night:
+                explo.camp.gold -= self.cost_per_night
+                explo.camp.rest()
+                explo.alert( "You rest the night and wake up perfectly refreshed." )
+            else:
+                explo.alert( "You can't afford to stay here! Come back when you've earned some money." )
+
+
 

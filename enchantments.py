@@ -4,7 +4,7 @@ import effects
 import animobs
 
 # Enumerated constants for dispelling types.
-COMBAT, MAGIC, POISON = range( 3 )
+COMBAT, MAGIC, POISON, DAILY = range( 4 )
 
 class Enchantment( object ):
     def __init__( self, fx=None, statline=None, dispel = (COMBAT,MAGIC) ):
@@ -13,6 +13,7 @@ class Enchantment( object ):
             statline = stats.StatMod()
         self.statline = statline
         self.dispel = dispel
+
     # If any of the following effects are defined, they will be added to attacks.
     ATTACK_ON_HIT = None
 

@@ -200,8 +200,8 @@ class BuildingDec( object ):
         for x in range( area.x+1, area.x + area.width-1, 4 ):
             if gb.get_wall(x,y1) == maps.BASIC_WALL and not gb.map[x][y1].decor:
                 gb.map[x][y1].decor = self.win
-            if gb.get_wall(x,y2) == maps.BASIC_WALL and not gb.map[x][y2].decor:
-                gb.map[x][y2].decor = self.win
+#            if gb.get_wall(x,y2) == maps.BASIC_WALL and not gb.map[x][y2].decor:
+#                gb.map[x][y2].decor = self.win
         x1 = area.x
         x2 = area.x + area.width - 1
         for y in range( area.y+1, area.y + area.height-1, 4 ):
@@ -231,6 +231,22 @@ class GeneralStoreDec( BuildingDec ):
 class LibraryDec( BuildingDec ):
     """Add windows + signs of inhabitation to a (sharp) room."""
     WALL_DECOR = ( maps.PORTRAIT, maps.LANDSCAPE_PICTURE, maps.HIGH_SHELF, maps.BENCH )
+
+class BedroomDec( BuildingDec ):
+    """Add windows + signs of inhabitation to a (sharp) room."""
+    WALL_DECOR = ( maps.LANDSCAPE_PICTURE, maps.HIGH_SHELF, maps.BENCH, maps.DRESSER )
+    def __call__( self, gb, area ):
+        if self.WALL_DECOR:
+            for x in range( area.x+1, area.x + area.width-1 ):
+                if gb.get_wall(x,area.y) == maps.BASIC_WALL and random.randint(1,3)==1 and not gb.map[x][area.y].decor:
+                    random.choice( self.WALL_DECOR ).place( gb, (x,area.y) )
+            for y in range( area.y+1, area.y + area.height-1 ):
+                if gb.get_wall(area.x,y) == maps.BASIC_WALL and random.randint(1,3)==1 and not gb.map[area.x][y].decor:
+                    gb.map[area.x][y].decor = random.choice( self.WALL_DECOR )
+        self.windowize(gb,area)
+
+        gb.map[area.x+1][area.y].decor = maps.BED_HEAD
+        gb.map[area.x+1][area.y+1].decor = maps.BED_FOOT
 
 #  *****************
 #  ***   ROOMS   ***

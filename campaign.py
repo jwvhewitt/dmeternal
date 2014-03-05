@@ -31,6 +31,7 @@ import waypoints
 import pfov
 import exploration
 import pygwrap
+import enchantments
 
 
 class Campaign( object ):
@@ -123,6 +124,16 @@ class Campaign( object ):
             pc.pos = None
             if pc in self.scene.contents:
                 self.scene.contents.remove( pc )
+
+    def rest( self, max_restore=1.0 ):
+        """Increment the day counter, restore hp and mp."""
+        self.day += 1
+        for pc in self.party:
+            if pc.is_alright():
+                pc.hp_damage = max( pc.hp_damage - int( pc.max_hp() * max_restore ), 0 )
+                pc.mp_damage = max( pc.mp_damage - int( pc.max_mp() * max_restore ), 0 )
+            pc.holy_signs_used = 0
+            pc.condition.tidy( enchantments.DAILY )
 
     def play( self, screen ):
         while self.first_living_pc() and not pygwrap.GOT_QUIT:
