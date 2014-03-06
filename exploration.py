@@ -208,6 +208,38 @@ class Explorer( object ):
         x,y = camp.first_living_pc().pos
         self.view.focus( screen, x, y )
 
+    def field_camp( self ):
+        """The party is going camping. Yahoo!"""
+        self.alert( "You camp down to take a short rest..." )
+        awareness = min( self.camp.party_stat( stats.AWARENESS, stats.INTELLIGENCE ), 75 ) + 15
+        if random.randint(1,100) <= awareness:
+            self.camp.rest( 0.5 )
+            self.alert( "...and wake up perfectly refreshed." )
+        elif random.randint(1,3)==2 and self.camp.gold > random.randint( 1,1000 ):
+            lose = max( self.camp.gold // 2, 1 )
+            self.camp.gold -= lose
+            self.camp.rest( 0.5 )
+            self.alert( "...but when you wake up, {0}gp is missing!".format( lose ) )
+        else:
+            pc = self.camp.first_living_pc()
+            aoe = list()
+            for x in range( pc.pos[0]-3, pc.pos[0]+4 ):
+                for y in range( pc.pos[1]-3, pc.pos[1]+4 ):
+                    if self.scene.on_the_map(x,y) and not self.scene.map[x][y].blocks_walking() and not self.scene.get_character_at_spot((x,y)):
+                        aoe.append( (x,y) )
+            team = teams.Team(default_reaction=-999)
+            mons = team.build_encounter( self.scene,(self.scene.rank + self.camp.party_rank() )//2, random.randint(40,65), self.scene.get_encounter_request() )
+            for m in mons:
+                if aoe:
+                    p = random.choice( aoe )
+                    aoe.remove( p )
+                    m.place( self.scene, p )
+                else:
+                    break
+            self.alert( "...and get woken up by monsters!" )
+            self.camp.activate_monster( mons[0] )
+
+
     def probe( self, target ):
         csheet = charsheet.CharacterSheet( target, screen=self.screen )
         myredraw = charsheet.CharacterViewRedrawer( csheet=csheet, screen=self.screen, caption="Probe", predraw=self.view)
@@ -607,6 +639,8 @@ class Explorer( object ):
                         self.view.focus( self.screen, *self.camp.first_living_pc().pos )
                     elif gdi.unicode == u"m":
                         self.cast_explo_spell(0)
+                    elif gdi.unicode == u"R":
+                        self.field_camp()
                     elif gdi.unicode == u"s":
                         self.shop( self )
                     elif gdi.unicode == u"*":

@@ -80,8 +80,7 @@ class AlarmTrap( SingleTrap ):
                     aoe.remove( p )
                 else:
                     break
-                m.pos = p
-                explo.scene.contents.append( m )
+                m.place( explo.scene, p )
             return self.ONE_SHOT
     def get_area( self, explo, pos ):
         aoe = list()

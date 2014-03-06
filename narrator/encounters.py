@@ -23,7 +23,7 @@ class BasicEncounter( Plot ):
         scene = self.elements.get("SCENE")
         mygen = nart.get_map_generator( scene )
         room = mygen.DEFAULT_ROOM()
-        room.contents.append( teams.Team(default_reaction=-999, rank=self.level, 
+        room.contents.append( teams.Team(default_reaction=-999, rank=self.rank, 
           habitat=scene.get_encounter_request() ) )
         self.register_element( "_ROOM", room, dident="SCENE" )
         return True

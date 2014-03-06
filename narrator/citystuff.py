@@ -50,7 +50,7 @@ class GenerallyGeneralStore( Plot ):
         int_mainroom.contents.append( npc )
         self.register_element( "SHOPKEEPER", npc )
 
-        self.shop = services.Shop( rank=self.level+2 )
+        self.shop = services.Shop( rank=self.rank+2 )
 
         return True
 
@@ -204,8 +204,9 @@ class GenericTemple( Plot ):
         exterior.special_c[ "door" ] = gate_1
         int_mainroom = mapgen.SharpRoom( tags=(context.CIVILIZED,), anchor=mapgen.south, parent=interior )
         int_mainroom.contents.append( gate_2 )
+        int_mainroom.contents.append( maps.ANKH_ALTAR )
         gate_2.anchor = mapgen.south
-        int_mainroom.decorate = mapgen.LibraryDec(win=maps.STAINED_GLASS)
+        int_mainroom.decorate = mapgen.TempleDec(win=maps.STAINED_GLASS)
 
         npc = monsters.generate_npc( job=random.choice((characters.Priest, characters.Priest, characters.Priest,
             characters.Druid, characters.Druid, characters.Monk, characters.Knight) ))
@@ -219,7 +220,7 @@ class GenericTemple( Plot ):
     def SHOPKEEPER_offers( self ):
         # Return list of shopkeeper offers.
         ol = list()
-        ol.append( dialogue.Offer( "You will recieve aid in accordance with the offering you provide." ,
+        ol.append( dialogue.Offer( "Remember that it is better to give than to receive, which is why we insist that you pay up front." ,
          context = context.ContextTag([context.SERVICE,context.HEALING]), effect=self.shop ) )
         return ol
 
@@ -262,7 +263,7 @@ class GenericWeaponShop( Plot ):
         int_mainroom.contents.append( npc )
         self.register_element( "SHOPKEEPER", npc )
 
-        self.shop = services.Shop( ware_types=services.WEAPON_STORE, rank=self.level+2,
+        self.shop = services.Shop( ware_types=services.WEAPON_STORE, rank=self.rank+2,
          allow_misc=False, allow_magic=True, num_items=15 )
 
         return True

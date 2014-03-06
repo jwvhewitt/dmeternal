@@ -6,17 +6,17 @@ class PlotError( Exception ):
 
 class PlotState( object ):
     """For passing state information to subplots."""
-    def __init__( self, propp=0, setting=None, chapter=None, level=None, elements={} ):
+    def __init__( self, propp=0, setting=None, chapter=None, rank=None, elements={} ):
         self.propp = propp
         self.setting = setting
         self.chapter = chapter
-        self.level = level
+        self.rank = rank
         self.elements = elements
     def based_on( self, oplot ):
         self.propp = self.propp or oplot.propp
         self.setting = self.setting or oplot.setting
         self.chapter = self.chapter or oplot.chapter
-        self.level = self.level or oplot.level
+        self.rank = self.rank or oplot.rank
         # Only copy over the elements not marked as private.
         for k,v in oplot.elements.iteritems():
             if isinstance( k, str ) and len(k)>0 and k[0]!="_":
@@ -33,7 +33,7 @@ class Plot( object ):
     propp = 0
     setting = False
     chapter = 1
-    level = 1
+    rank = 1
     active = False
     # Set scope to the scene identifier of the scene this plot's scripts are
     # attached to, or True for this plot to have global scope.
@@ -47,7 +47,7 @@ class Plot( object ):
         self.propp = self.propp or pstate.propp
         self.setting = self.setting or pstate.setting
         self.chapter = pstate.chapter or self.chapter
-        self.level = pstate.level or self.level
+        self.rank = pstate.rank or self.rank
         self.elements = pstate.elements.copy()
         self.subplots = dict()
 
@@ -95,12 +95,13 @@ class Plot( object ):
                 self.move_element( ele, mydest )
         return ele
 
-    def register_scene( self, nart, myscene, mygen, ident=None, dident=None ):
+    def register_scene( self, nart, myscene, mygen, ident=None, dident=None, rank=None ):
         self.register_element( ident, myscene, dident )
         nart.camp.scenes.append( myscene )
         self.move_records.append( (myscene,nart.camp.scenes) )
         nart.generators.append( mygen )
         self.move_records.append( (mygen,nart.generators) )
+        myscene.rank = rank or self.rank
         return myscene
 
     def custom_init( self, nart ):

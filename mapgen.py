@@ -226,7 +226,8 @@ class WeaponShopDec( BuildingDec ):
 
 class GeneralStoreDec( BuildingDec ):
     """Add windows + signs of inhabitation to a (sharp) room."""
-    WALL_DECOR = ( maps.PROVISIONS, maps.PROVISIONS, maps.WALL_CRATES, maps.WALL_WEAPON_RACK )
+    WALL_DECOR = ( maps.PROVISIONS, maps.PROVISIONS, maps.WALL_CRATES, maps.WALL_WEAPON_RACK,
+        maps.BIG_SHELF, maps.BIG_SHELF )
 
 class LibraryDec( BuildingDec ):
     """Add windows + signs of inhabitation to a (sharp) room."""
@@ -234,7 +235,7 @@ class LibraryDec( BuildingDec ):
 
 class BedroomDec( BuildingDec ):
     """Add windows + signs of inhabitation to a (sharp) room."""
-    WALL_DECOR = ( maps.LANDSCAPE_PICTURE, maps.HIGH_SHELF, maps.BENCH, maps.DRESSER )
+    WALL_DECOR = ( maps.LANDSCAPE_PICTURE, maps.BENCH, maps.BENCH, maps.DRESSER, maps.DRESSER )
     def all_clear( self, gb, area, point ):
         """Return true if no walls or decor in area, no map contents in point."""
         ok = True
@@ -267,6 +268,12 @@ class BedroomDec( BuildingDec ):
                     elif random.randint(1,3)==1:
                         random.choice( self.WALL_DECOR ).place( gb, (x,area.y) )
         self.windowize(gb,area)
+
+class TempleDec( BuildingDec ):
+    """Add windows + signs of inhabitation to a (sharp) room."""
+    WALL_DECOR = ( maps.SUN_PICTURE, maps.MOON_PICTURE, maps.HIGH_SHELF, maps.BENCH,
+        maps.COLUMN, maps.COLUMN, maps.TEMPLE_CANDLES, maps.TEMPLE_CANDLES )
+
 
 #  *****************
 #  ***   ROOMS   ***
