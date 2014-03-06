@@ -4,6 +4,7 @@ import pygame
 import items
 import random
 import copy
+import pfov
 
 GENERAL_STORE = ( items.SWORD, items.AXE, items.MACE, items.DAGGER, items.STAFF,
     items.BOW, items.POLEARM, items.ARROW, items.SHIELD, items.SLING, items.BULLET,
@@ -430,12 +431,115 @@ class Inn( object ):
         stay = rpm.query()
 
         if stay:
-            if explo.camp.gold > self.cost_per_night:
+            if explo.camp.gold >= self.cost_per_night:
                 explo.camp.gold -= self.cost_per_night
                 explo.camp.rest()
                 explo.alert( "You rest the night and wake up perfectly refreshed." )
             else:
                 explo.alert( "You can't afford to stay here! Come back when you've earned some money." )
 
+class Temple( object ):
+    def __init__( self, cost_for_resurrection = 100, cost_for_restoration=25, caption="Temple",
+      desc = "Welcome to the temple. What prayers are you in need of?" ):
+        self.cost_for_resurrection = cost_for_resurrection
+        self.cost_for_restoration = cost_for_restoration
+        self.caption = caption
+        self.desc = desc
+
+    def resurrection_cost( self, pc ):
+        return pc.rank() * self.cost_for_resurrection
+
+    def restoration_cost( self, pc ):
+        return pc.rank() * self.cost_for_restoration
+
+    def get_return_pos( self, explo ):
+        x0,y0 = explo.camp.first_living_pc().pos
+        entry_points = pfov.PointOfView( explo.scene, x0, y0, 12, True ).tiles
+        for m in explo.scene.contents:
+            if explo.scene.is_model(m) and m.pos in entry_points:
+                entry_points.remove( m.pos )
+        if entry_points:
+            return random.choice( list( entry_points ) )
+        else:
+            return (x0,y0)
+
+
+    def resurrection( self, explo ):
+        charsheets = dict()
+        for pc in explo.camp.party:
+            charsheets[ pc ] = charsheet.CharacterSheet( pc , screen=explo.screen, camp=explo.camp )
+        psr = charsheet.PartySelectRedrawer( predraw=explo.view, charsheets=charsheets, screen=explo.screen, caption="Resurrection" )
+
+        while True:
+            rpm = charsheet.RightMenu( explo.screen, predraw=psr, add_desc=False )
+            psr.menu = rpm
+            for pc in explo.camp.party:
+                if not pc.is_alright():
+                    rpm.add_item( "{0} - {1}gp".format( str( pc ), self.resurrection_cost( pc ) ) , pc )
+            rpm.sort()
+            rpm.add_alpha_keys()
+            rpm.add_item( "Exit", None )
+
+            pc = rpm.query()
+            if pc:
+                if explo.camp.gold >= self.resurrection_cost( pc ):
+                    pos = self.get_return_pos( explo )
+                    explo.camp.gold -= self.resurrection_cost( pc )
+                    pc.hp_damage = 0
+                    pc.mp_damage = 0
+                    del pc.condition[:]
+                    pc.holy_signs_used = 0
+                    psr.caption = "{0} has returned!".format( str(pc) )
+                    pc.place( explo.scene, pos )
+                else:
+                    psr.caption = "You can't afford it!"
+            else:
+                break
+
+    def restoration( self, explo ):
+        charsheets = dict()
+        for pc in explo.camp.party:
+            charsheets[ pc ] = charsheet.CharacterSheet( pc , screen=explo.screen, camp=explo.camp )
+        psr = charsheet.PartySelectRedrawer( predraw=explo.view, charsheets=charsheets, screen=explo.screen, caption="Restoration" )
+
+        while True:
+            rpm = charsheet.RightMenu( explo.screen, predraw=psr, add_desc=False )
+            psr.menu = rpm
+            for pc in explo.camp.party:
+                if pc.is_alright() and pc.stat_damage:
+                    rpm.add_item( "{0} - {1}gp".format( str( pc ), self.restoration_cost( pc ) ) , pc )
+            rpm.sort()
+            rpm.add_alpha_keys()
+            rpm.add_item( "Exit", None )
+
+            pc = rpm.query()
+            if pc:
+                if explo.camp.gold >= self.restoration_cost( pc ):
+                    explo.camp.gold -= self.restoration_cost( pc )
+                    pc.stat_damage.clear()
+                    psr.caption = "{0} has been healed!".format( str(pc) )
+                else:
+                    psr.caption = "You can't afford it!"
+            else:
+                break
+
+
+    def __call__( self, explo ):
+        pc = explo.camp.party_spokesperson()
+        myredraw = charsheet.CharacterViewRedrawer( csheet=charsheet.CharacterSheet( pc , screen=explo.screen, camp=explo.camp ), screen=explo.screen, predraw=explo.view, caption=self.caption )
+        rpm = charsheet.RightMenu( explo.screen, predraw=myredraw )
+
+        rpm.add_item( "Resurrection", self.resurrection, self.desc )
+        rpm.add_item( "Restoration", self.restoration, self.desc )
+        rpm.add_item( "Exit {0}".format(self.caption), False, self.desc )
+        rpm.add_alpha_keys()
+
+        while True:
+            it = rpm.query()
+
+            if it:
+                it( explo )
+            else:
+                break
 
 

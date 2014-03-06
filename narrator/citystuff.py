@@ -174,6 +174,55 @@ class GenericLibrary( Plot ):
          context = context.ContextTag([context.SERVICE,context.LIBRARY]), effect=self.shop ) )
         return ol
 
+#  ***********************
+#  ***   CITY_TEMPLE   ***
+#  ***********************
+
+class GenericTemple( Plot ):
+    LABEL = "CITY_TEMPLE"
+    active = True
+    scope = "_INTERIOR"
+    def custom_init( self, nart ):
+        exterior = mapgen.BuildingRoom( tags=(context.CIVILIZED,) )
+        exterior.special_c[ "window" ] = maps.STAINED_GLASS
+        exterior.special_c[ "sign1" ] = maps.ANKH_SIGN
+        self.register_element( "_EXTERIOR", exterior, dident="CITY" )
+
+        interior = maps.Scene( 50,50, sprites={maps.SPRITE_FLOOR: "terrain_floor_bigtile.png" },
+            biome=context.HAB_BUILDING, setting=self.setting, desctags=(context.DES_CIVILIZED,) )
+        igen = mapgen.BuildingScene( interior )
+
+        gate_1 = waypoints.GateDoor()
+        gate_2 = waypoints.GateDoor()
+        gate_1.destination = interior
+        gate_1.otherside = gate_2
+        gate_2.destination = self.elements.get( "SCENE" )
+        gate_2.otherside = gate_1
+
+        self.register_scene( nart, interior, igen, ident="_INTERIOR", dident="SCENE" )
+
+        exterior.special_c[ "door" ] = gate_1
+        int_mainroom = mapgen.SharpRoom( tags=(context.CIVILIZED,), anchor=mapgen.south, parent=interior )
+        int_mainroom.contents.append( gate_2 )
+        gate_2.anchor = mapgen.south
+        int_mainroom.decorate = mapgen.LibraryDec(win=maps.STAINED_GLASS)
+
+        npc = monsters.generate_npc( job=random.choice((characters.Priest, characters.Priest, characters.Priest,
+            characters.Druid, characters.Druid, characters.Monk, characters.Knight) ))
+        int_mainroom.contents.append( npc )
+        self.register_element( "SHOPKEEPER", npc )
+
+        self.shop = services.Temple()
+
+        return True
+
+    def SHOPKEEPER_offers( self ):
+        # Return list of shopkeeper offers.
+        ol = list()
+        ol.append( dialogue.Offer( "You will recieve aid in accordance with the offering you provide." ,
+         context = context.ContextTag([context.SERVICE,context.HEALING]), effect=self.shop ) )
+        return ol
+
 
 #  ***************************
 #  ***   CITY_WEAPONSHOP   ***
@@ -213,7 +262,8 @@ class GenericWeaponShop( Plot ):
         int_mainroom.contents.append( npc )
         self.register_element( "SHOPKEEPER", npc )
 
-        self.shop = services.Shop( ware_types=services.WEAPON_STORE, rank=self.level+2, allow_misc=False, allow_magic=True )
+        self.shop = services.Shop( ware_types=services.WEAPON_STORE, rank=self.level+2,
+         allow_misc=False, allow_magic=True, num_items=15 )
 
         return True
 

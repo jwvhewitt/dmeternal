@@ -45,6 +45,13 @@ MAJOR_CURE = Spell( "MAJOR_CURE", "Major Cure",
     rank=4, gems={SOLAR:2}, com_tar=targetarea.SingleTarget(reach=1), ai_tar=invocations.vs_wounded_ally,
     exp_tar=targetarea.SinglePartyMember(), mpfudge = -2 )
 
+RESTORATION = Spell( "RESTORATION", "Restoration",
+    "This spell heals all stat damage that has been done to a single ally.",
+    effects.StatRestore( anim=animobs.HealthUp ),
+    rank=4, gems={SOLAR:2}, com_tar=targetarea.SingleTarget(reach=1),
+    exp_tar=targetarea.SinglePartyMember() )
+
+
 # CIRCLE 5
 
 MASS_CURE = Spell( "MASS_CURE", "Mass Cure",

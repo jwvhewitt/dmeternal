@@ -251,6 +251,16 @@ class StatDamage( NoEffect ):
             target.stat_damage[self.stat_to_damage] += self.amount
         return self.children
 
+class StatRestore( NoEffect ):
+    """Remove the stat damage from this model."""
+    def handle_effect( self, camp, originator, pos, anims, delay=0 ):
+        """Apply some hurting to whoever is in the indicated tile."""
+        target = camp.scene.get_character_at_spot( pos )
+        if target:
+            target.stat_damage.clear()
+        return self.children
+
+
 class InstaKill( NoEffect ):
     """This effect automatically kills the target."""
     def handle_effect( self, camp, originator, pos, anims, delay=0 ):
