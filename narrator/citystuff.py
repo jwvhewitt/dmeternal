@@ -43,6 +43,8 @@ class GenerallyGeneralStore( Plot ):
         exterior.special_c[ "door" ] = gate_1
         int_mainroom = mapgen.SharpRoom( tags=(context.CIVILIZED,), anchor=mapgen.south, parent=interior )
         int_mainroom.contents.append( gate_2 )
+        int_mainroom.contents.append( maps.PILED_GOODS )
+        int_mainroom.contents.append( maps.PILED_GOODS )
         gate_2.anchor = mapgen.south
         int_mainroom.decorate = mapgen.GeneralStoreDec()
 
@@ -57,7 +59,7 @@ class GenerallyGeneralStore( Plot ):
     def SHOPKEEPER_offers( self ):
         # Return list of shopkeeper offers.
         ol = list()
-        ol.append( dialogue.Offer( "Take a look, and let me know if you need any help." ,
+        ol.append( dialogue.Offer( "" ,
          context = context.ContextTag([context.SHOP,context.GENERALSTORE]), effect=self.shop ) )
         return ol
 
@@ -93,7 +95,7 @@ class GenericInn( Plot ):
         int_mainroom.contents.append( gate_2 )
         int_mainroom.contents.append( waypoints.Bookshelf() )
         gate_2.anchor = mapgen.south
-        int_mainroom.decorate = mapgen.BuildingDec(win=maps.SMALL_WINDOW)
+        int_mainroom.decorate = mapgen.TavernDec(win=maps.SMALL_WINDOW)
 
         npc = monsters.generate_npc()
         int_mainroom.contents.append( npc )
@@ -104,6 +106,7 @@ class GenericInn( Plot ):
         int_mainroom.contents.append( maps.TABLE )
 
         int_bedroom = mapgen.SharpRoom( tags=(context.CIVILIZED,), parent=interior )
+        int_bedroom.contents.append( maps.LIGHT_STAND )
         int_bedroom.decorate = mapgen.BedroomDec()
 
 
@@ -188,7 +191,8 @@ class GenericTemple( Plot ):
         exterior.special_c[ "sign1" ] = maps.ANKH_SIGN
         self.register_element( "_EXTERIOR", exterior, dident="CITY" )
 
-        interior = maps.Scene( 50,50, sprites={maps.SPRITE_FLOOR: "terrain_floor_bigtile.png" },
+        interior = maps.Scene( 50,50, sprites={maps.SPRITE_FLOOR: "terrain_floor_bigtile.png",
+            maps.SPRITE_INTERIOR: "terrain_int_temple.png" },
             biome=context.HAB_BUILDING, setting=self.setting, desctags=(context.DES_CIVILIZED,) )
         igen = mapgen.BuildingScene( interior )
 
@@ -208,8 +212,9 @@ class GenericTemple( Plot ):
         gate_2.anchor = mapgen.south
         int_mainroom.decorate = mapgen.TempleDec(win=maps.STAINED_GLASS)
 
-        npc = monsters.generate_npc( job=random.choice((characters.Priest, characters.Priest, characters.Priest,
-            characters.Druid, characters.Druid, characters.Monk, characters.Knight) ))
+        npc = monsters.generate_npc( job=random.choice((characters.Priest, characters.Priest,
+            characters.Priest, characters.Priest, characters.Priest, characters.Priest, characters.Priest,
+            characters.Druid, characters.Druid, characters.Priest, characters.Monk, characters.Knight) ))
         int_mainroom.contents.append( npc )
         self.register_element( "SHOPKEEPER", npc )
 

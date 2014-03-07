@@ -18,6 +18,8 @@ if __name__=='__main__':
     import pygwrap
     import rpgmenu
     import campaign
+    import util
+    import pickle
 
     # Set the screen size.
     screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
@@ -35,6 +37,11 @@ if __name__=='__main__':
         for pc in camp.party:
             pc.choose_random_spells()
         camp.place_party()
+
+#        camp.save()
+#        f = open( util.user_dir( "rpg_BobDwarf19.sav" ) , "rb" )
+#        camp = pickle.load( f )
+#        f.close()
 
         camp.play( screen )
 

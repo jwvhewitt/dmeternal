@@ -4,8 +4,7 @@ import invocations
 SOLAR, EARTH, WATER, FIRE, AIR, LUNAR = range( 6 )
 
 class Spell( invocations.Invocation ):
-    def __init__( self, ident, name, desc, fx, rank=1, gems=dict(), mpfudge=0, com_tar=None, exp_tar=None, ai_tar=None, shot_anim=None ):
-        self.ident=ident
+    def __init__( self, name, desc, fx, rank=1, gems=dict(), mpfudge=0, com_tar=None, exp_tar=None, ai_tar=None, shot_anim=None ):
         self.name=name
         self.desc = desc
         self.fx = fx
@@ -47,6 +46,4 @@ class Spell( invocations.Invocation ):
         return "{0} [{1}MP]".format( self.name, self.mp_cost() )
     def __str__( self ):
         return self.name
-    def __reduce__( self ):
-        return self.ident
 

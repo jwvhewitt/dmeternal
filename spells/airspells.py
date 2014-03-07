@@ -8,13 +8,13 @@ import invocations
 
 # CIRCLE ONE
 
-AIR_ARMOR = Spell( "AIR_ARMOR", "Shield of Wind",
+AIR_ARMOR = Spell( "Shield of Wind",
     "Increases the physical and magical defense of all allies within 6 tiles by +5%. This effect lasts until the end of combat.",
     effects.TargetIsAlly( on_true = (
         effects.Enchant( enchantments.AirArmor, anim=animobs.BlueSparkle )
     ,) ), rank=1, gems={AIR:1}, com_tar=targetarea.SelfCentered() )
 
-PROBE = Spell( "PROBE", "Probe",
+PROBE = Spell( "Probe",
     "This spell reveals secret knowledge about one target creature.",
     effects.NoEffect( anim=animobs.BlueSparkle, children = (
         effects.Probe()
@@ -24,7 +24,7 @@ PROBE = Spell( "PROBE", "Probe",
 
 # CIRCLE THREE
 
-THUNDER_STRIKE = Spell( "THUNDER_STRIKE", "Thunder Strike",
+THUNDER_STRIKE = Spell( "Thunder Strike",
     "A bolt of lightning strikes all in its path for 3d6 damage.",
     effects.OpposedRoll( on_success = (
         effects.HealthDamage( (3,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_LIGHTNING, anim=animobs.Spark )

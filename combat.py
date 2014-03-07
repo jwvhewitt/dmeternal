@@ -125,7 +125,7 @@ class Combat( object ):
         """Enemies with attacks of opportunity can attack this target."""
         for m in self.active[:]:
             if m.is_alright() and m.is_enemy( self.camp, target ) and m.can_attack_of_opportunity() and self.cstat[m].aoo_readied and self.cstat[m].can_act() and self.scene.distance(m.pos,target.pos) <= 1:
-                self.attack( explo, m, target )
+                self.attack( explo, m, target, attack_of_opportunity=True )
                 self.cstat[m].aoo_readied = False
                 # If the target is killed, everyone else can stop piling on.
                 if not target.is_alright():
@@ -187,10 +187,12 @@ class Combat( object ):
 
         return result
 
-    def attack( self, explo, chara, target, redraw=None ):
+    def attack( self, explo, chara, target, redraw=None, attack_of_opportunity=False ):
         """Perform chara's attack against target."""
         # Determine number of attacks. If have moved one step or less, can make full attack.
-        if self.ap_spent[chara] <= 3:
+        if attack_of_opportunity:
+            num_attacks = 1
+        elif self.ap_spent[chara] <= 3:
             num_attacks = chara.number_of_attacks()
         else:
             num_attacks = 1

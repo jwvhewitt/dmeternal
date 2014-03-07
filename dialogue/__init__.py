@@ -250,7 +250,7 @@ def converse( exp, pc, npc, conversation ):
         mymenu = rpgmenu.Menu( exp.screen, crd.menu_rect.x, crd.menu_rect.y, crd.menu_rect.width, crd.menu_rect.height, border=None, predraw=crd )
         for i in coff.replies:
             mymenu.add_item( personalize_text( i.msg, pc_voice ), i.destination )
-        if not mymenu.items:
+        if crd.text and not mymenu.items:
             mymenu.add_item( "[Continue]", None )
         else:
             mymenu.sort()

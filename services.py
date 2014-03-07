@@ -297,7 +297,7 @@ class Library( object ):
             mymenu = charsheet.RightMenu( explo.screen, predraw = myredraw )
 
             for s in sl:
-                if s.can_be_learned( self.pc ) and s not in self.pc.techniques:
+                if s.can_be_learned( self.pc ) and not any( s.name == t.name for t in self.pc.techniques ):
                     mymenu.add_item( str( s ), s )
             mymenu.sort()
             mymenu.add_alpha_keys()

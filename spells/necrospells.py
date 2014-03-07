@@ -12,7 +12,7 @@ import invocations
 
 # CIRCLE ONE
 
-ICE_BOLT = Spell( "ICE_BOLT", "Icy Bolt",
+ICE_BOLT = Spell( "Icy Bolt",
     "This attack does 1d8 cold damage to a single target.",
     effects.OpposedRoll( on_success = (
         effects.HealthDamage( (1,8,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_COLD, anim=animobs.BlueExplosion )
@@ -21,7 +21,7 @@ ICE_BOLT = Spell( "ICE_BOLT", "Icy Bolt",
     ,) ), rank=1, gems={LUNAR:1,WATER:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.BlueBolt, mpfudge=-2,
     ai_tar=invocations.vs_enemy )
 
-RAISE_SKELETON = Spell( "RAISE_SKELETON", "Raise Skeleton",
+RAISE_SKELETON = Spell( "Raise Skeleton",
     "You conjure dark forces to animate a skeleton which will fight on your behaf.",
     effects.CallMonster( {context.MTY_UNDEAD: True, context.DES_LUNAR: context.MAYBE, context.GEN_UNDEAD: context.MAYBE}, 2, anim=animobs.PurpleSparkle ),
     rank=1, gems={EARTH:1,LUNAR:1}, com_tar=targetarea.SingleTarget(reach=2) )

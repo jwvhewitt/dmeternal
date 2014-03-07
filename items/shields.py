@@ -11,8 +11,12 @@ class Buckler( Item ):
     statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 5 })
     mass = 35
 
+    DESC = { 0: "A small silver shield.", \
+        1: "A small wooden shield.", 2: "A small red shield." }
+
     def __init__( self ):
         self.avatar_frame = random.choice( (0,1,2) )
+        self.true_desc = self.DESC[ self.avatar_frame ]
 
 class RoundShield( Item ):
     true_name = "Round Shield"
@@ -47,13 +51,17 @@ class TowerShield( Item ):
     statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 15 })
     mass = 215
 
+    DESC = { 28: "A very large steel shield.", \
+        29: "A very large red shield." }
+
     def __init__( self ):
         self.avatar_frame = random.choice( (28,29) )
+        self.true_desc = self.DESC[ self.avatar_frame ]
 
 
 class EterniaShield( Item ):
     true_name = "Eternia Shield"
-    true_desc = ""
+    true_desc = "A large round ironwood shield."
     itemtype = SHIELD
     avatar_image = "avatar_shield.png"
     avatar_frame = 3

@@ -220,6 +220,10 @@ class BuildingDec( object ):
                     gb.map[area.x][y].decor = random.choice( self.WALL_DECOR )
         self.windowize(gb,area)
 
+class TavernDec( BuildingDec ):
+    """Add windows + signs of inhabitation to a (sharp) room."""
+    WALL_DECOR = ( maps.WALL_LIGHT, )
+
 class WeaponShopDec( BuildingDec ):
     """Add windows + signs of inhabitation to a (sharp) room."""
     WALL_DECOR = ( maps.WALL_WEAPON_RACK, maps.WALL_WEAPON_RACK, maps.WALL_CRATES )
@@ -272,7 +276,7 @@ class BedroomDec( BuildingDec ):
 class TempleDec( BuildingDec ):
     """Add windows + signs of inhabitation to a (sharp) room."""
     WALL_DECOR = ( maps.SUN_PICTURE, maps.MOON_PICTURE, maps.HIGH_SHELF, maps.BENCH,
-        maps.COLUMN, maps.COLUMN, maps.TEMPLE_CANDLES, maps.TEMPLE_CANDLES )
+        maps.COLUMN, maps.COLUMN, maps.WALL_LIGHT, maps.WALL_LIGHT )
 
 
 #  *****************
@@ -392,14 +396,18 @@ class Room( object ):
         # Step Five: Actually draw the room, taking into account terrain already on map.
         pass
 
-    def deploy( self, gb ):
-        # Step Six: Move items and monsters onto the map.
-        # Find a list of good spots for stuff that goes in the open.
+    def list_good_deploy_spots( self, gb ):
         good_spots = list()
         for x in range( self.area.x+1, self.area.x + self.area.width-1, 2 ):
             for y in range( self.area.y+1, self.area.y + self.area.height-1, 2 ):
                 if not gb.map[x][y].blocks_walking():
                     good_spots.append( (x,y) )
+        return good_spots
+
+    def deploy( self, gb ):
+        # Step Six: Move items and monsters onto the map.
+        # Find a list of good spots for stuff that goes in the open.
+        good_spots = self.list_good_deploy_spots( gb )
 
         # First pass- execute any deploy methods in any contents.
         for i in self.contents[:]:
@@ -535,6 +543,15 @@ class SharpRoom( Room ):
         self.draw_wall( gb, animobs.get_line( self.area.x,self.area.y+1,self.area.x,self.area.y+self.area.height-2 ), (-1,0) )
         self.draw_wall( gb, animobs.get_line( self.area.x+1,self.area.y+self.area.height-1,self.area.x+self.area.width-2,self.area.y+self.area.height-1 ), (0,1) )
         self.draw_wall( gb, animobs.get_line( self.area.x+self.area.width-1,self.area.y+1,self.area.x+self.area.width-1,self.area.y+self.area.height-2 ), (1,0) )
+
+    def list_good_deploy_spots( self, gb ):
+        good_spots = list()
+        for x in range( self.area.x+2, self.area.x + self.area.width-2, 2 ):
+            for y in range( self.area.y+2, self.area.y + self.area.height-2, 2 ):
+                if not gb.map[x][y].blocks_walking():
+                    good_spots.append( (x,y) )
+        return good_spots
+
 
 class VillageRoom( Room ):
     """A setup for an open city."""

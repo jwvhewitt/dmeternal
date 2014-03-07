@@ -843,7 +843,7 @@ class Character( stats.PhysicalThing ):
     def choose_random_spells( self ):
         # Fill this character's spellbook with random stuff.
         while True:
-            candidates = [ s for s in spells.SPELL_LIST if ( s.can_be_learned(self) and s not in self.techniques ) ]
+            candidates = [ s for s in spells.SPELL_LIST if ( s.can_be_learned(self) and not any( s.name == t.name for t in self.techniques ) ) ]
             if candidates:
                 s = random.choice( candidates )
                 self.techniques.append( s )

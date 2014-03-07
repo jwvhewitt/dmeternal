@@ -12,7 +12,7 @@ import invocations
 
 # CIRCLE ONE
 
-ARMOR_OF_FAITH = Spell( "ARMOR_OF_FAITH", "Armor of Faith",
+ARMOR_OF_FAITH = Spell( "Armor of Faith",
     "The caster is infused with divine energy, healing wounds and bestowing protection.",
     effects.HealthRestore( dice=(2,6,0), anim=animobs.YellowSparkle, children = (
         effects.Enchant( enchantments.BlessingEn, anim=None ),
@@ -21,12 +21,12 @@ ARMOR_OF_FAITH = Spell( "ARMOR_OF_FAITH", "Armor of Faith",
 
 # CIRCLE TWO
 
-WEAPON_BLESSING = Spell( "WEAPON_BLESSING", "Weapon Blessing",
+WEAPON_BLESSING = Spell( "Weapon Blessing",
     "One ally's weapon will be blessed to do an extra 1-8 points of damage.",
     effects.Enchant( enchantments.BlessedWepEn, anim=animobs.YellowSparkle ),
     rank=2, gems={AIR:1,SOLAR:1}, com_tar=targetarea.SinglePartyMember() )
 
-DISPEL_EVIL = Spell( "DISPEL_EVIL", "Dispel Evil",
+DISPEL_EVIL = Spell( "Dispel Evil",
     "All unholy creatures within three tiles will be struck for 1-12 damage.",
     effects.TargetIs( pat=effects.UNHOLY, on_true = (
         effects.OpposedRoll( on_success = (
@@ -41,7 +41,7 @@ DISPEL_EVIL = Spell( "DISPEL_EVIL", "Dispel Evil",
 
 # CIRCLE FOUR
 
-BLIZZARD = Spell( "BLIZZARD", "Blizzard",
+BLIZZARD = Spell( "Blizzard",
     "Conjures a storm which causes 2d8 cold damage and 2d8 wind damage.",
     effects.OpposedRoll( on_success = (
         effects.HealthDamage( (2,8,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_COLD, anim=animobs.Blizzard,
