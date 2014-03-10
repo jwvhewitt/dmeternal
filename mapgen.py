@@ -291,7 +291,7 @@ class Room( object ):
         self.tags = tags
         self.anchor = anchor
         self.area = None
-        self.contents = container.ContainerList()
+        self.contents = container.ContainerList(owner=self)
         # special_c lists contents that will be treated specially by the generator.
         self.special_c = dict()
         if parent:

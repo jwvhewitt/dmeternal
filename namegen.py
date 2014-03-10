@@ -77,7 +77,7 @@ class NameGen:
 		else:
 			self.forbidden = _load_sample(forbidden_file)
 	
-	def gen_word(self, no_repeat = False):
+	def gen_word(self, no_repeat = True):
 		#random number of syllables, the last one is always appended
 		num_syl = random.randint(self.min_syl, self.max_syl - 1)
 		
@@ -187,7 +187,7 @@ if __name__=="__main__":
 #    test_names( ELDRITCH, 100000 )
 
     for t in range( 100 ):
-        print ELDRITCH.gen_word()
+        print JAPANESE.gen_word()
 
 
 #    print "Dragon"

@@ -360,9 +360,10 @@ DEFAULT_SPRITES = { SPRITE_GROUND: "terrain_ground_forest.png", \
 class Scene( object ):
     DELTA8 = ( (-1,-1), (0,-1), (1,-1), (-1,0), (1,0), (-1,1), (0,1), (1,1) )
     def __init__(self,width=128,height=128,sprites=None,biome=None,setting=None,desctags=()):
+        self.name = ""
         self.width = width
         self.height = height
-        self.contents = container.ContainerList()
+        self.contents = container.ContainerList(owner=self)
         self.sprites = DEFAULT_SPRITES.copy()
         if sprites:
             self.sprites.update( sprites )
@@ -370,10 +371,17 @@ class Scene( object ):
         self.setting=setting
         self.desctags = desctags
         self.scripts = list()
+        self.parent_scene = None
         # Fill the map with empty tiles
         self.map = [[ Tile()
             for y in range(height) ]
                 for x in range(width) ]
+
+    def root_scene( self ):
+        rs = self
+        while rs.parent_scene:
+            rs = rs.parent_scene
+        return rs
 
     def on_the_map( self , x , y ):
         # Returns true if on the map, false otherwise

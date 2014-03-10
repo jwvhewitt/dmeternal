@@ -593,6 +593,10 @@ class Explorer( object ):
         self.view( self.screen )
         pygame.display.flip()
 
+        # Do a start trigger, unless we're in combat.
+        if not self.camp.fight:
+            self.check_trigger( "START" )
+
         while self.keep_exploring():
             if self.camp.fight:
                 self.order = None

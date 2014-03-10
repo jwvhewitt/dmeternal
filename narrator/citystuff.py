@@ -269,7 +269,7 @@ class GenericWeaponShop( Plot ):
         self.register_element( "SHOPKEEPER", npc )
 
         self.shop = services.Shop( ware_types=services.WEAPON_STORE, rank=self.rank+2,
-         allow_misc=False, allow_magic=True, num_items=15 )
+         allow_misc=False, allow_magic=True, num_items=14 )
 
         return True
 

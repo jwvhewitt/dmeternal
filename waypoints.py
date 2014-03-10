@@ -18,7 +18,7 @@ class Waypoint( object ):
         """Place this waypoint in a scene."""
         if scene:
             self.place( scene, pos )
-        self.contents = container.ContainerList()
+        self.contents = container.ContainerList(owner=self)
 
     def place( self, scene, pos=None ):
         if hasattr( self, "container" ) and self.container:
@@ -164,4 +164,6 @@ class LargeChest( SmallChest ):
     ALT_DECOR = maps.LARGE_CHEST_OPEN
     HOARD_AMOUNT = 200
 
+class Well( Waypoint ):
+    TILE = maps.Tile( None, None, maps.WELL )
 

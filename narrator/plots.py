@@ -1,8 +1,21 @@
 import context
+import namegen
+import random
 
 class PlotError( Exception ):
     """Plot init will call this if initialization impossible."""
     pass
+
+class Chapter( object ):
+    """ Contains basic information about this chapter."""
+    def __init__( self, num=1, start_rank=1, end_rank=5, follows=None ):
+        if follows:
+            num = follows.num + 1
+            start_rank = follows.end_rank
+            end_rank = start_rank + random.randint( 3,5 )
+        self.num = num
+        self.start_rank = start_rank
+        self.end_rank = end_rank
 
 class PlotState( object ):
     """For passing state information to subplots."""
@@ -60,7 +73,7 @@ class Plot( object ):
         # If failure, delete currently added subplots + raise error.
         if hasattr( self, "fail" ) or not allok:
             self.remove( nart )
-            raise PlotError
+            raise PlotError( str( self.__class__ ) )
 
     def get_element_idents( self, ele ):
         """Return list of element idents assigned to this object."""
@@ -77,6 +90,16 @@ class Plot( object ):
         else:
             self.subplots[ident] = sp
         return sp
+
+    def add_first_locale_sub_plot( self, nart ):
+        # Utility function for a frequently used special case.
+        sp = self.add_sub_plot( nart, "CITY_SCENE" )
+        if sp:
+            nart.camp.scene = sp.elements.get( "SCENE" )
+            self.register_element( "LOCALE", sp.elements.get( "SCENE" ) )
+            nart.camp.entrance = sp.elements.get( "ENTRANCE" )
+        return sp
+
 
     def move_element( self, ele, dest ):
         # Record when a plot places an element; if this plot is removed, the
@@ -96,6 +119,8 @@ class Plot( object ):
         return ele
 
     def register_scene( self, nart, myscene, mygen, ident=None, dident=None, rank=None ):
+        if not myscene.name:
+            myscene.name = namegen.DEFAULT.gen_word()
         self.register_element( ident, myscene, dident )
         nart.camp.scenes.append( myscene )
         self.move_records.append( (myscene,nart.camp.scenes) )
@@ -155,13 +180,17 @@ class Plot( object ):
 
     def get_dialogue_offers( self, npc ):
         """Get any dialogue offers this plot has for npc."""
-        ofrz = list()
+        ofrz = self.get_generic_offers( npc )
         npc_ids = self.get_element_idents( npc )
         for i in npc_ids:
             ogen = getattr( self, "{0}_offers".format(i), None )
             if ogen:
                 ofrz += ogen()
         return ofrz
+
+    def get_generic_offers( self, npc ):
+        """Get any offers that could apply to non-element NPCs."""
+        return list()
 
 
     @classmethod

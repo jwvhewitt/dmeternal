@@ -55,9 +55,11 @@ def harvest( mod ):
             PLOT_LIST[ o.LABEL ].append( o )
 
 import citystuff
+import complication
 import encounters
 import intros
 harvest( citystuff )
+harvest( complication )
 harvest( encounters )
 harvest( intros )
 

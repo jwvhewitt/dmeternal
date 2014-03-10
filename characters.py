@@ -422,7 +422,7 @@ class Character( stats.PhysicalThing ):
             self.hair = random.choice( species.HAIRSTYLE[gender] )
         else:
             self.hair = -1
-        self.contents = items.Backpack()
+        self.contents = items.Backpack(owner=self)
         self.xp = 0
         self.beard = 0
         self.hp_damage = 0
