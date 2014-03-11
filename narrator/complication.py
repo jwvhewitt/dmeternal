@@ -29,6 +29,9 @@ class CaveDungeon( Plot ):
             if sp:
                 pstate = PlotState( rank = l ).based_on( sp )
 
-
+        # Connect all the levels.
+        prev = None
+        for next in self.levels:
+            pass
         return True
 

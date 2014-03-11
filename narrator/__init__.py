@@ -56,10 +56,12 @@ def harvest( mod ):
 
 import citystuff
 import complication
+import dungeonlevel
 import encounters
 import intros
 harvest( citystuff )
 harvest( complication )
+harvest( dungeonlevel )
 harvest( encounters )
 harvest( intros )
 

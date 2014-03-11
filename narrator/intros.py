@@ -64,6 +64,7 @@ class BalrogMovesIntoTown( Plot ):
         # Make sure a LOCALE exists; if not, create one.
         if not nart.camp.scene:
             self.add_first_locale_sub_plot( nart )
+        self.add_sub_plot( nart, "COMPLICATION", ident="next" )
         return True
     def t_START( self, explo ):
         if self.do_message:
