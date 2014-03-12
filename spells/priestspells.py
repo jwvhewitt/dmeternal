@@ -19,6 +19,16 @@ ARMOR_OF_FAITH = Spell( "Armor of Faith",
         effects.Enchant( enchantments.AirArmor, anim=None )
     ,) ), rank=1, gems={SOLAR:1,AIR:1}, com_tar=targetarea.SelfOnly(), mpfudge=-2 )
 
+BLAST_UNDEAD = Spell( "Blast Undead",
+    "This mystic bolt deals 1-6 damage to undead creatures.",
+    effects.TargetIs( pat=effects.UNDEAD, on_true = (
+        effects.HealthDamage((1,6,0), stat_bonus=stats.PIETY, element=stats.RESIST_SOLAR, anim=animobs.YellowExplosion )
+    ,), on_false = (
+        effects.NoEffect( anim=animobs.SmallBoom )
+    ,) ),
+    rank=1, gems={SOLAR:1,WATER:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.YellowBolt, mpfudge=-1 )
+
+
 # CIRCLE TWO
 
 WEAPON_BLESSING = Spell( "Weapon Blessing",
