@@ -71,9 +71,12 @@ class Plot( object ):
         allok = self.custom_init( nart )
 
         # If failure, delete currently added subplots + raise error.
-        if hasattr( self, "fail" ) or not allok:
-            self.remove( nart )
-            raise PlotError( str( self.__class__ ) )
+        if not allok:
+            self.fail(nart)
+
+    def fail( self, nart ):
+        self.remove( nart )
+        raise PlotError( str( self.__class__ ) )
 
     def get_element_idents( self, ele ):
         """Return list of element idents assigned to this object."""
@@ -86,8 +89,7 @@ class Plot( object ):
             ident = "_autoident_{0}".format( len( self.subplots ) )
         sp = nart.generate_sub_plot( spstate, splabel )
         if not sp:
-            raise PlotError( str( self.__class__ ) )
-#            self.fail = True
+            self.fail( nart )
         else:
             self.subplots[ident] = sp
         return sp

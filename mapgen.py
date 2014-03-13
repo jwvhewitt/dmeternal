@@ -787,6 +787,20 @@ class RandomScene( Room ):
                     gb.map[x][y].floor = maps.HIGROUND
                     gb.map[x][y].wall = True
 
+class CaveScene( RandomScene ):
+    mutate = CellMutator(noise_throttle=100)
+    def prepare( self, gb ):
+        # Step one- we're going to use a plasma map to set water/lo/hi ground.
+        # Fill all non-water tiles with True walls for now.
+        myplasma = Plasma()
+        for x in range( self.width ):
+            for y in range( self.height ):
+                if myplasma.map[x][y] < 0.6:
+                    gb.map[x][y].floor = maps.LOGROUND
+                    gb.map[x][y].wall = True
+                else:
+                    gb.map[x][y].floor = maps.HIGROUND
+                    gb.map[x][y].wall = True
 
 class DividedIslandScene( RandomScene ):
     """The rooms are divided into two groups by a single bridge."""
