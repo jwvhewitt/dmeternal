@@ -22,7 +22,7 @@ class CaveLevel( Plot ):
         """Requires the dungeon level to be a cave."""
         return pstate.elements.get( "DUNGEON_TYPE" ) == context.HAB_CAVE
     def custom_init( self, nart ):
-        myscene = maps.Scene( 50, 50, 
+        myscene = maps.Scene( 75, 75, 
             sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_cthonic.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
             biome=context.HAB_CAVE, setting=self.setting, desctags=(context.DES_EARTH,) )
         mymapgen = mapgen.CaveScene( myscene )

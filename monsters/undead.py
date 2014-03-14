@@ -98,7 +98,7 @@ class Zombie( base.Monster ):
     SPRITENAME = "monster_undead.png"
     FRAME = 9
     TEMPLATES = (stats.UNDEAD,)
-    MOVE_POINTS = 8
+    MOVE_POINTS = 6
     VOICE = None
     GP_VALUE = 5
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
@@ -141,10 +141,6 @@ class SkeletonWithMorningstar( base.Monster ):
 #  ***   ENCOUNTER  LEVEL  4   ***
 #  *******************************
 
-#  *******************************
-#  ***   ENCOUNTER  LEVEL  5   ***
-#  *******************************
-
 class Ghoul( base.Monster ):
     name = "Ghoul"
     statline = { stats.STRENGTH: 13, stats.TOUGHNESS: 15, stats.REFLEXES: 8, \
@@ -159,7 +155,7 @@ class Ghoul( base.Monster ):
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.MTY_UNDEAD, 
      context.DES_LUNAR, context.GEN_UNDEAD )
-    ENC_LEVEL = 5
+    ENC_LEVEL = 4
     COMPANIONS = (Zombie,)
 
     COMBAT_AI = aibrain.GhoulAI()
@@ -171,7 +167,12 @@ class Ghoul( base.Monster ):
      )
 
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 4, self ) )
+        self.levels.append( base.Humanoid( 3, self ) )
+
+
+#  *******************************
+#  ***   ENCOUNTER  LEVEL  5   ***
+#  *******************************
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  6   ***

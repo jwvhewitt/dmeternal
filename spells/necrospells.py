@@ -26,4 +26,21 @@ RAISE_SKELETON = Spell( "Raise Skeleton",
     effects.CallMonster( {context.MTY_UNDEAD: True, context.DES_LUNAR: context.MAYBE, context.GEN_UNDEAD: context.MAYBE}, 2, anim=animobs.PurpleSparkle ),
     rank=1, gems={EARTH:1,LUNAR:1}, com_tar=targetarea.SingleTarget(reach=2) )
 
+# CIRCLE 2
+
+RAISE_CORPSE = Spell( "Raise Corpse",
+    "You conjure dark forces to animate a lesser undead creature which will fight on your behaf.",
+    effects.CallMonster( {context.MTY_UNDEAD: True, context.DES_LUNAR: context.MAYBE, context.GEN_UNDEAD: context.MAYBE}, 4, anim=animobs.PurpleSparkle ),
+    rank=2, gems={EARTH:1,LUNAR:1}, com_tar=targetarea.SingleTarget(reach=2), mpfudge=4 )
+
+# CIRCLE 3
+
+ACID_CLOUD = Spell( "Acid Cloud",
+    "Calls forth billowing clouds of acid which do 2d6 damage to all targets within 3 tiles.",
+    effects.OpposedRoll( on_success = (
+        effects.HealthDamage( (2,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_ACID, anim=animobs.GreenCloud )
+    ,), on_failure = (
+        effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_ACID, anim=animobs.GreenCloud )
+    ,) ), rank=3, gems={EARTH:1,LUNAR:1}, com_tar=targetarea.Blast(radius=3), shot_anim=animobs.GreenComet, ai_tar=invocations.vs_enemy )
+
 

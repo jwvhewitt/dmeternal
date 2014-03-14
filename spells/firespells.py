@@ -31,5 +31,14 @@ EXPLOSION = Spell( "Explosion",
         effects.HealthDamage( (2,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.RedCloud )
     ,), on_failure = (
         effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.RedCloud )
-    ,) ), rank=3, gems={FIRE:2}, com_tar=targetarea.Blast(radius=3), ai_tar=invocations.vs_enemy )
+    ,) ), rank=3, gems={FIRE:2}, com_tar=targetarea.Blast(radius=3), shot_anim=animobs.Fireball, ai_tar=invocations.vs_enemy )
+
+# CIRCLE 4
+
+
+
+# CIRCLE 5
+
+# CIRCLE 6
+
 
