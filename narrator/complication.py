@@ -18,8 +18,6 @@ import namegen
 
 class CaveDungeon( Plot ):
     LABEL = "COMPLICATION"
-    active = True
-    scope = True
     def custom_init( self, nart ):
         """Load dungeon levels, dungeon entrance, CONCLUSION."""
         self.levels = list()
@@ -34,21 +32,8 @@ class CaveDungeon( Plot ):
         # Connect all the levels.
         prev = self.elements[ "LOCALE" ]
         for next in self.levels:
-            myzone1 = nart.get_map_generator( prev ).DEFAULT_ROOM()
-            myzone2 = nart.get_map_generator( next ).DEFAULT_ROOM()
-
-            stairs_1 = waypoints.SpiralStairsDown()
-            stairs_2 = waypoints.SpiralStairsUp()
-            stairs_1.destination = next
-            stairs_1.otherside = stairs_2
-            stairs_2.destination = prev
-            stairs_2.otherside = stairs_1
-
-            myzone1.contents.append( stairs_1 )
-            myzone2.contents.append( stairs_2 )
-            prev.contents.append( myzone1 )
-            next.contents.append( myzone2 )
-
+            pstate = PlotState( rank = next.rank, elements={"PREV":prev,"NEXT":next} ).based_on( self )
+            sp = self.add_sub_plot( nart, "CONNECT", pstate )
             prev = next
 
         return True
