@@ -11,6 +11,7 @@ class Narrative( object ):
     def __init__( self, pstate ):
         self.camp = campaign.Campaign()
         self.generators = list()
+        self.uniques = set()
         # Add the seed plot.
         self.story = self.generate_sub_plot( pstate, "INTRO_1" )
 
@@ -20,7 +21,8 @@ class Narrative( object ):
         candidates = list()
         for sp in PLOT_LIST[label]:
             if sp.matches( pstate ):
-                candidates.append( sp )
+                if not sp.UNIQUE or sp not in self.uniques:
+                    candidates.append( sp )
         if candidates:
             cp = None
             while candidates and not cp:
@@ -28,6 +30,8 @@ class Narrative( object ):
                 candidates.remove( cpc )
                 try:
                     cp = cpc(self,pstate)
+                    if cpc.UNIQUE:
+                        self.uniques.add( cpc )
                 except plots.PlotError:
                     cp = None
             return cp

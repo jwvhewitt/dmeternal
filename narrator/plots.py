@@ -43,6 +43,7 @@ class PlotState( object ):
 class Plot( object ):
     """The building block of the adventure."""
     LABEL = ""
+    UNIQUE = False
     propp = 0
     setting = False
     chapter = 1
@@ -145,6 +146,9 @@ class Plot( object ):
         for e,d in self.move_records:
             if e in d:
                 d.remove( e )
+        # Remove self from the uniques set, if necessary.
+        if self.UNIQUE and self.__class__ in nart.uniques:
+            nart.uniques.remove( self.__class__ )
 
     def install( self, nart ):
         """Plot generation complete. Mesh plot with campaign."""
