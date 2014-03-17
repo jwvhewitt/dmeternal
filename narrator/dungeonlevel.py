@@ -24,7 +24,8 @@ class CaveLevel( Plot ):
     def custom_init( self, nart ):
         myscene = maps.Scene( 75, 75, 
             sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_cthonic.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
-            biome=context.HAB_CAVE, setting=self.setting, desctags=(context.DES_EARTH,) )
+            biome=context.HAB_CAVE, setting=self.setting,
+            desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_EARTH) )
         mymapgen = mapgen.CaveScene( myscene )
         self.register_scene( nart, myscene, mymapgen, ident="SCENE" )
 

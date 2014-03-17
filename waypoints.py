@@ -81,16 +81,14 @@ class StairsDown( SpiralStairsUp ):
     TILE = maps.Tile( None, maps.STAIRS_DOWN, None )
     ATTACH_TO_WALL = True
 
-class SpiralStairsDown( Waypoint ):
+class SpiralStairsDown( SpiralStairsUp ):
     TILE = maps.Tile( None, maps.SPIRAL_STAIRS_DOWN, None )
-    destination = None
-    otherside = None
-    def bump( self, explo ):
-        if self.destination and self.otherside:
-            explo.camp.destination = self.destination
-            explo.camp.entrance = self.otherside
-        else:
-            explo.alert( "You have just bumped the stairs. Woohoo!" )
+
+class MineEntrance( SpiralStairsUp ):
+    TILE = maps.Tile( None, None, maps.MINE_ENTRANCE )
+
+class DungeonEntrance( SpiralStairsUp ):
+    TILE = maps.Tile( None, None, maps.DUNGEON_ENTRANCE )
 
 class PuzzleDoor( Waypoint ):
     TILE = maps.Tile( None, maps.CLOSED_DOOR, None )

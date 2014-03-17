@@ -72,41 +72,6 @@ class BalrogMovesIntoTown( Plot ):
             explo.alert( "Unfortunately, the arrival of a fearsome monster has shattered the peace. Now the people of {0} live in fear, waiting for a hero to deliver them from this terror.".format( city.name ) )
             self.do_message = False
 
-class CityOnEdgeOfCiv( Plot ):
-    LABEL = "CITY_SCENE"
-    def custom_init( self, nart ):
-        """Create map, fill with city + services."""
-        myscene = maps.Scene( 100, 100, sprites={maps.SPRITE_WALL: "terrain_wall_lightbrick.png"},
-            biome=context.HAB_FOREST, setting=self.setting, desctags=(context.DES_CIVILIZED,) )
-        mymapgen = mapgen.EdgeOfCivilization( myscene )
-        self.register_scene( nart, myscene, mymapgen, ident="SCENE" )
-
-        castle = self.register_element( "CITY", mapgen.CastleRoom( width=35,height=35,tags=(context.CIVILIZED,), parent=myscene ) )
-        myroom = mapgen.FuzzyRoom( tags=(context.ENTRANCE,), parent=castle )
-        myteam = teams.Team( strength=0, default_reaction=characters.SAFELY_FRIENDLY)
-        castle.contents.append( myteam )
-        myent = waypoints.Well()
-        myroom.contents.append( myent )
-        myroom.contents.append( monsters.generate_npc(team=myteam) )
-        myroom.contents.append( monsters.generate_npc(team=myteam) )
-
-        self.register_element( "ENTRANCE", myent )
-
-        self.add_sub_plot( nart, "CITY_GENERALSTORE" )
-        self.add_sub_plot( nart, "CITY_WEAPONSHOP" )
-        self.add_sub_plot( nart, "CITY_LIBRARY" )
-        self.add_sub_plot( nart, "CITY_INN" )
-        self.add_sub_plot( nart, "CITY_TEMPLE" )
-        self.add_sub_plot( nart, "ENCOUNTER" )
-        self.add_sub_plot( nart, "ENCOUNTER" )
-        self.add_sub_plot( nart, "ENCOUNTER" )
-        self.add_sub_plot( nart, "ENCOUNTER" )
-        self.add_sub_plot( nart, "ENCOUNTER" )
-
-        return True
-
-
-
 
 
 

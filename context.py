@@ -32,9 +32,9 @@ PROPP_NONE, PROPP_ABSENTATION, PROPP_INTERDICTION, PROPP_VIOLATION = range( 4 )
 
 ENTRANCE, GOAL, CIVILIZED = range( 3 )
 
-# **************************************
-# ***   Monster  Description  Tags   ***
-# **************************************
+# ******************************************
+# ***   Map/Monster  Description  Tags   ***
+# ******************************************
 #
 # When selecting a monster, the candidate must match the scene habitat or EVERY,
 # and should match at least one more tag in the scene description. If a monster
@@ -43,24 +43,27 @@ ENTRANCE, GOAL, CIVILIZED = range( 3 )
 # Habitat Tags- Linked to map generator
 HAB_EVERY, HAB_FOREST, HAB_CAVE, HAB_BUILDING = range( 4 )
 
+# Map Type- not exactly habitat, but kind of related?
+MAP_WILDERNESS, MAP_DUNGEON, MAP_GOUP, MAP_GODOWN = range( 50,54 )
+
 # Setting Tags
-SET_EVERY, SET_RENFAN = range( 100,102 )
+SET_EVERY, SET_RENFAN = range( 1000,1002 )
 
 # Description Tags- Linked to map sprite set and maybe map generator
 DES_EARTH, DES_AIR, DES_WATER, DES_FIRE, DES_SOLAR, DES_LUNAR, \
-  DES_ICE, DES_CIVILIZED = range(200,208)
+  DES_ICE, DES_CIVILIZED = range(1200,1208)
 
 # Type Tags
 #  MTY_UNDEAD can be summoned by Necromancer spells
 #  MTY_CREATURE can be summoned by Druid spells
 MTY_BEAST, MTY_HUMANOID, MTY_FIGHTER, MTY_THIEF, MTY_PRIEST, MTY_MAGE, \
-    MTY_UNDEAD, MTY_CREATURE, MTY_LEADER = range(300,309)
+    MTY_UNDEAD, MTY_CREATURE, MTY_LEADER = range(1300,1309)
 
 # Genus Tags. Note that these don't necessarily correspond to templates- a
 #  necromancer monster may be grouped with the undead, despite not being undead
 #  itself. Also a monster can have more than one genus because in Python we
 #  believe in multiple inheritence.
-GEN_GIANT, GEN_GOBLIN, GEN_CHAOS, GEN_UNDEAD, GEN_NATURE, GEN_DRAGON = range( 400,406 )
+GEN_GIANT, GEN_GOBLIN, GEN_CHAOS, GEN_UNDEAD, GEN_NATURE, GEN_DRAGON = range( 1400,1406 )
 
 def matches_description( context_set, desc_request ):
     # context_set is a list of context tags.

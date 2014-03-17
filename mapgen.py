@@ -704,6 +704,8 @@ class BuildingRoom( Room ):
 
 class BottleneckRoom( Room ):
     """A room that blocks passage, aside from one door."""
+    # special_c components:
+    #  "door": The waypoint to be placed in the dividing wall
     def render( self, gb ):
         myrect = self.area.inflate(-2,-2)
         for x in range( myrect.x, myrect.x + myrect.width ):
@@ -724,6 +726,26 @@ class BottleneckRoom( Room ):
         door_wp = self.special_c.get( "door", None )
         if door_wp:
             door_wp.place( gb, (x,y) )
+
+class MountainRoom( Room ):
+    """A fuzzy room with a mountain in it."""
+    # special_c components:
+    #  "door": A cave or mine entrance to be placed on the mountain.
+    def render( self, gb ):
+        # Step Five: Actually draw the room, taking into account terrain already on map.
+        for x in range( self.area.x+1, self.area.x + self.area.width-1 ):
+            for y in range( self.area.y+1, self.area.y + self.area.height-1 ):
+                self.draw_fuzzy_ground( gb, x, y )
+        x,y = self.area.center
+        gb.map[x][y].wall = maps.MOUNTAIN_TOP
+        gb.map[x+1][y].wall = maps.MOUNTAIN_RIGHT
+        gb.map[x][y+1].wall = maps.MOUNTAIN_LEFT
+        gb.map[x+1][y+1].wall = maps.MOUNTAIN_BOTTOM
+        door_wp = self.special_c.get( "door", None )
+        if door_wp:
+            door_wp.place( gb, (x+1,y+1) )
+
+
 
 #  *****************************
 #  ***   SCENE  GENERATORS   ***

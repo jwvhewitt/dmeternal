@@ -12,6 +12,55 @@ import teams
 import characters
 import random
 
+#
+#   **********************
+#   ***   CITY_SCENE   ***
+#   **********************
+#
+#  Create a new scene with a city in it. Register the following elements:
+#   SCENE: The new scene
+#   CITY: The map feature containing the city
+#   ENTRANCE: A waypoint for starting in/teleporting into the city
+#
+#  The city and map need to be populated, as well.
+#
+
+class CityOnEdgeOfCiv( Plot ):
+    LABEL = "CITY_SCENE"
+    def custom_init( self, nart ):
+        """Create map, fill with city + services."""
+        myscene = maps.Scene( 100, 100, sprites={maps.SPRITE_WALL: "terrain_wall_lightbrick.png"},
+            biome=context.HAB_FOREST, setting=self.setting,
+            desctags=(context.MAP_WILDERNESS,context.DES_CIVILIZED,) )
+        mymapgen = mapgen.EdgeOfCivilization( myscene )
+        self.register_scene( nart, myscene, mymapgen, ident="SCENE" )
+
+        castle = self.register_element( "CITY", mapgen.CastleRoom( width=35,height=35,tags=(context.CIVILIZED,), parent=myscene ) )
+        myroom = mapgen.FuzzyRoom( tags=(context.ENTRANCE,), parent=castle )
+        myteam = teams.Team( strength=0, default_reaction=characters.SAFELY_FRIENDLY)
+        castle.contents.append( myteam )
+        myent = waypoints.Well()
+        myroom.contents.append( myent )
+        myroom.contents.append( monsters.generate_npc(team=myteam) )
+        myroom.contents.append( monsters.generate_npc(team=myteam) )
+
+        self.register_element( "ENTRANCE", myent )
+
+        self.add_sub_plot( nart, "CITY_GENERALSTORE" )
+        self.add_sub_plot( nart, "CITY_WEAPONSHOP" )
+        self.add_sub_plot( nart, "CITY_LIBRARY" )
+        self.add_sub_plot( nart, "CITY_INN" )
+        self.add_sub_plot( nart, "CITY_TEMPLE" )
+        for t in range( random.randint(4,9) ):
+            self.add_sub_plot( nart, "ENCOUNTER" )
+
+        return True
+
+
+
+
+
+
 #  *****************************
 #  ***   CITY_GENERALSTORE   ***
 #  *****************************
