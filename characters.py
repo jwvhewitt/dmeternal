@@ -766,8 +766,10 @@ class Character( stats.PhysicalThing ):
         else:
             fx = self.unarmed_attack_effect( roll_mod )
         if self.hidden:
-            # Also, sneak attacks get double damage dice.
-            fx.on_success[0].att_dice = (fx.on_success[0].att_dice[0]*2,fx.on_success[0].att_dice[1],fx.on_success[0].att_dice[2])
+            # Also, sneak attacks get bonus damage.
+            fx.on_success[0].att_dice = (fx.on_success[0].att_dice[0],
+                fx.on_success[0].att_dice[1],max(fx.on_success[0].att_dice[2],fx.on_success[0].att_dice[2]*2)
+                 + fx.on_success[0].att_dice[0]*fx.on_success[0].att_dice[1])
         return fx
 
     def get_attack_shot_anim( self ):

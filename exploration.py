@@ -60,7 +60,6 @@ class MoveTo( object ):
         else:
             first = True
             keep_going = True
-            tiles_in_sight = set()
             for pc in exp.camp.party:
                 if pc.is_alright() and exp.scene.on_the_map( *pc.pos ):
                     d = self.smart_downhill_dir( exp, pc )
@@ -77,8 +76,6 @@ class MoveTo( object ):
                             if target:
                                 target.pos = pc.pos
                             pc.pos = p2
-                            pcview = exp.scene.update_pc_position( pc )
-                            tiles_in_sight.update( pcview.tiles )
                         elif first:
                             exp.bump_model( target )
                             keep_going = False
@@ -87,9 +84,10 @@ class MoveTo( object ):
                     first = False
             # Now that all of the pcs have moved, check the tiles_in_sight for
             # hidden models.
+            exp.scene.update_party_position( exp.camp.party )
             awareness = exp.camp.party_stat( stats.AWARENESS, stats.INTELLIGENCE )
             for m in exp.scene.contents:
-                if isinstance( m, characters.Character ) and m.hidden and m.pos in tiles_in_sight and \
+                if isinstance( m, characters.Character ) and m.hidden and m.pos in exp.scene.in_sight and \
                   awareness > m.get_stat( stats.STEALTH ) + m.get_stat_bonus(stats.REFLEXES):
                     m.hidden = False
 
@@ -558,7 +556,7 @@ class Explorer( object ):
                         m.hidden = True
 
                 # Next, check visibility to PC.
-                if m.team and m.team.on_guard():
+                if m.team and m.team.on_guard() and m.pos in self.scene.in_sight:
                     pov = pfov.PointOfView( self.scene, m.pos[0], m.pos[1], 5 )
                     in_sight = False
                     for pc in self.camp.party:

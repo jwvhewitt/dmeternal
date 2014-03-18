@@ -177,7 +177,7 @@ class Combat( object ):
 
             while self.ap_spent[ chara ] < chara.get_move():
                 result = self.step( explo, chara, hmap )
-                self.scene.update_pc_position( chara )
+                self.scene.update_party_position( explo.camp.party )
                 if result:
                     break
 
@@ -230,7 +230,7 @@ class Combat( object ):
             while self.ap_spent[ chara ] < chara.get_move():
                 result = self.step( explo, chara, hmap )
                 if chara in self.camp.party:
-                    self.scene.update_pc_position( chara )
+                    self.scene.update_party_position( explo.camp.party )
                 if result:
                     break
 

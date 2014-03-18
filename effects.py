@@ -190,6 +190,10 @@ class HealthDamage( NoEffect ):
                 elif dmg < 1:
                     dmg = 0
 
+            # If the attacker is hidden, bonus damage.
+            if originator and originator.hidden:
+                dmg = dmg * 2
+
             # If the target is asleep, damage doubled but they wake up.
             if camp.fight and camp.fight.cstat[target].asleep:
                 dmg = dmg * 2

@@ -377,6 +377,7 @@ class Scene( object ):
         self.desctags = desctags
         self.scripts = list()
         self.parent_scene = None
+        self.in_sight = set()
         # Fill the map with empty tiles
         self.map = [[ Tile()
             for y in range(height) ]
@@ -497,8 +498,11 @@ class Scene( object ):
     def distance( self, pos1, pos2 ):
         return round( math.sqrt( ( pos1[0]-pos2[0] )**2 + ( pos1[1]-pos2[1] )**2 ) )
 
-    def update_pc_position( self, pc ):
-        return pfov.PCPointOfView( self, pc.pos[0], pc.pos[1], 10 )
+    def update_party_position( self, party ):
+        self.in_sight = set()
+        for pc in party:
+            if pc.is_alright():
+                self.in_sight |= pfov.PCPointOfView( self, pc.pos[0], pc.pos[1], 10 ).tiles
 
 
 OVERLAY_ITEM = 0
