@@ -88,6 +88,7 @@ class MadDog( base.Monster ):
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.DES_CIVILIZED,
+     context.MAP_WILDERNESS,
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_CHAOS )
     ENC_LEVEL = 2
 
@@ -145,6 +146,7 @@ class FireBeetle( base.Monster ):
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.DES_FIRE,
+     context.MAP_DUNGEON,
      context.MTY_BEAST, context.MTY_CREATURE )
     ENC_LEVEL = 2
 
@@ -189,6 +191,7 @@ class Wolf( base.Monster ):
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.SET_EVERY, context.SET_RENFAN,
+     context.MAP_WILDERNESS,
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
     ENC_LEVEL = 3
 
@@ -303,6 +306,7 @@ class BlackBear( base.Monster ):
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.SET_EVERY, context.SET_RENFAN,
+     context.MAP_WILDERNESS,
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
     ENC_LEVEL = 4
 
@@ -487,6 +491,7 @@ class Lion( base.Monster ):
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.SET_EVERY, context.DES_SOLAR,
+     context.MAP_WILDERNESS,
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
     ENC_LEVEL = 6
 
@@ -510,6 +515,7 @@ class GrizzlyBear( base.Monster ):
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.SET_EVERY, context.SET_RENFAN,
+     context.MAP_WILDERNESS,
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
     ENC_LEVEL = 7
 
@@ -529,6 +535,7 @@ class GiantEagle( base.Monster ):
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.SET_EVERY, context.SET_RENFAN,
+     context.MAP_WILDERNESS,
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE,
      context.DES_AIR, context.DES_SOLAR )
     ENC_LEVEL = 7
@@ -553,6 +560,7 @@ class DireYak( base.Monster ):
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.HAB_CAVE, context.SET_EVERY,
+     context.MAP_WILDERNESS,
      context.DES_ICE,
      context.MTY_BEAST, context.MTY_CREATURE,
      context.GEN_NATURE )
@@ -597,6 +605,7 @@ class GreatStag( base.Monster ):
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.SET_EVERY, context.SET_RENFAN,
+     context.MAP_WILDERNESS,
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
     ENC_LEVEL = 9
 
@@ -617,6 +626,7 @@ class PolarBear( base.Monster ):
     GP_VALUE = 0
     HABITAT = ( context.SET_EVERY, context.SET_RENFAN,
      context.DES_ICE,
+     context.MAP_WILDERNESS,
      context.MTY_BEAST, context.MTY_CREATURE,
      context.GEN_NATURE )
     ENC_LEVEL = 9

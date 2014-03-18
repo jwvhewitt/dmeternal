@@ -398,9 +398,9 @@ class Room( object ):
 
     def list_good_deploy_spots( self, gb ):
         good_spots = list()
-        for x in range( self.area.x+1, self.area.x + self.area.width-1, 2 ):
-            for y in range( self.area.y+1, self.area.y + self.area.height-1, 2 ):
-                if not gb.map[x][y].blocks_walking():
+        for x in range( self.area.x+1, self.area.x + self.area.width-1 ):
+            for y in range( self.area.y+1, self.area.y + self.area.height-1 ):
+                if ((( x + y ) % 2 ) == 1 ) and not gb.map[x][y].blocks_walking():
                     good_spots.append( (x,y) )
         return good_spots
 
@@ -438,7 +438,7 @@ class Room( object ):
                     p = random.choice( good_walls )
                     good_walls.remove( p )
                     i.place( gb, p )
-                else:
+                elif good_spots:
                     p = random.choice( good_spots )
                     good_spots.remove( p )
                     i.place( gb, p )

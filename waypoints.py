@@ -53,6 +53,7 @@ class Bookshelf( Waypoint ):
 
 class GateDoor( Waypoint ):
     TILE = maps.Tile( None, maps.CLOSED_DOOR, None )
+    ATTACH_TO_WALL = True
     destination = None
     otherside = None
     def bump( self, explo ):

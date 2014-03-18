@@ -29,8 +29,8 @@ class AbandonedMineEntrance( Plot ):
         prev = self.elements[ "PREV" ]
         next = self.elements[ "NEXT" ]
 
-        myzone1 = self.register_element( "_P_ROOM", mapgen.MountainRoom(tags=(context.CIVILIZED,)), "PREV" )
-        myzone2 = self.register_element( "_N_ROOM", mapgen.SharpRoom(), "NEXT" )
+        myzone1 = self.register_element( "_P_ROOM", mapgen.MountainRoom(tags=(context.GOAL,context.CIVILIZED,)), "PREV" )
+        myzone2 = self.register_element( "_N_ROOM", mapgen.SharpRoom(tags=(context.ENTRANCE,)), "NEXT" )
 
         stairs_1 = waypoints.MineEntrance()
         stairs_2 = waypoints.GateDoor()
@@ -58,8 +58,8 @@ class DefaultDungeonEntrance( Plot ):
         prev = self.elements[ "PREV" ]
         next = self.elements[ "NEXT" ]
 
-        myzone1 = self.register_element( "_P_ROOM", mapgen.MountainRoom(), "PREV" )
-        myzone2 = self.register_element( "_N_ROOM", nart.get_map_generator( next ).DEFAULT_ROOM(), "NEXT" )
+        myzone1 = self.register_element( "_P_ROOM", mapgen.MountainRoom(tags=(context.GOAL,)), "PREV" )
+        myzone2 = self.register_element( "_N_ROOM", nart.get_map_generator( next ).DEFAULT_ROOM(tags=(context.ENTRANCE,)), "NEXT" )
 
         stairs_1 = waypoints.DungeonEntrance()
         if context.MAP_GOUP in next.desctags:
@@ -97,8 +97,8 @@ class DefaultGoUp( Plot ):
         prev = self.elements[ "PREV" ]
         next = self.elements[ "NEXT" ]
 
-        myzone1 = self.register_element( "_P_ROOM", nart.get_map_generator( prev ).DEFAULT_ROOM(), "PREV" )
-        myzone2 = self.register_element( "_N_ROOM", nart.get_map_generator( next ).DEFAULT_ROOM(), "NEXT" )
+        myzone1 = self.register_element( "_P_ROOM", nart.get_map_generator( prev ).DEFAULT_ROOM(tags=(context.GOAL,)), "PREV" )
+        myzone2 = self.register_element( "_N_ROOM", nart.get_map_generator( next ).DEFAULT_ROOM(tags=(context.ENTRANCE,)), "NEXT" )
 
         # Depending on whether we're going to a sharp room (with a guaranteed
         # border wall) or another room type, either go with the wall-mounted
@@ -137,8 +137,8 @@ class DefaultGoDown( Plot ):
         prev = self.elements[ "PREV" ]
         next = self.elements[ "NEXT" ]
 
-        myzone1 = self.register_element( "_P_ROOM", nart.get_map_generator( prev ).DEFAULT_ROOM(), "PREV" )
-        myzone2 = self.register_element( "_N_ROOM", nart.get_map_generator( next ).DEFAULT_ROOM(), "NEXT" )
+        myzone1 = self.register_element( "_P_ROOM", nart.get_map_generator( prev ).DEFAULT_ROOM(tags=(context.GOAL,)), "PREV" )
+        myzone2 = self.register_element( "_N_ROOM", nart.get_map_generator( next ).DEFAULT_ROOM(tags=(context.ENTRANCE,)), "NEXT" )
 
         # Depending on whether we're going to a sharp room (with a guaranteed
         # border wall) or another room type, either go with the wall-mounted

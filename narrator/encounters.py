@@ -69,6 +69,27 @@ class LargeTreasureEncounter( Plot ):
         self.register_element( "_ROOM", room, dident="SCENE" )
         return True
 
+class WildEncounter( Plot ):
+    LABEL = "ENCOUNTER"
+    active = True
+    @classmethod
+    def matches( self, pstate ):
+        """Requires the SCENE to exist and be wilderness."""
+        return ( pstate.elements.get("SCENE")
+                and context.MAP_WILDERNESS in pstate.elements["SCENE"].desctags )
+    def custom_init( self, nart ):
+        # Add an encounter, monsters must be MTY_BEAST, favoring GEN_NATURE.
+        scene = self.elements.get("SCENE")
+        mygen = nart.get_map_generator( scene )
+        room = mygen.DEFAULT_ROOM()
+        myhabitat=scene.get_encounter_request()
+        myhabitat[ context.MTY_BEAST ] = context.PRESENT
+        myhabitat[ context.GEN_NATURE ] = context.MAYBE
+        room.contents.append( teams.Team(default_reaction=-999, rank=self.rank, 
+          habitat=myhabitat ) )
+        self.register_element( "_ROOM", room, dident="SCENE" )
+        return True
+
 class BasicEncounter( Plot ):
     LABEL = "ENCOUNTER"
     active = True

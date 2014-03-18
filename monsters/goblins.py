@@ -25,6 +25,7 @@ class Goblin( base.Monster ):
     VOICE = dialogue.voice.ORCISH
     GP_VALUE = 5
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
+     context.MAP_WILDERNESS,
      context.MTY_HUMANOID, context.MTY_THIEF, context.GEN_GOBLIN )
     ENC_LEVEL = 1
 
@@ -44,6 +45,7 @@ class GoblinArcher( base.Monster ):
     VOICE = dialogue.voice.ORCISH
     GP_VALUE = 15
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY, context.SET_RENFAN,
+     context.MAP_WILDERNESS,
      context.MTY_HUMANOID, context.GEN_GOBLIN )
     ENC_LEVEL = 2
     COMBAT_AI = aibrain.BasicTechnicalAI()
@@ -96,6 +98,7 @@ class GoblinWarrior( base.Monster ):
     VOICE = dialogue.voice.ORCISH
     GP_VALUE = 20
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
+     context.MAP_WILDERNESS,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN )
     ENC_LEVEL = 4
     COMPANIONS = (Goblin,GoblinArcher)
@@ -116,6 +119,7 @@ class GoblinCook( base.Monster ):
     VOICE = dialogue.voice.ORCISH
     GP_VALUE = 25
     HABITAT = ( context.HAB_CAVE, context.SET_EVERY,
+     context.MAP_DUNGEON,
      context.MTY_HUMANOID, context.GEN_GOBLIN )
     ENC_LEVEL = 5
     LONER = True
@@ -137,6 +141,7 @@ class GoblinChampion( base.Monster ):
     VOICE = dialogue.voice.ORCISH
     GP_VALUE = 25
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
+     context.MAP_WILDERNESS,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN )
     ENC_LEVEL = 6
     COMPANIONS = (GoblinWarrior,)
@@ -158,6 +163,7 @@ class GoblinRanger( base.Monster ):
     VOICE = dialogue.voice.ORCISH
     GP_VALUE = 35
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
+     context.MAP_WILDERNESS,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN )
     ENC_LEVEL = 6
     COMBAT_AI = aibrain.BasicTechnicalAI()
@@ -187,6 +193,7 @@ class GoblinLeader( base.Monster ):
     VOICE = dialogue.voice.ORCISH
     GP_VALUE = 50
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
+     context.MAP_WILDERNESS,
      context.MTY_HUMANOID, context.MTY_LEADER, context.GEN_GOBLIN )
     ENC_LEVEL = 7
     LONER = True
@@ -320,6 +327,7 @@ class GoblinKing( base.Monster ):
     VOICE = dialogue.voice.ORCISH
     GP_VALUE = 195
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
+     context.MAP_DUNGEON,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN )
     ENC_LEVEL = 13
     COMBAT_AI = aibrain.GoblinKingAI()
@@ -510,6 +518,7 @@ class Orc( base.Monster ):
     VOICE = dialogue.voice.ORCISH
     GP_VALUE = 15
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
+     context.MAP_DUNGEON,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN )
     ENC_LEVEL = 3
 

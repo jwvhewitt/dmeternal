@@ -313,7 +313,7 @@ if __name__=='__main__':
         biome=context.HAB_CAVE, setting=context.SET_RENFAN, desctags=(context.DES_FIRE,) )
 
     stairs_1 = waypoints.SpiralStairsDown( myscene, (19,25) )
-    stairs_2 = waypoints.SpiralStairsUp()
+    stairs_2 = waypoints.StairsUp()
     stairs_1.destination = otherscene
     stairs_1.otherside = stairs_2
     stairs_2.destination = myscene
@@ -321,7 +321,7 @@ if __name__=='__main__':
 
 
     osgen = mapgen.DividedIslandScene( otherscene )
-    room1 = mapgen.FuzzyRoom( tags=(context.ENTRANCE,) )
+    room1 = mapgen.SharpRoom( tags=(context.ENTRANCE,) )
     room1.contents.append( stairs_2 )
     room2 = mapgen.SharpRoom( tags=(context.ENTRANCE,) )
     room3 = mapgen.FuzzyRoom( tags=(context.GOAL,) )

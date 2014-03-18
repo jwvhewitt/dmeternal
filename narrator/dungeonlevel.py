@@ -29,7 +29,7 @@ class CaveLevel( Plot ):
         mymapgen = mapgen.CaveScene( myscene )
         self.register_scene( nart, myscene, mymapgen, ident="SCENE" )
 
-        for t in range( random.randint(2,5) ):
+        for t in range( random.randint(4,8) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
 
         return True
