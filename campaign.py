@@ -251,6 +251,7 @@ if __name__=='__main__':
         i.pos = (23,17)
         myscene.contents.append( i )
 
+    myscene.rank = 1
     myscene.map[25][10].wall = maps.MOUNTAIN_TOP
     myscene.map[25][11].wall = maps.MOUNTAIN_LEFT
     myscene.map[26][10].wall = maps.MOUNTAIN_RIGHT
@@ -261,8 +262,13 @@ if __name__=='__main__':
     myscene.map[26][50].wall = maps.MOUNTAIN_RIGHT
     myscene.map[26][51].wall = maps.MOUNTAIN_BOTTOM
 
+    myscene.monster_zones.append( pygame.Rect(11,50,10,10) )
+    myscene.monster_zones.append( pygame.Rect(26,50,10,10) )
+    myscene.monster_zones.append( pygame.Rect(41,50,10,10) )
+    myscene.monster_zones.append( pygame.Rect(56,50,10,10) )
+    myscene.monster_zones.append( pygame.Rect(71,50,10,10) )
 
-    myroom = pygame.Rect(21,12,12,20)
+    myroom = pygame.Rect(21,12,12,10)
     myteam = teams.Team(default_reaction=characters.SAFELY_FRIENDLY, home=myroom)
 
     mygob = monsters.generate_npc( species = characters.Orc, team=myteam )

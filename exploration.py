@@ -231,8 +231,8 @@ class Explorer( object ):
                 for y in range( pc.pos[1]-3, pc.pos[1]+4 ):
                     if self.scene.on_the_map(x,y) and not self.scene.map[x][y].blocks_walking() and not self.scene.get_character_at_spot((x,y)):
                         aoe.append( (x,y) )
-            team = teams.Team(default_reaction=-999)
-            mons = team.build_encounter( self.scene,(self.scene.rank + self.camp.party_rank() )//2, random.randint(40,65), self.scene.get_encounter_request() )
+            team = teams.Team(default_reaction=-999,rank=(self.scene.rank + self.camp.party_rank() )//2, strength=random.randint(40,65), habitat=self.scene.get_encounter_request())
+            mons = team.build_encounter( self.scene )
             for m in mons:
                 if aoe:
                     p = random.choice( aoe )
@@ -589,9 +589,38 @@ class Explorer( object ):
     def keep_exploring( self ):
         return self.camp.first_living_pc() and self.no_quit and not pygwrap.GOT_QUIT and not self.camp.destination
 
+    def update_scene( self ):
+        """If appropriate, move models back to their home zone and restock monsters."""
+        if self.scene.last_updated < self.camp.day:
+            for m in self.scene.contents:
+                if isinstance( m, characters.Character ) and m.team and m.team.home and not m.team.home.collidepoint( m.pos ):
+                    # This monster is lost. Send it back home.
+                    m.pos = self.scene.find_entry_point_in_rect( m.team.home )
+
+            # Check the monster zones. Restock random monsters.
+            for mz in self.scene.monster_zones:
+                if self.scene.monster_zone_is_empty( mz ) and random.randint(1,2) != 2:
+                    NewTeam = teams.Team( default_reaction=-100, home=mz,
+                      rank=max( self.scene.rank, ( self.scene.rank + self.camp.party_rank() ) // 2 ),
+                      strength=100, habitat=self.scene.get_encounter_request() )
+                    mlist = NewTeam.build_encounter(self.scene)
+                    poslist = self.scene.find_free_points_in_rect( mz )
+
+                    for m in mlist:
+                        if poslist:
+                            pos = random.choice( poslist )
+                            m.place( self.scene, pos )
+                            poslist.remove( pos )
+                        else:
+                            break
+
+            self.scene.last_updated = self.camp.day
+
     def go( self ):
         self.no_quit = True
         self.order = None
+
+        self.update_scene()
 
         # Do one view first, just to prep the model map and mouse tile.
         self.view( self.screen )

@@ -11,6 +11,7 @@ import dialogue
 import services
 import teams
 import characters
+import random
 
 class SmallTreasureEncounter( Plot ):
     LABEL = "ENCOUNTER"
@@ -86,23 +87,8 @@ class WildEncounter( Plot ):
         myhabitat[ context.MTY_BEAST ] = context.PRESENT
         myhabitat[ context.GEN_NATURE ] = context.MAYBE
         room.contents.append( teams.Team(default_reaction=-999, rank=self.rank, 
-          habitat=myhabitat ) )
+          strength=random.randint(90,120), habitat=myhabitat ) )
         self.register_element( "_ROOM", room, dident="SCENE" )
         return True
 
-class BasicEncounter( Plot ):
-    LABEL = "ENCOUNTER"
-    active = True
-    @classmethod
-    def matches( self, pstate ):
-        """Requires the SCENE to exist."""
-        return pstate.elements.get("SCENE")
-    def custom_init( self, nart ):
-        scene = self.elements.get("SCENE")
-        mygen = nart.get_map_generator( scene )
-        room = mygen.DEFAULT_ROOM()
-        room.contents.append( teams.Team(default_reaction=-999, rank=self.rank, 
-          habitat=scene.get_encounter_request() ) )
-        self.register_element( "_ROOM", room, dident="SCENE" )
-        return True
 

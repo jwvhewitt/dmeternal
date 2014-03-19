@@ -155,8 +155,8 @@ class CellMutator( object ):
     def carve_noise( self, gb, area ):
         myrect = pygame.Rect(0,0,5,5)
         for t in range( gb.width * gb.height // self.noise_throttle ):
-            myrect.x = random.choice( range( area.x , area.x + area.width - myrect.width ) )
-            myrect.y = random.choice( range( area.y , area.y + area.height - myrect.height ) )
+            myrect.x = random.choice( range( area.x + 1 , area.x + area.width - myrect.width - 1 ) )
+            myrect.y = random.choice( range( area.y + 1 , area.y + area.height - myrect.height - 1 ) )
             if self.contains_a_space( gb, myrect ):
                 for x in range( myrect.x, myrect.x + myrect.width ):
                     for y in range( myrect.y, myrect.y + myrect.height ):
@@ -200,8 +200,6 @@ class BuildingDec( object ):
         for x in range( area.x+1, area.x + area.width-1, 4 ):
             if gb.get_wall(x,y1) == maps.BASIC_WALL and not gb.map[x][y1].decor:
                 gb.map[x][y1].decor = self.win
-#            if gb.get_wall(x,y2) == maps.BASIC_WALL and not gb.map[x][y2].decor:
-#                gb.map[x][y2].decor = self.win
         x1 = area.x
         x2 = area.x + area.width - 1
         for y in range( area.y+1, area.y + area.height-1, 4 ):
@@ -278,6 +276,60 @@ class TempleDec( BuildingDec ):
     WALL_DECOR = ( maps.SUN_PICTURE, maps.MOON_PICTURE, maps.HIGH_SHELF, maps.BENCH,
         maps.COLUMN, maps.COLUMN, maps.WALL_LIGHT, maps.WALL_LIGHT )
 
+class MonsterDec( object ):
+    """Just add this room to the monster_zones list. Maybe add some monster sign."""
+    FLOOR_DECOR = (maps.SKULL, maps.BONE, maps.SKELETON, maps.FLOOR_BLOOD, maps.FLOOR_BLOOD)
+    def __call__( self, gb, area ):
+        gb.monster_zones.append( area )
+        if random.randint(1,3)!=1:
+            for t in range( random.randint(1,3) ):
+                x = random.choice( range( area.x , area.x + area.width ) )
+                y = random.choice( range( area.y , area.y + area.height ) )
+                if gb.on_the_map(x,y) and not gb.map[x][y].blocks_walking() and not gb.map[x][y].wall and not gb.map[x][y].decor:
+                    # This is an empty space. Add some carnage.
+                    gb.map[x][y].decor = random.choice(self.FLOOR_DECOR)
+
+#  **********************
+#  ***   GAPFILLERS   ***
+#  **********************
+
+class MonsterFiller( object ):
+    """If this room has empty spots, add some monster zones."""
+    def __init__( self, min_mz=3, max_mz=10, spacing=10 ):
+        self.min_mz = min_mz
+        self.max_mz = max_mz
+        self.spacing = spacing
+    def __call__( self, gb, room ):
+        # Determine the areas occupied by rooms.
+        closed_area = list()
+        for r in room.contents:
+            if hasattr( r, "area" ) and r.area:
+                closed_area.append( r.area )
+
+        if hasattr( room, "DEFAULT_ROOM" ):
+            rclass = room.DEFAULT_ROOM
+        else:
+            rclass = FuzzyRoom
+
+        # Attempt to add some random rooms.
+        for t in range( random.randint(self.min_mz,self.max_mz) ):
+            myroom = rclass()
+            myroom.decorate = MonsterDec()
+            myrect = pygame.Rect( 0, 0, myroom.width, myroom.height )
+            count = 0
+            while ( count < 100 ) and not myroom.area:
+                myrect.x = random.choice( range( room.area.x , room.area.x + room.area.width - myroom.width ) )
+                myrect.y = random.choice( range( room.area.y , room.area.y + room.area.height - myroom.height ) )
+                if myrect.inflate(self.spacing,self.spacing).collidelist( closed_area ) == -1:
+                    myroom.area = myrect
+                    closed_area.append( myrect )
+                count += 1
+            if myroom.area:
+                room.contents.append( myroom )
+            else:
+                break
+
+
 
 #  *****************
 #  ***   ROOMS   ***
@@ -298,6 +350,8 @@ class Room( object ):
             parent.contents.append( self )
     def step_two( self, gb ):
         self.arrange_contents( gb )
+        if self.gapfill:
+            self.gapfill( gb, self )
         # Prepare any child nodes in self.contents as needed.
         for r in self.contents:
             if isinstance( r, Room ):
@@ -389,6 +443,7 @@ class Room( object ):
                 # r becomes the new prev
                 prev = r
 
+    gapfill = None
     mutate = None
     decorate = None
 
@@ -810,6 +865,7 @@ class RandomScene( Room ):
                     gb.map[x][y].wall = True
 
 class CaveScene( RandomScene ):
+    gapfill = MonsterFiller()
     mutate = CellMutator(noise_throttle=100)
     def prepare( self, gb ):
         # Step one- we're going to use a plasma map to set water/lo/hi ground.
@@ -868,6 +924,10 @@ class DividedIslandScene( RandomScene ):
             river = pygame.Rect( 0,0,7,self.height )
         if random.randint(1,2) == 1:
             z1,z2 = z2,z1
+        z1.gapfill = MonsterFiller()
+        z1.DEFAULT_ROOM = self.DEFAULT_ROOM
+        z2.gapfill = MonsterFiller()
+        z2.DEFAULT_ROOM = self.DEFAULT_ROOM
         river.center = self.area.center
         self.fill( gb, river, floor=maps.WATER, wall=None )
         self.fill( gb, river.inflate(3,3), wall=None )
@@ -944,6 +1004,8 @@ class EdgeOfCivilization( RandomScene ):
         self.wilds = Room( width=self.width-10, height=self.height, anchor=west, parent=self )
         self.wilds.area = pygame.Rect( 0, 0, self.wilds.width, self.wilds.height )
         self.wilds.FUZZY_FILL_TERRAIN = maps.LOGROUND
+        self.wilds.gapfill = MonsterFiller(spacing=16)
+        self.wilds.DEFAULT_ROOM = self.DEFAULT_ROOM
 
         self.civilized_bits = list()
         for r in self.contents[:]:

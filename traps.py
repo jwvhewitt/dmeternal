@@ -69,11 +69,11 @@ class AlarmTrap( SingleTrap ):
         else:
             explo.alert( "You have set off an alarm!" )
             aoe = self.get_area( explo, pos )
-            team = teams.Team(default_reaction=-999)
             req = explo.scene.get_encounter_request()
             req[context.MTY_HUMANOID] = context.MAYBE
             req[context.MTY_FIGHTER] = context.MAYBE
-            mons = team.build_encounter( explo.scene, self.MIN_RANK-1, 75, req )
+            team = teams.Team(default_reaction=-999, rank=self.MIN_RANK-1, strength=75, habitat=req)
+            mons = team.build_encounter( explo.scene )
             for m in mons:
                 if aoe:
                     p = random.choice( aoe )

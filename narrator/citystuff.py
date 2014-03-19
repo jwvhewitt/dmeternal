@@ -51,7 +51,7 @@ class CityOnEdgeOfCiv( Plot ):
         self.add_sub_plot( nart, "CITY_LIBRARY" )
         self.add_sub_plot( nart, "CITY_INN" )
         self.add_sub_plot( nart, "CITY_TEMPLE" )
-        for t in range( random.randint(4,9) ):
+        for t in range( random.randint(1,4) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
 
         return True

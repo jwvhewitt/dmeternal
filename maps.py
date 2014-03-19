@@ -306,6 +306,7 @@ DUNGEON_ENTRANCE = SingTerrain( "DUNGEON_ENTRANCE", spritesheet = SPRITE_DECOR, 
 CRYPT_ENTRANCE = SingTerrain( "CRYPT_ENTRANCE", spritesheet = SPRITE_DECOR, frame = 82, block_walk=True )
 RUIN_ENTRANCE = SingTerrain( "RUIN_ENTRANCE", spritesheet = SPRITE_DECOR, frame = 83, block_walk=True )
 SECRET_ENTRANCE = SingTerrain( "SECRET_ENTRANCE", spritesheet = SPRITE_DECOR, frame = 84, block_walk=True )
+FLOOR_BLOOD = VariableTerrain( "FLOOR_BLOOD", spritesheet = SPRITE_DECOR, block_walk=False, frames = (85,86,87,88,89) )
 
 BED_HEAD = BedHeadTerrain( "BED_HEAD", block_walk=True, frame=2 )
 BED_FOOT = BedFootTerrain( "BED_FOOT", block_walk=True, frame=4, partner=BED_HEAD )
@@ -378,6 +379,10 @@ class Scene( object ):
         self.scripts = list()
         self.parent_scene = None
         self.in_sight = set()
+
+        self.last_updated = 0
+        self.monster_zones = list()
+
         # Fill the map with empty tiles
         self.map = [[ Tile()
             for y in range(height) ]
@@ -504,6 +509,33 @@ class Scene( object ):
             if pc.is_alright():
                 self.in_sight |= pfov.PCPointOfView( self, pc.pos[0], pc.pos[1], 10 ).tiles
 
+    def find_free_points_in_rect( self, area ):
+        # Return a list of all points in rect that are unoccupied + unblocked.
+        points = list()
+        for x in range( area.x, area.x+area.width ):
+            for y in range( area.y, area.y+area.height ):
+                if self.on_the_map(x,y) and not self.map[x][y].blocks_walking():
+                    points.append( (x,y) )
+        for m in self.contents:
+            if self.is_model( m ) and m.pos in points:
+                points.remove( m.pos )
+        return points
+
+    def find_entry_point_in_rect( self, area ):
+        # Given the provided area, find a tile that is unoccupied + unblocked.
+        candidates = self.find_free_points_in_rect( area )
+        if candidates:
+            return random.choice( candidates )
+        else:
+            return None
+
+    def monster_zone_is_empty( self, mzone ):
+        all_clear = True
+        for m in self.contents:
+            if isinstance( m , characters.Character ) and mzone.collidepoint( m.pos ):
+                all_clear = False
+                break
+        return all_clear
 
 OVERLAY_ITEM = 0
 OVERLAY_CURSOR = 1

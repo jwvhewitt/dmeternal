@@ -4,13 +4,14 @@ import characters
 import context
 
 class Team( object ):
-    def __init__( self, default_reaction = 0, home=None, rank=1, strength=100, habitat=None ):
+    def __init__( self, default_reaction = 0, home=None, rank=1, strength=100, habitat=None, respawn=True ):
         self.default_reaction = default_reaction
         self.charm_roll = None
         self.home = home
         self.rank = rank
         self.strength = strength
         self.habitat = habitat
+        self.respawn = respawn
 
     def check_reaction( self, camp ):
         if self.charm_roll:
@@ -20,15 +21,15 @@ class Team( object ):
             self.charm_roll = random.randint( 1, 50 ) - random.randint( 1, 50 ) + pc.get_stat_bonus( stats.CHARISMA )
             return self.charm_roll + self.default_reaction
 
-    def build_encounter( self, gb, rank, strength, habitat=None ):
-        min_rank = min( int( rank * 0.7 ), rank - 2 )
-        max_rank = rank + 2
+    def build_encounter( self, gb ):
+        min_rank = min( int( self.rank * 0.7 ), self.rank - 2 )
+        max_rank = self.rank + 2
         horde = list()
 
         # Determine how many points of monster to generate.
-        pts = max( ( random.randint(150,250) * strength ) // 100, 1 )
+        pts = max( ( random.randint(150,250) * self.strength ) // 100, 1 )
 
-        mclass = gb.choose_monster( min_rank, max_rank, habitat )
+        mclass = gb.choose_monster( min_rank, max_rank, self.habitat )
         while pts > 0 and mclass:
             rel_level = max_rank + 1 - mclass.ENC_LEVEL
             m_pts = 200 / ( rel_level ** 2 // 12 + rel_level )
@@ -76,7 +77,9 @@ class Team( object ):
     def predeploy( self, gb, room ):
         self.home = room.area
         if self.strength:
-            room.contents += self.build_encounter( gb, self.rank, self.strength, self.habitat )
+            room.contents += self.build_encounter( gb )
+        if self.respawn:
+            gb.monster_zones.append( room.area )
 
     def on_guard( self ):
         """Returns True if monster isn't definitely friendly."""
