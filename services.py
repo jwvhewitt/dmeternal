@@ -454,7 +454,7 @@ class Temple( object ):
 
     def get_return_pos( self, explo ):
         x0,y0 = explo.camp.first_living_pc().pos
-        entry_points = pfov.PointOfView( explo.scene, x0, y0, 12, True ).tiles
+        entry_points = pfov.AttackReach( explo.scene, x0, y0, 12, True ).tiles
         for m in explo.scene.contents:
             if explo.scene.is_model(m) and m.pos in entry_points:
                 entry_points.remove( m.pos )
