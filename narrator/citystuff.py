@@ -29,7 +29,7 @@ class CityOnEdgeOfCiv( Plot ):
     LABEL = "CITY_SCENE"
     def custom_init( self, nart ):
         """Create map, fill with city + services."""
-        myscene = maps.Scene( 100, 100, sprites={maps.SPRITE_WALL: "terrain_wall_lightbrick.png"},
+        myscene = maps.Scene( 129, 129, sprites={maps.SPRITE_WALL: "terrain_wall_lightbrick.png"},
             biome=context.HAB_FOREST, setting=self.setting,
             desctags=(context.MAP_WILDERNESS,context.DES_CIVILIZED,) )
         mymapgen = mapgen.EdgeOfCivilization( myscene )

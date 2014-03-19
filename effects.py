@@ -122,7 +122,7 @@ class PercentRoll( NoEffect ):
             return self.on_failure
 
 class SavingThrow( NoEffect ):
-    def __init__(self, roll_skill=stats.AWARENESS, roll_stat=stats.AWARENESS, roll_modifier=0, \
+    def __init__(self, roll_skill=stats.AWARENESS, roll_stat=stats.REFLEXES, roll_modifier=0, \
       on_success=None, on_failure=None, on_no_target=None, anim=None ):
         self.roll_skill = roll_skill
         self.roll_stat = roll_stat

@@ -20,11 +20,17 @@ import services
 
 class MoveTo( object ):
     """A command for moving to a particular point."""
-    def __init__( self, scene, pos ):
+    def __init__( self, explo, pos ):
         """Move the party to pos."""
         self.dest = pos
         self.tries = 300
-        self.hmap = hotmaps.PointMap( scene, pos )
+        pcpos = explo.camp.first_living_pc().pos
+        if explo.scene.distance( pcpos, pos ) < 30:
+            limit = pygame.Rect(0,0,50,50)
+            limit.center = ( (pos[0]+pcpos[0])//2, (pos[1]+pcpos[1])//2 )
+            self.hmap = hotmaps.PointMap( explo.scene, pos, limits=limit )
+        else:
+            self.hmap = hotmaps.PointMap( explo.scene, pos )
 
     def is_later_model( self, party, pc, npc ):
         return ( pc in party ) and ( npc in party ) \
@@ -655,7 +661,7 @@ class Explorer( object ):
                     if gdi.button == 1:
                         # Left mouse button.
                         if ( self.view.mouse_tile != self.camp.first_living_pc().pos ) and self.scene.on_the_map( *self.view.mouse_tile ):
-                            self.order = MoveTo( self.scene, self.view.mouse_tile )
+                            self.order = MoveTo( self, self.view.mouse_tile )
                             self.view.overlays.clear()
                         else:
                             self.pick_up( self.view.mouse_tile )

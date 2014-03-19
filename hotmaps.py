@@ -115,10 +115,10 @@ class HotMap( object ):
 
 
 class PointMap( HotMap ):
-    def __init__( self, scene, dest, avoid_models = False, expensive=set() ):
+    def __init__( self, scene, dest, avoid_models = False, expensive=set(), limits=None ):
         myset = set()
         myset.add( dest )
-        super( PointMap, self ).__init__( scene, myset, expensive=expensive, avoid_models=avoid_models )
+        super( PointMap, self ).__init__( scene, myset, expensive=expensive, avoid_models=avoid_models, limits=limits )
 
 class MoveMap( HotMap ):
     """Calculates movement costs to different tiles. Only calcs as far as necessary."""

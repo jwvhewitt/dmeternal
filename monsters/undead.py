@@ -31,7 +31,7 @@ class SkeletalHound( base.Monster ):
 
     COMBAT_AI = aibrain.BrainDeadAI()
 
-    ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING )
+    ATTACK = items.Attack( (1,4,0), element = stats.RESIST_PIERCING )
 
     def init_monster( self ):
         self.levels.append( base.Beast( 1, self ) )
@@ -160,7 +160,7 @@ class Ghoul( base.Monster ):
 
     COMBAT_AI = aibrain.GhoulAI()
 
-    ATTACK = items.Attack( (1,10,0), element = stats.RESIST_CRUSHING, extra_effect =
+    ATTACK = items.Attack( (1,8,0), element = stats.RESIST_CRUSHING, extra_effect =
          effects.OpposedRoll( att_modifier=-10, on_success = (
             effects.Paralyze( max_duration = 6 )
         ,) )
@@ -173,6 +173,34 @@ class Ghoul( base.Monster ):
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  5   ***
 #  *******************************
+
+class PlagueZombie( base.Monster ):
+    name = "Plague Zombie"
+    statline = { stats.STRENGTH: 11, stats.TOUGHNESS: 14, stats.REFLEXES: 4, \
+        stats.INTELLIGENCE: 2, stats.PIETY: 8, stats.CHARISMA: 1, \
+        stats.RESIST_CRUSHING: 50, stats.RESIST_FIRE: 50, stats.RESIST_PIERCING: 50 }
+    SPRITENAME = "monster_undead.png"
+    FRAME = 10
+    TEMPLATES = (stats.UNDEAD,)
+    MOVE_POINTS = 6
+    VOICE = None
+    GP_VALUE = 25
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.SET_RENFAN,
+     context.MTY_UNDEAD, 
+     context.DES_LUNAR, context.GEN_UNDEAD )
+    ENC_LEVEL = 5
+    COMPANIONS = (Zombie,)
+    COMBAT_AI = aibrain.BrainDeadAI()
+
+    ATTACK = items.Attack( (1,10,0), element = stats.RESIST_CRUSHING, extra_effect=
+        effects.SavingThrow( roll_skill=stats.RESIST_LUNAR, roll_stat=stats.TOUGHNESS, on_failure = (
+            effects.StatDamage( stats.TOUGHNESS, anim=animobs.GreenBoom )
+        ,))
+    )
+
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 6, self ) )
+
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  6   ***
