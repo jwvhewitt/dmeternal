@@ -374,7 +374,7 @@ class InvulnerableArmor( Enhancer ):
 
 class RuneArmor( Enhancer ):
     NAMEPAT = "Rune {0}"
-    DESCPAT = "{0} Protective runes give +10% to defense and aura, while also reducing both dark and holy damage."
+    DESCPAT = "{0} Protective runes give +10% to defense and aura, while also protecting against both dark and holy damage."
     PLUSRANK = 8
     AFFECTS = (CLOTHES, LIGHT_ARMOR, HEAVY_ARMOR)
     BONUSES = stats.StatMod({ stats.PHYSICAL_DEFENSE: 10, stats.NATURAL_DEFENSE: 10, stats.MAGIC_DEFENSE: 10, stats.RESIST_SOLAR: 25, stats.RESIST_LUNAR: 25 })
@@ -397,6 +397,13 @@ class ShinyShield( Enhancer ):
     PLUSRANK = 3
     AFFECTS = (SHIELD,)
     BONUSES = stats.StatMod({ stats.PHYSICAL_DEFENSE: 5, stats.MAGIC_DEFENSE: 5 })
+
+class ResilentShield( Enhancer ):
+    NAMEPAT = "{0} of Resilence"
+    DESCPAT = "{0} It provides a +2 bonus to toughness."
+    PLUSRANK = 6
+    AFFECTS = (SHIELD,)
+    BONUSES = stats.StatMod({ stats.PHYSICAL_DEFENSE: 5, stats.TOUGHNESS:2 })
 
 class ElementalShield( Enhancer ):
     NAMEPAT = "Elemental {0}"

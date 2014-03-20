@@ -12,4 +12,28 @@ import characters
 import namegen
 import random
 
+""" PuzzleBits are atomic actions which can be used to generate random puzzles.
+    Generation happens backwards, starting with the end state and stringing
+    along actions until the causality chain terminates.
+
+    A PB request will include an element TARGET, which is the thing to be
+    affected by the action.
+"""
+
+###   *****************
+###   ***  PB_DATE  ***
+###   *****************
+
+class HighStandards( Plot ):
+    """Creates a NPC who will date the TARGET if TARGET sent invitation and has
+       had a makeover."""
+    LABEL = "PB_DATE"
+    @classmethod
+    def matches( self, pstate ):
+        """Requires the TARGET to exist."""
+        return pstate.elements.get("TARGET")
+
+
+
+
 
