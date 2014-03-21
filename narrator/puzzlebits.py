@@ -17,7 +17,9 @@ import random
     along actions until the causality chain terminates.
 
     A PB request will include an element TARGET, which is the thing to be
-    affected by the action.
+    affected by the action. When the action is performed, a script trigger
+    will be sprung with a trigger ID equal to the action name (minus "PB_")
+    and thing set to the target item.
 """
 
 ###   *****************
