@@ -35,6 +35,13 @@ class HighStandards( Plot ):
         """Requires the TARGET to exist."""
         return pstate.elements.get("TARGET")
 
+    def custom_init( self, nart ):
+        """Create the chapter + city, then load INTRO_2"""
+        self.chapter = Chapter()
+        self.add_first_locale_sub_plot( nart )
+        self.add_sub_plot( nart, "INTRO_2", ident="next" )
+        return True
+
 
 
 

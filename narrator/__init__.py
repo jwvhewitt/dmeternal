@@ -64,10 +64,12 @@ import connections
 import dungeonlevel
 import encounters
 import intros
+import puzzlebits
 harvest( citystuff )
 harvest( complication )
 harvest( connections )
 harvest( dungeonlevel )
 harvest( encounters )
 harvest( intros )
+harvest( puzzlebits )
 
