@@ -36,10 +36,10 @@ class HighStandards( Plot ):
         return pstate.elements.get("TARGET")
 
     def custom_init( self, nart ):
-        """Create the chapter + city, then load INTRO_2"""
-        self.chapter = Chapter()
-        self.add_first_locale_sub_plot( nart )
-        self.add_sub_plot( nart, "INTRO_2", ident="next" )
+        """Create the NPC, add the two puzzle subplots."""
+        sp = self.add_sub_plot( nart, "RESOURCE_LOVEINTEREST" )
+
+
         return True
 
 
