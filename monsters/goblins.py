@@ -411,7 +411,7 @@ class HobgoblinThief( base.Monster ):
     name = "Hobgoblin Thief"
     statline = { stats.STRENGTH: 13, stats.TOUGHNESS: 11, stats.REFLEXES: 14, \
         stats.INTELLIGENCE: 10, stats.PIETY: 9, stats.CHARISMA: 9, \
-        stats.STEALTH: 25 }
+        stats.STEALTH: 20 }
     SPRITENAME = "monster_goblins.png"
     FRAME = 15
     TEMPLATES = ()

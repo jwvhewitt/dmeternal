@@ -72,6 +72,26 @@ class DireNewt( base.Monster ):
     def init_monster( self ):
         self.levels.append( base.Beast( 1, self ) )
 
+class Chicken( base.Monster ):
+    name = "Chicken"
+    statline = { stats.STRENGTH: 9, stats.TOUGHNESS: 8, stats.REFLEXES: 12, \
+        stats.INTELLIGENCE: 1, stats.PIETY: 1, stats.CHARISMA: 4 }
+    SPRITENAME = "monster_animals.png"
+    FRAME = 23
+    TEMPLATES = ()
+    MOVE_POINTS = 12
+    VOICE = None
+    GP_VALUE = 0
+    HABITAT = ( context.HAB_EVERY,
+     context.DES_AIR,
+     context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
+    ENC_LEVEL = 1
+
+    ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING, skill_mod=stats.REFLEXES )
+
+    def init_monster( self ):
+        self.levels.append( base.Beast( 1, self ) )
+
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  2   ***
@@ -111,7 +131,8 @@ class CaveAnt( base.Monster ):
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
     ENC_LEVEL = 2
 
-    ATTACK = items.Attack( (1,6,1), element = stats.RESIST_ACID )
+    ATTACK = items.Attack( (1,6,0), element = stats.RESIST_ACID,
+        hit_anim=animobs.GreenExplosion )
 
     def init_monster( self ):
         self.levels.append( base.Beast( 2, self ) )
@@ -285,7 +306,52 @@ class WaterBeetle( base.Monster ):
     ENC_LEVEL = 3
 
     ATTACK = items.Attack( (1,4,0), element = stats.RESIST_PIERCING,
-     extra_effect=effects.HealthDamage( (1,4,0), stat_bonus=None, element=stats.RESIST_POISON, anim=animobs.GreenBoom ))
+     extra_effect=effects.HealthDamage( (1,4,0), stat_bonus=None, element=stats.RESIST_POISON, anim=animobs.PoisonCloud ))
+
+    def init_monster( self ):
+        self.levels.append( base.Beast( 3, self ) )
+
+class PlagueRat( base.Monster ):
+    name = "Plague Rat"
+    statline = { stats.STRENGTH: 10, stats.TOUGHNESS: 10, stats.REFLEXES: 13, \
+        stats.INTELLIGENCE: 1, stats.PIETY: 9, stats.CHARISMA: 3 }
+    SPRITENAME = "monster_animals.png"
+    FRAME = 4
+    TEMPLATES = ()
+    MOVE_POINTS = 12
+    VOICE = None
+    GP_VALUE = 0
+    HABITAT = ( context.HAB_CAVE, context.HAB_BUILDING, context.SET_EVERY, context.SET_RENFAN,
+    context.DES_LUNAR, context.DES_CIVILIZED,
+     context.MTY_BEAST, context.GEN_CHAOS, context.GEN_UNDEAD )
+    ENC_LEVEL = 3
+    COMPANIONS = ( GiantRat, )
+
+    ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING, extra_effect=
+        effects.SavingThrow( roll_skill=stats.MAGIC_DEFENSE, roll_stat=stats.TOUGHNESS, roll_modifier=15, on_failure = (
+            effects.StatDamage( stats.TOUGHNESS, anim=animobs.GreenBoom )
+        ,))
+    )
+
+    def init_monster( self ):
+        self.levels.append( base.Beast( 2, self ) )
+
+class Cow( base.Monster ):
+    name = "Cow"
+    statline = { stats.STRENGTH: 14, stats.TOUGHNESS: 12, stats.REFLEXES: 10, \
+        stats.INTELLIGENCE: 1, stats.PIETY: 10, stats.CHARISMA: 4 }
+    SPRITENAME = "monster_animals.png"
+    FRAME = 22
+    TEMPLATES = ()
+    MOVE_POINTS = 10
+    VOICE = None
+    GP_VALUE = 0
+    HABITAT = ( context.HAB_EVERY,
+     context.DES_EARTH,
+     context.MTY_BEAST, context.MTY_CREATURE )
+    ENC_LEVEL = 3
+
+    ATTACK = items.Attack( (1,8,0), element = stats.RESIST_CRUSHING )
 
     def init_monster( self ):
         self.levels.append( base.Beast( 3, self ) )
@@ -339,7 +405,7 @@ class GiantLizard( base.Monster ):
 class FireBat( base.Monster ):
     name = "Fire Bat"
     statline = { stats.STRENGTH: 10, stats.TOUGHNESS: 10, stats.REFLEXES: 14, \
-        stats.INTELLIGENCE: 6, stats.PIETY: 9, stats.CHARISMA: 3, }
+        stats.INTELLIGENCE: 2, stats.PIETY: 9, stats.CHARISMA: 3, }
     SPRITENAME = "monster_animals.png"
     FRAME = 26
     TEMPLATES = (stats.FIRE,)
@@ -374,6 +440,7 @@ class IceFox( base.Monster ):
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.MAP_WILDERNESS,
      context.DES_ICE,
      context.MTY_BEAST, context.MTY_CREATURE,
      context.GEN_NATURE )
@@ -403,6 +470,7 @@ class FireWeasel( base.Monster ):
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.MAP_WILDERNESS,
      context.DES_FIRE,
      context.MTY_BEAST, context.MTY_CREATURE,
      context.GEN_NATURE )
@@ -440,6 +508,7 @@ class DireWolf( base.Monster ):
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE, 
      context.GEN_GOBLIN )
     ENC_LEVEL = 5
+    COMPANIONS = (Wolf,)
 
     ATTACK = items.Attack( (1,10,0), element = stats.RESIST_PIERCING )
 

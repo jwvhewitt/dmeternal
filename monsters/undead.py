@@ -8,6 +8,7 @@ import effects
 import animobs
 import targetarea
 import invocations
+import animals
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  1   ***
@@ -136,6 +137,32 @@ class SkeletonWithMorningstar( base.Monster ):
     def init_monster( self ):
         self.levels.append( base.Humanoid( 3, self ) )
 
+class SkeletalBat( base.Monster ):
+    name = "Skeletal Bat"
+    statline = { stats.STRENGTH: 9, stats.TOUGHNESS: 9, stats.REFLEXES: 12, \
+        stats.INTELLIGENCE: 1, stats.PIETY: 1, stats.CHARISMA: 1 }
+    SPRITENAME = "monster_undead2.png"
+    FRAME = 4
+    TEMPLATES = (stats.UNDEAD,stats.BONE)
+    MOVE_POINTS = 14
+    VOICE = None
+    GP_VALUE = 0
+    HABITAT = ( context.HAB_CAVE, context.SET_EVERY,
+     context.DES_AIR, context.DES_LUNAR,
+     context.MTY_UNDEAD, context.MTY_BEAST,
+     context.GEN_UNDEAD )
+    ENC_LEVEL = 3
+    COMBAT_AI = aibrain.BrainDeadAI()
+
+    ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING, extra_effect=
+        effects.SavingThrow( roll_skill=stats.RESIST_LUNAR, roll_stat=stats.TOUGHNESS, on_failure = (
+            effects.StatDamage( stats.PIETY, anim=animobs.BloodSplat )
+        ,))
+    )
+
+    def init_monster( self ):
+        self.levels.append( base.Beast( 2, self ) )
+
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  4   ***
@@ -156,7 +183,7 @@ class Ghoul( base.Monster ):
      context.MTY_UNDEAD, 
      context.DES_LUNAR, context.GEN_UNDEAD )
     ENC_LEVEL = 4
-    COMPANIONS = (Zombie,)
+    COMPANIONS = (Zombie,animals.PlagueRat)
 
     COMBAT_AI = aibrain.GhoulAI()
 
@@ -200,6 +227,32 @@ class PlagueZombie( base.Monster ):
 
     def init_monster( self ):
         self.levels.append( base.Humanoid( 6, self ) )
+
+class Shade( base.Monster ):
+    name = "Shade"
+    statline = { stats.STRENGTH: 12, stats.TOUGHNESS: 12, stats.REFLEXES: 12, \
+        stats.INTELLIGENCE: 12, stats.PIETY: 12, stats.CHARISMA: 8, \
+        stats.RESIST_SOLAR: -50, stats.RESIST_FIRE: -100 }
+    SPRITENAME = "monster_undead.png"
+    FRAME = 42
+    TEMPLATES = (stats.UNDEAD,stats.INCORPOREAL)
+    MOVE_POINTS = 8
+    VOICE = None
+    GP_VALUE = 0
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.MAP_DUNGEON,
+     context.MTY_UNDEAD, 
+     context.DES_LUNAR, context.GEN_UNDEAD )
+    ENC_LEVEL = 5
+
+    ATTACK = items.Attack( (2,4,0), element = stats.RESIST_ATOMIC, extra_effect=
+        effects.SavingThrow( roll_skill=stats.RESIST_LUNAR, roll_stat=stats.TOUGHNESS, on_failure = (
+            effects.StatDamage( stats.STRENGTH, anim=animobs.GreenBoom )
+        ,))
+    )
+
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 5, self ) )
 
 
 #  *******************************

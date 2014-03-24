@@ -129,6 +129,7 @@ class Campaign( object ):
     def rest( self, max_restore=1.0 ):
         """Increment the day counter, restore hp and mp."""
         self.day += 1
+        self.scene.last_updated = self.day
         for pc in self.party:
             if pc.is_alright():
                 pc.hp_damage = max( pc.hp_damage - int( pc.max_hp() * max_restore ), 0 )

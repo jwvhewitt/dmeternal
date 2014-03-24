@@ -219,7 +219,7 @@ class Explorer( object ):
         if random.randint(1,100) <= awareness:
             self.camp.rest( 0.5 )
             self.alert( "...and wake up perfectly refreshed." )
-        elif random.randint(1,3)==2 and self.camp.gold > random.randint( 1,1000 ):
+        elif random.randint(1,3)==2 and self.camp.gold > random.randint( 1500,10000 ):
             lose = max( self.camp.gold // 2, 1 )
             self.camp.gold -= lose
             self.camp.rest( 0.5 )
