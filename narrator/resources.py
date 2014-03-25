@@ -11,6 +11,7 @@ import teams
 import characters
 import namegen
 import random
+import stats
 
 ###   *******************************
 ###   ***  RESOURCE_LOVEINTEREST  ***
@@ -52,6 +53,13 @@ class RLI_VillagePerson( Plot ):
         int_mainroom.decorate = mapgen.BedroomDec()
 
         npc = monsters.generate_npc()
+        suitor = self.elements.get("TARGET")
+        # Assume a heteronormativity rate of 50%.
+        if random.randint(1,2) == 1:
+            if suitor.gender == stats.MALE:
+                npc.gender = stats.FEMALE
+            elif suitor.gender == stats.FEMALE:
+                npc.gender = stats.MALE
         int_mainroom.contents.append( npc )
         self.register_element( "RESOURCE", npc )
 

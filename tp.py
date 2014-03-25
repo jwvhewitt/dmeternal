@@ -11,7 +11,8 @@ if nart.story:
     nart.story.display()
 else:
     print "Plot loading failed."
-
+    for e in nart.errors:
+        print e
 
 if __name__=='__main__':
     import pygame
@@ -21,28 +22,27 @@ if __name__=='__main__':
     import util
     import pickle
 
-    # Set the screen size.
-    screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
-#    screen = pygame.display.set_mode( (800,600) )
-    pygame.init()
-    pygwrap.init()
-    rpgmenu.init()
+    if nart.story:
 
-    nart.build()
-    camp = nart.camp
+        # Set the screen size.
+#        screen = pygame.display.set_mode( (0,0), pygame.FULLSCREEN )
+        screen = pygame.display.set_mode( (800,600) )
+        pygame.init()
+        pygwrap.init()
+        rpgmenu.init()
 
-    camp.party = campaign.load_party( screen )
+        nart.build()
+        camp = nart.camp
 
-    if camp.party:
-        for pc in camp.party:
-            pc.choose_random_spells()
-        camp.place_party()
+        camp.party = campaign.load_party( screen )
 
-#        camp.save()
-#        f = open( util.user_dir( "rpg_BobDwarf19.sav" ) , "rb" )
-#        camp = pickle.load( f )
-#        f.close()
+        if camp.party:
+            for pc in camp.party:
+                pc.choose_random_spells()
+            camp.place_party()
 
-        camp.play( screen )
+            camp.play( screen )
+
+
 
 

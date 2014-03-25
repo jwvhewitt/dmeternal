@@ -1,5 +1,5 @@
 
-from plots import Plot,PlotError
+from plots import Plot,PlotError,PlotState
 import context
 import items
 import maps
@@ -34,6 +34,7 @@ class CityOnEdgeOfCiv( Plot ):
             desctags=(context.MAP_WILDERNESS,context.DES_CIVILIZED,) )
         mymapgen = mapgen.EdgeOfCivilization( myscene )
         self.register_scene( nart, myscene, mymapgen, ident="SCENE" )
+        self.register_element( "LOCALE", myscene )
 
         castle = self.register_element( "CITY", mapgen.CastleRoom( width=35,height=35,tags=(context.CIVILIZED,), parent=myscene ) )
         myroom = mapgen.FuzzyRoom( tags=(context.ENTRANCE,), parent=castle )
@@ -216,6 +217,9 @@ class GenericLibrary( Plot ):
         int_mainroom.contents.append( maps.TABLE )
 
         self.shop = services.Library()
+
+        self.add_sub_plot( nart, "PB_DATE", PlotState( elements={"TARGET":npc} ).based_on( self ) )
+
 
         return True
 

@@ -19,12 +19,15 @@ class Chapter( object ):
 
 class PlotState( object ):
     """For passing state information to subplots."""
-    def __init__( self, propp=0, setting=None, chapter=None, rank=None, elements={} ):
+    def __init__( self, propp=0, setting=None, chapter=None, rank=None, elements=None ):
         self.propp = propp
         self.setting = setting
         self.chapter = chapter
         self.rank = rank
-        self.elements = elements
+        if elements:
+            self.elements = elements.copy()
+        else:
+            self.elements = dict()
     def based_on( self, oplot ):
         self.propp = self.propp or oplot.propp
         self.setting = self.setting or oplot.setting
@@ -33,7 +36,8 @@ class PlotState( object ):
         # Only copy over the elements not marked as private.
         for k,v in oplot.elements.iteritems():
             if isinstance( k, str ) and len(k)>0 and k[0]!="_":
-                self.elements[k] = v
+                if k not in self.elements:
+                    self.elements[k] = v
         # Why return self? Because this function will often be called straight
         # from the generator.
         return self

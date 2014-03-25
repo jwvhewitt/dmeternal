@@ -1,5 +1,7 @@
 
 # Conversation Tags
+#  Conversations are built according to a grammar. Each of the standard offers
+#  and replies in the dialogue package define a rule.
 
 HELLO,SHOP,SERVICE,GENERALSTORE,WEAPON,INFO,HINT,INN,LIBRARY,HEALING = range(10)
 

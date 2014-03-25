@@ -29,6 +29,8 @@ import random
 class LowStandards( Plot ):
     """Creates a NPC who will date the TARGET if TARGET sent invitation."""
     LABEL = "PB_DATE"
+    active = True
+    scope = True
     @classmethod
     def matches( self, pstate ):
         """Requires the TARGET to exist."""
@@ -37,10 +39,10 @@ class LowStandards( Plot ):
     def custom_init( self, nart ):
         """Create the NPC, add the two puzzle subplots."""
         sp = self.add_sub_plot( nart, "RESOURCE_LOVEINTEREST" )
-        npc1 = self.element[ "TARGET" ]
-        npc2 = sp.element[ "RESOURCE" ]
+        npc1 = self.elements[ "TARGET" ]
+        npc2 = sp.elements[ "RESOURCE" ]
         self.invited = False
-        self.register_element( "_MYNPC", npc )
+        self.register_element( "_MYNPC", npc2 )
 
         self.add_sub_plot( nart, "PB_DATEINVITE", PlotState( elements={"TARGET":npc2, "ORIGIN":npc1} ).based_on( self ) )
 
@@ -53,27 +55,28 @@ class LowStandards( Plot ):
         ol = list()
         return ol
 
-###   *************************
-###   ***  PB_DATEINTEREST  ***
-###   *************************
+###   *********************
+###   ***  PB_LOVELORN  ***
+###   *********************
 
-class MysteryDate( Plot ):
-    """ORIGIN will express interest in dating TARGET."""
-    LABEL = "PB_DATEINVITE"
+class LL_LonelyPlanet( Plot ):
+    """TARGET will express the desire to meet someone."""
+    LABEL = "PB_LOVELORN"
+    active = True
+    scope = True
     @classmethod
     def matches( self, pstate ):
         """Requires the TARGET to exist."""
-        return pstate.elements.get("TARGET") and pstate.elements.get("ORIGIN")
+        return pstate.elements.get("TARGET")
 
-    def custom_init( self, nart ):
-        """Create the NPC, add the two puzzle subplots."""
+    def desire_expressed( self, explo ):
+        explo.check_trigger( "LOVELORN", self.elements[ "TARGET" ] )
+        self.active = False
 
-        self.add_sub_plot( nart, "PB_DATEINTEREST", PlotState( elements={"TARGET":npc2, "ORIGIN":npc1} ).based_on( self ) )
-
-        return True
-
-    def ORIGIN_offers( self ):
+    def TARGET_offers( self ):
         ol = list()
+        ol.append( dialogue.Offer( "It's a lonely life out here... I wish I had someone to do fun things with." ,
+         context = context.ContextTag([context.HELLO,]), effect=self.desire_expressed ) )
         return ol
 
 
@@ -82,8 +85,10 @@ class MysteryDate( Plot ):
 ###   ***********************
 
 class MysteryDate( Plot ):
-    """ORIGIN will send invitation to TARGET if TARGET is interested."""
+    """ORIGIN will send invitation to TARGET if TARGET is lovelorn."""
     LABEL = "PB_DATEINVITE"
+    active = True
+    scope = True
     @classmethod
     def matches( self, pstate ):
         """Requires the TARGET to exist."""
@@ -91,13 +96,17 @@ class MysteryDate( Plot ):
 
     def custom_init( self, nart ):
         """Create the NPC, add the two puzzle subplots."""
-
-        self.add_sub_plot( nart, "PB_DATEINTEREST", PlotState( elements={"TARGET":npc2, "ORIGIN":npc1} ).based_on( self ) )
-
+        self.add_sub_plot( nart, "PB_LOVELORN", PlotState().based_on( self ) )
+        self._interested = False
         return True
+
+    def TARGET_LOVELORN( self, explo ):
+        self._interested = True
 
     def ORIGIN_offers( self ):
         ol = list()
+        ol.append( dialogue.Offer( "I would like to ask someone to the festival dance, but I don't know anyone..." ,
+         context = context.ContextTag([context.HELLO,]) ) )
         return ol
 
 

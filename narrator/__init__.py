@@ -11,6 +11,7 @@ class Narrative( object ):
     def __init__( self, pstate ):
         self.camp = campaign.Campaign()
         self.generators = list()
+        self.errors = list()
         self.uniques = set()
         # Add the seed plot.
         self.story = self.generate_sub_plot( pstate, "INTRO_1" )
@@ -34,7 +35,11 @@ class Narrative( object ):
                         self.uniques.add( cpc )
                 except plots.PlotError:
                     cp = None
+            if not cp:
+                self.errors.append( "No plot accepted for {0}".format( label ) )
             return cp
+        else:
+            self.errors.append( "No plot found for {0}".format( label ) )
 
     def get_map_generator( self, gb ):
         mygen = None
