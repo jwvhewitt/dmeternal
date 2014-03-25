@@ -98,6 +98,7 @@ class MysteryDate( Plot ):
         """Create the NPC, add the two puzzle subplots."""
         self.add_sub_plot( nart, "PB_LOVELORN", PlotState().based_on( self ) )
         self._interested = False
+        self._told_problem = False
         return True
 
     def TARGET_LOVELORN( self, explo ):
@@ -106,18 +107,24 @@ class MysteryDate( Plot ):
     def ask_invitation( self, explo ):
         explo.check_trigger( "DATEINVITE", self.elements[ "TARGET" ] )
         self.active = False
+    def tell_problem( self, explo ):
+        self._told_problem = True
 
     def ORIGIN_offers( self ):
         ol = list()
-        if self._interested:
+        if self._interested and self._told_problem:
             r1 = dialogue.Reply( "{0} would like to go out with you.".format(self.elements.get("TARGET")),
              destination=dialogue.Offer( "Really? Great! Could you ask them to go to that thing?" , effect=self.ask_invitation ) )
             ol.append( dialogue.Offer( "Yes, what is it?" ,
              context = context.ContextTag([context.BRINGMESSAGE,context.GOODNEWS]),
              replies = [r1,] ) )
         else:
-            ol.append( dialogue.Offer( "I would like to ask someone to the festival dance, but I don't know anyone..." ,
-             context = context.ContextTag([context.PROBLEM,context.PERSONAL]) ) )
+            myoffer = dialogue.Offer( "I would like to ask someone to the festival dance, but I don't know anyone..." ,
+             context = context.ContextTag([context.PROBLEM,context.PERSONAL]), effect=self.tell_problem )
+            ol.append( myoffer )
+            if self._interested:
+                r1 = dialogue.Reply( "Why don't you ask {0} ?".format(self.elements.get("TARGET")),
+                 destination=dialogue.Offer( "Would they be interested in going with me? Could you find out?" , effect=self.ask_invitation ) )
         return ol
 
 
