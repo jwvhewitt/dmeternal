@@ -63,6 +63,14 @@ PT_DATABASE = {
         PTEntry( "stuff", { voice.STUPID: True } ),
         PTEntry( "anythin'", { voice.KITTEH: True } ),
         ),
+    "Are you alright ?":   (
+        PTEntry( "Is everything alright?" ),
+        PTEntry( "Is everything okay?" ),
+        PTEntry( "Are you okay?" ),
+        PTEntry( "Iz you okays?", { voice.KITTEH: True } ),
+        PTEntry( "I can smell your pain.", { voice.DRACONIAN: True } ),
+        PTEntry( "Wot's da matta?", { voice.ORCISH: True } ),
+        ),
     "ate":   (
         PTEntry( "eated", { voice.KITTEH: True, voice.SMART: False } ),
         PTEntry( "devoured", { voice.SMART: True } ),
@@ -362,6 +370,16 @@ PT_DATABASE = {
         PTEntry( "today", { voice.GNOMIC: True } ),
         PTEntry( "ere an now", { voice.ORCISH: True } ),
         ),
+    "sad": (
+        PTEntry( "down" ),
+        PTEntry( "miserable" ),
+        PTEntry( "dour", { voice.DWARVEN: True } ),
+        PTEntry( "sour", { voice.HURTHISH: True } ),
+        PTEntry( "unhappy", { voice.ELVEN: True, voice.STUPID: False } ),
+        PTEntry( "unwell", { voice.ELVEN: True } ),
+        PTEntry( "glum", { voice.ORCISH: True } ),
+        PTEntry( "melancholy", { voice.SMART: True } ),
+        ),
     "sea": (
         PTEntry( "whale-road", { voice.DWARVEN: True } ),
        ),
@@ -526,6 +544,10 @@ PT_DATABASE = {
     "your": (
         PTEntry( "yer", { voice.ORCISH: True } ),
         PTEntry( "youz", { voice.KITTEH: True } ),
+        ),
+    "You look like you": (
+        PTEntry( "I tinks you", { voice.ORCISH: True } ),
+        PTEntry( "Mebbe you haz", { voice.KITTEH: True } ),
         ),
     }
 

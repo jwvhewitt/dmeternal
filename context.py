@@ -1,9 +1,22 @@
 
-# Conversation Tags
+# Conversation Context
 #  Conversations are built according to a grammar. Each of the standard offers
 #  and replies in the dialogue package define a rule.
+#
+#  Offers and replies are described with ContextTag objects, which contain an
+#  ordered list of context values.
+#
+#  HELLO.* -> SHOP( GENERALSTORE, WEAPON )
+#  HELLO.* -> SERVICE( INN, LIBRARY, HEALING )
+#  HELLO.* -> INFO( HINT )
+#  HELLO.* -> PROBLEM( PERSONAL )
+#  HELLO.* -> BRINGMESSAGE( GOODNEWS, BADNEWS )
+#  INFO -> INFO
+#  PROBLEM -> PROBLEM
 
-HELLO,SHOP,SERVICE,GENERALSTORE,WEAPON,INFO,HINT,INN,LIBRARY,HEALING = range(10)
+HELLO,SHOP,SERVICE,INFO,PROBLEM,BRINGMESSAGE, \
+    GENERALSTORE,WEAPON,HINT,INN,LIBRARY, \
+    HEALING,PERSONAL,GOODNEWS,BADNEWS = range(15)
 
 
 class ContextTag( tuple ):

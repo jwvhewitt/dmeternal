@@ -103,10 +103,21 @@ class MysteryDate( Plot ):
     def TARGET_LOVELORN( self, explo ):
         self._interested = True
 
+    def ask_invitation( self, explo ):
+        explo.check_trigger( "DATEINVITE", self.elements[ "TARGET" ] )
+        self.active = False
+
     def ORIGIN_offers( self ):
         ol = list()
-        ol.append( dialogue.Offer( "I would like to ask someone to the festival dance, but I don't know anyone..." ,
-         context = context.ContextTag([context.HELLO,]) ) )
+        if self._interested:
+            r1 = dialogue.Reply( "{0} would like to go out with you.".format(self.elements.get("TARGET")),
+             destination=dialogue.Offer( "Really? Great! Could you ask them to go to that thing?" , effect=self.ask_invitation ) )
+            ol.append( dialogue.Offer( "Yes, what is it?" ,
+             context = context.ContextTag([context.BRINGMESSAGE,context.GOODNEWS]),
+             replies = [r1,] ) )
+        else:
+            ol.append( dialogue.Offer( "I would like to ask someone to the festival dance, but I don't know anyone..." ,
+             context = context.ContextTag([context.PROBLEM,context.PERSONAL]) ) )
         return ol
 
 

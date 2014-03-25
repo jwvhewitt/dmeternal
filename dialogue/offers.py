@@ -9,11 +9,16 @@ from base import Cue, Offer, Reply
 HELLO_BASIC = Offer( msg = "Hello." , context = ContextTag( [context.HELLO] ) )
 
 HELLO_INFO = Offer( msg = "They say that information is the greatest weapon. I have something you may want to know." ,
-        context = ContextTag( [context.HELLO,context.HINT] ) ,
+        context = ContextTag( [context.HELLO,context.INFO] ) ,
         replies = [ Reply( "Tell me about it." ,
                     destination = Cue( ContextTag( [context.INFO] ) ) ) ]
         )
 
+HELLO_PROBLEM = Offer( msg = "Yes, what do you want?" ,
+        context = ContextTag( [context.HELLO,context.PROBLEM] ) ,
+        replies = [ Reply( "You look like you have a problem." ,
+                    destination = Cue( ContextTag( [context.PROBLEM] ) ) ) ]
+        )
 
 HELLO_SHOPKEEPER = Offer( msg = "Welcome to my store." ,
         context = ContextTag( [context.HELLO,context.SHOP] ) ,

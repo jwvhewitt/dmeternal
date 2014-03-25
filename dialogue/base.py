@@ -16,7 +16,7 @@ class Cue(object):
 class Offer(object):
     # An Offer is a single line spoken by the NPC, along with its context tag,
     # effect, and a list of replies.
-    def __init__(self, msg, context=None, effect = None, replies = None ):
+    def __init__(self, msg, context=(), effect = None, replies = None ):
         self.msg = msg
         self.context = context
         self.effect = effect
@@ -48,7 +48,7 @@ class Offer(object):
 
 class Reply(object):
     # A persona.Reply is a single line spoken by the PC, leading to a new exchange
-    def __init__(self, msg, destination=None, context=None ):
+    def __init__(self, msg, destination=None, context=() ):
         self.msg = msg
         self.destination = destination
         self.context = context
