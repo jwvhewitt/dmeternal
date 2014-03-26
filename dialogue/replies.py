@@ -38,7 +38,11 @@ HELLO_TO_INN = Reply( "We need a room for the night.",
             destination = Cue( ContextTag([context.SERVICE,context.INN])),
             context = ContextTag([context.HELLO]) )
 
-HELLO_TO_PROBLEM = Reply( "Are you alright? You look sad.",
+HELLO_TO_PROBLEM = Reply( "Is there something on your mind?",
+            destination = Cue( ContextTag([context.PROBLEM,])),
+            context = ContextTag([context.HELLO,]) )
+
+HELLO_TO_PROBLEM_PERSONAL = Reply( "Are you alright? You look sad.",
             destination = Cue( ContextTag([context.PROBLEM,context.PERSONAL])),
             context = ContextTag([context.HELLO]) )
 
@@ -52,6 +56,10 @@ HELLO_TO_MESSAGE_GOODNEWS = Reply( "I have some good news for you.",
 
 HELLO_TO_MESSAGE_BADNEWS = Reply( "I have some bad news for you.",
             destination = Cue( ContextTag([context.BRINGMESSAGE,context.BADNEWS])),
+            context = ContextTag([context.HELLO]) )
+
+HELLO_TO_MESSAGE_QUESTION = Reply( "I have come with a question for you.",
+            destination = Cue( ContextTag([context.BRINGMESSAGE,context.QUESTION])),
             context = ContextTag([context.HELLO]) )
 
 INFO_TO_INFO = Reply( "Do you have anything else I should know?",

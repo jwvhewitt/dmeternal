@@ -218,7 +218,7 @@ class GenericLibrary( Plot ):
 
         self.shop = services.Library()
 
-        self.add_sub_plot( nart, "PB_DATE", PlotState( elements={"TARGET":npc} ).based_on( self ) )
+        self.add_sub_plot( nart, "SB_DATE", PlotState( elements={"TARGET":npc} ).based_on( self ) )
 
 
         return True

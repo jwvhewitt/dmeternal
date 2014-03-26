@@ -29,7 +29,8 @@ class RLI_VillagePerson( Plot ):
         return pstate.elements.get("TARGET") and pstate.elements.get("LOCALE")
 
     def custom_init( self, nart ):
-        exterior = mapgen.BuildingRoom( tags=(context.CIVILIZED,) )
+        w = random.randint(7,10)
+        exterior = mapgen.BuildingRoom(w,17-w,tags=(context.CIVILIZED,) )
         exterior.special_c[ "window" ] = maps.SMALL_WINDOW
         self.register_element( "_EXTERIOR", exterior, dident="LOCALE" )
 
@@ -47,7 +48,7 @@ class RLI_VillagePerson( Plot ):
         self.register_scene( nart, interior, igen, ident="_INTERIOR", dident="LOCALE" )
         exterior.special_c[ "door" ] = gate_1
 
-        int_mainroom = mapgen.SharpRoom( random.randint(12,20), random.randint(12,20), tags=(context.CIVILIZED,), anchor=mapgen.south, parent=interior )
+        int_mainroom = mapgen.SharpRoom( tags=(context.CIVILIZED,), anchor=mapgen.south, parent=interior )
         int_mainroom.contents.append( gate_2 )
         gate_2.anchor = mapgen.south
         int_mainroom.decorate = mapgen.BedroomDec()

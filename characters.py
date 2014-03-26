@@ -864,6 +864,15 @@ class Character( stats.PhysicalThing ):
                         ilist.append( t )
         return ilist
 
+    def subject_pronoun( self ):
+        return stats.SUBJECT_PRONOUN[ self.gender ]
+
+    def object_pronoun( self ):
+        return stats.OBJECT_PRONOUN[ self.gender ]
+
+    def possessive_pronoun( self ):
+        return stats.POSSESSIVE_PRONOUN[ self.gender ]
+
 
 def roll_initiative( pc ):
     """Convenience function for making initiative rolls."""

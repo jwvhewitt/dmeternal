@@ -82,6 +82,9 @@ PRIMARY_STATS = ( STRENGTH, TOUGHNESS, REFLEXES, INTELLIGENCE, PIETY, CHARISMA )
 # Gender tags
 FEMALE, MALE, NEUTER = range( 3 )
 GENDER = ( "Female", "Male", "Neuter" )
+SUBJECT_PRONOUN = ( "she", "he", "ze" )
+OBJECT_PRONOUN = ( "her", "him", "ze" )
+POSSESSIVE_PRONOUN = ( "her", "his", "ze" )
 
 
 
