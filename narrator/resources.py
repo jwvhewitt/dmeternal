@@ -25,7 +25,7 @@ class RLI_VillagePerson( Plot ):
     LABEL = "RESOURCE_LOVEINTEREST"
     @classmethod
     def matches( self, pstate ):
-        """Requires the TARGET to exist."""
+        """Requires the TARGET and LOCALE to exist."""
         return pstate.elements.get("TARGET") and pstate.elements.get("LOCALE")
 
     def custom_init( self, nart ):

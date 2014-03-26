@@ -103,8 +103,8 @@ class Plot( object ):
         # Utility function for a frequently used special case.
         sp = self.add_sub_plot( nart, "CITY_SCENE" )
         if sp:
-            nart.camp.scene = sp.elements.get( "SCENE" )
-            self.register_element( "LOCALE", sp.elements.get( "SCENE" ) )
+            nart.camp.scene = sp.elements.get( "LOCALE" )
+            self.register_element( "LOCALE", sp.elements.get( "LOCALE" ) )
             nart.camp.entrance = sp.elements.get( "ENTRANCE" )
         return sp
 

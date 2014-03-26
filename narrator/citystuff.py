@@ -18,7 +18,7 @@ import random
 #   **********************
 #
 #  Create a new scene with a city in it. Register the following elements:
-#   SCENE: The new scene
+#   LOCALE: The new scene
 #   CITY: The map feature containing the city
 #   ENTRANCE: A waypoint for starting in/teleporting into the city
 #
@@ -33,8 +33,7 @@ class CityOnEdgeOfCiv( Plot ):
             biome=context.HAB_FOREST, setting=self.setting,
             desctags=(context.MAP_WILDERNESS,context.DES_CIVILIZED,) )
         mymapgen = mapgen.EdgeOfCivilization( myscene )
-        self.register_scene( nart, myscene, mymapgen, ident="SCENE" )
-        self.register_element( "LOCALE", myscene )
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
 
         castle = self.register_element( "CITY", mapgen.CastleRoom( width=35,height=35,tags=(context.CIVILIZED,), parent=myscene ) )
         myroom = mapgen.FuzzyRoom( tags=(context.ENTRANCE,), parent=castle )
@@ -69,7 +68,7 @@ class CityOnEdgeOfCiv( Plot ):
 class GenerallyGeneralStore( Plot ):
     LABEL = "CITY_GENERALSTORE"
     active = True
-    scope = "_INTERIOR"
+    scope = "BUILDING_INT"
     def custom_init( self, nart ):
         exterior = mapgen.BuildingRoom( tags=(context.CIVILIZED,) )
         exterior.special_c[ "window" ] = maps.SMALL_WINDOW
@@ -85,10 +84,10 @@ class GenerallyGeneralStore( Plot ):
         gate_2 = waypoints.GateDoor()
         gate_1.destination = interior
         gate_1.otherside = gate_2
-        gate_2.destination = self.elements.get( "SCENE" )
+        gate_2.destination = self.elements.get( "LOCALE" )
         gate_2.otherside = gate_1
 
-        self.register_scene( nart, interior, igen, ident="_INTERIOR", dident="SCENE" )
+        self.register_scene( nart, interior, igen, ident="BUILDING_INT", dident="LOCALE" )
 
         exterior.special_c[ "door" ] = gate_1
         int_mainroom = mapgen.SharpRoom( tags=(context.CIVILIZED,), anchor=mapgen.south, parent=interior )
@@ -120,7 +119,7 @@ class GenerallyGeneralStore( Plot ):
 class GenericInn( Plot ):
     LABEL = "CITY_INN"
     active = True
-    scope = "_INTERIOR"
+    scope = "BUILDING_INT"
     def custom_init( self, nart ):
         exterior = mapgen.BuildingRoom( tags=(context.CIVILIZED,) )
         exterior.special_c[ "window" ] = maps.SMALL_WINDOW
@@ -135,10 +134,10 @@ class GenericInn( Plot ):
         gate_2 = waypoints.GateDoor()
         gate_1.destination = interior
         gate_1.otherside = gate_2
-        gate_2.destination = self.elements.get( "SCENE" )
+        gate_2.destination = self.elements.get( "LOCALE" )
         gate_2.otherside = gate_1
 
-        self.register_scene( nart, interior, igen, ident="_INTERIOR", dident="SCENE" )
+        self.register_scene( nart, interior, igen, ident="BUILDING_INT", dident="LOCALE" )
 
         exterior.special_c[ "door" ] = gate_1
         int_mainroom = mapgen.SharpRoom( random.randint(12,20), random.randint(12,20), tags=(context.CIVILIZED,), anchor=mapgen.south, parent=interior )
@@ -179,7 +178,7 @@ class GenericInn( Plot ):
 class GenericLibrary( Plot ):
     LABEL = "CITY_LIBRARY"
     active = True
-    scope = "_INTERIOR"
+    scope = "BUILDING_INT"
     def custom_init( self, nart ):
         exterior = mapgen.BuildingRoom( tags=(context.CIVILIZED,) )
         exterior.special_c[ "window" ] = maps.DARK_WINDOW
@@ -194,10 +193,10 @@ class GenericLibrary( Plot ):
         gate_2 = waypoints.GateDoor()
         gate_1.destination = interior
         gate_1.otherside = gate_2
-        gate_2.destination = self.elements.get( "SCENE" )
+        gate_2.destination = self.elements.get( "LOCALE" )
         gate_2.otherside = gate_1
 
-        self.register_scene( nart, interior, igen, ident="_INTERIOR", dident="SCENE" )
+        self.register_scene( nart, interior, igen, ident="BUILDING_INT", dident="LOCALE" )
 
         exterior.special_c[ "door" ] = gate_1
         int_mainroom = mapgen.SharpRoom( tags=(context.CIVILIZED,), anchor=mapgen.south, parent=interior )
@@ -237,7 +236,7 @@ class GenericLibrary( Plot ):
 class GenericTemple( Plot ):
     LABEL = "CITY_TEMPLE"
     active = True
-    scope = "_INTERIOR"
+    scope = "BUILDING_INT"
     def custom_init( self, nart ):
         exterior = mapgen.BuildingRoom( tags=(context.CIVILIZED,) )
         exterior.special_c[ "window" ] = maps.STAINED_GLASS
@@ -253,10 +252,10 @@ class GenericTemple( Plot ):
         gate_2 = waypoints.GateDoor()
         gate_1.destination = interior
         gate_1.otherside = gate_2
-        gate_2.destination = self.elements.get( "SCENE" )
+        gate_2.destination = self.elements.get( "LOCALE" )
         gate_2.otherside = gate_1
 
-        self.register_scene( nart, interior, igen, ident="_INTERIOR", dident="SCENE" )
+        self.register_scene( nart, interior, igen, ident="BUILDING_INT", dident="LOCALE" )
 
         exterior.special_c[ "door" ] = gate_1
         int_mainroom = mapgen.SharpRoom( tags=(context.CIVILIZED,), anchor=mapgen.south, parent=interior )
@@ -290,7 +289,7 @@ class GenericTemple( Plot ):
 class GenericWeaponShop( Plot ):
     LABEL = "CITY_WEAPONSHOP"
     active = True
-    scope = "_INTERIOR"
+    scope = "BUILDING_INT"
     def custom_init( self, nart ):
         exterior = mapgen.BuildingRoom( tags=(context.CIVILIZED,) )
         exterior.special_c[ "window" ] = maps.SMALL_WINDOW
@@ -305,10 +304,10 @@ class GenericWeaponShop( Plot ):
         gate_2 = waypoints.GateDoor()
         gate_1.destination = interior
         gate_1.otherside = gate_2
-        gate_2.destination = self.elements.get( "SCENE" )
+        gate_2.destination = self.elements.get( "LOCALE" )
         gate_2.otherside = gate_1
 
-        self.register_scene( nart, interior, igen, ident="_INTERIOR", dident="SCENE" )
+        self.register_scene( nart, interior, igen, ident="BUILDING_INT", dident="LOCALE" )
 
         exterior.special_c[ "door" ] = gate_1
         int_mainroom = mapgen.SharpRoom( tags=(context.CIVILIZED,), anchor=mapgen.south, parent=interior )
