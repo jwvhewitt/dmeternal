@@ -71,6 +71,7 @@ import encounters
 import intros
 import puzzlebits
 import resources
+import sidestories
 import socialbits
 harvest( citystuff )
 harvest( complication )
@@ -80,6 +81,7 @@ harvest( encounters )
 harvest( intros )
 harvest( puzzlebits )
 harvest( resources )
+harvest( sidestories )
 harvest( socialbits )
 
 

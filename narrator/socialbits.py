@@ -63,6 +63,43 @@ class LowStandards( Plot ):
              replies = [r1,] ) )
         return ol
 
+class DATE_WaitingForAnInvitation( Plot ):
+    """Creates a NPC who will date the TARGET if TARGET sent invitation."""
+    LABEL = "SB_DATE"
+    UNIQUE = True
+    active = True
+    scope = True
+    @classmethod
+    def matches( self, pstate ):
+        """Requires the TARGET to exist."""
+        return pstate.elements.get("TARGET")
+    def custom_init( self, nart ):
+        """Create the NPC, add the two puzzle subplots."""
+        sp = self.add_sub_plot( nart, "RESOURCE_LOVEINTEREST" )
+        npc1 = self.elements[ "TARGET" ]
+        npc2 = sp.elements[ "RESOURCE" ]
+        self.invited = False
+        self.register_element( "ORIGIN", npc2 )
+        self.add_sub_plot( nart, "SB_DATEINVITE", PlotState().based_on( self ) )
+        return True
+    def TARGET_DATEINVITE( self, explo ):
+        self.invited = True
+    def accept_invitation( self, explo ):
+        explo.check_trigger( "DATE", self.elements[ "TARGET" ] )
+        self.active = False
+    def TARGET_offers( self ):
+        ol = list()
+        if self.invited:
+            npc = self.elements[ "ORIGIN" ]
+            r1 = dialogue.Reply( "Would you like to go out with {0}?".format(npc),
+             destination=dialogue.Offer( "{0}? Yes, you may tell {1} that I would like that very much!".format(npc,npc.object_pronoun()),
+             effect=self.accept_invitation ) )
+            ol.append( dialogue.Offer( "Yes, what is it?" ,
+             context = context.ContextTag([context.BRINGMESSAGE,context.QUESTION]),
+             replies = [r1,] ) )
+        return ol
+
+
 ###   ***********************
 ###   ***  SB_DATEINVITE  ***
 ###   ***********************
@@ -106,7 +143,7 @@ class MysteryDate( Plot ):
             ol.append( myoffer )
             if self._interested:
                 myoffer.replies.append( dialogue.Reply( "Why don't you ask {0}?".format(npc),
-                 destination=dialogue.Offer( "Would {0} be interested in going with me? I cannot leave here right now; could you deliver my invitation?",format(npc.subject_pronoun()),
+                 destination=dialogue.Offer( "Would {0} be interested in going with me? I cannot leave here right now; could you deliver my invitation?".format(npc.subject_pronoun()),
                  effect=self.ask_invitation ) ) )
         return ol
 

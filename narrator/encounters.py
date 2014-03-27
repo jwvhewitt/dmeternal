@@ -18,10 +18,10 @@ class SmallTreasureEncounter( Plot ):
     @classmethod
     def matches( self, pstate ):
         """Requires the SCENE to exist."""
-        return ( pstate.elements.get("SCENE")
-                and context.MAP_DUNGEON in pstate.elements["SCENE"].desctags )
+        return ( pstate.elements.get("LOCALE")
+                and context.MAP_DUNGEON in pstate.elements["LOCALE"].desctags )
     def custom_init( self, nart ):
-        scene = self.elements.get("SCENE")
+        scene = self.elements.get("LOCALE")
         mygen = nart.get_map_generator( scene )
         room = mygen.DEFAULT_ROOM()
         room.contents.append( teams.Team(default_reaction=-999, rank=self.rank, 
@@ -29,7 +29,7 @@ class SmallTreasureEncounter( Plot ):
         mychest = waypoints.SmallChest()
         mychest.stock(self.rank)
         room.contents.append( mychest )
-        self.register_element( "_ROOM", room, dident="SCENE" )
+        self.register_element( "_ROOM", room, dident="LOCALE" )
         return True
 
 class MediumTreasureEncounter( Plot ):
@@ -37,10 +37,10 @@ class MediumTreasureEncounter( Plot ):
     @classmethod
     def matches( self, pstate ):
         """Requires the SCENE to exist."""
-        return ( pstate.elements.get("SCENE")
-                and context.MAP_DUNGEON in pstate.elements["SCENE"].desctags )
+        return ( pstate.elements.get("LOCALE")
+                and context.MAP_DUNGEON in pstate.elements["LOCALE"].desctags )
     def custom_init( self, nart ):
-        scene = self.elements.get("SCENE")
+        scene = self.elements.get("LOCALE")
         mygen = nart.get_map_generator( scene )
         room = mygen.DEFAULT_ROOM()
         room.contents.append( teams.Team(default_reaction=-999, rank=self.rank, 
@@ -48,7 +48,7 @@ class MediumTreasureEncounter( Plot ):
         mychest = waypoints.MediumChest()
         mychest.stock(self.rank)
         room.contents.append( mychest )
-        self.register_element( "_ROOM", room, dident="SCENE" )
+        self.register_element( "_ROOM", room, dident="LOCALE" )
         return True
 
 class LargeTreasureEncounter( Plot ):
@@ -56,10 +56,10 @@ class LargeTreasureEncounter( Plot ):
     @classmethod
     def matches( self, pstate ):
         """Requires the SCENE to exist."""
-        return ( pstate.elements.get("SCENE")
-                and context.MAP_DUNGEON in pstate.elements["SCENE"].desctags )
+        return ( pstate.elements.get("LOCALE")
+                and context.MAP_DUNGEON in pstate.elements["LOCALE"].desctags )
     def custom_init( self, nart ):
-        scene = self.elements.get("SCENE")
+        scene = self.elements.get("LOCALE")
         mygen = nart.get_map_generator( scene )
         room = mygen.DEFAULT_ROOM()
         room.contents.append( teams.Team(default_reaction=-999, rank=self.rank, 
@@ -67,7 +67,7 @@ class LargeTreasureEncounter( Plot ):
         mychest = waypoints.LargeChest()
         mychest.stock(self.rank)
         room.contents.append( mychest )
-        self.register_element( "_ROOM", room, dident="SCENE" )
+        self.register_element( "_ROOM", room, dident="LOCALE" )
         return True
 
 class WildEncounter( Plot ):
@@ -76,11 +76,11 @@ class WildEncounter( Plot ):
     @classmethod
     def matches( self, pstate ):
         """Requires the SCENE to exist and be wilderness."""
-        return ( pstate.elements.get("SCENE")
-                and context.MAP_WILDERNESS in pstate.elements["SCENE"].desctags )
+        return ( pstate.elements.get("LOCALE")
+                and context.MAP_WILDERNESS in pstate.elements["LOCALE"].desctags )
     def custom_init( self, nart ):
         # Add an encounter, monsters must be MTY_BEAST, favoring GEN_NATURE.
-        scene = self.elements.get("SCENE")
+        scene = self.elements.get("LOCALE")
         mygen = nart.get_map_generator( scene )
         room = mygen.DEFAULT_ROOM()
         myhabitat=scene.get_encounter_request()
@@ -88,7 +88,7 @@ class WildEncounter( Plot ):
         myhabitat[ context.GEN_NATURE ] = context.MAYBE
         room.contents.append( teams.Team(default_reaction=-999, rank=self.rank, 
           strength=random.randint(90,120), habitat=myhabitat ) )
-        self.register_element( "_ROOM", room, dident="SCENE" )
+        self.register_element( "_ROOM", room, dident="LOCALE" )
         return True
 
 

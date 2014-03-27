@@ -23,27 +23,42 @@ class DateMyCousinPlease( Plot ):
     scope = True
     @classmethod
     def matches( self, pstate ):
-        """Requires the SHOPKEEPER and BUILDING_INT to exist."""
+        """Requires the SHOPKEEPER, SHOPKEEPER.species, and BUILDING_INT to exist."""
         return pstate.elements.get("SHOPKEEPER") and pstate.elements.get("SHOPKEEPER").species and pstate.elements.get("BUILDING_INT")
     def custom_init( self, nart ):
         """Create the cousin, add puzzle subplot."""
-        the_cousin = monsters.generate_npc(species=self.elements.get("SHOPKEEPER").species.__class__)
+        npc = self.elements["SHOPKEEPER"]
+        the_room = npc.container.owner
+        self.register_element( "_THE_ROOM", the_room )
+        the_cousin = monsters.generate_npc(species=npc.species.__class__)
         self.register_element( "TARGET", the_cousin )
+        self.started = False
         self.dated = False
         self.add_sub_plot( nart, "SB_DATE", PlotState().based_on( self ) )
         return True
     def TARGET_DATE( self, explo ):
         self.dated = True
 
-    def _MYNPC_offers( self ):
+    def tell_problem( self, explo ):
+        # Move the cousin into the room.
+        scene = self.elements["BUILDING_INT"]
+        area = self.elements["_THE_ROOM"].area
+        pos = scene.find_entry_point_in_rect(area)
+        if pos:
+            the_cousin = self.elements["TARGET"]
+            the_cousin.place( scene, pos )
+            self.started = True
+
+    def SHOPKEEPER_offers( self ):
         ol = list()
-        if self.invited:
-            npc = self.elements[ "TARGET" ]
-            r1 = dialogue.Reply( "Would you like to go out with {0}?".format(npc),
-             destination=dialogue.Offer( "{0}? Yes, you may tell {1} that I would like that very much!".format(npc,npc.object_pronoun()),
-             effect=self.accept_invitation ) )
-            ol.append( dialogue.Offer( "Yes, what is it?" ,
-             context = context.ContextTag([context.BRINGMESSAGE,context.QUESTION]),
-             replies = [r1,] ) )
+        the_cousin = self.elements["TARGET"]
+        if self.started:
+            pass
+        elif self.dated:
+            pass
+        else:
+            myoffer = dialogue.Offer( "It's my cousin {0}... {1} hangs out here all day bothering me.".format(the_cousin,the_cousin.subject_pronoun()),
+             context = context.ContextTag([context.PROBLEM,context.PERSONAL]), effect=self.tell_problem )
+            ol.append( myoffer )
         return ol
 

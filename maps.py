@@ -509,9 +509,11 @@ class Scene( object ):
             if pc.is_alright():
                 self.in_sight |= pfov.PCPointOfView( self, pc.pos[0], pc.pos[1], 10 ).tiles
 
-    def find_free_points_in_rect( self, area ):
+    def find_free_points_in_rect( self, area=None ):
         # Return a list of all points in rect that are unoccupied + unblocked.
         points = list()
+        if not area:
+            area = pygame.Rect( 0,0,self.width,self.height )
         for x in range( area.x, area.x+area.width ):
             for y in range( area.y, area.y+area.height ):
                 if self.on_the_map(x,y) and not self.map[x][y].blocks_walking():
@@ -521,7 +523,7 @@ class Scene( object ):
                 points.remove( m.pos )
         return points
 
-    def find_entry_point_in_rect( self, area ):
+    def find_entry_point_in_rect( self, area=None ):
         # Given the provided area, find a tile that is unoccupied + unblocked.
         candidates = self.find_free_points_in_rect( area )
         if candidates:
