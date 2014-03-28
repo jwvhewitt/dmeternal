@@ -27,7 +27,7 @@ class CaveLevel( Plot ):
             biome=context.HAB_CAVE, setting=self.setting,
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_EARTH) )
         mymapgen = mapgen.CaveScene( myscene )
-        self.register_scene( nart, myscene, mymapgen, ident="SCENE" )
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
 
         for t in range( random.randint(4,8) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
