@@ -8,10 +8,22 @@ from base import Cue, Offer, Reply
 
 HELLO_BASIC = Offer( msg = "Hello." , context = ContextTag( [context.HELLO] ) )
 
-HELLO_INFO = Offer( msg = "They say that information is the greatest weapon. I have something you may want to know." ,
+HELLO_INFO = Offer( msg = "You look like the curious type. Would you like to know something?" ,
+        context = ContextTag( [context.HELLO,context.INFO] ) ,
+        replies = [ Reply( "Alright, tell me about it." ,
+                    destination = Cue( ContextTag( [context.INFO] ) ) ) ]
+        )
+
+HELLO_INFO_HINT = Offer( msg = "They say that information is the greatest weapon. I have something you may want to know." ,
         context = ContextTag( [context.HELLO,context.INFO] ) ,
         replies = [ Reply( "Tell me about it." ,
-                    destination = Cue( ContextTag( [context.INFO] ) ) ) ]
+                    destination = Cue( ContextTag( [context.INFO,context.HINT] ) ) ) ]
+        )
+
+HELLO_INFO_PERSONAL = Offer( msg = "I have a secret. I'm not sure I should be saying this, but..." ,
+        context = ContextTag( [context.HELLO,context.INFO] ) ,
+        replies = [ Reply( "What is it?" ,
+                    destination = Cue( ContextTag( [context.INFO,context.HINT] ) ) ) ]
         )
 
 HELLO_PROBLEM = Offer( msg = "Yes, what do you want?" ,

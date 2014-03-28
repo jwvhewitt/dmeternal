@@ -27,7 +27,7 @@ import random
 ###   ***  SB_DATE  ***
 ###   *****************
 
-class LowStandards( Plot ):
+class DATE_LowStandards( Plot ):
     """Creates a NPC who will date the TARGET if TARGET sent invitation."""
     LABEL = "SB_DATE"
     UNIQUE = True
@@ -104,7 +104,28 @@ class DATE_WaitingForAnInvitation( Plot ):
 ###   ***  SB_DATEINVITE  ***
 ###   ***********************
 
-class MysteryDate( Plot ):
+class DI_Admirer( Plot ):
+    """ORIGIN will send invitation to TARGET because TARGET is awesome."""
+    LABEL = "SB_DATEINVITE"
+    UNIQUE = True
+    active = True
+    scope = True
+    @classmethod
+    def matches( self, pstate ):
+        """Requires the TARGET to exist."""
+        return pstate.elements.get("TARGET") and pstate.elements.get("ORIGIN")
+    def ask_invitation( self, explo ):
+        explo.check_trigger( "DATEINVITE", self.elements[ "TARGET" ] )
+        self.active = False
+    def ORIGIN_offers( self ):
+        ol = list()
+        npc = self.elements.get("TARGET")
+        ol.append( dialogue.Offer( "{0} is cute and awesome, and I don't care who knows! I'd tell {1} myself, but I'm too scared...".format( npc, npc.object_pronoun() ),
+         context = context.ContextTag([context.INFO,context.PERSONAL]),
+         effect=self.ask_invitation ) )
+        return ol
+
+class DI_MysteryDate( Plot ):
     """ORIGIN will send invitation to TARGET if TARGET is lovelorn."""
     LABEL = "SB_DATEINVITE"
     UNIQUE = True
