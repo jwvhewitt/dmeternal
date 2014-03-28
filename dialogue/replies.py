@@ -62,6 +62,10 @@ HELLO_TO_MESSAGE_QUESTION = Reply( "I have come with a question for you.",
             destination = Cue( ContextTag([context.BRINGMESSAGE,context.QUESTION])),
             context = ContextTag([context.HELLO]) )
 
+HELLO_TO_REWARD = Reply( "About our reward...?",
+            destination = Cue( ContextTag([context.REWARD])),
+            context = ContextTag([context.HELLO]) )
+
 INFO_TO_INFO = Reply( "Do you have anything else I should know?",
             destination = Cue( ContextTag([context.INFO])),
             context = ContextTag([context.INFO]) )

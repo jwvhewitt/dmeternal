@@ -26,7 +26,7 @@ class CaveDungeon( Plot ):
             sp = self.add_sub_plot( nart, "DUNGEON_LEVEL", pstate )
             if sp:
                 pstate = PlotState( rank = l ).based_on( sp )
-                dunglev = sp.elements[ "SCENE" ]
+                dunglev = sp.elements[ "LOCALE" ]
                 self.levels.append( dunglev )
 
         # Connect all the levels.
