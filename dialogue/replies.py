@@ -6,8 +6,6 @@ HELLO_INFO = Reply( "I am looking for information." ,
             destination = Cue( ContextTag([context.INFO]) ) ,
             context = ContextTag([context.HELLO]) )
 
-
-
 HELLO_TO_SHOP = Reply( "Do you have anything for sale?" ,
             destination = Cue( ContextTag([context.SHOP]) ) ,
             context = ContextTag([context.HELLO]) )
