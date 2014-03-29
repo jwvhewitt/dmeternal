@@ -492,7 +492,7 @@ class Character( stats.PhysicalThing ):
 
     def can_use_stealth( self ):
         """Return True if this character can hide in combat."""
-        return self.get_stat( stats.STEALTH ) > 0 or sum( l.get_stat( stats.STEALTH ) for l in self.levels ) > 0
+        return self.get_stat( stats.STEALTH, False ) > 0 or sum( l.get_stat( stats.STEALTH ) for l in self.levels ) > 0
 
     def can_use_holy_sign( self ):
         """Return True if this character can use holy sign in combat."""

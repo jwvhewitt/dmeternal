@@ -42,7 +42,13 @@ class PlotState( object ):
         # from the generator.
         return self
 
-
+def all_contents( thing ):
+    """Iterate over this thing and all of its descendants."""
+    yield thing
+    if hasattr( thing, "contents" ):
+        for t in thing.contents:
+            for tt in all_contents( t ):
+                yield tt
 
 class Plot( object ):
     """The building block of the adventure."""
@@ -126,12 +132,27 @@ class Plot( object ):
                 self.move_element( ele, mydest )
         return ele
 
+    def seek_element( self, nart, ident, seek_func, dident=None, scope=None, must_find=True ):
+        """Check scope and all children for a gear that seek_func returns True"""
+        if not scope:
+            scope = nart.camp
+        candidates = list()
+        for e in all_contents( scope ):
+            if seek_func( e ):
+                candidates.append( e )
+        if candidates:
+            e = random.choice( candidates )
+            self.register_element( ident, e, dident )
+            return e
+        elif must_find:
+            self.fail( nart )
+
     def register_scene( self, nart, myscene, mygen, ident=None, dident=None, rank=None ):
         if not myscene.name:
             myscene.name = namegen.DEFAULT.gen_word()
         self.register_element( ident, myscene, dident )
-        nart.camp.scenes.append( myscene )
-        self.move_records.append( (myscene,nart.camp.scenes) )
+        nart.camp.contents.append( myscene )
+        self.move_records.append( (myscene,nart.camp.contents) )
         nart.generators.append( mygen )
         self.move_records.append( (mygen,nart.generators) )
         myscene.rank = rank or self.rank

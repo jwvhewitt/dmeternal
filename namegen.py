@@ -172,6 +172,12 @@ GNOME = NameGen( "ng_gnome.txt" )
 HURTHLING = NameGen( "ng_hurthling.txt" )
 ELDRITCH = NameGen( "ng_eldritch.txt", max_syl=5 )
 
+ALL_NAME_GENERATORS = ( DEFAULT, DWARF, DRAGON, ELF, ORC, GREEK, JAPANESE, GNOME, HURTHLING, ELDRITCH )
+
+def random_style_name():
+    ng = random.choice( ALL_NAME_GENERATORS )
+    return ng.gen_word()
+
 if __name__=="__main__":
 #    print "Gnome"
 #    test_names( GNOME, 1000 )

@@ -539,6 +539,12 @@ class Scene( object ):
                 break
         return all_clear
 
+    def __str__( self ):
+        if self.name:
+            return self.name
+        else:
+            return repr( self )
+
 OVERLAY_ITEM = 0
 OVERLAY_CURSOR = 1
 OVERLAY_ATTACK = 2

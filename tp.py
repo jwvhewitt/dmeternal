@@ -7,6 +7,17 @@ print "Hellow World!"
 init = narrator.plots.PlotState(rank=1)
 nart = narrator.Narrative( init )
 
+def display_contents( thing, lead="" ):
+    print lead + str( thing )
+    if hasattr( thing, "contents" ):
+        for sp in thing.contents:
+            display_contents(sp,lead+" ")
+
+def display_contents2( thing, lead="" ):
+    for t in narrator.plots.all_contents( thing ):
+        print lead + str( t )
+
+
 if nart.story:
     nart.story.display()
 else:
@@ -33,6 +44,7 @@ if __name__=='__main__':
 
         nart.build()
         camp = nart.camp
+        display_contents( camp )
 
         camp.party = campaign.load_party( screen )
 

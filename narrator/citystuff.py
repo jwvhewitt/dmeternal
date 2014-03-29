@@ -69,6 +69,7 @@ class GenerallyGeneralStore( Plot ):
     LABEL = "CITY_GENERALSTORE"
     active = True
     scope = "BUILDING_INT"
+    NAME_PATTERNS = ( "{0}'s Shop", "{0}'s Goods" )
     def custom_init( self, nart ):
         exterior = mapgen.BuildingRoom( tags=(context.CIVILIZED,) )
         exterior.special_c[ "window" ] = maps.SMALL_WINDOW
@@ -90,7 +91,7 @@ class GenerallyGeneralStore( Plot ):
         self.register_scene( nart, interior, igen, ident="BUILDING_INT", dident="LOCALE" )
 
         exterior.special_c[ "door" ] = gate_1
-        int_mainroom = mapgen.SharpRoom( tags=(context.CIVILIZED,), anchor=mapgen.south, parent=interior )
+        int_mainroom = mapgen.SharpRoom( tags=(context.CIVILIZED,context.ROOM_PUBLIC), anchor=mapgen.south, parent=interior )
         int_mainroom.contents.append( gate_2 )
         int_mainroom.contents.append( maps.PILED_GOODS )
         int_mainroom.contents.append( maps.PILED_GOODS )
@@ -98,6 +99,7 @@ class GenerallyGeneralStore( Plot ):
         int_mainroom.decorate = mapgen.GeneralStoreDec()
 
         npc = monsters.generate_npc( job=monsters.base.Merchant )
+        interior.name = random.choice( self.NAME_PATTERNS ).format( npc )
         int_mainroom.contents.append( npc )
         self.register_element( "SHOPKEEPER", npc )
 
@@ -120,6 +122,7 @@ class GenericInn( Plot ):
     LABEL = "CITY_INN"
     active = True
     scope = "BUILDING_INT"
+    NAME_PATTERNS = ( "{0}'s Inn", "The {1} and {2}" )
     def custom_init( self, nart ):
         exterior = mapgen.BuildingRoom( tags=(context.CIVILIZED,) )
         exterior.special_c[ "window" ] = maps.SMALL_WINDOW
@@ -140,13 +143,15 @@ class GenericInn( Plot ):
         self.register_scene( nart, interior, igen, ident="BUILDING_INT", dident="LOCALE" )
 
         exterior.special_c[ "door" ] = gate_1
-        int_mainroom = mapgen.SharpRoom( random.randint(12,20), random.randint(12,20), tags=(context.CIVILIZED,), anchor=mapgen.south, parent=interior )
+        int_mainroom = mapgen.SharpRoom( random.randint(12,20), random.randint(12,20),
+         tags=(context.CIVILIZED,context.ROOM_PUBLIC), anchor=mapgen.south, parent=interior )
         int_mainroom.contents.append( gate_2 )
         int_mainroom.contents.append( waypoints.Bookshelf() )
         gate_2.anchor = mapgen.south
         int_mainroom.decorate = mapgen.TavernDec(win=maps.SMALL_WINDOW)
 
         npc = monsters.generate_npc()
+        interior.name = random.choice( self.NAME_PATTERNS ).format( npc, random.choice(monsters.MONSTER_LIST).name, random.choice(monsters.MONSTER_LIST).name )
         int_mainroom.contents.append( npc )
         self.register_element( "SHOPKEEPER", npc )
 
@@ -180,6 +185,7 @@ class GenericLibrary( Plot ):
     active = True
     scope = "BUILDING_INT"
     def custom_init( self, nart ):
+        locale = self.elements.get( "LOCALE" )
         exterior = mapgen.BuildingRoom( tags=(context.CIVILIZED,) )
         exterior.special_c[ "window" ] = maps.DARK_WINDOW
         exterior.special_c[ "sign1" ] = maps.BOOK_SIGN
@@ -188,18 +194,19 @@ class GenericLibrary( Plot ):
         interior = maps.Scene( 50,50, sprites={maps.SPRITE_FLOOR: "terrain_floor_wood.png" },
             biome=context.HAB_BUILDING, setting=self.setting, desctags=(context.DES_CIVILIZED,) )
         igen = mapgen.BuildingScene( interior )
+        interior.name = "{0} Library".format( locale )
 
         gate_1 = waypoints.GateDoor()
         gate_2 = waypoints.GateDoor()
         gate_1.destination = interior
         gate_1.otherside = gate_2
-        gate_2.destination = self.elements.get( "LOCALE" )
+        gate_2.destination = locale
         gate_2.otherside = gate_1
 
         self.register_scene( nart, interior, igen, ident="BUILDING_INT", dident="LOCALE" )
 
         exterior.special_c[ "door" ] = gate_1
-        int_mainroom = mapgen.SharpRoom( tags=(context.CIVILIZED,), anchor=mapgen.south, parent=interior )
+        int_mainroom = mapgen.SharpRoom( tags=(context.CIVILIZED,context.ROOM_PUBLIC), anchor=mapgen.south, parent=interior )
         int_mainroom.contents.append( gate_2 )
         int_mainroom.contents.append( waypoints.Bookshelf() )
         gate_2.anchor = mapgen.south
@@ -243,22 +250,24 @@ class GenericTemple( Plot ):
         exterior.special_c[ "sign1" ] = maps.ANKH_SIGN
         self.register_element( "_EXTERIOR", exterior, dident="CITY" )
 
+        locale = self.elements.get( "LOCALE" )
         interior = maps.Scene( 50,50, sprites={maps.SPRITE_FLOOR: "terrain_floor_bigtile.png",
             maps.SPRITE_INTERIOR: "terrain_int_temple.png" },
             biome=context.HAB_BUILDING, setting=self.setting, desctags=(context.DES_CIVILIZED,) )
         igen = mapgen.BuildingScene( interior )
+        interior.name = "{0} Temple".format( locale )
 
         gate_1 = waypoints.GateDoor()
         gate_2 = waypoints.GateDoor()
         gate_1.destination = interior
         gate_1.otherside = gate_2
-        gate_2.destination = self.elements.get( "LOCALE" )
+        gate_2.destination = locale
         gate_2.otherside = gate_1
 
         self.register_scene( nart, interior, igen, ident="BUILDING_INT", dident="LOCALE" )
 
         exterior.special_c[ "door" ] = gate_1
-        int_mainroom = mapgen.SharpRoom( tags=(context.CIVILIZED,), anchor=mapgen.south, parent=interior )
+        int_mainroom = mapgen.SharpRoom( tags=(context.CIVILIZED,context.ROOM_PUBLIC), anchor=mapgen.south, parent=interior )
         int_mainroom.contents.append( gate_2 )
         int_mainroom.contents.append( maps.ANKH_ALTAR )
         gate_2.anchor = mapgen.south
@@ -290,6 +299,7 @@ class GenericWeaponShop( Plot ):
     LABEL = "CITY_WEAPONSHOP"
     active = True
     scope = "BUILDING_INT"
+    NAME_PATTERNS = ( "{0}'s Arms", "{0}'s Weapons" )
     def custom_init( self, nart ):
         exterior = mapgen.BuildingRoom( tags=(context.CIVILIZED,) )
         exterior.special_c[ "window" ] = maps.SMALL_WINDOW
@@ -310,13 +320,14 @@ class GenericWeaponShop( Plot ):
         self.register_scene( nart, interior, igen, ident="BUILDING_INT", dident="LOCALE" )
 
         exterior.special_c[ "door" ] = gate_1
-        int_mainroom = mapgen.SharpRoom( tags=(context.CIVILIZED,), anchor=mapgen.south, parent=interior )
+        int_mainroom = mapgen.SharpRoom( tags=(context.CIVILIZED,context.ROOM_PUBLIC), anchor=mapgen.south, parent=interior )
         int_mainroom.contents.append( gate_2 )
 #        int_mainroom.contents.append( waypoints.Anvil() )
         gate_2.anchor = mapgen.south
         int_mainroom.decorate = mapgen.WeaponShopDec()
 
         npc = monsters.generate_npc( job=monsters.base.Merchant )
+        interior.name = random.choice( self.NAME_PATTERNS ).format( npc )
         int_mainroom.contents.append( npc )
         self.register_element( "SHOPKEEPER", npc )
 

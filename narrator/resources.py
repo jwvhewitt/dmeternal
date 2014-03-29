@@ -54,6 +54,7 @@ class RLI_VillagePerson( Plot ):
         int_mainroom.decorate = mapgen.BedroomDec()
 
         npc = monsters.generate_npc()
+        interior.name = "{0}'s Home".format( npc )
         suitor = self.elements.get("TARGET")
         # Assume a heteronormativity rate of 50%.
         if random.randint(1,2) == 1:

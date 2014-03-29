@@ -33,6 +33,7 @@ import exploration
 import pygwrap
 import enchantments
 import collections
+import container
 
 
 class Campaign( object ):
@@ -43,7 +44,7 @@ class Campaign( object ):
         self.scene = scene
         self.entrance = entrance
         self.destination = None
-        self.scenes = list()
+        self.contents = container.ContainerList()
         self.scripts = list()
         self.fight = None
         self.gold = 300
@@ -401,9 +402,9 @@ if __name__=='__main__':
     osgen3.make()
 
 
-    camp.scenes.append( myscene )
-    camp.scenes.append( otherscene )
-    camp.scenes.append( scene3 )
+    camp.contents.append( myscene )
+    camp.contents.append( otherscene )
+    camp.contents.append( scene3 )
 
 
     myroom = pygame.Rect(50,12,10,10)

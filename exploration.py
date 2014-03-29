@@ -619,6 +619,12 @@ class Explorer( object ):
     def go( self ):
         self.no_quit = True
         self.order = None
+        if self.scene.name:
+            caption = pygwrap.SMALLFONT.render(self.scene.name, True, pygwrap.TEXT_COLOR )
+            caption_rect = caption.get_rect(topleft=(32,32))
+            caption_timer = 35
+        else:
+            caption = None
 
         self.update_scene()
 
@@ -644,6 +650,12 @@ class Explorer( object ):
 
             if gdi.type == pygwrap.TIMEREVENT:
                 self.view( self.screen )
+                if caption and caption_timer > 0:
+                    pygwrap.default_border.render( self.screen, caption_rect )
+                    self.screen.blit( caption, caption_rect )
+                    caption_timer += -1
+                    if caption_timer < 1:
+                        caption = None
                 pygame.display.flip()
 
                 self.time += 1
