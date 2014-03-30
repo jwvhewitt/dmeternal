@@ -232,11 +232,11 @@ class Shade( base.Monster ):
     name = "Shade"
     statline = { stats.STRENGTH: 12, stats.TOUGHNESS: 12, stats.REFLEXES: 12, \
         stats.INTELLIGENCE: 12, stats.PIETY: 12, stats.CHARISMA: 8, \
-        stats.RESIST_SOLAR: -50, stats.RESIST_FIRE: -100 }
+        stats.RESIST_SOLAR: -50, stats.RESIST_FIRE: -100, stats.STEALTH: 10 }
     SPRITENAME = "monster_undead.png"
     FRAME = 42
     TEMPLATES = (stats.UNDEAD,stats.INCORPOREAL)
-    MOVE_POINTS = 8
+    MOVE_POINTS = 6
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
@@ -279,7 +279,8 @@ class Shade( base.Monster ):
 class Fossil( base.Monster ):
     name = "Fossil"
     statline = { stats.STRENGTH: 24, stats.TOUGHNESS: 19, stats.REFLEXES: 12, \
-        stats.INTELLIGENCE: 1, stats.PIETY: 14, stats.CHARISMA: 1 }
+        stats.INTELLIGENCE: 1, stats.PIETY: 14, stats.CHARISMA: 1,
+        stats.RESIST_LUNAR: 155 }
     SPRITENAME = "monster_undead2.png"
     FRAME = 11
     TEMPLATES = (stats.UNDEAD,stats.BONE)
@@ -298,7 +299,11 @@ class Fossil( base.Monster ):
 
     TECHNIQUES = ( invocations.MPInvocation( "Hellfire",
       effects.OpposedRoll( att_skill=stats.PHYSICAL_ATTACK, att_stat=stats.REFLEXES, att_modifier=10, def_stat=stats.REFLEXES, on_success = (
-        effects.HealthDamage( (1,10,0), stat_bonus=stats.TOUGHNESS, element=stats.RESIST_LUNAR, anim=animobs.PurpleExplosion )
+        effects.HealthDamage( (1,10,0), stat_bonus=stats.TOUGHNESS, element=stats.RESIST_LUNAR, anim=animobs.PurpleExplosion, on_success = (
+            effects.SavingThrow( roll_skill=stats.RESIST_LUNAR, roll_stat=stats.TOUGHNESS, on_failure = (
+                effects.StatDamage( stats.STRENGTH, anim=animobs.GreenBoom )
+            ,))
+         ,))
       ,), on_failure = (
         effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_LUNAR, anim=animobs.PurpleExplosion )
       ,) ), com_tar=targetarea.Blast(radius=2), shot_anim=animobs.MysticBolt, ai_tar=invocations.vs_enemy, mp_cost=3

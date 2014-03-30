@@ -25,11 +25,12 @@ class DateMyCousinPlease( Plot ):
     def matches( self, pstate ):
         """Requires the SHOPKEEPER, SHOPKEEPER.species, and BUILDING_INT to exist."""
         return pstate.elements.get("SHOPKEEPER") and pstate.elements.get("SHOPKEEPER").species and pstate.elements.get("BUILDING_INT")
+    def room_seeker( self, thing ):
+        return isinstance( thing, mapgen.Room ) and context.ROOM_PUBLIC in thing.tags
     def custom_init( self, nart ):
         """Create the cousin, add puzzle subplot."""
         npc = self.elements["SHOPKEEPER"]
-        the_room = npc.container.owner
-        self.register_element( "_THE_ROOM", the_room )
+        the_room = self.seek_element( nart, "_THE_ROOM", self.room_seeker, scope=self.elements.get("BUILDING_INT") )
         the_cousin = monsters.generate_npc(species=npc.species.__class__)
         self.register_element( "TARGET", the_cousin )
         self.started = False

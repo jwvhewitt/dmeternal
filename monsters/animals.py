@@ -139,7 +139,7 @@ class CaveAnt( base.Monster ):
 
 class WoodBeetle( base.Monster ):
     name = "Wood Beetle"
-    statline = { stats.STRENGTH: 10, stats.TOUGHNESS: 14, stats.REFLEXES: 8, \
+    statline = { stats.STRENGTH: 10, stats.TOUGHNESS: 12, stats.REFLEXES: 8, \
         stats.INTELLIGENCE: 1, stats.PIETY: 1, stats.CHARISMA: 1 }
     SPRITENAME = "monster_bugs.png"
     FRAME = 10
@@ -271,7 +271,7 @@ class SwampDragonfly( base.Monster ):
 
 class BoringBeetle( base.Monster ):
     name = "Boring Beetle"
-    statline = { stats.STRENGTH: 10, stats.TOUGHNESS: 14, stats.REFLEXES: 8, \
+    statline = { stats.STRENGTH: 10, stats.TOUGHNESS: 12, stats.REFLEXES: 8, \
         stats.INTELLIGENCE: 1, stats.PIETY: 1, stats.CHARISMA: 1 }
     SPRITENAME = "monster_bugs.png"
     FRAME = 11
@@ -292,7 +292,7 @@ class BoringBeetle( base.Monster ):
 
 class WaterBeetle( base.Monster ):
     name = "Water Beetle"
-    statline = { stats.STRENGTH: 10, stats.TOUGHNESS: 14, stats.REFLEXES: 8, \
+    statline = { stats.STRENGTH: 10, stats.TOUGHNESS: 12, stats.REFLEXES: 8, \
         stats.INTELLIGENCE: 1, stats.PIETY: 1, stats.CHARISMA: 1 }
     SPRITENAME = "monster_bugs.png"
     FRAME = 12
