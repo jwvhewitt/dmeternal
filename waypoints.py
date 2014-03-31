@@ -14,11 +14,13 @@ import container
 class Waypoint( object ):
     TILE = None
     ATTACH_TO_WALL = False
-    def __init__( self, scene=None, pos=(0,0) ):
+    desc = ""
+    def __init__( self, scene=None, pos=(0,0), plot_locked=False ):
         """Place this waypoint in a scene."""
         if scene:
             self.place( scene, pos )
         self.contents = container.ContainerList(owner=self)
+        self.plot_locked = plot_locked
 
     def place( self, scene, pos=None ):
         if hasattr( self, "container" ) and self.container:
@@ -37,18 +39,30 @@ class Waypoint( object ):
         else:
             self.pos = (0,0)
 
-    def bump( self, explo ):
+    def unlocked_use( self, explo ):
         # Perform this waypoint's special action.
-        pass
+        if self.desc:
+            explo.alert( self.desc )
+
+    def bump( self, explo ):
+        # If plot_locked, check plots for possible actions.
+        # Otherwise, use the normal unlocked_use.
+        if self.plot_locked:
+            pass
+        else:
+            self.unlocked_use( explo )
+
 
 class Anvil( Waypoint ):
     TILE = maps.Tile( None, None, maps.ANVIL )
+    desc = "You stand before an anvil."
 
 class Bookshelf( Waypoint ):
     TILE = maps.Tile( None, None, maps.BOOKSHELF )
     ATTACH_TO_WALL = True
     LIBRARY = services.Library()
-    def bump( self, explo ):
+    desc = "You stand before a bookshelf."
+    def unlocked_use( self, explo ):
         self.LIBRARY( explo )
 
 class GateDoor( Waypoint ):
@@ -56,7 +70,8 @@ class GateDoor( Waypoint ):
     ATTACH_TO_WALL = True
     destination = None
     otherside = None
-    def bump( self, explo ):
+    desc = "You stand before a door."
+    def unlocked_use( self, explo ):
         if self.destination and self.otherside:
             explo.camp.destination = self.destination
             explo.camp.entrance = self.otherside
@@ -67,7 +82,8 @@ class SpiralStairsUp( Waypoint ):
     TILE = maps.Tile( None, maps.SPIRAL_STAIRS_UP, None )
     destination = None
     otherside = None
-    def bump( self, explo ):
+    desc = "You stand before a staircase."
+    def unlocked_use( self, explo ):
         if self.destination and self.otherside:
             explo.camp.destination = self.destination
             explo.camp.entrance = self.otherside
@@ -77,24 +93,30 @@ class SpiralStairsUp( Waypoint ):
 class StairsUp( SpiralStairsUp ):
     TILE = maps.Tile( None, maps.STAIRS_UP, None )
     ATTACH_TO_WALL = True
+    desc = "You stand before a staircase."
 
 class StairsDown( SpiralStairsUp ):
     TILE = maps.Tile( None, maps.STAIRS_DOWN, None )
     ATTACH_TO_WALL = True
+    desc = "You stand before a staircase."
 
 class SpiralStairsDown( SpiralStairsUp ):
     TILE = maps.Tile( None, maps.SPIRAL_STAIRS_DOWN, None )
+    desc = "You stand before a staircase."
 
 class MineEntrance( SpiralStairsUp ):
     TILE = maps.Tile( None, None, maps.MINE_ENTRANCE )
+    desc = "You stand before a mine entrance."
 
 class DungeonEntrance( SpiralStairsUp ):
     TILE = maps.Tile( None, None, maps.DUNGEON_ENTRANCE )
+    desc = "You stand before a dark passageway."
 
 class PuzzleDoor( Waypoint ):
     TILE = maps.Tile( None, maps.CLOSED_DOOR, None )
     ATTACH_TO_WALL = True
-    def bump( self, explo ):
+    desc = "You stand before a door."
+    def unlocked_use( self, explo ):
         explo.alert( "This door is impassable." )
     def activate( self, explo ):
         self.scene.map[self.pos[0]][self.pos[1]].wall = maps.OPEN_DOOR
@@ -109,7 +131,8 @@ class PuzzleSwitch( Waypoint ):
     CALL = None
     RECALL = None
     UP = True
-    def bump( self, explo ):
+    desc = "You stand before a lever."
+    def unlocked_use( self, explo ):
         if self.UP:
             if self.CALL:
                 self.CALL( explo )
@@ -131,7 +154,8 @@ class SmallChest( Waypoint ):
     ALT_DECOR = maps.SMALL_CHEST_OPEN
     trap = None
     HOARD_AMOUNT = 50
-    def bump( self, explo ):
+    desc = "You stand before a chest."
+    def unlocked_use( self, explo ):
         if self.trap:
             disarm = self.trap.trigger( explo, self.pos )
             if disarm:
@@ -165,4 +189,6 @@ class LargeChest( SmallChest ):
 
 class Well( Waypoint ):
     TILE = maps.Tile( None, None, maps.WELL )
+    desc = "You stand before a well."
+
 

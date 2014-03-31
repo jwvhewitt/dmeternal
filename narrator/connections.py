@@ -53,7 +53,6 @@ class DefaultDungeonEntrance( Plot ):
         return ( pstate.elements.get( "PREV" ) and pstate.elements.get( "NEXT" )
          and context.MAP_WILDERNESS in pstate.elements["PREV"].desctags
          and context.MAP_DUNGEON in pstate.elements["NEXT"].desctags )
-
     def custom_init( self, nart ):
         prev = self.elements[ "PREV" ]
         next = self.elements[ "NEXT" ]
@@ -161,5 +160,14 @@ class DefaultGoDown( Plot ):
         myzone1.contents.append( stairs_1 )
         myzone2.contents.append( stairs_2 )
         return True
+
+
+###   **************************
+###   ***   SECRET_CONNECT   ***
+###   **************************
+###  A secret connection works like above, but the entrance isn't obvious.
+###  Usually some kind of puzzle needs to be solved before the entrance can be
+###  used.
+
 
 
