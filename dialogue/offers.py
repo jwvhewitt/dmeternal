@@ -48,6 +48,12 @@ HELLO_GENERAL_SHOPKEEPER = Offer( msg = "Whatever you need, I probably have it i
                     destination = Cue( ContextTag( [context.SHOP,context.GENERALSTORE] ) ) ) ]
         )
 
+HELLO_SHOPKEEPER_BLACKMARKET = Offer( msg = "Looking for something out of the ordinary? I have it all right here, and I promise you will not find it anywhere else." ,
+        context = ContextTag( [context.HELLO,context.SHOP,context.BLACKMARKET] ) ,
+        replies = [ Reply( "I will take a look at your wares." ,
+                    destination = Cue( ContextTag( [context.SHOP,context.BLACKMARKET] ) ) ) ]
+        )
+
 HELLO_SHOPKEEPER_WITH_INFO = Offer( msg = "Hello. Are you going to buy something, or is there something else you want?" ,
         context = ContextTag( [context.HELLO] ) ,
         replies = [ Reply( "I would like to see your wares." ,

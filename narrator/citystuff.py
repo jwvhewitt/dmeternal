@@ -40,7 +40,6 @@ class CityOnEdgeOfCiv( Plot ):
         myteam = teams.Team( strength=0, default_reaction=characters.SAFELY_FRIENDLY)
         castle.contents.append( myteam )
         myent = waypoints.Well()
-        myent.plot_locked = True
         myroom.contents.append( myent )
         myroom.contents.append( monsters.generate_npc(team=myteam) )
         myroom.contents.append( monsters.generate_npc(team=myteam) )
@@ -105,6 +104,8 @@ class GenerallyGeneralStore( Plot ):
         self.register_element( "SHOPKEEPER", npc )
 
         self.shop = services.Shop( rank=self.rank+2 )
+
+        self.add_sub_plot( nart, "SIDE_STORY", PlotState().based_on( self ) )
 
         return True
 

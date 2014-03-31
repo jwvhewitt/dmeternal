@@ -169,5 +169,43 @@ class DefaultGoDown( Plot ):
 ###  Usually some kind of puzzle needs to be solved before the entrance can be
 ###  used.
 
+class ThroughTheWell( Plot ):
+    LABEL = "SECRET_CONNECT"
+    UNIQUE = True
+    active = True
+    scope = True
+    @classmethod
+    def matches( self, pstate ):
+        """Requires PREV and NEXT to exist, PREV to be wilderness."""
+        return ( pstate.elements.get( "PREV" ) and pstate.elements.get( "NEXT" )
+         and context.MAP_WILDERNESS in pstate.elements["PREV"].desctags )
+    def seek_well( self, thing ):
+        # We need a well that is not plot_locked.
+        return isinstance( thing, waypoints.Well ) and not thing.plot_locked
+    def seek_entrance_room( self, thing ):
+        # We need a room that is marked as an entrance.
+        return isinstance( thing, mapgen.Room ) and context.ENTRANCE in thing.tags
+    def custom_init( self, nart ):
+        prev = self.elements[ "PREV" ]
+        next = self.elements[ "NEXT" ]
+        well = self.seek_element( nart, "_WELL", self.seek_well, scope=prev, check_subscenes=False )
+        well.plot_locked = True
+        myzone2 = self.seek_element( nart, "_N_ROOM", self.seek_entrance_room, scope=next, check_subscenes=False, must_find=False )
+        if not myzone2:
+            myzone2 = self.register_element( "_N_ROOM", mapgen.SharpRoom(tags=(context.ENTRANCE,)), "NEXT" )
+        stairs_2 = waypoints.GateDoor()
+        well.destination = next
+        well.otherside = stairs_2
+        stairs_2.destination = prev
+        stairs_2.otherside = well
+        self.register_element( "_EXIT", stairs_2, "_N_ROOM" )
+        return True
+    def use_well( self, explo ):
+        explo.camp.destination = self.elements[ "NEXT" ]
+        explo.camp.entrance = self.elements[ "_EXIT" ]
+    def _WELL_menu( self, thingmenu ):
+        thingmenu.desc = "{0} There is a ladder inside, descending into darkness.".format( thingmenu.desc )
+        thingmenu.add_item( "Climb down the well.", self.use_well )
+        thingmenu.add_item( "Leave it alone.", None )
 
 

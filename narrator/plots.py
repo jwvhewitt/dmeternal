@@ -1,6 +1,7 @@
 import context
 import namegen
 import random
+import maps
 
 class PlotError( Exception ):
     """Plot init will call this if initialization impossible."""
@@ -42,13 +43,14 @@ class PlotState( object ):
         # from the generator.
         return self
 
-def all_contents( thing ):
+def all_contents( thing, check_subscenes=True ):
     """Iterate over this thing and all of its descendants."""
     yield thing
     if hasattr( thing, "contents" ):
         for t in thing.contents:
-            for tt in all_contents( t ):
-                yield tt
+            if check_subscenes or not isinstance( t, maps.Scene ):
+                for tt in all_contents( t, check_subscenes ):
+                    yield tt
 
 class Plot( object ):
     """The building block of the adventure."""
@@ -132,12 +134,12 @@ class Plot( object ):
                 self.move_element( ele, mydest )
         return ele
 
-    def seek_element( self, nart, ident, seek_func, dident=None, scope=None, must_find=True ):
+    def seek_element( self, nart, ident, seek_func, dident=None, scope=None, must_find=True, check_subscenes=True ):
         """Check scope and all children for a gear that seek_func returns True"""
         if not scope:
             scope = nart.camp
         candidates = list()
-        for e in all_contents( scope ):
+        for e in all_contents( scope, check_subscenes ):
             if seek_func( e ):
                 candidates.append( e )
         if candidates:

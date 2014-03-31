@@ -15,17 +15,49 @@ import random
 ### provide some things for the PC to do other than clearing the main dungeon.
 
 class TheBlackMarket( Plot ):
-    """The cousin of the shopkeeper must be removed from the house."""
+    """There's a black market in town, but it's hidden."""
     LABEL = "SIDE_STORY"
     UNIQUE = True
     active = True
     scope = True
+    NAME_PATTERNS = ( "{0}'s Black Market", "{0}'s Contraband" )
     @classmethod
     def matches( self, pstate ):
-        """Requires the SHOPKEEPER to exist."""
-        return pstate.elements.get("SHOPKEEPER")
+        """Requires the SHOPKEEPER and LOCALE to exist."""
+        return pstate.elements.get("SHOPKEEPER") and pstate.elements.get("LOCALE")
     def custom_init( self, nart ):
-        """Create the cousin, add puzzle subplot."""
+        """Create the black market, add secret connection."""
+        locale = self.elements["LOCALE"]
+        interior = maps.Scene( 50,50, sprites={maps.SPRITE_WALL: "terrain_wall_darkbrick.png", maps.SPRITE_FLOOR: "terrain_floor_wood.png" },
+            biome=context.HAB_BUILDING, setting=self.setting, desctags=(context.DES_CIVILIZED,) )
+        igen = mapgen.BuildingScene( interior )
+        self.register_scene( nart, interior, igen, ident="BUILDING_INT", dident="LOCALE" )
+        int_mainroom = mapgen.SharpRoom( tags=(context.CIVILIZED,context.ENTRANCE), anchor=mapgen.northwest, parent=interior )
+        int_mainroom.contents.append( maps.PILED_GOODS )
+        int_mainroom.contents.append( maps.PILED_GOODS )
+        int_mainroom.decorate = mapgen.GeneralStoreDec()
+        npc = monsters.generate_npc( job=monsters.base.Merchant )
+        interior.name = random.choice( self.NAME_PATTERNS ).format( npc )
+        int_mainroom.contents.append( npc )
+        self.register_element( "BMKEEPER", npc )
+        self.shop = services.Shop( rank=self.rank+3, allow_magic=True )
+        self.add_sub_plot( nart, "SECRET_CONNECT", PlotState( elements={"PREV":locale,"NEXT":interior} ).based_on( self ) )
+        return True
+    def BMKEEPER_offers( self ):
+        # Return list of shopkeeper offers.
+        ol = list()
+        ol.append( dialogue.Offer( "" ,
+         context = context.ContextTag([context.SHOP,context.GENERALSTORE]), effect=self.shop ) )
+        return ol
+    def SHOPKEEPER_offers( self ):
+        # Return list of shopkeeper offers.
+        ol = list()
+        if random.randint(1,4)==1:
+            ol.append( dialogue.Offer( "If you are unhappy with the selection in my store, you can always try the black market. Good luck finding it, though." ,
+             context = context.ContextTag([context.HELLO,context.SHOP,context.GENERALSTORE]),
+             replies = [ Reply( "I will just look at your wares, thanks." , destination = Cue( ContextTag( [context.SHOP] ) ) ), ]
+             ) )
+        return ol
 
 
 class DateMyCousinPlease( Plot ):

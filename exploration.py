@@ -593,6 +593,10 @@ class Explorer( object ):
             p.modify_puzzle_menu( thing, thingmenu )
         if not thingmenu.items:
             thingmenu.add_item( "[Continue]", None )
+        else:
+            thingmenu.sort()
+            thingmenu.add_alpha_keys()
+
 
     def keep_exploring( self ):
         return self.camp.first_living_pc() and self.no_quit and not pygwrap.GOT_QUIT and not self.camp.destination

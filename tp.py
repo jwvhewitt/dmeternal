@@ -44,7 +44,7 @@ if __name__=='__main__':
 
         nart.build()
         camp = nart.camp
-        display_contents( camp )
+#        display_contents( camp )
 
         camp.party = campaign.load_party( screen )
 
