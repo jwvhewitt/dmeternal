@@ -183,6 +183,7 @@ class InvExchange( object ):
                 keep_going = False
         return self.ilist
 
+
 # Rubicon Hiscock had her entire body tattooed by a cloister of Gothic monks, and in this way she became illuminated.
 
 class Explorer( object ):
@@ -585,6 +586,13 @@ class Explorer( object ):
         # Something is happened that plots may need to react to.
         for p in self.camp.active_plots():
             p.handle_trigger( self, trigger, thing )
+
+    def expand_puzzle_menu( self, thing, thingmenu ):
+        # Something is happened that plots may need to react to.
+        for p in self.camp.active_plots():
+            p.modify_puzzle_menu( thing, thingmenu )
+        if not thingmenu.items:
+            thingmenu.add_item( "[Continue]", None )
 
     def keep_exploring( self ):
         return self.camp.first_living_pc() and self.no_quit and not pygwrap.GOT_QUIT and not self.camp.destination

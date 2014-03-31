@@ -10,6 +10,29 @@ import items
 import traps
 import random
 import container
+import rpgmenu
+import pygame
+import pygwrap
+
+class PuzzleMenu( rpgmenu.Menu ):
+    WIDTH = 350
+    HEIGHT = 250
+    MENU_HEIGHT = 75
+
+    def __init__( self, explo, wp ):
+        x = explo.screen.get_width() // 2 - self.WIDTH // 2
+        y = explo.screen.get_height() // 2 - self.HEIGHT // 2
+        super(PuzzleMenu, self).__init__(explo.screen,x,y+self.HEIGHT-self.MENU_HEIGHT,self.WIDTH,self.MENU_HEIGHT,border=None,predraw=self.pre)
+        self.full_rect = pygame.Rect( x,y,self.WIDTH,self.HEIGHT )
+        self.text_rect = pygame.Rect( x, y, self.WIDTH, self.HEIGHT - self.MENU_HEIGHT - 16 )
+        self.explo = explo
+        self.desc = wp.desc
+
+    def pre( self, screen ):
+        self.explo.view( screen )
+        pygwrap.default_border.render( screen , self.full_rect )
+        pygwrap.draw_text( screen, pygwrap.SMALLFONT, self.desc, self.text_rect, justify = 0 )
+
 
 class Waypoint( object ):
     TILE = None
@@ -48,7 +71,11 @@ class Waypoint( object ):
         # If plot_locked, check plots for possible actions.
         # Otherwise, use the normal unlocked_use.
         if self.plot_locked:
-            pass
+            rpm = PuzzleMenu( explo, self )
+            explo.expand_puzzle_menu( self, rpm )
+            fx = rpm.query()
+            if fx:
+                fx( explo )
         else:
             self.unlocked_use( explo )
 

@@ -14,6 +14,19 @@ import random
 ### Sidestories get added to buildings in cities to flesh them out and to
 ### provide some things for the PC to do other than clearing the main dungeon.
 
+class TheBlackMarket( Plot ):
+    """The cousin of the shopkeeper must be removed from the house."""
+    LABEL = "SIDE_STORY"
+    UNIQUE = True
+    active = True
+    scope = True
+    @classmethod
+    def matches( self, pstate ):
+        """Requires the SHOPKEEPER to exist."""
+        return pstate.elements.get("SHOPKEEPER")
+    def custom_init( self, nart ):
+        """Create the cousin, add puzzle subplot."""
+
 
 class DateMyCousinPlease( Plot ):
     """The cousin of the shopkeeper must be removed from the house."""
