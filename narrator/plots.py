@@ -87,6 +87,12 @@ class Plot( object ):
         if not allok:
             self.fail(nart)
 
+    def random_rank_in_chapter( self ):
+        if self.chapter:
+            return random.randint( self.chapter.start_rank, max( self.chapter.end_rank, self.chapter.start_rank + 2 ) )
+        else:
+            return 1
+
     def fail( self, nart ):
         self.remove( nart )
         raise PlotError( str( self.__class__ ) )

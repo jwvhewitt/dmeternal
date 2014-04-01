@@ -57,7 +57,7 @@ ENTRANCE, GOAL, CIVILIZED = range( 3 )
 # of a given kind is requested it should match that too.
 #
 # Habitat Tags- Linked to map generator
-HAB_EVERY, HAB_FOREST, HAB_CAVE, HAB_BUILDING = range( 4 )
+HAB_EVERY, HAB_FOREST, HAB_CAVE, HAB_BUILDING, HAB_SEWER = range( 5 )
 
 # Map Type- not exactly habitat, but kind of related?
 MAP_WILDERNESS, MAP_DUNGEON, MAP_GOUP, MAP_GODOWN = range( 50,54 )

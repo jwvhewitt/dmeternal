@@ -105,7 +105,7 @@ class GenerallyGeneralStore( Plot ):
 
         self.shop = services.Shop( rank=self.rank+2 )
 
-        self.add_sub_plot( nart, "SIDE_STORY", PlotState().based_on( self ) )
+        self.add_sub_plot( nart, "SIDE_STORY", PlotState(rank=self.random_rank_in_chapter()).based_on( self ) )
 
         return True
 
@@ -226,7 +226,7 @@ class GenericLibrary( Plot ):
 
         self.shop = services.Library()
 
-        self.add_sub_plot( nart, "SIDE_STORY", PlotState().based_on( self ) )
+        self.add_sub_plot( nart, "SIDE_STORY", PlotState(rank=self.random_rank_in_chapter()).based_on( self ) )
 
 
         return True

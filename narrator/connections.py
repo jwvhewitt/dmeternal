@@ -10,6 +10,7 @@ import services
 import teams
 import characters
 import namegen
+import random
 
 """ A CONNECT subplot connects two levels, which are passed via the plotstate
     as elements PREV and NEXT.
@@ -174,6 +175,7 @@ class ThroughTheWell( Plot ):
     UNIQUE = True
     active = True
     scope = True
+    NAME_PATTERNS = ( "{0} Undercity", "{0} Sewer", "Tunnels of {1}", "{0} Waterworks" )
     @classmethod
     def matches( self, pstate ):
         """Requires PREV and NEXT to exist, PREV to be wilderness."""
@@ -194,15 +196,59 @@ class ThroughTheWell( Plot ):
         if not myzone2:
             myzone2 = self.register_element( "_N_ROOM", mapgen.SharpRoom(tags=(context.ENTRANCE,)), "NEXT" )
         stairs_2 = waypoints.GateDoor()
-        well.destination = next
-        well.otherside = stairs_2
-        stairs_2.destination = prev
-        stairs_2.otherside = well
         self.register_element( "_EXIT", stairs_2, "_N_ROOM" )
+
+        if next.rank > prev.rank:
+            # We're gonna add a dungeon.
+            self.levels = list()
+            pstate = PlotState( elements={"DUNGEON_TYPE":context.HAB_SEWER} ).based_on( self )
+            for l in range( prev.rank, next.rank+1 ):
+                pstate.rank = l
+                sp = self.add_sub_plot( nart, "DUNGEON_LEVEL", pstate )
+                if sp:
+                    self.levels.append( sp.elements[ "LOCALE" ] )
+
+            # Decide on a good name.
+            dname = random.choice( self.NAME_PATTERNS ).format( prev, namegen.random_style_name() )
+
+            # Connect all the levels, and name them.
+            prv = self.levels[0]
+            prv.name = "{0}, Lvl{1}".format( dname, 1 )
+            if len( self.levels ) > 1:
+                n = 2
+                for nxt in self.levels[1:]:
+                    nxt.name = "{0}, Lvl{1}".format( dname, n )
+                    n += 1
+                    pstate = PlotState( rank = nxt.rank, elements={"PREV":prv,"NEXT":nxt} ).based_on( self )
+                    sp = self.add_sub_plot( nart, "CONNECT", pstate )
+                    prv = nxt
+
+            # Connect to well and black market.
+            stairs_3 = waypoints.StairsUp()
+            stairs_4 = waypoints.StairsDown()
+            myzone_3 = mapgen.SharpRoom(tags=(context.ENTRANCE,),parent=self.levels[0])
+            myzone_4 = mapgen.SharpRoom(tags=(context.GOAL,),parent=self.levels[-1])
+            myzone_3.contents.append( stairs_3 )
+            myzone_4.contents.append( stairs_4 )
+
+            self.well_destination = self.levels[0]
+            self.well_otherside = stairs_3
+            stairs_3.destination = prev
+            stairs_3.otherside = well
+
+            stairs_2.destination = self.levels[-1]
+            stairs_2.otherside = stairs_4
+            stairs_4.destination = next
+            stairs_4.otherside = stairs_2
+        else:
+            self.well_destination = next
+            self.well_otherside = stairs_2
+            stairs_2.destination = prev
+            stairs_2.otherside = well
         return True
     def use_well( self, explo ):
-        explo.camp.destination = self.elements[ "NEXT" ]
-        explo.camp.entrance = self.elements[ "_EXIT" ]
+        explo.camp.destination = self.well_destination
+        explo.camp.entrance = self.well_otherside
     def _WELL_menu( self, thingmenu ):
         thingmenu.desc = "{0} There is a ladder inside, descending into darkness.".format( thingmenu.desc )
         thingmenu.add_item( "Climb down the well.", self.use_well )
