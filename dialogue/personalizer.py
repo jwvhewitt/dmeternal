@@ -114,6 +114,9 @@ PT_DATABASE = {
         PTEntry( "dissimilar", { voice.ELVEN: True } ),
         PTEntry( "difrunt", { voice.KITTEH: True } ),
         ),
+    "did not":   (
+        PTEntry( "didn't" ),
+        ),
     "Do you have":   (
         PTEntry( "You got", { voice.ORCISH: True } ),
         PTEntry( "You haz got", { voice.KITTEH: True, voice.SMART: False } ),
@@ -380,6 +383,10 @@ PT_DATABASE = {
         PTEntry( "glum", { voice.ORCISH: True } ),
         PTEntry( "melancholy", { voice.SMART: True } ),
         ),
+    "scared": (
+        PTEntry( "terrified", { voice.SMART: True } ),
+        PTEntry( "scaredy", { voice.KITTEH: True } ),
+        ),
     "sea": (
         PTEntry( "whale-road", { voice.DWARVEN: True } ),
        ),
@@ -480,6 +487,9 @@ PT_DATABASE = {
        ),
     "trying":   (
         PTEntry( "tryin", { voice.KITTEH: True, voice.STUPID: True } ),
+        ),
+    "ugly": (
+        PTEntry( "unlovely", { voice.ELVEN: True } ),
         ),
     "want": (
         PTEntry( "desire", { voice.DRACONIAN: True } ),

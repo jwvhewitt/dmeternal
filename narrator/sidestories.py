@@ -46,8 +46,8 @@ class TheBlackMarket( Plot ):
     def BMKEEPER_offers( self ):
         # Return list of shopkeeper offers.
         ol = list()
-        ol.append( dialogue.Offer( "" ,
-         context = context.ContextTag([context.SHOP,context.GENERALSTORE]), effect=self.shop ) )
+        ol.append( dialogue.Offer( "If anyone asks, you did not get this stuff from me, understand?",
+         context = context.ContextTag([context.SHOP,context.BLACKMARKET]), effect=self.shop ) )
         return ol
     def SHOPKEEPER_offers( self ):
         # Return list of shopkeeper offers.
@@ -55,7 +55,7 @@ class TheBlackMarket( Plot ):
         if random.randint(1,4)==1:
             ol.append( dialogue.Offer( "If you are unhappy with the selection in my store, you can always try the black market. Good luck finding it, though." ,
              context = context.ContextTag([context.HELLO,context.SHOP,context.GENERALSTORE]),
-             replies = [ Reply( "I will just look at your wares, thanks." , destination = Cue( ContextTag( [context.SHOP] ) ) ), ]
+             replies = [ dialogue.Reply( "I will just look at your wares, thanks." , destination = dialogue.Cue( context.ContextTag( [context.SHOP] ) ) ), ]
              ) )
         return ol
 

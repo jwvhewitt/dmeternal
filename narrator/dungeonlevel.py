@@ -15,8 +15,8 @@ import random
 
 class CaveLevel( Plot ):
     LABEL = "DUNGEON_LEVEL"
-    active = True
-    scope = True
+#    active = True
+#    scope = True
     @classmethod
     def matches( self, pstate ):
         """Requires the dungeon level to be a cave."""
@@ -36,8 +36,8 @@ class CaveLevel( Plot ):
 
 class SewerLevel( Plot ):
     LABEL = "DUNGEON_LEVEL"
-    active = True
-    scope = True
+#    active = True
+#    scope = True
     @classmethod
     def matches( self, pstate ):
         """Requires the dungeon level to be a sewer."""

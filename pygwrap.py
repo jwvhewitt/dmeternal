@@ -62,6 +62,10 @@ def wait_event():
     elif ev.type == TIMEREVENT:
         pygame.event.clear( TIMEREVENT )
 
+    elif ev.type == pygame.KEYDOWN and ev.key == pygame.K_PRINT:
+        screen = pygame.display.get_surface()
+        pygame.image.save( screen, util.user_dir( "out.png" ) )
+
     return ev
 
 def anim_delay():
