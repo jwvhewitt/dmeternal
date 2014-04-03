@@ -40,6 +40,7 @@ class CaveDungeon( Plot ):
         n = 1
         for next in self.levels:
             next.name = "{0}, Lvl{1}".format( dname, n )
+            next.dname = dname
             n += 1
             pstate = PlotState( rank = next.rank, elements={"PREV":prev,"NEXT":next} ).based_on( self )
             sp = self.add_sub_plot( nart, "CONNECT", pstate )

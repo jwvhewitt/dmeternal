@@ -13,6 +13,8 @@ import teams
 import combat
 import stats
 import services
+import image
+import rpgmenu
 
 
 # Commands should be callable objects which take the explorer and return a value.
@@ -183,6 +185,43 @@ class InvExchange( object ):
                 keep_going = False
         return self.ilist
 
+class MiniMap( object ):
+    def __init__( self, explo ):
+        self.explo = explo
+        self.view()
+
+    def draw( self, screen ):
+        self.explo.view( screen )
+        pygwrap.map_border.render( screen, self.dest )
+        self.pic.render( screen, self.dest, 0 )
+        pos = self.menu.items[ self.menu.selected_item ].value
+        if pos and ( self.explo.view.phase // 5 ) % 2 == 0:
+            self.quill.render( screen, ( self.dest.x + pos[0] * 4 + 2, self.dest.y + pos[1] * 4 - 16 ) )
+
+    def view( self ):
+        self.pic = image.Image( frame_width = self.explo.scene.width * 4, frame_height = self.explo.scene.height * 4 )
+        self.quill = image.Image( "sys_quill.png", 21, 18 )
+        mmbits = image.Image( "sys_mapbits.png", 4, 4 )
+        for x in range( self.explo.scene.width ):
+            for y in range( self.explo.scene.height ):
+                if self.explo.scene.map[x][y].visible:
+                    t = 0
+                    if self.explo.scene.map[x][y].wall:
+                        t = 2
+                    if self.explo.scene.map[x][y].blocks_walking():
+                        t += 1
+                    mmbits.render( self.pic.bitmap, (x*4,y*4), t )
+        self.dest = self.pic.bitmap.get_rect( center=(self.explo.screen.get_width()//2-100, self.explo.screen.get_height()//2 ) )
+        self.menu = rpgmenu.Menu(self.explo.screen,self.explo.screen.get_width()//2+215, self.explo.screen.get_height()//2-200, 150, 400, predraw=self.draw )
+
+        self.menu.add_item( "Party", self.explo.camp.first_living_pc().pos )
+        for t in self.explo.scene.contents:
+            if hasattr( t, "mini_map_label" ) and self.explo.scene.get_visible( *t.pos ):
+                self.menu.add_item( t.mini_map_label, t.pos )
+        self.menu.sort()
+        pos = self.menu.query()
+        if pos:
+            self.explo.view.focus( self.explo.screen, *pos )
 
 # Rubicon Hiscock had her entire body tattooed by a cloister of Gothic monks, and in this way she became illuminated.
 
@@ -700,6 +739,8 @@ class Explorer( object ):
                         self.view.focus( self.screen, *self.camp.first_living_pc().pos )
                     elif gdi.unicode == u"m":
                         self.cast_explo_spell(0)
+                    elif gdi.unicode == u"M":
+                        MiniMap( self )
                     elif gdi.unicode == u"R":
                         self.field_camp()
                     elif gdi.unicode == u"s":

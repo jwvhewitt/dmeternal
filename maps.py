@@ -453,6 +453,13 @@ class Scene( object ):
         else:
             return None
 
+    def get_visible( self, x, y ):
+        """Safely return decor of tile x,y, or None if off map."""
+        if self.on_the_map(x,y):
+            return self.map[x][y].visible
+        else:
+            return False
+
     def tile_blocks_vision( self, x, y ):
         if self.on_the_map(x,y):
             return self.map[x][y].blocks_vision()

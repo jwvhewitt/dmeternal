@@ -82,7 +82,8 @@ def find_offer_to_match_cue( cue_in_question , offers ):
     # Find an offer in this list which matches one of the provided cues.
     goffs = []
     for o in offers:
-        if cue_in_question.context.matches( o.context ):
+        o_cues = o.get_cue_list()
+        if cue_in_question.context.matches( o.context ) and cues_accounted_for( o_cues, offers ):
             goffs.append( o )
 
     if goffs:

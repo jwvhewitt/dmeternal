@@ -55,6 +55,7 @@ class RLI_VillagePerson( Plot ):
 
         npc = monsters.generate_npc()
         interior.name = "{0}'s Home".format( npc )
+        gate_1.mini_map_label = interior.name
         suitor = self.elements.get("TARGET")
         # Assume a heteronormativity rate of 50%.
         if random.randint(1,2) == 1:

@@ -89,6 +89,7 @@ class Bookshelf( Waypoint ):
     ATTACH_TO_WALL = True
     LIBRARY = services.Library()
     desc = "You stand before a bookshelf."
+    mini_map_label = "Bookshelf"
     def unlocked_use( self, explo ):
         self.LIBRARY( explo )
 
@@ -98,6 +99,7 @@ class GateDoor( Waypoint ):
     destination = None
     otherside = None
     desc = "You stand before a door."
+    mini_map_label = "Door"
     def unlocked_use( self, explo ):
         if self.destination and self.otherside:
             explo.camp.destination = self.destination
@@ -110,6 +112,7 @@ class SpiralStairsUp( Waypoint ):
     destination = None
     otherside = None
     desc = "You stand before a staircase."
+    mini_map_label = "Stairs Up"
     def unlocked_use( self, explo ):
         if self.destination and self.otherside:
             explo.camp.destination = self.destination
@@ -121,15 +124,18 @@ class StairsUp( SpiralStairsUp ):
     TILE = maps.Tile( None, maps.STAIRS_UP, None )
     ATTACH_TO_WALL = True
     desc = "You stand before a staircase."
+    mini_map_label = "Stairs Up"
 
 class StairsDown( SpiralStairsUp ):
     TILE = maps.Tile( None, maps.STAIRS_DOWN, None )
     ATTACH_TO_WALL = True
     desc = "You stand before a staircase."
+    mini_map_label = "Stairs Down"
 
 class SpiralStairsDown( SpiralStairsUp ):
     TILE = maps.Tile( None, maps.SPIRAL_STAIRS_DOWN, None )
     desc = "You stand before a staircase."
+    mini_map_label = "Stairs Down"
 
 class MineEntrance( SpiralStairsUp ):
     TILE = maps.Tile( None, None, maps.MINE_ENTRANCE )
@@ -159,6 +165,7 @@ class PuzzleSwitch( Waypoint ):
     RECALL = None
     UP = True
     desc = "You stand before a lever."
+    mini_map_label = "Lever"
     def unlocked_use( self, explo ):
         if self.UP:
             if self.CALL:
@@ -217,5 +224,6 @@ class LargeChest( SmallChest ):
 class Well( Waypoint ):
     TILE = maps.Tile( None, None, maps.WELL )
     desc = "You stand before a well."
+    mini_map_label = "Well"
 
 

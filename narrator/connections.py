@@ -41,6 +41,12 @@ class AbandonedMineEntrance( Plot ):
         stairs_2.destination = prev
         stairs_2.otherside = stairs_1
 
+        if hasattr( next, "dname" ):
+            stairs_1.mini_map_label = next.dname
+        else:
+            stairs_1.mini_map_label = next.name
+        stairs_2.mini_map_label = "Exit"
+
         myzone1.special_c["door"] = stairs_1
         myzone2.contents.append( stairs_2 )
         return True
@@ -77,6 +83,11 @@ class DefaultDungeonEntrance( Plot ):
         stairs_1.otherside = stairs_2
         stairs_2.destination = prev
         stairs_2.otherside = stairs_1
+
+        if hasattr( next, "dname" ):
+            stairs_1.mini_map_label = next.dname
+        else:
+            stairs_1.mini_map_label = next.name
 
         myzone1.special_c["door"] = stairs_1
         myzone2.contents.append( stairs_2 )
