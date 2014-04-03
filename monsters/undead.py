@@ -102,7 +102,7 @@ class Zombie( base.Monster ):
     MOVE_POINTS = 6
     VOICE = None
     GP_VALUE = 5
-    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+    HABITAT = ( context.HAB_EVERY, context.HAB_TUNNELS, context.SET_EVERY,
      context.MTY_UNDEAD, 
      context.DES_LUNAR, context.GEN_UNDEAD )
     ENC_LEVEL = 3
@@ -179,7 +179,7 @@ class Ghoul( base.Monster ):
     MOVE_POINTS = 10
     VOICE = None
     GP_VALUE = 50
-    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+    HABITAT = ( context.HAB_EVERY, context.HAB_TUNNELS, context.SET_EVERY,
      context.MTY_UNDEAD, 
      context.DES_LUNAR, context.GEN_UNDEAD )
     ENC_LEVEL = 4
@@ -212,7 +212,8 @@ class PlagueZombie( base.Monster ):
     MOVE_POINTS = 6
     VOICE = None
     GP_VALUE = 25
-    HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.SET_RENFAN,
+    HABITAT = ( context.HAB_EVERY, context.HAB_TUNNELS,
+     context.SET_EVERY, context.SET_RENFAN,
      context.MTY_UNDEAD, 
      context.DES_LUNAR, context.GEN_UNDEAD )
     ENC_LEVEL = 5

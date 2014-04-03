@@ -23,11 +23,12 @@ class CaveDungeon( Plot ):
     def custom_init( self, nart ):
         """Load dungeon levels, dungeon entrance, CONCLUSION."""
         self.levels = list()
-        pstate = PlotState( rank = self.chapter.start_rank, elements={"DUNGEON_TYPE":context.HAB_CAVE} ).based_on( self )
+        pstate = PlotState( rank = self.chapter.start_rank, elements={"DUNGEON_TYPE":(context.HAB_CAVE,)} ).based_on( self )
         for l in range( self.chapter.start_rank, self.chapter.end_rank+1 ):
             sp = self.add_sub_plot( nart, "DUNGEON_LEVEL", pstate )
             if sp:
-                pstate = PlotState( rank = l ).based_on( sp )
+                pstate.rank = l
+                pstate.elements["DUNGEON_TYPE"] = sp.TAGS
                 dunglev = sp.elements[ "LOCALE" ]
                 self.levels.append( dunglev )
 

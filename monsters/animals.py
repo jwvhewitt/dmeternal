@@ -22,8 +22,9 @@ class GiantBat( base.Monster ):
     MOVE_POINTS = 12
     VOICE = None
     GP_VALUE = 0
-    HABITAT = ( context.HAB_CAVE, context.SET_EVERY, context.SET_RENFAN,
-     context.DES_LUNAR,
+    HABITAT = ( context.HAB_CAVE, context.HAB_TUNNELS,
+     context.SET_EVERY, context.SET_RENFAN,
+     context.DES_LUNAR, context.DES_AIR,
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
     ENC_LEVEL = 1
 
@@ -42,8 +43,9 @@ class GiantRat( base.Monster ):
     MOVE_POINTS = 12
     VOICE = None
     GP_VALUE = 0
-    HABITAT = ( context.HAB_CAVE, context.HAB_BUILDING, context.SET_EVERY,
-    context.DES_EARTH, context.DES_CIVILIZED,
+    HABITAT = ( context.HAB_BUILDING, context.HAB_TUNNELS,
+     context.SET_EVERY,
+     context.DES_EARTH, context.DES_CIVILIZED,
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
     ENC_LEVEL = 1
 
@@ -279,7 +281,7 @@ class BoringBeetle( base.Monster ):
     MOVE_POINTS = 8
     VOICE = None
     GP_VALUE = 0
-    HABITAT = ( context.HAB_CAVE, context.SET_EVERY,
+    HABITAT = ( context.HAB_CAVE, context.HAB_TUNNELS, context.SET_EVERY,
      context.DES_EARTH,
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
     ENC_LEVEL = 3
@@ -300,7 +302,7 @@ class WaterBeetle( base.Monster ):
     MOVE_POINTS = 8
     VOICE = None
     GP_VALUE = 0
-    HABITAT = ( context.SET_EVERY,
+    HABITAT = ( context.HAB_TUNNELS, context.SET_EVERY,
      context.DES_WATER,
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
     ENC_LEVEL = 3
@@ -321,8 +323,9 @@ class PlagueRat( base.Monster ):
     MOVE_POINTS = 12
     VOICE = None
     GP_VALUE = 0
-    HABITAT = ( context.HAB_CAVE, context.HAB_BUILDING, context.SET_EVERY, context.SET_RENFAN,
-    context.DES_LUNAR, context.DES_CIVILIZED,
+    HABITAT = ( context.HAB_CAVE, context.HAB_BUILDING, context.HAB_TUNNELS,
+     context.SET_EVERY, context.SET_RENFAN,
+     context.DES_LUNAR, context.DES_CIVILIZED,
      context.MTY_BEAST, context.GEN_CHAOS, context.GEN_UNDEAD )
     ENC_LEVEL = 3
     COMPANIONS = ( GiantRat, )
@@ -650,7 +653,7 @@ class Crocodile( base.Monster ):
     MOVE_POINTS = 8
     VOICE = None
     GP_VALUE = 0
-    HABITAT = ( context.SET_EVERY,
+    HABITAT = ( context.HAB_TUNNELS, context.SET_EVERY,
      context.DES_WATER, context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
     ENC_LEVEL = 8
 

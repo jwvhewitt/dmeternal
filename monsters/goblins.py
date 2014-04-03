@@ -192,7 +192,8 @@ class GoblinLeader( base.Monster ):
     MOVE_POINTS = 12
     VOICE = dialogue.voice.ORCISH
     GP_VALUE = 50
-    HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
+    HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.HAB_TUNNELS,
+     context.SET_EVERY,
      context.MAP_WILDERNESS,
      context.MTY_HUMANOID, context.MTY_LEADER, context.GEN_GOBLIN )
     ENC_LEVEL = 7
@@ -237,7 +238,8 @@ class GoblinElite( base.Monster ):
     MOVE_POINTS = 10
     VOICE = dialogue.voice.ORCISH
     GP_VALUE = 45
-    HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
+    HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.HAB_TUNNELS,
+     context.SET_EVERY,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN )
     ENC_LEVEL = 9
 
@@ -326,7 +328,8 @@ class GoblinKing( base.Monster ):
     MOVE_POINTS = 10
     VOICE = dialogue.voice.ORCISH
     GP_VALUE = 195
-    HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
+    HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.HAB_TUNNELS,
+     context.SET_EVERY,
      context.MAP_DUNGEON,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN )
     ENC_LEVEL = 13

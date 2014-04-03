@@ -201,7 +201,7 @@ class ThroughTheWell( Plot ):
         if next.rank > prev.rank:
             # We're gonna add a dungeon.
             self.levels = list()
-            pstate = PlotState( elements={"DUNGEON_TYPE":context.HAB_SEWER} ).based_on( self )
+            pstate = PlotState( elements={"DUNGEON_TYPE":(context.HAB_TUNNELS,context.DES_WATER)} ).based_on( self )
             for l in range( prev.rank+1, next.rank+1 ):
                 pstate.rank = l
                 sp = self.add_sub_plot( nart, "DUNGEON_LEVEL", pstate )
