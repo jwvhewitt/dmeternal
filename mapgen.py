@@ -872,7 +872,87 @@ class CaveScene( RandomScene ):
         # Fill all non-water tiles with True walls for now.
         self.fill( gb, self.area, floor=maps.BASIC_FLOOR, wall=True )
 
-class OpenTunnelScene( RandomScene ):
+class SubtleMonkeyTunnelScene( RandomScene ):
+    gapfill = MonsterFiller()
+    def arrange_contents( self, gb ):
+        # Step Two: Arrange subcomponents within this area.
+        closed_area = list()
+        # Add already placed rooms to the closed_area list.
+        for r in self.contents:
+            if hasattr( r, "area" ) and r.area:
+                closed_area.append( r.area )
+        # Add rooms with defined anchors next
+        for r in self.contents:
+            if hasattr( r, "anchor" ) and r.anchor and hasattr(r,"area"):
+                myrect = pygame.Rect( 0, 0, r.width, r.height )
+                r.anchor( self.area, myrect )
+                if myrect.collidelist( closed_area ) == -1:
+                    r.area = myrect
+                    closed_area.append( myrect )
+        # Assign areas for unplaced rooms.
+        for r in self.contents:
+            if hasattr( r, "area" ):
+                myrect = pygame.Rect( 0, 0, r.width, r.height )
+                count = 0
+                while ( count < 1000 ) and not r.area:
+                    myrect.x = random.choice( range( self.area.x , self.area.x + self.area.width - r.width ) )
+                    myrect.y = random.choice( range( self.area.y , self.area.y + self.area.height - r.height ) )
+                    if myrect.inflate(8,8).collidelist( closed_area ) == -1:
+                        r.area = myrect
+                        closed_area.append( myrect )
+                    count += 1
+
+    def monkey_L_connection( self, gb, x1,y1,x2,y2 ):
+        # Draw an L-connection between these two points, returning list of
+        # joined points.
+        if random.randint(1,2) == 1:
+            cx,cy = x1,y2
+        else:
+            cx,cy = x2,y1
+        self.draw_direct_connection( gb, x1, y1, cx, cy )
+        self.draw_direct_connection( gb, x2, y2, cx, cy )
+        return ( (cx,cy), )
+
+    def get_monkey_points( self, area ):
+        # Return list of points where x,y both equal to 2 mod 5.
+        mp = list()
+        for x in range( area.x, area.x+area.width ):
+            for y in range( area.y, area.y+area.height ):
+                if ( x % 5 == 2 ) and ( y % 5 == 2 ):
+                    mp.append( (x,y) )
+        return mp
+
+    def connect_contents( self, gb ):
+        # Step Three: Connect all rooms in contents, making trails on map.
+        # For this one, I'm just gonna straight line connect the contents in
+        # a circle.
+        # Generate list of rooms.
+        myrooms = list()
+        for r in self.contents:
+            if hasattr( r, "area" ):
+                myrooms.append( r )
+
+        # Start the list of connected points.
+        connected_points = list()
+        x0 = random.randint( 1, self.gb.width // 5 ) * 5 - 3
+        y0 = random.randint( 1, self.gb.height // 5 ) * 5 - 3
+        connected_points.append( (x0,y0) )
+
+        # Process them
+        if myrooms:
+            for r in myrooms:
+                # Connect r to a random connected point.
+                r_points = self.get_monkey_points( r.area )
+                in_point = random.choice( r_points )
+                dest_point = random.choice( connected_points )
+                connected_points += r_points
+                
+                self.draw_direct_connection( gb, r.area.centerx, r.area.centery, in_point[0], in_point[1] )
+                hall_points = self.monkey_L_connection( gb, in_point[0], in_point[1], dest_point[0], dest_point[1] )
+                connected_points += hall_points
+
+
+class OpenTunnelScene( SubtleMonkeyTunnelScene ):
     gapfill = MonsterFiller()
     def prepare( self, gb ):
         # Step one- we're going to use a plasma map to set water/lo/hi ground.
@@ -911,6 +991,7 @@ class DividedIslandScene( RandomScene ):
                     gb.map[x][y].floor = maps.LOGROUND
                     gb.map[x][y].wall = True
                 else:
+
                     gb.map[x][y].floor = maps.HIGROUND
                     gb.map[x][y].wall = True
 
