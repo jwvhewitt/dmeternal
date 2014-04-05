@@ -48,7 +48,7 @@ class Skeleton( base.Monster ):
     SPRITENAME = "monster_undead.png"
     FRAME = 0
     TEMPLATES = (stats.UNDEAD,stats.BONE)
-    MOVE_POINTS = 12
+    MOVE_POINTS = 10
     VOICE = None
     GP_VALUE = 5
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
@@ -71,7 +71,7 @@ class SkeletonWithDagger( base.Monster ):
     SPRITENAME = "monster_undead.png"
     FRAME = 1
     TEMPLATES = (stats.UNDEAD,stats.BONE)
-    MOVE_POINTS = 12
+    MOVE_POINTS = 10
     VOICE = None
     GP_VALUE = 10
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.SET_RENFAN,
@@ -121,7 +121,7 @@ class SkeletonWithMorningstar( base.Monster ):
     SPRITENAME = "monster_undead.png"
     FRAME = 3
     TEMPLATES = (stats.UNDEAD,stats.BONE)
-    MOVE_POINTS = 12
+    MOVE_POINTS = 10
     VOICE = None
     GP_VALUE = 15
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.SET_RENFAN,
@@ -144,7 +144,7 @@ class SkeletalBat( base.Monster ):
     SPRITENAME = "monster_undead2.png"
     FRAME = 4
     TEMPLATES = (stats.UNDEAD,stats.BONE)
-    MOVE_POINTS = 14
+    MOVE_POINTS = 12
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.HAB_CAVE, context.SET_EVERY,
@@ -176,7 +176,7 @@ class Ghoul( base.Monster ):
     SPRITENAME = "monster_undead.png"
     FRAME = 35
     TEMPLATES = (stats.UNDEAD,)
-    MOVE_POINTS = 10
+    MOVE_POINTS = 8
     VOICE = None
     GP_VALUE = 50
     HABITAT = ( context.HAB_EVERY, context.HAB_TUNNELS, context.SET_EVERY,

@@ -3,6 +3,121 @@ import stats
 import items
 import dialogue
 import context
+import spells
+import aibrain
+import invocations
+import effects
+import animobs
+import targetarea
+
+
+class Barbarian( base.Monster ):
+    name = "Barbarian"    
+    statline = { stats.STRENGTH: 12, stats.TOUGHNESS: 12, stats.REFLEXES: 10, \
+        stats.INTELLIGENCE: 10, stats.PIETY: 10, stats.CHARISMA: 10 }
+    SPRITENAME = "monster_giants.png"
+    FRAME = 5
+    TEMPLATES = ()
+    MOVE_POINTS = 8
+    GP_VALUE = 15
+    HABITAT = ( context.HAB_EVERY,
+     context.SET_EVERY,
+     context.MAP_WILDERNESS,
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GIANT )
+    ENC_LEVEL = 3
+    ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 3, self ) )
+
+class BarbarianScout( base.Monster ):
+    name = "Barbarian Scout"    
+    statline = { stats.STRENGTH: 10, stats.TOUGHNESS: 12, stats.REFLEXES: 12, \
+        stats.INTELLIGENCE: 10, stats.PIETY: 10, stats.CHARISMA: 10 }
+    SPRITENAME = "monster_giants.png"
+    FRAME = 8
+    TEMPLATES = ()
+    MOVE_POINTS = 10
+    GP_VALUE = 15
+    HABITAT = ( context.HAB_EVERY,
+     context.SET_EVERY,
+     context.MAP_WILDERNESS,
+     context.MTY_HUMANOID, context.GEN_GIANT )
+    ENC_LEVEL = 3
+    COMBAT_AI = aibrain.BasicTechnicalAI()
+    ATTACK = items.Attack( (1,6,0), element = stats.RESIST_SLASHING )
+    TECHNIQUES = ( invocations.Invocation( "Arrow",
+      effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, on_success = (
+        effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_PIERCING, anim=animobs.RedBoom )
+      ,), on_failure = (
+        effects.NoEffect( anim=animobs.SmallBoom )
+      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.vs_enemy
+    ), )
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 3, self ) )
+
+class BarbarianShaman( base.Monster ):
+    name = "Barbarian Shaman"    
+    statline = { stats.STRENGTH: 10, stats.TOUGHNESS: 12, stats.REFLEXES: 10, \
+        stats.INTELLIGENCE: 12, stats.PIETY: 12, stats.CHARISMA: 10 }
+    SPRITENAME = "monster_giants.png"
+    FRAME = 7
+    TEMPLATES = ()
+    MOVE_POINTS = 10
+    GP_VALUE = 50
+    HABITAT = ( context.HAB_EVERY,
+     context.SET_EVERY,
+     context.MAP_WILDERNESS,
+     context.MTY_HUMANOID, context.MTY_MAGE, context.GEN_GIANT )
+    ENC_LEVEL = 5
+    COMBAT_AI = aibrain.BasicTechnicalAI()
+    LONER = True
+    COMPANIONS = (Barbarian,BarbarianScout)
+    ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )
+    TECHNIQUES = ( spells.magespells.SHOCK_SPHERE, spells.earthspells.ACID_SPRAY,
+        spells.waterspells.FREEZE_FOE
+    )
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 5, self ) )
+
+class Berserker( base.Monster ):
+    name = "Berserker"
+    statline = { stats.STRENGTH: 14, stats.TOUGHNESS: 14, stats.REFLEXES: 12, \
+        stats.INTELLIGENCE: 10, stats.PIETY: 10, stats.CHARISMA: 10 }
+    SPRITENAME = "monster_giants.png"
+    FRAME = 18
+    TEMPLATES = ()
+    MOVE_POINTS = 10
+    GP_VALUE = 30
+    HABITAT = ( context.HAB_EVERY,
+     context.SET_EVERY,
+     context.MAP_WILDERNESS,
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GIANT )
+    ENC_LEVEL = 6
+    ATTACK = items.Attack( (2,6,0), element = stats.RESIST_SLASHING )
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 6, self ) )
+
+class BarbarianChief( base.Monster ):
+    name = "Barbarian Chief"
+    statline = { stats.STRENGTH: 14, stats.TOUGHNESS: 14, stats.REFLEXES: 12, \
+        stats.INTELLIGENCE: 10, stats.PIETY: 14, stats.CHARISMA: 10,
+        stats.NATURAL_DEFENSE: 10, stats.MAGIC_DEFENSE: 10 }
+    SPRITENAME = "monster_giants.png"
+    FRAME = 6
+    TEMPLATES = ()
+    MOVE_POINTS = 8
+    GP_VALUE = 105
+    HABITAT = ( context.HAB_EVERY,
+     context.SET_EVERY,
+     context.MAP_WILDERNESS,
+     context.MTY_HUMANOID, context.MTY_LEADER, context.GEN_GIANT )
+    ENC_LEVEL = 7
+    COMPANIONS = ( Barbarian,BarbarianScout,Berserker )
+    LONER = True
+    ATTACK = items.Attack( (2,6,0), element = stats.RESIST_SLASHING )
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 7, self ) )
+
 
 class Ogre( base.Monster ):
     name = "Ogre"    
@@ -22,4 +137,66 @@ class Ogre( base.Monster ):
 
     def init_monster( self ):
         self.levels.append( base.Humanoid( 4, self ) )
+
+class OgreChamp( base.Monster ):
+    name = "Ogre Champion"    
+    statline = { stats.STRENGTH: 16, stats.TOUGHNESS: 16, stats.REFLEXES: 10, \
+        stats.INTELLIGENCE: 6, stats.PIETY: 8, stats.CHARISMA: 5 }
+    SPRITENAME = "monster_giants.png"
+    FRAME = 2
+    TEMPLATES = ()
+    MOVE_POINTS = 10
+    GP_VALUE = 50
+    HABITAT = ( context.HAB_EVERY, context.HAB_FOREST,
+     context.SET_EVERY, context.SET_RENFAN,
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GIANT )
+    ENC_LEVEL = 6
+    COMPANIONS = ( Ogre, )
+    LONER = True
+    ATTACK = items.Attack( (1,12,0), element = stats.RESIST_CRUSHING )
+
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 6, self ) )
+
+class OgreShaman( base.Monster ):
+    name = "Ogre Shaman"
+    statline = { stats.STRENGTH: 16, stats.TOUGHNESS: 16, stats.REFLEXES: 10, \
+        stats.INTELLIGENCE: 10, stats.PIETY: 10, stats.CHARISMA: 5 }
+    SPRITENAME = "monster_giants.png"
+    FRAME = 3
+    TEMPLATES = ()
+    MOVE_POINTS = 10
+    GP_VALUE = 50
+    HABITAT = ( context.HAB_EVERY, context.HAB_FOREST,
+     context.SET_EVERY, context.SET_RENFAN,
+     context.MTY_HUMANOID, context.MTY_PRIEST, context.GEN_GIANT )
+    ENC_LEVEL = 7
+    COMBAT_AI = aibrain.BasicTechnicalAI()
+    COMPANIONS = ( Ogre, OgreChamp )
+    LONER = True
+    ATTACK = items.Attack( (1,12,0), element = stats.RESIST_CRUSHING )
+    TECHNIQUES = ( spells.waterspells.WINTER_WIND, spells.solarspells.MODERATE_CURE,
+        
+    )
+    def init_monster( self ):
+        self.levels.append( base.Spellcaster( 7, self ) )
+
+class OgreLeader( base.Monster ):
+    name = "Ogre Leader"
+    statline = { stats.STRENGTH: 18, stats.TOUGHNESS: 18, stats.REFLEXES: 10, \
+        stats.INTELLIGENCE: 10, stats.PIETY: 10, stats.CHARISMA: 5 }
+    SPRITENAME = "monster_giants.png"
+    FRAME = 4
+    TEMPLATES = ()
+    MOVE_POINTS = 10
+    GP_VALUE = 80
+    HABITAT = ( context.HAB_EVERY, context.HAB_FOREST,
+     context.SET_EVERY, context.SET_RENFAN,
+     context.MTY_HUMANOID, context.MTY_PRIEST, context.GEN_GIANT )
+    ENC_LEVEL = 8
+    LONER = True
+    COMPANIONS = ( Ogre, OgreChamp, OgreShaman )
+    ATTACK = items.Attack( (4,4,0), element = stats.RESIST_CRUSHING )
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 8, self ) )
 

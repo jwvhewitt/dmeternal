@@ -78,12 +78,10 @@ class GoblinShaman( base.Monster ):
      context.MTY_HUMANOID, context.MTY_PRIEST, context.GEN_GOBLIN )
     ENC_LEVEL = 3
     COMPANIONS = (Goblin,GoblinArcher)
-
+    COMBAT_AI = aibrain.BasicTechnicalAI()
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_CRUSHING )
-
     TECHNIQUES = ( spells.firespells.FIRE_BOLT, spells.lunarspells.WIZARD_MISSILE,
         spells.solarspells.MINOR_CURE )
-
     def init_monster( self ):
         self.levels.append( base.Spellcaster( 3, self ) )
 
@@ -189,7 +187,7 @@ class GoblinLeader( base.Monster ):
     SPRITENAME = "monster_goblins.png"
     FRAME = 1
     TEMPLATES = ()
-    MOVE_POINTS = 12
+    MOVE_POINTS = 10
     VOICE = dialogue.voice.ORCISH
     GP_VALUE = 50
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.HAB_TUNNELS,
@@ -284,7 +282,7 @@ class GoblinGuard( base.Monster ):
     SPRITENAME = "monster_goblins.png"
     FRAME = 10
     TEMPLATES = ()
-    MOVE_POINTS = 12
+    MOVE_POINTS = 10
     VOICE = dialogue.voice.ORCISH
     GP_VALUE = 50
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
@@ -304,7 +302,7 @@ class GoblinHero( base.Monster ):
     SPRITENAME = "monster_goblins.png"
     FRAME = 4
     TEMPLATES = ()
-    MOVE_POINTS = 10
+    MOVE_POINTS = 8
     VOICE = dialogue.voice.ORCISH
     GP_VALUE = 110
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
@@ -325,7 +323,7 @@ class GoblinKing( base.Monster ):
     SPRITENAME = "monster_goblins.png"
     FRAME = 9
     TEMPLATES = ()
-    MOVE_POINTS = 10
+    MOVE_POINTS = 8
     VOICE = dialogue.voice.ORCISH
     GP_VALUE = 195
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.HAB_TUNNELS,
@@ -374,7 +372,7 @@ class Hobgoblin( base.Monster ):
     SPRITENAME = "monster_goblins.png"
     FRAME = 11
     TEMPLATES = ()
-    MOVE_POINTS = 12
+    MOVE_POINTS = 10
     VOICE = dialogue.voice.ORCISH
     GP_VALUE = 12
     HABITAT = ( context.HAB_EVERY, context.HAB_CAVE, context.SET_EVERY,
@@ -396,7 +394,7 @@ class HobgoblinFighter( base.Monster ):
     SPRITENAME = "monster_goblins.png"
     FRAME = 41
     TEMPLATES = ()
-    MOVE_POINTS = 12
+    MOVE_POINTS = 10
     VOICE = dialogue.voice.ORCISH
     GP_VALUE = 30
     HABITAT = ( context.HAB_EVERY, context.HAB_CAVE, context.SET_EVERY,
@@ -418,7 +416,7 @@ class HobgoblinThief( base.Monster ):
     SPRITENAME = "monster_goblins.png"
     FRAME = 15
     TEMPLATES = ()
-    MOVE_POINTS = 12
+    MOVE_POINTS = 10
     VOICE = dialogue.voice.ORCISH
     GP_VALUE = 30
     HABITAT = ( context.HAB_EVERY, context.HAB_CAVE, context.SET_EVERY,
@@ -439,7 +437,7 @@ class HobgoblinMage( base.Monster ):
     SPRITENAME = "monster_goblins.png"
     FRAME = 13
     TEMPLATES = ()
-    MOVE_POINTS = 12
+    MOVE_POINTS = 10
     VOICE = dialogue.voice.ORCISH
     GP_VALUE = 30
     HABITAT = ( context.HAB_EVERY, context.HAB_CAVE, context.SET_EVERY,
@@ -464,7 +462,7 @@ class HobgoblinPriest( base.Monster ):
     SPRITENAME = "monster_goblins.png"
     FRAME = 14
     TEMPLATES = ()
-    MOVE_POINTS = 12
+    MOVE_POINTS = 10
     VOICE = dialogue.voice.ORCISH
     GP_VALUE = 36
     HABITAT = ( context.HAB_EVERY, context.HAB_CAVE, context.SET_EVERY,
@@ -490,7 +488,7 @@ class HobgoblinWarlord( base.Monster ):
     SPRITENAME = "monster_goblins.png"
     FRAME = 16
     TEMPLATES = ()
-    MOVE_POINTS = 12
+    MOVE_POINTS = 10
     VOICE = dialogue.voice.ORCISH
     GP_VALUE = 80
     HABITAT = ( context.HAB_EVERY, context.HAB_CAVE, context.SET_EVERY,
