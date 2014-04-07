@@ -95,7 +95,7 @@ class GenerallyGeneralStore( Plot ):
         int_mainroom.decorate = mapgen.GeneralStoreDec()
         npc = monsters.generate_npc( job=monsters.base.Merchant )
         interior.name = random.choice( self.NAME_PATTERNS ).format( npc )
-        gate_1.mini_map_label = interior.name
+        gate_1.mini_map_label = "General Store"
         int_mainroom.contents.append( npc )
         self.register_element( "SHOPKEEPER", npc )
         self.shop = services.Shop( rank=self.rank+2 )
@@ -147,7 +147,7 @@ class GenericInn( Plot ):
 
         npc = monsters.generate_npc()
         interior.name = random.choice( self.NAME_PATTERNS ).format( npc, random.choice(monsters.MONSTER_LIST).name, random.choice(monsters.MONSTER_LIST).name )
-        gate_1.mini_map_label = interior.name
+        gate_1.mini_map_label = "Inn"
         int_mainroom.contents.append( npc )
         self.register_element( "SHOPKEEPER", npc )
 
@@ -194,7 +194,7 @@ class GenericLibrary( Plot ):
         gate_2 = waypoints.GateDoor()
         gate_1.destination = interior
         gate_1.otherside = gate_2
-        gate_1.mini_map_label = interior.name
+        gate_1.mini_map_label = "Library"
         gate_2.destination = locale
         gate_2.otherside = gate_1
         self.register_scene( nart, interior, igen, ident="BUILDING_INT", dident="LOCALE" )
@@ -249,7 +249,7 @@ class GenericTemple( Plot ):
         gate_2 = waypoints.GateDoor()
         gate_1.destination = interior
         gate_1.otherside = gate_2
-        gate_1.mini_map_label = interior.name
+        gate_1.mini_map_label = "Temple"
         gate_2.destination = locale
         gate_2.otherside = gate_1
 
@@ -317,7 +317,7 @@ class GenericWeaponShop( Plot ):
 
         npc = monsters.generate_npc( job=monsters.base.Merchant )
         interior.name = random.choice( self.NAME_PATTERNS ).format( npc )
-        gate_1.mini_map_label = interior.name
+        gate_1.mini_map_label = "Weapon Shop"
         int_mainroom.contents.append( npc )
         self.register_element( "SHOPKEEPER", npc )
 
