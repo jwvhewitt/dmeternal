@@ -339,7 +339,7 @@ class Combat( object ):
 
         elif choice:
             # Presumably, this is an invocation of some kind.
-            if explo.invoke_technique( chara, choice, choice.com_tar ):
+            if explo.pc_use_technique( chara, choice, choice.com_tar ):
                 self.end_turn( chara )
 
     def do_player_action( self, explo, chara ):

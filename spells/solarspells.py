@@ -36,6 +36,14 @@ HEALING_LIGHT = Spell( "Healing Light",
     rank=3, gems={SOLAR:2}, com_tar=targetarea.SingleTarget(reach=10), ai_tar=invocations.vs_wounded_ally,
     exp_tar=targetarea.SinglePartyMember(), mpfudge=1, shot_anim=animobs.YellowVortex )
 
+SUNRAY = Spell( "Sunray",
+    "This attack does 3d6 solar damage when it hits.",
+    effects.OpposedRoll( att_modifier=10, on_success = (
+        effects.HealthDamage( (3,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_SOLAR, anim=animobs.YellowExplosion )
+    ,), on_failure = (
+        effects.NoEffect( anim=animobs.SmallBoom )
+    ,) ), rank=3, gems={SOLAR:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.YellowVortex, ai_tar=invocations.vs_enemy )
+
 
 # CIRCLE 4
 

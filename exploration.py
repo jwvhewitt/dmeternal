@@ -356,6 +356,13 @@ class Explorer( object ):
                         i.equipped = False
                         i.place( self.scene, m.pos )
 
+    def invoke_technique( self, tech, originator, area_of_effect, opening_anim = None, delay_point=None ):
+        if self.camp.fight and self.camp.fight.cstat[originator].silent and isinstance( tech, spells.Spell ):
+            pass
+        else:
+            self.invoke_effect( tech.fx, originator, area_of_effect, opening_anim, delay_point )
+        tech.pay_invocation_price( originator )
+
     SELECT_AREA_CAPTION_ZONE = pygame.Rect( 32, 32, 300, 15 )
     def select_area( self, origin, aoegen, caption = None ):
         # Start by determining the possible target tiles.
@@ -397,7 +404,7 @@ class Explorer( object ):
         return target
 
 
-    def invoke_technique( self, chara, tech, aoegen ):
+    def pc_use_technique( self, chara, tech, aoegen ):
         """Let chara invoke tech, selecting area of effect, return True if not cancelled."""
         if aoegen.AUTOMATIC:
             # This is easy.
@@ -421,8 +428,7 @@ class Explorer( object ):
                 delay_point = target
             else:
                 delay_point = None
-            self.invoke_effect( tech.fx, chara, tiles, opening_anim = shot, delay_point = delay_point )
-            tech.pay_invocation_price( chara )
+            self.invoke_technique( tech, chara, tiles, opening_anim = shot, delay_point = delay_point )
             return True
         else:
             return False
@@ -568,7 +574,7 @@ class Explorer( object ):
             elif it:
                 # A spell was selected. Deal with it.
                 if pc.is_alright() and it.can_be_invoked( pc ):
-                    self.invoke_technique( pc, it, it.exp_tar )
+                    self.pc_use_technique( pc, it, it.exp_tar )
                 else:
                     self.alert( "That technique cannot be used right now." )
                 keep_going = False

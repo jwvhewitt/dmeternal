@@ -22,6 +22,16 @@ PROBE = Spell( "Probe",
 
 # CIRCLE TWO
 
+SILENCE = Spell( "Silence",
+    "Causes living creatures in a 2 tile radius to fall asleep.",
+    effects.OpposedRoll( att_modifier=0, on_success = (
+        effects.CauseSilence(),
+    ), on_failure = (
+        effects.NoEffect( anim=animobs.SmallBoom ),
+    )),
+    rank=2, gems={AIR:1}, com_tar=targetarea.Blast(radius=2), ai_tar=invocations.vs_enemy )
+
+
 # CIRCLE THREE
 
 THUNDER_STRIKE = Spell( "Thunder Strike",
@@ -31,4 +41,9 @@ THUNDER_STRIKE = Spell( "Thunder Strike",
     ,), on_failure = (
         effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_LIGHTNING, anim=animobs.Spark )
     ,) ), rank=3, gems={AIR:1}, com_tar=targetarea.Line(), ai_tar=invocations.vs_enemy )
+
+MAGIC_MAP = Spell( "Magic Map",
+    "This spell reveals detailed knowledge about the local area.",
+    effects.MagicMap( anim=animobs.BlueSparkle ),
+     rank=3, gems={AIR:2}, mpfudge=8, com_tar=targetarea.SelfOnly(), exp_tar=targetarea.SelfOnly() )
 

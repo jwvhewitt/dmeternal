@@ -50,8 +50,7 @@ class BasicAI( object ):
             else:
                 delay_point = None
 
-            explo.invoke_effect( self.tech.fx, chara, self.tech.com_tar.get_area( explo.camp,chara.pos,target), opening_anim = shot, delay_point = delay_point )
-            self.tech.pay_invocation_price( chara )
+            explo.invoke_technique( self.tech, chara, self.tech.com_tar.get_area( explo.camp,chara.pos,target), opening_anim = shot, delay_point = delay_point )
             comba.end_turn( chara )
             return True
 

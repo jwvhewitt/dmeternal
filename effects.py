@@ -316,6 +316,26 @@ class CauseSleep( NoEffect ):
 
         return self.children
 
+class CauseSilence( NoEffect ):
+    """Set the Silence status to True."""
+    def __init__(self, children=(), anim=animobs.SpeakSilence ):
+        if not children:
+            children = list()
+        self.children = children
+        self.anim = anim
+
+    def handle_effect( self, camp, originator, pos, anims, delay=0 ):
+        """Do whatever is required of effect; return list of child effects."""
+        target = camp.scene.get_character_at_spot( pos )
+        if target:
+            # Start by activating the target.
+            camp.activate_monster( target )
+
+            if camp.fight:
+                camp.fight.cstat[target].silent = True
+
+        return self.children
+
 
 class Enchant( NoEffect ):
     """Adds an enchantment to the target's condition list."""
@@ -408,10 +428,20 @@ class Probe( NoEffect ):
             target.probe_me = True
         return self.children
 
+class MagicMap( NoEffect ):
+    """Reveals all tiles; target doesn't matter."""
+    def handle_effect( self, camp, originator, pos, anims, delay=0 ):
+        """Do whatever is required of effect; return list of child effects."""
+        for x in range( camp.scene.width ):
+            for y in range( camp.scene.height ):
+                camp.scene.map[x][y].visible = True
+        return self.children
+
 
 ANIMAL = {stats.UNDEAD: False, stats.DEMON: False, stats.ELEMENTAL: False, \
     stats.PLANT: False, stats.CONSTRUCT: False}
-
+ALIVE = {stats.UNDEAD: False, stats.DEMON: False, stats.ELEMENTAL: False, \
+    stats.CONSTRUCT: False}
 UNDEAD = {stats.UNDEAD: True }
 UNHOLY = {(stats.UNDEAD,stats.DEMON): True }
 CONSTRUCT = {(stats.CONSTRUCT,stats.BONE): True }

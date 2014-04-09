@@ -35,6 +35,19 @@ ACID_SPRAY = Spell( "Acid Spray",
 
 # CIRCLE 3
 
+SHAPE_FLESH = Spell( "Shape Flesh",
+    "By touching a living creature, you may reshape its flesh so as to either cause or cure 3-18 damage.",
+    effects.TargetIs( effects.ALIVE, on_true= (
+        effects.TargetIsAlly( on_true=(
+            effects.HealthRestore( dice=(3,6,0) ), ),),
+        effects.TargetIsEnemy( on_true=(
+            effects.HealthDamage( (3,6,0), stat_bonus=None, element=stats.RESIST_ATOMIC, anim=animobs.RedBoom )
+        ,))
+    )),
+    rank=3, gems={EARTH:2}, com_tar=targetarea.SingleTarget(reach=1),
+    exp_tar=targetarea.SinglePartyMember(), mpfudge = -1 )
+
+
 # CIRCLE 4
 
 # CIRCLE 5
