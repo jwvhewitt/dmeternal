@@ -9,7 +9,7 @@ class PlotError( Exception ):
 
 class Chapter( object ):
     """ Contains basic information about this chapter."""
-    def __init__( self, num=1, start_rank=1, end_rank=5, follows=None ):
+    def __init__( self, num=1, start_rank=1, end_rank=5, world = None, follows=None ):
         if follows:
             num = follows.num + 1
             start_rank = follows.end_rank
@@ -17,6 +17,7 @@ class Chapter( object ):
         self.num = num
         self.start_rank = start_rank
         self.end_rank = end_rank
+        self.world = world
 
 class PlotState( object ):
     """For passing state information to subplots."""
@@ -58,7 +59,7 @@ class Plot( object ):
     UNIQUE = False
     propp = 0
     setting = False
-    chapter = 1
+    chapter = None
     rank = 1
     active = False
     # Set scope to the scene identifier of the scene this plot's scripts are
@@ -158,9 +159,14 @@ class Plot( object ):
     def register_scene( self, nart, myscene, mygen, ident=None, dident=None, rank=None ):
         if not myscene.name:
             myscene.name = namegen.DEFAULT.gen_word()
+        if not dident:
+            if self.chapter and self.chapter.world:
+                self.chapter.world.contents.append( myscene )
+                self.move_records.append( (myscene,self.chapter.world.contents) )
+            else:
+                nart.camp.contents.append( myscene )
+                self.move_records.append( (myscene,nart.camp.contents) )
         self.register_element( ident, myscene, dident )
-        nart.camp.contents.append( myscene )
-        self.move_records.append( (myscene,nart.camp.contents) )
         nart.generators.append( mygen )
         self.move_records.append( (mygen,nart.generators) )
         myscene.rank = rank or self.rank

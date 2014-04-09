@@ -29,6 +29,7 @@ class AbandonedMineEntrance( Plot ):
     def custom_init( self, nart ):
         prev = self.elements[ "PREV" ]
         next = self.elements[ "NEXT" ]
+        self.move_element( next, prev )
 
         myzone1 = self.register_element( "_P_ROOM", mapgen.MountainRoom(tags=(context.GOAL,context.CIVILIZED,)), "PREV" )
         myzone2 = self.register_element( "_N_ROOM", mapgen.SharpRoom(tags=(context.ENTRANCE,)), "NEXT" )
@@ -63,6 +64,7 @@ class DefaultDungeonEntrance( Plot ):
     def custom_init( self, nart ):
         prev = self.elements[ "PREV" ]
         next = self.elements[ "NEXT" ]
+        self.move_element( next, prev )
 
         myzone1 = self.register_element( "_P_ROOM", mapgen.MountainRoom(tags=(context.GOAL,)), "PREV" )
         myzone2 = self.register_element( "_N_ROOM", nart.get_map_generator( next ).DEFAULT_ROOM(tags=(context.ENTRANCE,)), "NEXT" )
@@ -107,6 +109,7 @@ class DefaultGoUp( Plot ):
     def custom_init( self, nart ):
         prev = self.elements[ "PREV" ]
         next = self.elements[ "NEXT" ]
+        self.move_element( next, prev )
 
         myzone1 = self.register_element( "_P_ROOM", nart.get_map_generator( prev ).DEFAULT_ROOM(tags=(context.GOAL,)), "PREV" )
         myzone2 = self.register_element( "_N_ROOM", nart.get_map_generator( next ).DEFAULT_ROOM(tags=(context.ENTRANCE,)), "NEXT" )
@@ -147,6 +150,8 @@ class DefaultGoDown( Plot ):
     def custom_init( self, nart ):
         prev = self.elements[ "PREV" ]
         next = self.elements[ "NEXT" ]
+
+        self.move_element( next, prev )
 
         myzone1 = self.register_element( "_P_ROOM", nart.get_map_generator( prev ).DEFAULT_ROOM(tags=(context.GOAL,)), "PREV" )
         myzone2 = self.register_element( "_N_ROOM", nart.get_map_generator( next ).DEFAULT_ROOM(tags=(context.ENTRANCE,)), "NEXT" )
@@ -251,11 +256,14 @@ class ThroughTheWell( Plot ):
             stairs_2.otherside = stairs_4
             stairs_4.destination = next
             stairs_4.otherside = stairs_2
+            self.move_element( next, self.levels[-1] )
+            self.move_element( self.levels[0], prev )
         else:
             self.well_destination = next
             self.well_otherside = stairs_2
             stairs_2.destination = prev
             stairs_2.otherside = well
+            self.move_element( next, prev )
         return True
     def use_well( self, explo ):
         explo.camp.destination = self.well_destination

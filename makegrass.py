@@ -22,7 +22,7 @@ if __name__=='__main__':
 
     for y in range( sample.get_height() ):
         for x in range( sample.get_width() ):
-            c = sample.get_at( (x,y) )
+            c = tuple( sample.get_at( (x,y) ) )
             if c != (0,0,0,255):
                 spots.append( c )
                 mc_spots[(last_a,last_b,last_c)].append(c)
@@ -53,7 +53,7 @@ if __name__=='__main__':
             last_a,last_b,last_c = last_b,last_c,c
 
     pygame.image.save( screen , "out_markovchain.png" )
-    pygame.display.flip()
+#    pygame.display.flip()
 
     while True:
         ev = pygame.event.wait()

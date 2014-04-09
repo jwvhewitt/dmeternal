@@ -44,6 +44,8 @@ class CaveDungeon( Plot ):
             n += 1
             pstate = PlotState( rank = next.rank, elements={"PREV":prev,"NEXT":next} ).based_on( self )
             sp = self.add_sub_plot( nart, "CONNECT", pstate )
+#            print str( prev ) + " takes " + str( next )
+#            prev.contents.append( next )
             prev = next
 
         return True

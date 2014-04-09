@@ -11,6 +11,7 @@ import services
 import teams
 import characters
 import namegen
+import worlds
 
 """ The INTRO is divided into two parts. INTRO_1 sets the setting and maybe
     also changes the Propp state. INTRO_2 is the branch to the first chapter;
@@ -36,8 +37,9 @@ class OurFineCity( Plot ):
         if pstate.setting in (None,context.SET_RENFAN):
             return True
     def custom_init( self, nart ):
-        """Create the chapter + city, then load INTRO_2"""
-        self.chapter = Chapter()
+        """Create the world + chapter + city, then load INTRO_2"""
+        w = worlds.World()
+        self.chapter = Chapter( world=w )
         self.add_first_locale_sub_plot( nart )
         self.add_sub_plot( nart, "INTRO_2", ident="next" )
         return True

@@ -11,6 +11,7 @@ import services
 import teams
 import characters
 import random
+import worlds
 
 #
 #   **********************
@@ -29,7 +30,7 @@ class CityOnEdgeOfCiv( Plot ):
     LABEL = "CITY_SCENE"
     def custom_init( self, nart ):
         """Create map, fill with city + services."""
-        myscene = maps.Scene( 129, 129, sprites={maps.SPRITE_WALL: "terrain_wall_lightbrick.png"},
+        myscene = maps.Scene( 129, 129, sprites={maps.SPRITE_GROUND: "terrain_ground_forest.png", maps.SPRITE_WALL: "terrain_wall_lightbrick.png"},
             biome=context.HAB_FOREST, setting=self.setting,
             desctags=(context.MAP_WILDERNESS,context.DES_CIVILIZED,) )
         mymapgen = mapgen.EdgeOfCivilization( myscene )
@@ -45,6 +46,8 @@ class CityOnEdgeOfCiv( Plot ):
         myroom.contents.append( monsters.generate_npc(team=myteam) )
 
         self.register_element( "ENTRANCE", myent )
+
+        self.chapter.world.add_entrance( myscene, myscene.name, worlds.W_CITY, myent, True )
 
         self.add_sub_plot( nart, "CITY_GENERALSTORE" )
         self.add_sub_plot( nart, "CITY_WEAPONSHOP" )

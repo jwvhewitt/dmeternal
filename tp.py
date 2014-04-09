@@ -2,16 +2,25 @@
 
 import narrator
 import context
+import maps
 
 print "Hellow World!"
 init = narrator.plots.PlotState(rank=1)
 nart = narrator.Narrative( init )
 
 def display_contents( thing, lead="" ):
+    thing.identified = True
     print lead + str( thing )
     if hasattr( thing, "contents" ):
         for sp in thing.contents:
             display_contents(sp,lead+" ")
+
+def display_scenes( thing, lead="" ):
+    if isinstance( thing, maps.Scene ):
+        print lead + str( thing )
+    if hasattr( thing, "contents" ):
+        for sp in thing.contents:
+            display_scenes(sp,lead+" ")
 
 def display_contents2( thing, lead="" ):
     for t in narrator.plots.all_contents( thing ):
@@ -42,9 +51,10 @@ if __name__=='__main__':
         pygwrap.init()
         rpgmenu.init()
 
+        display_scenes( nart.camp )
+
         nart.build()
         camp = nart.camp
-#        display_contents( camp )
 
         camp.party = campaign.load_party( screen )
 

@@ -185,6 +185,38 @@ class InvExchange( object ):
                 keep_going = False
         return self.ilist
 
+class WorldExplorer( object ):
+    def __init__( self, explo ):
+        self.explo = explo
+        self.w = explo.camp.current_world()
+        self.view()
+
+    def draw( self, screen ):
+        self.explo.view( screen )
+        pygwrap.map_border.render( screen, self.dest )
+        self.pic.render( screen, self.dest, 0 )
+        pos = self.menu.items[ self.menu.selected_item ].value.world_map_pos.coords
+        if pos and ( self.explo.view.phase // 5 ) % 2 == 0:
+            self.quill.render( screen, ( self.dest.x + pos[0] * 32 + 16, self.dest.y + pos[1] * 32 ) )
+
+    def view( self ):
+        self.pic = image.Image( frame_width = 480, frame_height = 480 )
+        self.quill = image.Image( "sys_quill.png", 21, 18 )
+        mmbits = image.Image( "sys_worldmapbits.png", 32, 32 )
+        self.dest = self.pic.bitmap.get_rect( center=(self.explo.screen.get_width()//2-100, self.explo.screen.get_height()//2 ) )
+        self.menu = rpgmenu.Menu(self.explo.screen,self.explo.screen.get_width()//2+215, self.explo.screen.get_height()//2-200, 150, 400, predraw=self.draw )
+
+        for t in self.w.contents:
+            if hasattr( t, "world_map_pos" ) and t.world_map_pos.visible:
+                self.menu.add_item( t.world_map_pos.name, t )
+                mmbits.render( self.pic.bitmap, (t.world_map_pos.coords[0]*32,t.world_map_pos.coords[1]*32), t.world_map_pos.icon )
+
+        self.menu.sort()
+        dest = self.menu.query()
+        if dest:
+            pass
+
+
 class MiniMap( object ):
     def __init__( self, explo ):
         self.explo = explo
@@ -219,9 +251,14 @@ class MiniMap( object ):
             if hasattr( t, "mini_map_label" ) and self.explo.scene.get_visible( *t.pos ):
                 self.menu.add_item( t.mini_map_label, t.pos )
         self.menu.sort()
+        if hasattr( self.explo.scene, "world_map_pos" ):
+            self.menu.add_item( "[World Map]", 0 )
+
         pos = self.menu.query()
         if pos:
             self.explo.view.focus( self.explo.screen, *pos )
+        elif pos is 0:
+            WorldExplorer( self.explo )
 
 # Rubicon Hiscock had her entire body tattooed by a cloister of Gothic monks, and in this way she became illuminated.
 

@@ -34,6 +34,7 @@ import pygwrap
 import enchantments
 import collections
 import container
+import maps
 
 
 class Campaign( object ):
@@ -158,6 +159,20 @@ class Campaign( object ):
             if p.active:
                 yield p
 
+    def current_root_scene( self ):
+        # Return the city where the action's currently taking place.
+        s = self.scene
+        while hasattr( s, "parent_scene" ) and isinstance( s.parent_scene, maps.Scene ):
+            s = s.parent_scene
+        return s
+
+    def current_world( self ):
+        # Return the world where the action's currently taking place.
+        s = self.current_root_scene()
+        if hasattr( s, "world_map_pos" ):
+            return s.world_map_pos.parent_world
+
+
 
 def load_party( screen ):
     # Select up to four characters to form the new party.
@@ -209,7 +224,6 @@ def fix_characters():
 if __name__=='__main__':
     import pygame
     import rpgmenu
-    import maps
     import items
     import characters
     import teams

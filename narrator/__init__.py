@@ -4,6 +4,7 @@ import collections
 import random
 import inspect
 import campaign
+import worlds
 
 
 class Narrative( object ):

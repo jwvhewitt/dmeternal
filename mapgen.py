@@ -874,6 +874,7 @@ class CaveScene( RandomScene ):
 
 class SubtleMonkeyTunnelScene( RandomScene ):
     gapfill = MonsterFiller()
+    DEFAULT_ROOM = SharpRoom
     def arrange_contents( self, gb ):
         # Step Two: Arrange subcomponents within this area.
         closed_area = list()
