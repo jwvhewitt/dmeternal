@@ -49,6 +49,13 @@ DISPEL_EVIL = Spell( "Dispel Evil",
 
 # CIRCLE THREE
 
+HEALING_LIGHT = Spell( "Healing Light",
+    "Blessed radiance will heal one ally for 3-24 damage.",
+    effects.HealthRestore( dice=(3,8,0) ),
+    rank=3, gems={AIR:1,SOLAR:2}, com_tar=targetarea.SingleTarget(reach=10), ai_tar=invocations.vs_wounded_ally,
+    exp_tar=targetarea.SinglePartyMember(), shot_anim=animobs.YellowVortex )
+
+
 # CIRCLE FOUR
 
 BLIZZARD = Spell( "Blizzard",

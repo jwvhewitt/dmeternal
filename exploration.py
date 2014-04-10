@@ -15,6 +15,7 @@ import stats
 import services
 import image
 import rpgmenu
+import spells
 
 
 # Commands should be callable objects which take the explorer and return a value.
@@ -358,7 +359,8 @@ class Explorer( object ):
 
     def invoke_technique( self, tech, originator, area_of_effect, opening_anim = None, delay_point=None ):
         if self.camp.fight and self.camp.fight.cstat[originator].silent and isinstance( tech, spells.Spell ):
-            pass
+            anims = [ animobs.SpeakSilence(originator.pos), ]
+            animobs.handle_anim_sequence( self.screen, self.view, anims )
         else:
             self.invoke_effect( tech.fx, originator, area_of_effect, opening_anim, delay_point )
         tech.pay_invocation_price( originator )

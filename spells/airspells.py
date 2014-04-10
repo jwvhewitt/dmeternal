@@ -31,6 +31,14 @@ SILENCE = Spell( "Silence",
     )),
     rank=2, gems={AIR:1}, com_tar=targetarea.Blast(radius=2), ai_tar=invocations.vs_enemy )
 
+SHOUT = Spell( "Shout",
+    "The caster's words become a sonic wave, doing 1d8 wind damage to all targets within reach.",
+    effects.OpposedRoll( on_success = (
+        effects.HealthDamage( (1,8,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_WIND, anim=animobs.SonicHit )
+    ,), on_failure = (
+        effects.HealthDamage( (1,4,0), stat_bonus=None, element=stats.RESIST_WIND, anim=animobs.SonicHit )
+    ,) ), rank=1, gems={AIR:2}, com_tar=targetarea.Cone(reach=3), ai_tar=invocations.vs_enemy )
+
 
 # CIRCLE THREE
 

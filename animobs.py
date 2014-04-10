@@ -362,7 +362,7 @@ class SpeakSad( SpeakHello ):
 
 class SpeakSilence( AnimOb ):
     def __init__(self, pos=(0,0), loop=1, delay=1 ):
-        super(SpeakHello, self).__init__(sprite_name="fx_emoticons.png",pos=pos,
+        super(SpeakSilence, self).__init__(sprite_name="fx_emoticons.png",pos=pos,
             start_frame=5, end_frame=7,
             loop=loop,y_off=-16, delay=delay, ticks_per_frame=3)
 

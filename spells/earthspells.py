@@ -21,7 +21,7 @@ CALL_CRITTER = Spell( "Call Critter",
 
 # CIRCLE 2
 
-ACID_SPRAY = Spell( "Acid Spray",
+ACID_BOLT = Spell( "Acid Bolt",
     "This attack does 2d5 acid damage to a single target, and may corrode the target's armor.",
     effects.OpposedRoll( on_success = (
         effects.HealthDamage( (2,5,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_ACID, anim=animobs.GreenExplosion ),
@@ -43,6 +43,8 @@ SHAPE_FLESH = Spell( "Shape Flesh",
         effects.TargetIsEnemy( on_true=(
             effects.HealthDamage( (3,6,0), stat_bonus=None, element=stats.RESIST_ATOMIC, anim=animobs.RedBoom )
         ,))
+    ), on_false = (
+        effects.NoEffect( anim=animobs.SmallBoom ),
     )),
     rank=3, gems={EARTH:2}, com_tar=targetarea.SingleTarget(reach=1),
     exp_tar=targetarea.SinglePartyMember(), mpfudge = -1 )

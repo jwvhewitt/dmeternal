@@ -474,7 +474,7 @@ class HobgoblinPriest( base.Monster ):
 
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_CRUSHING )
 
-    TECHNIQUES = ( spells.solarspells.HEALING_LIGHT, spells.waterspells.FREEZE_FOE,
+    TECHNIQUES = ( spells.priestspells.HEALING_LIGHT, spells.waterspells.FREEZE_FOE,
         spells.airspells.THUNDER_STRIKE )
 
     def init_monster( self ):

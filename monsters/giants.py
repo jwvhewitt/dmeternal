@@ -73,8 +73,8 @@ class BarbarianShaman( base.Monster ):
     LONER = True
     COMPANIONS = (Barbarian,BarbarianScout)
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )
-    TECHNIQUES = ( spells.magespells.SHOCK_SPHERE, spells.earthspells.ACID_SPRAY,
-        spells.waterspells.FREEZE_FOE
+    TECHNIQUES = ( spells.magespells.SHOCK_SPHERE, spells.earthspells.ACID_BOLT,
+        spells.waterspells.FREEZE_FOE, spells.airspells.SHOUT
     )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 5, self ) )

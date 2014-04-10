@@ -30,12 +30,6 @@ MODERATE_CURE = Spell( "Moderate Cure",
 
 # CIRCLE 3
 
-HEALING_LIGHT = Spell( "Healing Light",
-    "Blessed radiance will heal one ally for 3-24 damage.",
-    effects.HealthRestore( dice=(3,8,0) ),
-    rank=3, gems={SOLAR:2}, com_tar=targetarea.SingleTarget(reach=10), ai_tar=invocations.vs_wounded_ally,
-    exp_tar=targetarea.SinglePartyMember(), mpfudge=1, shot_anim=animobs.YellowVortex )
-
 SUNRAY = Spell( "Sunray",
     "This attack does 3d6 solar damage when it hits.",
     effects.OpposedRoll( att_modifier=10, on_success = (
