@@ -37,10 +37,10 @@ WEAPON_BLESSING = Spell( "Weapon Blessing",
     rank=2, gems={AIR:1,SOLAR:1}, com_tar=targetarea.SinglePartyMember() )
 
 DISPEL_EVIL = Spell( "Dispel Evil",
-    "All unholy creatures within three tiles will be struck for 1-12 damage.",
+    "All unholy creatures within three tiles will be struck for 1-10 damage.",
     effects.TargetIs( pat=effects.UNHOLY, on_true = (
         effects.OpposedRoll( on_success = (
-            effects.HealthDamage( (1,12,0), stat_bonus=stats.CHARISMA, element=stats.RESIST_SOLAR, anim=animobs.YellowExplosion )
+            effects.HealthDamage( (1,10,0), stat_bonus=stats.CHARISMA, element=stats.RESIST_SOLAR, anim=animobs.YellowExplosion )
         ,), on_failure = (
             effects.HealthDamage( (1,4,0), stat_bonus=None, element=stats.RESIST_SOLAR, anim=animobs.YellowExplosion )
     ,) ) ,) ), rank=2, gems={SOLAR:1,WATER:1}, com_tar=targetarea.SelfCentered(radius=3,exclude_middle=True), mpfudge=-2,
@@ -59,18 +59,18 @@ HEALING_LIGHT = Spell( "Healing Light",
 # CIRCLE FOUR
 
 BLIZZARD = Spell( "Blizzard",
-    "Conjures a storm which causes 2d8 cold damage and 2d8 wind damage.",
+    "Conjures a storm which causes 2d5 cold damage and 2d5 wind damage.",
     effects.OpposedRoll( on_success = (
-        effects.HealthDamage( (2,8,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_COLD, anim=animobs.Blizzard,
-            on_success= (effects.HealthDamage( (2,8,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_WIND, anim=animobs.Blizzard),),
-            on_failure= (effects.HealthDamage( (2,8,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_WIND, anim=animobs.Blizzard),),
-            on_death= (effects.HealthDamage( (2,8,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_WIND, anim=animobs.Blizzard),),
+        effects.HealthDamage( (2,5,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_COLD, anim=animobs.Blizzard,
+            on_success= (effects.HealthDamage( (2,5,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_WIND, anim=animobs.Blizzard),),
+            on_failure= (effects.HealthDamage( (2,5,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_WIND, anim=animobs.Blizzard),),
+            on_death= (effects.HealthDamage( (2,5,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_WIND, anim=animobs.Blizzard),),
      )
     ,), on_failure = (
-        effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_COLD, anim=animobs.Blizzard,
-            on_success= (effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_WIND, anim=animobs.Blizzard),),
-            on_failure= (effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_WIND, anim=animobs.Blizzard),),
-            on_death= (effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_WIND, anim=animobs.Blizzard),),
+        effects.HealthDamage( (1,5,0), stat_bonus=None, element=stats.RESIST_COLD, anim=animobs.Blizzard,
+            on_success= (effects.HealthDamage( (1,5,0), stat_bonus=None, element=stats.RESIST_WIND, anim=animobs.Blizzard),),
+            on_failure= (effects.HealthDamage( (1,5,0), stat_bonus=None, element=stats.RESIST_WIND, anim=animobs.Blizzard),),
+            on_death= (effects.HealthDamage( (1,5,0), stat_bonus=None, element=stats.RESIST_WIND, anim=animobs.Blizzard),),
      )
     ,) ), rank=4, gems={WATER:1,AIR:1}, com_tar=targetarea.Blast(radius=4, delay_from=1),
     ai_tar=invocations.vs_enemy )

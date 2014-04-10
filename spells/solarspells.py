@@ -73,6 +73,18 @@ MAXIMUM_CURE = Spell( "Maximum Cure",
 
 # CIRCLE 7
 
+SUNBURST = Spell( "Sunburst",
+    "Conjures an intense ball of light which does 5d10 solar damage to all enemies in a 3 tile radius.",
+    effects.TargetIsEnemy( on_true=(
+        effects.OpposedRoll( on_success = (
+            effects.HealthDamage( (5,10,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_SOLAR, anim=animobs.YellowExplosion )
+        ,), on_failure = (
+            effects.HealthDamage( (2,12,0), stat_bonus=None, element=stats.RESIST_SOLAR, anim=animobs.YellowExplosion ), )
+        ),
+        ), on_false = (effects.NoEffect( anim=animobs.YellowExplosion ),)
+    ), rank=7, gems={SOLAR:2}, com_tar=targetarea.Blast(radius=3,delay_from=1), shot_anim=animobs.GoldStone, ai_tar=invocations.vs_enemy )
+
+
 # CIRCLE 8
 
 # CIRCLE 9

@@ -55,3 +55,38 @@ MAGIC_MAP = Spell( "Magic Map",
     effects.MagicMap( anim=animobs.BlueSparkle ),
      rank=3, gems={AIR:2}, mpfudge=8, com_tar=targetarea.SelfOnly(), exp_tar=targetarea.SelfOnly() )
 
+
+# CIRCLE FOUR
+
+
+
+# CIRCLE FIVE
+
+TORNADO = Spell( "Tornado",
+    "Conjures a whirlwind which does 4d8 wind damage to all targets in a radius of 3 tiles.",
+    effects.OpposedRoll( def_stat=stats.REFLEXES, on_success = (
+        effects.HealthDamage( (4,8,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_WIND, anim=animobs.Spiral )
+    ,), on_failure = (
+        effects.HealthDamage( (1,16,0), stat_bonus=None, element=stats.RESIST_WIND, anim=animobs.Spiral )
+    ,) ), rank=5, gems={AIR:3}, com_tar=targetarea.Blast(radius=3), shot_anim=animobs.Whirlwind, ai_tar=invocations.vs_enemy )
+
+
+# CIRCLE SIX
+
+
+
+# CIRCLE SEVEN
+
+
+
+# CIRCLE EIGHT
+
+
+
+# CIRCLE NINE
+
+
+
+
+
+
