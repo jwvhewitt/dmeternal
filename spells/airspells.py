@@ -37,7 +37,7 @@ SHOUT = Spell( "Shout",
         effects.HealthDamage( (1,8,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_WIND, anim=animobs.SonicHit )
     ,), on_failure = (
         effects.HealthDamage( (1,4,0), stat_bonus=None, element=stats.RESIST_WIND, anim=animobs.SonicHit )
-    ,) ), rank=1, gems={AIR:2}, com_tar=targetarea.Cone(reach=3), ai_tar=invocations.vs_enemy )
+    ,) ), rank=2, gems={AIR:2}, com_tar=targetarea.Cone(reach=3), ai_tar=invocations.vs_enemy )
 
 
 # CIRCLE THREE
@@ -73,6 +73,18 @@ TORNADO = Spell( "Tornado",
 
 # CIRCLE SIX
 
+DISMISSAL = Spell( "Dismissal",
+    "Forces one demon, elemental, or spirit to leave the mortal realm and return to its home plane.",
+    effects.TargetIs( effects.OTHERWORLDLY, anim=animobs.BlueSparkle, on_true=(
+        effects.OpposedRoll( on_success = (
+            effects.InstaKill( anim=animobs.CriticalHit )
+        ,), on_failure = (
+            effects.HealthDamage( (3,12,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_SOLAR, anim=animobs.YellowExplosion ), )
+        ),
+        ), on_false = (effects.NoEffect( anim=animobs.Caption ),)
+    ), rank=6, gems={AIR:2}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.MysticBolt )
+
+
 
 
 # CIRCLE SEVEN
@@ -80,6 +92,14 @@ TORNADO = Spell( "Tornado",
 
 
 # CIRCLE EIGHT
+
+THUNDER_STORM = Spell( "Thunder Storm",
+    "Calls down the wrath of the heavens. All targets within a 5 tile radius will be struck for 10d8 lightning damage.",
+    effects.OpposedRoll( on_success = (
+        effects.HealthDamage( (10,8,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_LIGHTNING, anim=animobs.ThunderStorm )
+    ,), on_failure = (
+        effects.HealthDamage( (4,10,0), stat_bonus=None, element=stats.RESIST_LIGHTNING, anim=animobs.ThunderStorm )
+    ,) ), rank=8, gems={AIR:5}, com_tar=targetarea.Blast(radius=5), shot_anim=animobs.Lightning, ai_tar=invocations.vs_enemy )
 
 
 

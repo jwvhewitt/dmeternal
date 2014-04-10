@@ -445,6 +445,7 @@ ALIVE = {stats.UNDEAD: False, stats.DEMON: False, stats.ELEMENTAL: False, \
 UNDEAD = {stats.UNDEAD: True }
 UNHOLY = {(stats.UNDEAD,stats.DEMON): True }
 CONSTRUCT = {(stats.CONSTRUCT,stats.BONE): True }
+OTHERWORLDLY = { (stats.UNDEAD,stats.DEMON,stats.ELEMENTAL): True }
 
 class TargetIs( NoEffect ):
     """An effect that branches depending on if target matches provided pattern."""

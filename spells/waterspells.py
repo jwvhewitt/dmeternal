@@ -35,5 +35,39 @@ WINTER_WIND = Spell( "Winter Wind",
     ,) ), rank=3, gems={WATER:2}, com_tar=targetarea.Cone(reach=8),
     ai_tar=invocations.vs_enemy )
 
+# CIRCLE FOUR
+
+
+# CIRCLE FIVE
+
+
+# CIRCLE SIX
+
+TSUNAMI = Spell( "Tsunami",
+    "Conjures a tidal wave which strikes foes for 5d10 water damage.",
+    effects.OpposedRoll( on_success = (
+        effects.HealthDamage( (5,10,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_WATER, anim=animobs.BlueCloud )
+    ,), on_failure = (
+        effects.HealthDamage( (2,12,1), stat_bonus=None, element=stats.RESIST_WATER, anim=animobs.BlueCloud )
+    ,) ), rank=6, gems={WATER:3}, com_tar=targetarea.Cone(reach=10),
+    ai_tar=invocations.vs_enemy )
+
+
+# CIRCLE SEVEN
+
+HAIL_STORM = Spell( "Hail Storm",
+    "Conjures a storm of freezing hail. All targets caught within a 5 tile radius take 10d6 cold damage.",
+    effects.OpposedRoll( on_success = (
+        effects.HealthDamage( (10,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_COLD, anim=animobs.IceStorm )
+    ,), on_failure = (
+        effects.HealthDamage( (3,10,0), stat_bonus=None, element=stats.RESIST_COLD, anim=animobs.IceStorm )
+    ,) ), rank=7, gems={WATER:4}, com_tar=targetarea.Blast(radius=5), shot_anim=animobs.BlueComet, ai_tar=invocations.vs_enemy )
+
+
+# CIRCLE EIGHT
+
+
+# CIRCLE NINE
+
 
 
