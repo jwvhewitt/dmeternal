@@ -527,6 +527,28 @@ class TargetIsEnemy( NoEffect ):
         else:
             return self.on_false
 
+class TargetIsDamaged( NoEffect ):
+    """An effect that branches depending on if target is damaged."""
+    def __init__(self, on_true=(), on_false=(), anim=None ):
+        if not on_true:
+            on_true = list()
+        self.on_true = on_true
+        if not on_false:
+            on_false = list()
+        self.on_false = on_false
+        self.anim = anim
+
+    def handle_effect( self, camp, originator, pos, anims, delay=0 ):
+        """Do whatever is required of effect; return list of child effects."""
+        target = camp.scene.get_character_at_spot( pos )
+        if target:
+            if target.hp_damage <= 0:
+                return self.on_false
+            else:
+                return self.on_true
+        else:
+            return self.on_false
+
 
 
 if __name__=='__main__':

@@ -33,6 +33,12 @@ ACID_BOLT = Spell( "Acid Bolt",
     ,) ), rank=2, gems={EARTH:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.GreenSpray,
     ai_tar=invocations.vs_enemy )
 
+BEASTLY_MIGHT = Spell( "Beastly Might",
+    "Imbues a single ally with supernatural strength, giving +4 strength, +4 toughness, and +5% to attack.",
+    effects.Enchant( enchantments.BeastlyMightEn, anim=animobs.OrangeSparkle ),
+    rank=2, gems={EARTH:1}, com_tar=targetarea.SingleTarget() )
+
+
 # CIRCLE 3
 
 SHAPE_FLESH = Spell( "Shape Flesh",
@@ -52,15 +58,50 @@ SHAPE_FLESH = Spell( "Shape Flesh",
 
 # CIRCLE 4
 
+WOOD_SKIN = Spell( "Wood Skin",
+    "Transforms a single ally, providing +10% to defense plus 25% resistance to slashing, crushing, and piercing damage.",
+    effects.Enchant( enchantments.WoodSkinEn, anim=animobs.OrangeSparkle ),
+    rank=4, gems={EARTH:2}, com_tar=targetarea.SingleTarget(), mpfudge=-2 )
+
+
 # CIRCLE 5
 
+POISON_WEAPON = Spell( "Poison Weapon",
+    "Enhances one ally's weapon with poison, causing an extra 2d6 damage at first and potentially more damage later.",
+    effects.Enchant( enchantments.PoisonWepEn, anim=animobs.OrangeSparkle ),
+    rank=5, gems={EARTH:2}, com_tar=targetarea.SingleTarget(), mpfudge=-2 )
+
+
 # CIRCLE 6
+
+STONE_SKIN = Spell( "Stone Skin",
+    "Transforms a single ally, providing +10% to defense and aura plus 50% resistance to slashing, crushing, and piercing damage.",
+    effects.Enchant( enchantments.StoneSkinEn, anim=animobs.OrangeSparkle ),
+    rank=6, gems={EARTH:3}, com_tar=targetarea.SingleTarget(), mpfudge=-2 )
+
 
 # CIRCLE 7
 
 # CIRCLE 8
 
+IRON_SKIN = Spell( "Iron Skin",
+    "Transforms a single ally, providing +10% to defense and aura plus 75% resistance to slashing, crushing, and piercing damage.",
+    effects.Enchant( enchantments.IronSkinEn, anim=animobs.OrangeSparkle ),
+    rank=8, gems={EARTH:4}, com_tar=targetarea.SingleTarget(), mpfudge=-2 )
+
+
 # CIRCLE 9
+
+EARTHQUAKE = Spell( "Earthquake",
+    "The land itself will attack your foes. Tremors do 12d6 crushing damage to all enemies within 8 tiles.",
+    effects.TargetIsEnemy( anim=animobs.EarthBoom, on_true = (
+        effects.OpposedRoll( def_stat=stats.REFLEXES, on_success = (
+            effects.HealthDamage( (12,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_CRUSHING, anim=animobs.RedBoom )
+        ,), on_failure = (
+            effects.HealthDamage( (3,12,0), stat_bonus=None, element=stats.RESIST_CRUSHING, anim=animobs.RedBoom )
+        ,) )
+    ,) ), rank=9, gems={EARTH:5}, com_tar=targetarea.SelfCentered(radius=8,delay_from=-1,exclude_middle=True),
+    ai_tar=invocations.vs_enemy )
 
 
 

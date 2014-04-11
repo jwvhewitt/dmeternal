@@ -7,15 +7,18 @@ import animobs
 COMBAT, MAGIC, POISON, DAILY = range( 4 )
 
 class Enchantment( object ):
-    def __init__( self, fx=None, statline=None, dispel = (COMBAT,MAGIC) ):
-        self.fx = fx
+    def __init__( self, statline=None, dispel = (COMBAT,MAGIC) ):
         if not statline:
             statline = stats.StatMod()
         self.statline = statline
         self.dispel = dispel
+        self.uses = 0
 
     # If any of the following effects are defined, they will be added to attacks.
     ATTACK_ON_HIT = None
+
+    # If MAX_USES defined, enchantment disappears after that number of uses.
+    MAX_USES = None
 
 
 class AirArmor( Enchantment ):
@@ -25,6 +28,10 @@ class AirArmor( Enchantment ):
 class ArmorDamage( Enchantment ):
     def __init__( self ):
         super(ArmorDamage, self).__init__(statline=stats.StatMod({stats.PHYSICAL_DEFENSE:-10,stats.NATURAL_DEFENSE:-10}),dispel=(COMBAT))
+
+class BeastlyMightEn( Enchantment ):
+    def __init__( self ):
+        super(BeastlyMightEn, self).__init__(statline=stats.StatMod({stats.STRENGTH:4,stats.TOUGHNESS:4,stats.PHYSICAL_ATTACK:5}),dispel=(COMBAT,MAGIC))
 
 class BlessedWepEn( Enchantment ):
     def __init__( self ):
@@ -52,6 +59,61 @@ class FireWepEn( Enchantment ):
 class HolySignMark( Enchantment ):
     def __init__( self ):
         super(HolySignMark, self).__init__(statline=stats.StatMod({stats.PHYSICAL_ATTACK:-5,stats.MAGIC_ATTACK:-5}),dispel=(COMBAT,))
+
+class IronSkinEn( Enchantment ):
+    def __init__( self ):
+        super(IronSkinEn, self).__init__(statline=stats.StatMod({stats.RESIST_SLASHING:75,stats.RESIST_CRUSHING:75,stats.RESIST_PIERCING:75
+            ,stats.PHYSICAL_DEFENSE:10,stats.NATURAL_DEFENSE:10,stats.MAGIC_DEFENSE:10}),dispel=(COMBAT,MAGIC))
+
+class PoisonClassic( Enchantment ):
+    def __init__( self ):
+        super(PoisonClassic, self).__init__(dispel=(POISON,DAILY))
+    FX = effects.HealthDamage( (1,4,0), stat_bonus=None, element=stats.RESIST_POISON, anim=animobs.PoisonCloud )
+    MAX_USES = 10
+
+class PoisonWepEn( Enchantment ):
+    def __init__( self ):
+        super(PoisonWepEn, self).__init__(statline=stats.StatMod({stats.PHYSICAL_ATTACK:10}),dispel=(COMBAT,MAGIC))
+    ATTACK_ON_HIT = effects.HealthDamage( (2,6,0), stat_bonus=None, element=stats.RESIST_POISON, anim=animobs.PoisonCloud, on_success=(
+        effects.SavingThrow( roll_skill=stats.RESIST_POISON, roll_stat=stats.TOUGHNESS, on_failure = (
+            effects.Enchant( PoisonClassic, anim=animobs.DeathSparkle )
+        ,))
+    ,) )
+
+class RegeneratEn( Enchantment ):
+    def __init__( self ):
+        super(RegeneratEn, self).__init__(dispel=(MAGIC,DAILY))
+    FX = effects.TargetIsDamaged( on_true= (
+        effects.HealthRestore( dice=(1,6,0) )
+    ,))
+    MAX_USES = 10
+
+class ResistAtomicEn( Enchantment ):
+    def __init__( self ):
+        super(ResistAtomicEn, self).__init__(statline=stats.StatMod({stats.RESIST_ATOMIC:50}),
+            dispel=(COMBAT,MAGIC))
+
+class ResistElementsEn( Enchantment ):
+    def __init__( self ):
+        super(ResistElementsEn, self).__init__(statline=stats.StatMod({stats.RESIST_WIND:50,
+            stats.RESIST_WATER:50,stats.RESIST_POISON:50}),dispel=(COMBAT,MAGIC))
+
+class ResistEnergyEn( Enchantment ):
+    def __init__( self ):
+        super(ResistEnergyEn, self).__init__(statline=stats.StatMod({stats.RESIST_FIRE:50,stats.RESIST_COLD:50,
+            stats.RESIST_ACID:50,stats.RESIST_LIGHTNING:50}),dispel=(COMBAT,MAGIC))
+
+
+class StoneSkinEn( Enchantment ):
+    def __init__( self ):
+        super(StoneSkinEn, self).__init__(statline=stats.StatMod({stats.RESIST_SLASHING:50,stats.RESIST_CRUSHING:50,stats.RESIST_PIERCING:50
+            ,stats.PHYSICAL_DEFENSE:10,stats.NATURAL_DEFENSE:10,stats.MAGIC_DEFENSE:10}),dispel=(COMBAT,MAGIC))
+
+
+class WoodSkinEn( Enchantment ):
+    def __init__( self ):
+        super(WoodSkinEn, self).__init__(statline=stats.StatMod({stats.RESIST_SLASHING:25,stats.RESIST_CRUSHING:25,stats.RESIST_PIERCING:25
+            ,stats.PHYSICAL_DEFENSE:10,stats.NATURAL_DEFENSE:10}),dispel=(COMBAT,MAGIC))
 
 
 class Field( object ):

@@ -30,6 +30,11 @@ SHOCK_SPHERE = Spell( "Shock Sphere",
 
 # CIRCLE TWO
 
+LIGHTNING_BOLT = Spell( "Lightning Bolt",
+    "This spell conjures magical lightning, which will unerringly hit one foe for 1d10 damage.",
+    effects.HealthDamage((1,10,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_LIGHTNING, anim=animobs.BlueZap ),
+    rank=2, gems={AIR:1,LUNAR:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.Lightning, ai_tar=invocations.vs_enemy )
+
 # CIRCLE THREE
 
 

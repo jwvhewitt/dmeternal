@@ -438,12 +438,22 @@ class Explorer( object ):
 
     def invoke_enchantments( self, chara ):
         """If this character has any effect enchantments, handle them."""
-        aoe = chara.pos
-        for enc in chara.condition:
-            if enc.fx:
-                self.invoke_effect( enc.fx, chara, aoe )
+        aoe = (chara.pos,)
+        for enc in chara.condition[:]:
+            if enc.FX:
+                self.invoke_effect( enc.FX, chara, aoe )
                 if not chara.is_alright():
                     break
+                if enc.MAX_USES:
+                    enc.uses += 1
+                    if enc.uses >= enc.MAX_USES:
+                        chara.condition.remove( enc )
+
+    def update_enchantments( self ):
+        print "Invoking enchantments"
+        for c in self.scene.contents:
+            if hasattr( c, "condition" ) and c.condition:
+                self.invoke_enchantments( c )
 
     def alert( self, txt ):
         mydest = pygame.Rect( self.screen.get_width() // 2 - 200, self.screen.get_height()//2 - 100, 400, 200 )
@@ -761,6 +771,9 @@ class Explorer( object ):
                         self.order = None
 
                 self.update_monsters()
+
+                if self.time % 150 == 0:
+                    self.update_enchantments()
 
             elif not self.order:
                 # Set the mouse cursor on the map.

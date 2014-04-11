@@ -24,6 +24,13 @@ RESTORE_FLUIDITY = Spell( "Restore Fluidity",
 
 # CIRCLE 2
 
+RESIST_ENERGY = Spell( "Resist Energy",
+    "All allies within 6 tiles get 50% resistance to fire, cold, lightning, and acid damage for the duration of combat.",
+    effects.TargetIsAlly( on_true = (
+        effects.Enchant( enchantments.ResistEnergyEn, anim=animobs.GreenSparkle ),
+    )),
+    rank=2, gems={WATER:1}, com_tar=targetarea.SelfCentered() )
+
 # CIRCLE 3
 
 WINTER_WIND = Spell( "Winter Wind",
@@ -35,10 +42,30 @@ WINTER_WIND = Spell( "Winter Wind",
     ,) ), rank=3, gems={WATER:2}, com_tar=targetarea.Cone(reach=8),
     ai_tar=invocations.vs_enemy )
 
+REGENERATION = Spell( "Regeneration",
+    "Infuses a single ally will life energy, allowing them to regenerate 1d6 health per turn.",
+    effects.Enchant( enchantments.RegeneratEn, anim=animobs.GreenSparkle ),
+    rank=2, gems={WATER:2}, com_tar=targetarea.SingleTarget(), exp_tar=targetarea.SinglePartyMember(),
+    ai_tar=invocations.vs_wounded_ally )
+
 # CIRCLE FOUR
 
+RESIST_ELEMENTS = Spell( "Resist Energy",
+    "All allies within 6 tiles get 50% resistance to wind, water, and poison damage for the duration of combat.",
+    effects.TargetIsAlly( on_true = (
+        effects.Enchant( enchantments.ResistElementsEn, anim=animobs.GreenSparkle ),
+    )),
+    rank=4, gems={WATER:2}, com_tar=targetarea.SelfCentered() )
 
 # CIRCLE FIVE
+
+HEALING_MISTS = Spell( "Healing Mists",
+    "The party is bathed in beneficial vapors, allowing all allies to regenerate their wounds.",
+    effects.TargetIsAlly( on_true = (
+        effects.Enchant( enchantments.RegeneratEn, anim=animobs.GreenSparkle ),
+    )),
+    rank=5, gems={WATER:3}, com_tar=targetarea.SelfCentered(), exp_tar=targetarea.AllPartyMembers(),
+    ai_tar=invocations.vs_wounded_ally )
 
 
 # CIRCLE SIX
@@ -65,6 +92,14 @@ HAIL_STORM = Spell( "Hail Storm",
 
 
 # CIRCLE EIGHT
+
+RESIST_ATOMIC = Spell( "Resist Atomic",
+    "All allies within 6 tiles get 50% resistance to atomic damage for the duration of combat.",
+    effects.TargetIsAlly( on_true = (
+        effects.Enchant( enchantments.ResistAtomicEn, anim=animobs.GreenSparkle ),
+    )),
+    rank=8, gems={WATER:3}, com_tar=targetarea.SelfCentered() )
+
 
 
 # CIRCLE NINE
