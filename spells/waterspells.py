@@ -46,9 +46,9 @@ WINTER_WIND = Spell( "Winter Wind",
 TSUNAMI = Spell( "Tsunami",
     "Conjures a tidal wave which strikes foes for 5d10 water damage.",
     effects.OpposedRoll( on_success = (
-        effects.HealthDamage( (5,10,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_WATER, anim=animobs.BlueCloud )
+        effects.HealthDamage( (5,10,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_WATER, anim=animobs.Bubbles )
     ,), on_failure = (
-        effects.HealthDamage( (2,12,1), stat_bonus=None, element=stats.RESIST_WATER, anim=animobs.BlueCloud )
+        effects.HealthDamage( (2,12,1), stat_bonus=None, element=stats.RESIST_WATER, anim=animobs.Bubbles )
     ,) ), rank=6, gems={WATER:3}, com_tar=targetarea.Cone(reach=10),
     ai_tar=invocations.vs_enemy )
 

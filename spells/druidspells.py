@@ -76,9 +76,9 @@ CALL_JUGGERNAUT = Spell( "Call Juggernaut",
 NATURAL_DISASTER = Spell( "Natural Disaster",
     "Causes massive fire damage in a five tile radius.",
     effects.OpposedRoll( on_success = (
-        effects.HealthDamage( (20,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.Nuclear )
+        effects.HealthDamage( (10,10,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.Nuclear )
     ,), on_failure = (
-        effects.HealthDamage( (10,6,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.Nuclear )
+        effects.HealthDamage( (5,10,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.Nuclear )
     ,) ), rank=8, gems={EARTH:2,FIRE:3}, com_tar=targetarea.Blast(radius=5, delay_from=1), shot_anim=animobs.BigMeteor,
     ai_tar=invocations.vs_enemy )
 

@@ -35,6 +35,10 @@ class BlessingEn( Enchantment ):
     def __init__( self ):
         super(BlessingEn, self).__init__(statline=stats.StatMod({stats.PHYSICAL_ATTACK:5,stats.MAGIC_ATTACK:5,stats.KUNG_FU:5}),dispel=(COMBAT,MAGIC))
 
+class BlindedEn( Enchantment ):
+    def __init__( self ):
+        super(BlindedEn, self).__init__(statline=stats.StatMod({stats.PHYSICAL_ATTACK:-10}),dispel=(COMBAT,MAGIC))
+
 class CurseEn( Enchantment ):
     def __init__( self ):
         super(CurseEn, self).__init__(statline=stats.StatMod({stats.PHYSICAL_ATTACK:-5,stats.MAGIC_ATTACK:-5}),dispel=(COMBAT,MAGIC))
