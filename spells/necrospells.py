@@ -43,4 +43,18 @@ ACID_CLOUD = Spell( "Acid Cloud",
         effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_ACID, anim=animobs.GreenCloud )
     ,) ), rank=3, gems={EARTH:1,LUNAR:1}, com_tar=targetarea.Blast(radius=3), shot_anim=animobs.GreenComet, ai_tar=invocations.vs_enemy )
 
+# CIRCLE FOUR
+
+# CIRCLE FIVE
+
+# CIRCLE SIX
+
+# CIRCLE SEVEN
+
+# CIRCLE EIGHT
+
+# CIRCLE NINE
+
+
+
 

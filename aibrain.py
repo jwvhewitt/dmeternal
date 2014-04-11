@@ -244,6 +244,13 @@ class SteadyAI( BasicAI ):
     AVOID_THREAT = True
     DOES_SEARCH = True
 
+class SteadySpellAI( BasicAI ):
+    """For golems- walks in a straight line, but can avoid threatened area."""
+    AVOID_FIELDS = False
+    AVOID_THREAT = True
+    DOES_SEARCH = True
+    TECHNIQUE_CHANCE = 90
+
 class BasicTechnicalAI( BasicAI ):
     """Basic AI with a high technique use chance- for archers + mages."""
     TECHNIQUE_CHANCE = 90

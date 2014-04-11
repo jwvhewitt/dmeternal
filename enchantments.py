@@ -46,9 +46,20 @@ class BlindedEn( Enchantment ):
     def __init__( self ):
         super(BlindedEn, self).__init__(statline=stats.StatMod({stats.PHYSICAL_ATTACK:-10}),dispel=(COMBAT,MAGIC))
 
+class BurnLowEn( Enchantment ):
+    def __init__( self ):
+        super(BurnLowEn, self).__init__(dispel=(MAGIC,COMBAT))
+    FX = effects.HealthDamage( (1,4,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.RedCloud )
+    MAX_USES = 5
+
 class CurseEn( Enchantment ):
     def __init__( self ):
         super(CurseEn, self).__init__(statline=stats.StatMod({stats.PHYSICAL_ATTACK:-5,stats.MAGIC_ATTACK:-5}),dispel=(COMBAT,MAGIC))
+
+class FireSignEn( Enchantment ):
+    def __init__( self ):
+        super(FireSignEn, self).__init__(statline=stats.StatMod({stats.PHYSICAL_DEFENSE:-10,stats.NATURAL_DEFENSE:-10,
+            stats.STEALTH:-200}),dispel=(COMBAT,MAGIC))
 
 class FireWepEn( Enchantment ):
     def __init__( self ):

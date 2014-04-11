@@ -75,14 +75,18 @@ DES_EARTH, DES_AIR, DES_WATER, DES_FIRE, DES_SOLAR, DES_LUNAR, \
 # Type Tags
 #  MTY_UNDEAD can be summoned by Necromancer spells
 #  MTY_CREATURE can be summoned by Druid spells
+#  MTY_CONSTRUCT of levels 7-8 can be summoned by Animation spell
 MTY_BEAST, MTY_HUMANOID, MTY_FIGHTER, MTY_THIEF, MTY_PRIEST, MTY_MAGE, \
-    MTY_UNDEAD, MTY_CREATURE, MTY_LEADER = range(1300,1309)
+    MTY_UNDEAD, MTY_CREATURE, MTY_LEADER, MTY_CONSTRUCT = range(1300,1310)
 
 # Genus Tags. Note that these don't necessarily correspond to templates- a
 #  necromancer monster may be grouped with the undead, despite not being undead
 #  itself. Also a monster can have more than one genus because in Python we
 #  believe in multiple inheritence.
 GEN_GIANT, GEN_GOBLIN, GEN_CHAOS, GEN_UNDEAD, GEN_NATURE, GEN_DRAGON = range( 1400,1406 )
+
+# Summon Tags. Used to mark individual monsters for specific spells.
+SUMMON_FLAMINGSWORD = 2000
 
 def matches_description( context_set, desc_request ):
     # context_set is a list of context tags.

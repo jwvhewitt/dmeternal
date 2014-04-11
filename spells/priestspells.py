@@ -75,4 +75,15 @@ BLIZZARD = Spell( "Blizzard",
     ,) ), rank=4, gems={WATER:1,AIR:1}, com_tar=targetarea.Blast(radius=4, delay_from=1),
     ai_tar=invocations.vs_enemy )
 
+# CIRCLE FIVE
+
+# CIRCLE SIX
+
+# CIRCLE SEVEN
+
+# CIRCLE EIGHT
+
+# CIRCLE NINE
+
+
 

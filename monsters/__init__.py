@@ -7,6 +7,7 @@ import namegen
 from dialogue import voice
 
 import animals
+import constructs
 import giants
 import goblins
 import undead
@@ -20,6 +21,7 @@ def harvest( mod ):
             MONSTER_LIST.append( o )
 
 harvest( animals )
+harvest( constructs )
 harvest( giants )
 harvest( goblins )
 harvest( undead )

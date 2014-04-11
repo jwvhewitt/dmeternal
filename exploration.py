@@ -450,7 +450,6 @@ class Explorer( object ):
                         chara.condition.remove( enc )
 
     def update_enchantments( self ):
-        print "Invoking enchantments"
         for c in self.scene.contents:
             if hasattr( c, "condition" ) and c.condition:
                 self.invoke_enchantments( c )
