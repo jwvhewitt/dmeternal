@@ -35,6 +35,12 @@ CALL_CREATURE = Spell( "Call Creature",
     effects.CallMonster( {context.MTY_CREATURE: True, context.DES_EARTH: context.MAYBE, context.GEN_NATURE: context.MAYBE, context.DES_SOLAR: context.MAYBE}, 6, anim=animobs.OrangeSparkle ),
     rank=3, gems={EARTH:2,SOLAR:1}, com_tar=targetarea.SingleTarget(reach=2), mpfudge = 6 )
 
+SLIMY_WEAPON = Spell( "Slimy Weapon",
+    "One ally's weapon will be coated in caustic slime which causes an extra 1d10 acid damage and may corrode an opponent's armor.",
+    effects.Enchant( enchantments.AcidWepEn, anim=animobs.OrangeSparkle ),
+    rank=3, gems={EARTH:1}, com_tar=targetarea.SingleTarget() )
+
+
 # CIRCLE FOUR
 
 CALL_BEAST = Spell( "Call Beast",
@@ -48,6 +54,27 @@ CALL_MONSTER = Spell( "Call Monster",
     "This spell will summon a powerful monster to fight on your behaf.",
     effects.CallMonster( {context.MTY_CREATURE: True, context.DES_EARTH: context.MAYBE, context.GEN_NATURE: context.MAYBE, context.DES_SOLAR: context.MAYBE}, 10, anim=animobs.OrangeSparkle ),
     rank=5, gems={EARTH:2,SOLAR:2}, com_tar=targetarea.SingleTarget(reach=2), mpfudge = 10 )
+
+ELEMENTAL_STORM = Spell( "Elemental Storm",
+    "The wrath of nature is brought to bear on your foes. All targets within a 3 tile radius take 2d4 damage from each of fire, cold, lightning, and acid.",
+    effects.OpposedRoll( on_success = (
+        effects.HealthDamage( (2,4,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion ),
+        effects.HealthDamage( (2,4,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_COLD, anim=animobs.BlueBoom ),
+        effects.HealthDamage( (2,4,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_LIGHTNING, anim=animobs.BlueZap ),
+        effects.HealthDamage( (2,4,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_ACID, anim=animobs.GreenSplat )
+    ), on_failure = (
+        effects.HealthDamage( (2,4,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion ),
+        effects.HealthDamage( (2,4,0), stat_bonus=None, element=stats.RESIST_COLD, anim=animobs.BlueBoom ),
+        effects.HealthDamage( (2,4,0), stat_bonus=None, element=stats.RESIST_LIGHTNING, anim=animobs.BlueZap ),
+        effects.HealthDamage( (2,4,0), stat_bonus=None, element=stats.RESIST_ACID, anim=animobs.GreenSplat )
+    ) ), rank=5, gems={FIRE:2,SOLAR:1}, com_tar=targetarea.Blast(radius=3), shot_anim=animobs.CrystalBall, ai_tar=invocations.vs_enemy )
+
+TRANSFORMATION = Spell( "Transformation",
+    "Transforms all allies within six tiles, providing +10% to defense plus 25% resistance to slashing, crushing, and piercing damage.",
+    effects.TargetIsAlly( on_true = (
+        effects.Enchant( enchantments.WoodSkinEn, anim=animobs.OrangeSparkle ),
+    )), rank=5, gems={EARTH:3,FIRE:1}, com_tar=targetarea.SelfCentered() )
+
 
 # CIRCLE SIX
 

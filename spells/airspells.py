@@ -58,6 +58,11 @@ MAGIC_MAP = Spell( "Magic Map",
 
 # CIRCLE FOUR
 
+DISPEL_MAGIC = Spell( "Dispel Magic",
+    "Deactivates all enchantments within a three tile radius, including both harmful and beneficial effects.",
+    effects.TidyEnchantments( enchantments.MAGIC, anim=animobs.BlueSparkle ),
+    rank=4, gems={AIR:2}, com_tar=targetarea.Blast(radius=3),
+    exp_tar=targetarea.Blast(radius=3) )
 
 
 # CIRCLE FIVE
@@ -99,7 +104,7 @@ THUNDER_STORM = Spell( "Thunder Storm",
         effects.HealthDamage( (10,8,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_LIGHTNING, anim=animobs.ThunderStorm )
     ,), on_failure = (
         effects.HealthDamage( (4,10,0), stat_bonus=None, element=stats.RESIST_LIGHTNING, anim=animobs.ThunderStorm )
-    ,) ), rank=8, gems={AIR:5}, com_tar=targetarea.Blast(radius=5), shot_anim=animobs.Lightning, ai_tar=invocations.vs_enemy )
+    ,) ), rank=8, gems={AIR:5}, com_tar=targetarea.Blast(radius=5), ai_tar=invocations.vs_enemy )
 
 
 

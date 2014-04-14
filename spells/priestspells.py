@@ -46,6 +46,12 @@ DISPEL_EVIL = Spell( "Dispel Evil",
     ,) ) ,) ), rank=2, gems={SOLAR:1,WATER:1}, com_tar=targetarea.SelfCentered(radius=3,exclude_middle=True), mpfudge=-2,
     ai_tar=invocations.vs_enemy )
 
+HEROISM = Spell( "Heroism",
+    "All allies within 6 tiles get a +2 bonus to strength, toughness, reflexes, intelligence, piety, and charisma until the end of combat.",
+    effects.TargetIsAlly( on_true = (
+        effects.Enchant( enchantments.HeroismEn, anim=animobs.YellowSparkle )
+    ,) ), rank=2, gems={AIR:1,WATER:1}, com_tar=targetarea.SelfCentered(), mpfudge=1 )
+
 
 # CIRCLE THREE
 
@@ -54,6 +60,13 @@ HEALING_LIGHT = Spell( "Healing Light",
     effects.HealthRestore( dice=(3,8,0) ),
     rank=3, gems={AIR:1,SOLAR:2}, com_tar=targetarea.SingleTarget(reach=10), ai_tar=invocations.vs_wounded_ally,
     exp_tar=targetarea.SinglePartyMember(), shot_anim=animobs.YellowVortex )
+
+PROTECT_FROM_EVIL = Spell( "Protection from Evil",
+    "All allies within 6 tiles get +10% defense, +10% aura, and 50% resistance to dark damage for the duration of combat.",
+    effects.TargetIsAlly( on_true = (
+        effects.Enchant( enchantments.ProtectFromEvilEn, anim=animobs.YellowSparkle ),
+    )),
+    rank=3, gems={SOLAR:1,WATER:1}, com_tar=targetarea.SelfCentered() )
 
 
 # CIRCLE FOUR
@@ -75,9 +88,63 @@ BLIZZARD = Spell( "Blizzard",
     ,) ), rank=4, gems={WATER:1,AIR:1}, com_tar=targetarea.Blast(radius=4, delay_from=1),
     ai_tar=invocations.vs_enemy )
 
+DIVINE_HAMMER = Spell( "Divine Hammer",
+    "This attack does 4d8 holy damage to a single target. Unholy creatures may be stunned.",
+    effects.OpposedRoll( def_stat=stats.REFLEXES, on_success = (
+        effects.HealthDamage( (4,8,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_SOLAR, anim=animobs.RedBoom ),
+        effects.TargetIs( pat=effects.UNHOLY, on_true = (
+            effects.Paralyze( max_duration = 3 ),
+        ))
+    ,), on_failure = (
+        effects.HealthDamage( (2,8,2), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_SOLAR, anim=animobs.RedBoom )
+    ,) ), rank=4, gems={AIR:1,SOLAR:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.YellowVortex, ai_tar=invocations.vs_enemy )
+
+SANCTUARY = Spell( "Samctuary",
+    "Enemies within 4 tiles will be frozen in place for a short time.",
+    effects.TargetIsEnemy( on_true = (
+        effects.OpposedRoll( on_success = (
+            effects.Paralyze( max_duration = 3 ),
+        ))
+    ,) ), rank=4, gems={SOLAR:1,WATER:2}, com_tar=targetarea.SelfCentered(radius=4,exclude_middle=True),
+    ai_tar=invocations.vs_enemy )
+
+
 # CIRCLE FIVE
 
+SMITE = Spell( "Smite",
+    "A bolt of lightning will unerringly strike all targets in a 2 tile radius for 3d10 damage.",
+    effects.HealthDamage( (3,10,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_LIGHTNING, anim=animobs.BlueZap ),
+    rank=5, gems={AIR:3,SOLAR:1}, com_tar=targetarea.Blast(radius=2), shot_anim=animobs.Lightning, ai_tar=invocations.vs_enemy )
+
+SPELL_SHIELD = Spell( "Spell Shield",
+    "All allies within 6 tiles get +25% aura until the end of combat.",
+    effects.TargetIsAlly( on_true = (
+        effects.Enchant( enchantments.SpellShieldEn, anim=animobs.YellowSparkle ),
+    )),
+    rank=5, gems={SOLAR:1,WATER:1}, com_tar=targetarea.SelfCentered() )
+
+
 # CIRCLE SIX
+
+JUSTICE = Spell( "Justice",
+    "Calls down divine judgment on all targets within 6 tiles. The good will be healed and blessed, the evil will be punished.",
+    effects.TargetIsAlly( on_true = (
+        effects.Enchant( enchantments.BlessingEn, anim=animobs.YellowSparkle ),
+        effects.TargetIsDamaged( on_true= (
+            effects.HealthRestore( dice=(3,12,0) ),
+        ))
+    ), on_false=(
+        effects.TargetIsEnemy( on_true = (
+
+            effects.HealthDamage( (3,12,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_SOLAR, anim=animobs.Pearl ),
+        )),
+    ) ), rank=6, gems={AIR:1,SOLAR:2}, com_tar=targetarea.SelfCentered(), mpfudge=3 )
+
+DIVINE_AID = Spell( "Divine Aid",
+    "A celestial being will answer your call to aid you in this combat.",
+    effects.CallMonster( {context.MTY_CELESTIAL: True, context.DES_SOLAR: context.MAYBE, context.DES_SOLAR: context.MAYBE}, 12, anim=animobs.YellowSparkle ),
+    rank=6, gems={WATER:2,SOLAR:2}, com_tar=targetarea.SingleTarget(reach=2), mpfudge = 12 )
+
 
 # CIRCLE SEVEN
 
@@ -85,5 +152,9 @@ BLIZZARD = Spell( "Blizzard",
 
 # CIRCLE NINE
 
+DIVINE_WRATH = Spell( "Divine Wrath",
+    "A powerful celestial being will answer your call to aid you in this combat.",
+    effects.CallMonster( {context.MTY_CELESTIAL: True, context.DES_SOLAR: context.MAYBE, context.DES_SOLAR: context.MAYBE}, 18, anim=animobs.YellowSparkle ),
+    rank=9, gems={WATER:3,SOLAR:3}, com_tar=targetarea.SingleTarget(reach=4), mpfudge = 20 )
 
 

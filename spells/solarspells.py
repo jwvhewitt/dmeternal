@@ -28,6 +28,7 @@ MODERATE_CURE = Spell( "Moderate Cure",
     rank=2, gems={SOLAR:2}, com_tar=targetarea.SingleTarget(reach=1), ai_tar=invocations.vs_wounded_ally,
     exp_tar=targetarea.SinglePartyMember(), mpfudge = -2 )
 
+
 # CIRCLE 3
 
 SUNRAY = Spell( "Sunray",
@@ -36,7 +37,13 @@ SUNRAY = Spell( "Sunray",
         effects.HealthDamage( (3,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_SOLAR, anim=animobs.YellowExplosion )
     ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
-    ,) ), rank=3, gems={SOLAR:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.YellowVortex, ai_tar=invocations.vs_enemy )
+    ,) ), rank=3, gems={SOLAR:2}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.YellowVortex, ai_tar=invocations.vs_enemy )
+
+CURE_POISON = Spell( "Cure Poison",
+    "This spell will remove all poisoning from a single party member.",
+    effects.TidyEnchantments( enchantments.POISON, anim=animobs.YellowSparkle ),
+    rank=3, gems={SOLAR:1}, com_tar=targetarea.SingleTarget(reach=1),
+    exp_tar=targetarea.SinglePartyMember(), mpfudge = -1 )
 
 
 # CIRCLE 4
@@ -63,6 +70,13 @@ MASS_CURE = Spell( "Mass Cure",
     ,) ), rank=5, gems={SOLAR:3}, com_tar=targetarea.SelfCentered(radius=3), ai_tar=invocations.vs_wounded_ally,
     exp_tar=targetarea.AllPartyMembers(), mpfudge = 4 )
 
+REMOVE_CURSE = Spell( "Remove Curse",
+    "This spell will dispel all harmful magical effects from a single party member.",
+    effects.TidyEnchantments( enchantments.CURSE, anim=animobs.YellowSparkle ),
+    rank=5, gems={SOLAR:2}, com_tar=targetarea.SingleTarget(reach=1),
+    exp_tar=targetarea.SinglePartyMember(), mpfudge = -2 )
+
+
 # CIRCLE 6
 
 MAXIMUM_CURE = Spell( "Maximum Cure",
@@ -84,6 +98,16 @@ SUNBURST = Spell( "Sunburst",
         ), on_false = (effects.NoEffect( anim=animobs.YellowExplosion ),)
     ), rank=7, gems={SOLAR:2}, com_tar=targetarea.Blast(radius=3,delay_from=1), shot_anim=animobs.GoldStone, ai_tar=invocations.vs_enemy )
 
+RENEWAL = Spell( "Renewal",
+    "This spell will heal one nearby ally for 50-120 damage, retore drained stats, remove curses and cure poisoning.",
+    effects.TargetIsAlly( on_true = (
+        effects.HealthRestore( dice=(10,8,40) ),
+        effects.TidyEnchantments( enchantments.CURSE, anim=None ),
+        effects.TidyEnchantments( enchantments.POISON, anim=None ),
+        effects.StatRestore( anim=None ),
+    )),
+    rank=7, gems={SOLAR:4}, com_tar=targetarea.SingleTarget(reach=1), ai_tar=invocations.vs_wounded_ally,
+    exp_tar=targetarea.SinglePartyMember(), mpfudge=2 )
 
 # CIRCLE 8
 

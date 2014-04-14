@@ -4,7 +4,7 @@ import effects
 import animobs
 
 # Enumerated constants for dispelling types.
-COMBAT, MAGIC, POISON, DAILY = range( 4 )
+COMBAT, MAGIC, POISON, DAILY, CURSE = range( 5 )
 
 class Enchantment( object ):
     def __init__( self, statline=None, dispel = (COMBAT,MAGIC) ):
@@ -13,6 +13,9 @@ class Enchantment( object ):
         self.statline = statline
         self.dispel = dispel
         self.uses = 0
+
+    # If FX is defined, this affects carrier once per round.
+    FX = None
 
     # If any of the following effects are defined, they will be added to attacks.
     ATTACK_ON_HIT = None
@@ -29,6 +32,16 @@ class ArmorDamage( Enchantment ):
     def __init__( self ):
         super(ArmorDamage, self).__init__(statline=stats.StatMod({stats.PHYSICAL_DEFENSE:-10,stats.NATURAL_DEFENSE:-10}),dispel=(COMBAT))
 
+class AcidWepEn( Enchantment ):
+    def __init__( self ):
+        super(AcidWepEn, self).__init__(statline=stats.StatMod({stats.PHYSICAL_ATTACK:10}),dispel=(COMBAT,MAGIC))
+    ATTACK_ON_HIT = effects.HealthDamage( (1,10,0), stat_bonus=None, element=stats.RESIST_ACID, anim=animobs.GreenExplosion, on_success=(
+        effects.OpposedRoll( def_stat=stats.TOUGHNESS, on_failure = (
+            effects.Enchant( ArmorDamage, anim=animobs.OrangeSparkle )
+        ,))
+    ,) )
+
+
 class BeastlyMightEn( Enchantment ):
     def __init__( self ):
         super(BeastlyMightEn, self).__init__(statline=stats.StatMod({stats.STRENGTH:4,stats.TOUGHNESS:4,stats.PHYSICAL_ATTACK:5}),dispel=(COMBAT,MAGIC))
@@ -44,28 +57,38 @@ class BlessingEn( Enchantment ):
 
 class BlindedEn( Enchantment ):
     def __init__( self ):
-        super(BlindedEn, self).__init__(statline=stats.StatMod({stats.PHYSICAL_ATTACK:-10}),dispel=(COMBAT,MAGIC))
+        super(BlindedEn, self).__init__(statline=stats.StatMod({stats.PHYSICAL_ATTACK:-10}),dispel=(COMBAT,MAGIC,CURSE))
 
 class BurnLowEn( Enchantment ):
     def __init__( self ):
-        super(BurnLowEn, self).__init__(dispel=(MAGIC,COMBAT))
-    FX = effects.HealthDamage( (1,4,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.RedCloud )
+        super(BurnLowEn, self).__init__(dispel=(MAGIC,COMBAT,CURSE))
+    FX = effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.RedCloud )
     MAX_USES = 5
 
 class CurseEn( Enchantment ):
     def __init__( self ):
-        super(CurseEn, self).__init__(statline=stats.StatMod({stats.PHYSICAL_ATTACK:-5,stats.MAGIC_ATTACK:-5}),dispel=(COMBAT,MAGIC))
+        super(CurseEn, self).__init__(statline=stats.StatMod({stats.PHYSICAL_ATTACK:-5,stats.MAGIC_ATTACK:-5}),dispel=(COMBAT,MAGIC,CURSE))
 
 class FireSignEn( Enchantment ):
     def __init__( self ):
         super(FireSignEn, self).__init__(statline=stats.StatMod({stats.PHYSICAL_DEFENSE:-10,stats.NATURAL_DEFENSE:-10,
-            stats.STEALTH:-200}),dispel=(COMBAT,MAGIC))
+            stats.STEALTH:-200}),dispel=(COMBAT,MAGIC,CURSE))
 
 class FireWepEn( Enchantment ):
     def __init__( self ):
         super(FireWepEn, self).__init__(statline=stats.StatMod({stats.PHYSICAL_ATTACK:5,stats.RESIST_COLD:5}),dispel=(COMBAT,MAGIC))
     ATTACK_ON_HIT = effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion )
 
+class FrostBurnEn( Enchantment ):
+    def __init__( self ):
+        super(FrostBurnEn, self).__init__(dispel=(MAGIC,COMBAT,CURSE))
+    FX = effects.HealthDamage( (3,4,0), stat_bonus=None, element=stats.RESIST_COLD, anim=animobs.SnowCloud )
+    MAX_USES = 5
+
+class HeroismEn( Enchantment ):
+    def __init__( self ):
+        super(HeroismEn, self).__init__(statline=stats.StatMod({stats.STRENGTH:2,stats.TOUGHNESS:2,stats.REFLEXES:2,
+        stats.INTELLIGENCE:2, stats.PIETY:2, stats.CHARISMA:2}),dispel=(COMBAT,MAGIC))
 
 class HolySignMark( Enchantment ):
     def __init__( self ):
@@ -91,6 +114,19 @@ class PoisonWepEn( Enchantment ):
         ,))
     ,) )
 
+class ProtectFromEvilEn( Enchantment ):
+    def __init__( self ):
+        super(ProtectFromEvilEn, self).__init__(statline=stats.StatMod({stats.PHYSICAL_DEFENSE:10,
+            stats.NATURAL_DEFENSE:10, stats.MAGIC_DEFENSE:10, stats.RESIST_LUNAR:50}),
+            dispel=(COMBAT,MAGIC))
+
+class ProtectFromGoodEn( Enchantment ):
+    def __init__( self ):
+        super(ProtectFromGoodEn, self).__init__(statline=stats.StatMod({stats.PHYSICAL_DEFENSE:10,
+            stats.NATURAL_DEFENSE:10, stats.MAGIC_DEFENSE:10, stats.RESIST_SOLAR:50}),
+            dispel=(COMBAT,MAGIC))
+
+
 class RegeneratEn( Enchantment ):
     def __init__( self ):
         super(RegeneratEn, self).__init__(dispel=(MAGIC,DAILY))
@@ -114,6 +150,9 @@ class ResistEnergyEn( Enchantment ):
         super(ResistEnergyEn, self).__init__(statline=stats.StatMod({stats.RESIST_FIRE:50,stats.RESIST_COLD:50,
             stats.RESIST_ACID:50,stats.RESIST_LIGHTNING:50}),dispel=(COMBAT,MAGIC))
 
+class SpellShieldEn( Enchantment ):
+    def __init__( self ):
+        super(SpellShieldEn, self).__init__(statline=stats.StatMod({stats.MAGIC_DEFENSE:25}),dispel=(COMBAT,MAGIC))
 
 class StoneSkinEn( Enchantment ):
     def __init__( self ):

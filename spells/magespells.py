@@ -88,8 +88,26 @@ FLAMING_SWORD = Spell( "Flaming Sword",
     effects.CallMonster( {context.SUMMON_FLAMINGSWORD: True, context.DES_AIR: context.MAYBE, context.DES_FIRE: context.MAYBE}, 14, anim=animobs.RedSparkle ),
     rank=7, gems={AIR:2,FIRE:2}, com_tar=targetarea.SingleTarget(reach=2), mpfudge = 16 )
 
+FROSTFIRE = Spell( "Frostfire",
+    "This spell creates a sphere of pure anti-fire, which freezes all targets in a 3 tile radius for 4d12 cold damage. The frostfire may continue to burn until the victim is frozen solid.",
+    effects.OpposedRoll( on_success = (
+        effects.HealthDamage( (4,12,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_COLD, anim=animobs.SnowCloud ),
+        effects.Enchant( enchantments.FrostBurnEn )
+    ,), on_failure = (
+        effects.HealthDamage( (4,8,0), stat_bonus=None, element=stats.RESIST_COLD, anim=animobs.SnowCloud )
+    ,) ), rank=7, gems={FIRE:2,LUNAR:3}, com_tar=targetarea.Blast(radius=3), shot_anim=animobs.BlueComet, ai_tar=invocations.vs_enemy )
 
 # CIRCLE EIGHT
+
+METEOR_STORM = Spell( "Meteor Storm",
+    "This spell calls down flaming rocks from the heavens, doing 10d8 fire damage and setting targets alight in a 4 tile radius.",
+    effects.OpposedRoll( on_success = (
+        effects.HealthDamage( (10,8,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.MeteorStorm ),
+        effects.Enchant( enchantments.BurnLowEn )
+    ), on_failure = (
+        effects.HealthDamage( (3,12,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.MeteorStorm ),
+    ) ), rank=8, gems={FIRE:2,AIR:2}, com_tar=targetarea.Blast(radius=4), ai_tar=invocations.vs_enemy )
+
 
 # CIRCLE NINE
 

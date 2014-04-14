@@ -373,6 +373,26 @@ class PlaceField( NoEffect ):
         camp.scene.contents.append( self.f_type( pos, caster=originator ) )
         return self.children
 
+class TidyEnchantments( NoEffect ):
+    """Remove enchantments of a type from character, remove fields of type too."""
+    def __init__(self, e_type, children=None, anim=None ):
+        self.e_type = e_type
+        if not children:
+            children = list()
+        self.children = children
+        self.anim = anim
+
+    def handle_effect( self, camp, originator, pos, anims, delay=0 ):
+        """Tidy character, field in the indicated tile."""
+        target = camp.scene.get_character_at_spot( pos )
+        if target:
+            target.condition.tidy( self.e_type )
+        target = camp.scene.get_field_at_spot( pos )
+        if target and self.e_type in target.dispel:
+            camp.scene.contents.remove( target )
+        return self.children
+
+
 class CallMonster( NoEffect ):
     def __init__(self, habitat={ context.HAB_EVERY: True }, max_level=1, children=None, anim=None ):
         self.habitat = habitat
@@ -442,6 +462,8 @@ ANIMAL = {stats.UNDEAD: False, stats.DEMON: False, stats.ELEMENTAL: False, \
     stats.PLANT: False, stats.CONSTRUCT: False}
 ALIVE = {stats.UNDEAD: False, stats.DEMON: False, stats.ELEMENTAL: False, \
     stats.CONSTRUCT: False}
+CAN_DROWN = {stats.UNDEAD: False, stats.DEMON: False, stats.ELEMENTAL: False, \
+    stats.PLANT: False, stats.CONSTRUCT: False, stats.WATER: False}
 UNDEAD = {stats.UNDEAD: True }
 UNHOLY = {(stats.UNDEAD,stats.DEMON): True }
 CONSTRUCT = {(stats.CONSTRUCT,stats.BONE): True }
