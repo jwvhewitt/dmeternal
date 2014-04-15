@@ -53,6 +53,8 @@ CLOAK = SingType( "CLOAK", "Cloak", slot = BACK )
 HOLYSYMBOL = SingType( "HOLYSYMBOL", "Symbol", slot = HAND2 )
 WAND = SingType( "WAND", "Wand", slot = HAND1 )
 FARMTOOL = SingType( "FARMTOOL", "Farm Tool", slot = HAND1 )
+SCROLL = SingType( "SCROLL", "Scroll" )
+POTION = SingType( "POTION", "Potion" )
 
 class Attack( object ):
     def __init__( self, damage = (1,6,0), skill_mod = stats.STRENGTH, damage_mod = stats.STRENGTH,
@@ -237,14 +239,15 @@ class MissileWeapon( Item ):
         if h2.quantity < 1:
             user.contents.remove( h2 )
 
-class Ammo( Item ):
-    quantity = 20
-    mass_per_shot = 1
-    itemtype = ARROW
-    cost_per_shot = 1
+class Stackable( Item ):
+    quantity = 1
+    mass_per_q = 1
+    cost_per_q = 1
+    max_q = 10
 
     def cost( self, include_enhancement=True ):
-        it = self.cost_per_shot * self.quantity
+        it = self.cost_per_q * self.quantity
+
         if self.statline != None:
             it += self.statline.cost()
         if self.attackdata != None:
@@ -253,6 +256,16 @@ class Ammo( Item ):
         if self.enhancement and include_enhancement:
             it += ( self.enhancement.cost() * self.quantity ) // 25
         return it
+
+    def can_stack_with( self, other ):
+        # Return True if these things can stack.
+        return self.__class__ == other.__class__ and not self.enhancement and \
+         not other.enhancement and self.identified and other.identified and \
+         ( self.quantity + other.quantity ) <= self.max_q
+
+    @property
+    def mass( self ):
+        return self.quantity * self.mass_per_q
 
     def __str__( self ):
         if self.identified:
@@ -264,9 +277,31 @@ class Ammo( Item ):
             msg = "?"+self.itemtype.name
         return "{0} [{1}]".format( msg, self.quantity )
 
-    @property
-    def mass( self ):
-        return self.quantity * self.mass_per_shot
+class Consumable( Stackable ):
+    itemtype = POTION
+    tech = None
+    def use( self, user, explo ):
+        # The player wants to use this item.
+        if self.tech and self.tech.can_be_invoked( user, explo.camp.fight ):
+            if explo.camp.fight:
+                uzd = explo.pc_use_technique( user, self.tech, self.tech.com_tar )
+            else:
+                uzd = explo.pc_use_technique( user, self.tech, self.tech.exp_tar )
+            if uzd:
+                self.quantity += -1
+                if self.quantity < 1:
+                    user.contents.remove( self )
+            return uzd
+        else:
+            explo.alert( "{0} cannot be used right now.".format( self ) )
+
+
+class Ammo( Stackable ):
+    quantity = 20
+    mass_per_q = 1
+    itemtype = ARROW
+    cost_per_q = 1
+    max_q = 60
 
 class ManaWeapon( Item ):
     MP_COST = 1
@@ -349,6 +384,8 @@ import holysymbols
 import lightarmor
 import maces
 import polearms
+import potions
+import scrolls
 import shields
 import shoes
 import slings
@@ -361,7 +398,7 @@ ITEM_LIST = []
 def harvest( mod ):
     for name in dir( mod ):
         o = getattr( mod, name )
-        if inspect.isclass( o ) and issubclass( o , Item ) and o not in (Item, MissileWeapon, Ammo, ManaWeapon, Clothing):
+        if inspect.isclass( o ) and issubclass( o , Item ) and o not in (Item, MissileWeapon, Ammo, ManaWeapon, Clothing, Stackable, Consumable):
             ITEM_LIST.append( o )
 
 harvest( axes )
@@ -379,6 +416,8 @@ harvest( holysymbols )
 harvest( lightarmor )
 harvest( maces )
 harvest( polearms )
+harvest( potions )
+harvest( scrolls )
 harvest( shields )
 harvest( shoes )
 harvest( slings )
@@ -423,7 +462,8 @@ def make_item_magic( item_to_enchant, target_rank ):
         item_to_enchant.enhancement = e()
 
 PREMIUM_TYPES = (SWORD,AXE,MACE,DAGGER,STAFF,BOW,ARROW,SHIELD,POLEARM,SLING,BULLET,
-    LIGHT_ARMOR,HEAVY_ARMOR,HELM,GAUNTLET,LIGHT_ARMOR,HEAVY_ARMOR,SWORD,AXE,MACE,SHIELD)
+    LIGHT_ARMOR,HEAVY_ARMOR,HELM,GAUNTLET,LIGHT_ARMOR,HEAVY_ARMOR,SWORD,AXE,MACE,SHIELD,
+    SCROLL,POTION)
 
 def generate_hoard( drop_rank, drop_strength ):
     """Returns a tuple containing gold, list of items."""
@@ -491,6 +531,22 @@ class Backpack( container.ContainerList ):
     def unequip( self, item ):
         item.equipped = False
 
+    def tidy( self ):
+        # Merge any stackable items.
+        mystackables = list()
+        for i in self[:]:
+            if hasattr(i,"can_stack_with"):
+                self.remove( i )
+                found_stack = False
+                for ii in mystackables:
+                    if i.can_stack_with( ii ):
+                        ii.quantity += i.quantity
+                        found_stack = True
+                        break
+                if not found_stack:
+                    mystackables.append( i )
+        if mystackables:
+            self += mystackables
 
 
 

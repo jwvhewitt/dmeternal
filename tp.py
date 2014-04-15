@@ -56,11 +56,10 @@ if __name__=='__main__':
         nart.build()
         camp = nart.camp
 
-        camp.party = campaign.load_party( screen )
+        pcs = campaign.load_party( screen )
 
-        if camp.party:
-            for pc in camp.party:
-                pc.choose_random_spells()
+        if pcs:
+            camp.add_party( pcs )
             camp.place_party()
 
             camp.play( screen )

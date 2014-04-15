@@ -16,6 +16,8 @@ WEAPON_STORE = ( items.SWORD, items.AXE, items.MACE, items.DAGGER, items.STAFF,
     items.BOW, items.POLEARM, items.ARROW, items.SLING, items.BULLET,
     items.FARMTOOL )
 
+MAGIC_STORE = ( items.SCROLL, )
+
 class Shop( object ):
     def __init__( self, ware_types = GENERAL_STORE, allow_misc=True, allow_magic=False, caption="Shop", magic_chance=20, rank=3, num_items=25 ):
         self.wares = list()
@@ -133,6 +135,7 @@ class Shop( object ):
         while keep_going:
             mymenu = charsheet.RightMenu( explo.screen, predraw = myredraw )
 
+            self.pc.contents.tidy()
             for s in self.pc.contents:
                 if s.equipped:
                     mymenu.add_item( "*{0} ({1}gp)".format( s, self.sale_price( s )), s )
@@ -282,8 +285,8 @@ class Shop( object ):
         del self.charsheets
 
 
-class Library( object ):
-    def __init__( self, spell_list = None, caption="Library" ):
+class SpellManager( object ):
+    def __init__( self, spell_list = None, caption="Manage Spells" ):
         self.spell_list = spell_list
         self.caption = caption
 
@@ -291,7 +294,7 @@ class Library( object ):
         keep_going = True
         myredraw = charsheet.CharacterViewRedrawer( csheet=self.charsheets[ self.pc ], screen=explo.screen, predraw=explo.view, caption="Learn New Spell" )
 
-        sl = self.spell_list or spells.SPELL_LIST
+        sl = self.spell_list or explo.camp.known_spells
 
         while keep_going:
             mymenu = charsheet.RightMenu( explo.screen, predraw = myredraw )
@@ -383,6 +386,33 @@ class Library( object ):
             else:
                 keep_going = False
 
+    def browse_spells( self, explo ):
+        keep_going = True
+        myredraw = charsheet.CharacterViewRedrawer( csheet=self.charsheets[ self.pc ], screen=explo.screen, predraw=explo.view, caption="Browse Library" )
+
+        while keep_going:
+            mymenu = charsheet.RightMenu( explo.screen, predraw = myredraw )
+            for s in explo.camp.known_spells:
+                mymenu.add_item( str( s ), s )
+            mymenu.sort()
+            mymenu.add_alpha_keys()
+            mymenu.add_item( "Exit", False )
+            myredraw.menu = mymenu
+            mymenu.quick_keys[ pygame.K_LEFT ] = -1
+            mymenu.quick_keys[ pygame.K_RIGHT ] = 1
+
+            it = mymenu.query()
+            if it is -1:
+                n = ( explo.camp.party.index(self.pc) + len( explo.camp.party ) - 1 ) % len( explo.camp.party )
+                self.pc = explo.camp.party[n]
+                myredraw.csheet = self.charsheets[ self.pc ]
+            elif it is 1:
+                n = ( explo.camp.party.index(self.pc) + 1 ) % len( explo.camp.party )
+                self.pc = explo.camp.party[n]
+                myredraw.csheet = self.charsheets[ self.pc ]
+            else:
+                keep_going = False
+
 
     def __call__( self, explo ):
         self.charsheets = dict()
@@ -396,6 +426,7 @@ class Library( object ):
             rpm.add_item( str( pc ), pc )
         rpm.sort()
         rpm.add_alpha_keys()
+        rpm.add_item( "Browse Spells", 1 )
         rpm.add_item( "Exit", None )
         keep_going = True
         self.pc = explo.camp.first_living_pc()
@@ -404,7 +435,9 @@ class Library( object ):
             rpm.set_item_by_value( self.pc )
             pc = rpm.query()
 
-            if pc:
+            if pc == 1:
+                self.browse_spells( explo )
+            elif pc:
                 self.pc = pc
                 self.enter_library( explo )
             else:

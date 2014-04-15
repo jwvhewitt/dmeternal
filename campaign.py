@@ -35,6 +35,7 @@ import enchantments
 import collections
 import container
 import maps
+import spells
 
 
 class Campaign( object ):
@@ -47,9 +48,39 @@ class Campaign( object ):
         self.destination = None
         self.contents = container.ContainerList()
         self.scripts = list()
+        self.known_spells = list()
         self.fight = None
         self.gold = 300
         self.day = 1
+
+    def add_party( self, party ):
+        """Add the party, give them random spells, fill the known spell list."""
+        self.party = party
+        # Set spells
+        has_color = [False,False,False,False,False,False]
+        for pc in self.party:
+            pc.choose_random_spells()
+            for t in spells.COLORS:
+                if pc.spell_gems_of_color(t):
+                    has_color[t] = True
+        candidates = list()
+        for spell in spells.SPELL_LIST:
+            s_ok = True
+            for k in spell.gems.iterkeys():
+                if not has_color[k]:
+                    s_ok = False
+            if s_ok:
+                if spell.rank == 1:
+                    self.known_spells.append( spell )
+                elif spell.rank == 2:
+                    candidates.append( spell )
+        for t in range( 3 ):
+            if candidates:
+                spell = random.choice( candidates )
+                candidates.remove( spell )
+                self.known_spells.append( spell )
+            else:
+                break
 
     def first_living_pc( self ):
         """Return the first living PC in the party."""

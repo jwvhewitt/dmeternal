@@ -142,6 +142,7 @@ class InvExchange( object ):
             rmenu.quick_keys[ pygame.K_RIGHT ] = 1
             rmenu.quick_keys[ "/" ] = 2
 
+            pc.contents.tidy()
             for it in pc.contents:
                 if it.equipped:
                     lmenu.add_item( "*"+str( it ), it )
@@ -185,6 +186,8 @@ class InvExchange( object ):
             else:
                 keep_going = False
         return self.ilist
+
+
 
 class WorldExplorer( object ):
     def __init__( self, explo ):
@@ -504,15 +507,18 @@ class Explorer( object ):
 
     def equip_item( self, it, pc, redraw ):
         pc.contents.equip( it )
+        return True
 
     def unequip_item( self, it, pc, redraw ):
         pc.contents.unequip( it )
+        return True
 
     def drop_item( self, it, pc, redraw ):
         pc.contents.unequip( it )
         if not it.equipped:
             pc.contents.remove( it )
             it.place( self.scene, pc.pos )
+        return True
 
     def trade_item( self, it, pc, redraw ):
         """Trade this item to another character."""
@@ -532,7 +538,18 @@ class Explorer( object ):
                     opc.contents.append( it )
                 else:
                     self.alert( "{0} can't carry any more.".format( str( opc ) ) )
+        return True
 
+    def use_item( self, it, pc, myredraw ):
+        it.use( pc, self )
+
+    def learn_spell_from_item( self, it, pc, myredraw ):
+        self.camp.known_spells.append( it.spell )
+        self.alert( "You have added {0} to your library.".format( it.spell ) )
+        if hasattr( it, "quantity" ):
+            it.quantity += -1
+            if it.quantity < 1:
+                pc.contents.remove( it )
 
     def equip_or_whatevs( self, it, pc, myredraw ):
         """Equip, trade, drop, or whatever this item."""
@@ -541,6 +558,10 @@ class Explorer( object ):
             mymenu.add_item( "Unequip Item", self.unequip_item )
         elif pc.can_equip( it ):
             mymenu.add_item( "Equip Item", self.equip_item )
+        if hasattr( it, "use" ):
+            mymenu.add_item( "Use Item", self.use_item )
+        if hasattr( it, "spell" ) and not any( it.spell.name == t.name for t in self.camp.known_spells ):
+            mymenu.add_item( "Learn Spell", self.learn_spell_from_item )
         mymenu.add_item( "Trade Item", self.trade_item )
         mymenu.add_item( "Drop Item", self.drop_item )
         mymenu.add_item( "Exit", False )
@@ -549,9 +570,12 @@ class Explorer( object ):
         n = mymenu.query()
 
         if n:
-            n( it, pc, myredraw )
+            result = n( it, pc, myredraw )
             myredraw.csheet.regenerate_avatar()
             self.view.regenerate_avatars( self.camp.party )
+            return result
+        else:
+            return True
 
     def cast_explo_spell( self, n, can_switch=True ):
         if n >= len( self.camp.party ):
@@ -601,6 +625,7 @@ class Explorer( object ):
 
         while keep_going:
             mymenu = charsheet.RightMenu( self.screen, predraw = myredraw )
+            pc.contents.tidy()
             for i in pc.contents:
                 if i.equipped:
                     mymenu.add_item( "*" + str( i ) , i )
@@ -628,8 +653,8 @@ class Explorer( object ):
 
             elif it:
                 # An item was selected. Deal with it.
-                self.equip_or_whatevs( it, pc, myredraw )
-
+                if not self.equip_or_whatevs( it, pc, myredraw ):
+                    keep_going = False
             else:
                 keep_going = False
 
@@ -804,7 +829,7 @@ class Explorer( object ):
                     elif gdi.unicode == u"R":
                         self.field_camp()
                     elif gdi.unicode == u"s":
-                        self.shop( self )
+                        services.SpellManager()(self)
                     elif gdi.unicode == u"*":
                         for pc in self.camp.party:
                             pc.advance( pc.mr_level.__class__ )

@@ -67,9 +67,9 @@ HELLO_SERVICE = Offer( msg = "Hello. Can I help you with anything?" ,
         context = ContextTag( [context.HELLO,context.SERVICE] ) ,
         replies = [ Reply( "Yes, I need your services." , destination = Cue( ContextTag( [context.SERVICE] ) ) ) ] )
 
-HELLO_LIBRARY = Offer( msg = "Welcome to the library. Let me know if you need any help." ,
+HELLO_MAGICSTORE = Offer( msg = "Welcome to my shop. Let me know if you need any help." ,
         context = ContextTag( [context.HELLO,context.SERVICE] ) ,
-        replies = [ Reply( "I need some new spells." , destination = Cue( ContextTag( [context.SERVICE,context.LIBRARY] ) ) ) ] )
+        replies = [ Reply( "I need some new magic." , destination = Cue( ContextTag( [context.SHOP,context.MAGICGOODS] ) ) ) ] )
 
 HELLO_TEMPLE = Offer( msg = "Welcome to the temple. Do you need any healing?" ,
         context = ContextTag( [context.HELLO,context.HEALING] ) ,

@@ -87,11 +87,8 @@ class Anvil( Waypoint ):
 class Bookshelf( Waypoint ):
     TILE = maps.Tile( None, None, maps.BOOKSHELF )
     ATTACH_TO_WALL = True
-    LIBRARY = services.Library()
     desc = "You stand before a bookshelf."
     mini_map_label = "Bookshelf"
-    def unlocked_use( self, explo ):
-        self.LIBRARY( explo )
 
 class GateDoor( Waypoint ):
     TILE = maps.Tile( None, maps.CLOSED_DOOR, None )

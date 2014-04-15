@@ -25,7 +25,7 @@ HELLO_TO_GENERAL_SHOP = Reply( "We need to buy something.",
 
 
 HELLO_TO_LIBRARY = Reply( "I need to research spells.",
-            destination = Cue( ContextTag([context.SERVICE,context.LIBRARY])),
+            destination = Cue( ContextTag([context.SHOP,context.MAGICGOODS])),
             context = ContextTag([context.HELLO]) )
 
 HELLO_TO_HEALING = Reply( "We need some healing.",

@@ -216,7 +216,7 @@ class GenericLibrary( Plot ):
         self.register_element( "SHOPKEEPER", npc )
         int_mainroom.contents.append( maps.DESK )
         int_mainroom.contents.append( maps.TABLE )
-        self.shop = services.Library()
+        self.shop = services.Shop( services.MAGIC_STORE, rank=self.rank+5, allow_misc=False, allow_magic=True, num_items=9 )
         self.add_sub_plot( nart, "SIDE_STORY", PlotState(rank=self.random_rank_in_chapter()).based_on( self ) )
         return True
 
@@ -224,7 +224,7 @@ class GenericLibrary( Plot ):
         # Return list of shopkeeper offers.
         ol = list()
         ol.append( dialogue.Offer( "Knowledge is power. Some knowledge is more powerful than others." ,
-         context = context.ContextTag([context.SERVICE,context.LIBRARY]), effect=self.shop ) )
+         context = context.ContextTag([context.SHOP,context.MAGICGOODS]), effect=self.shop ) )
         return ol
 
 #  ***********************

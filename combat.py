@@ -300,6 +300,20 @@ class Combat( object ):
                 n += 1
         return n
 
+    def pop_useitem_menu( self, explo, chara ):
+        mymenu = rpgmenu.PopUpMenu( explo.screen, explo.view )
+        for i in chara.contents:
+            if hasattr( i, "use" ):
+                mymenu.add_item( str( i ) , i )
+        mymenu.sort()
+        mymenu.add_alpha_keys()
+
+        choice = mymenu.query()
+
+        if choice:
+            if choice.use( chara, explo ):
+                self.end_turn( chara )
+
     def pop_combat_menu( self, explo, chara ):
         mymenu = rpgmenu.PopUpMenu( explo.screen, explo.view )
 
@@ -317,6 +331,8 @@ class Combat( object ):
             mymenu.add_item( "Skill: Stealth", 4 )
         if self.num_enemies_hiding(chara):
             mymenu.add_item( "Skill: Awareness", 5 )
+        if any( hasattr( i, "use" ) for i in chara.contents ):
+            mymenu.add_item( "Use Item", 7 )
         mymenu.add_item( "View Inventory".format(str(chara)), 2 )
         mymenu.add_item( "Focus on {0}".format(str(chara)), 1 )
         mymenu.add_item( "End Turn".format(str(chara)), 3 )
@@ -336,6 +352,8 @@ class Combat( object ):
             self.attempt_awareness( explo, chara )
         elif choice == 6:
             self.attempt_holy_sign( explo, chara )
+        elif choice == 7:
+            self.pop_useitem_menu( explo, chara )
 
         elif choice:
             # Presumably, this is an invocation of some kind.
