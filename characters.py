@@ -400,6 +400,11 @@ class CappedModifierList( list ):
         for thing in self[:]:
             if hasattr( thing, "dispel" ) and dispel_this in thing.dispel:
                 self.remove( thing )
+    def has_enchantment_of_type( self, find_this ):
+        for thing in self:
+            if hasattr( thing, "dispel" ) and find_this in thing.dispel:
+                return True
+
 
 class Character( stats.PhysicalThing ):
     FRAME = 0
