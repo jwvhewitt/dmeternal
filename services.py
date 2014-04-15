@@ -16,7 +16,8 @@ WEAPON_STORE = ( items.SWORD, items.AXE, items.MACE, items.DAGGER, items.STAFF,
     items.BOW, items.POLEARM, items.ARROW, items.SLING, items.BULLET,
     items.FARMTOOL )
 
-MAGIC_STORE = ( items.SCROLL, )
+MAGIC_STORE = ( items.SCROLL, items.SCROLL, items.SCROLL, items.SCROLL, items.SCROLL, 
+    items.POTION, items.HOLYSYMBOL, items.WAND )
 
 class Shop( object ):
     def __init__( self, ware_types = GENERAL_STORE, allow_misc=True, allow_magic=False, caption="Shop", magic_chance=20, rank=3, num_items=25 ):
@@ -77,10 +78,10 @@ class Shop( object ):
         mymenu = charsheet.RightMenu( explo.screen, predraw = myredraw )
 
         for s in self.wares:
-            if self.pc.can_equip(s):
-                mymenu.add_item( str( s ), s )
-            else:
+            if s.slot != items.NOSLOT and not self.pc.can_equip(s):
                 mymenu.add_item( "#" + str( s ), s )
+            else:
+                mymenu.add_item( str( s ), s )
         mymenu.sort()
         mymenu.add_alpha_keys()
         mymenu.add_item( "Exit", False )
@@ -139,10 +140,10 @@ class Shop( object ):
             for s in self.pc.contents:
                 if s.equipped:
                     mymenu.add_item( "*{0} ({1}gp)".format( s, self.sale_price( s )), s )
-                elif self.pc.can_equip(s):
-                    mymenu.add_item( "{0} ({1}gp)".format( s, self.sale_price( s ) ), s )
-                else:
+                elif s.slot != items.NOSLOT and not self.pc.can_equip(s):
                     mymenu.add_item( "#{0} ({1}gp)".format( s, self.sale_price( s ) ), s )
+                else:
+                    mymenu.add_item( "{0} ({1}gp)".format( s, self.sale_price( s ) ), s )
             mymenu.sort()
             mymenu.add_alpha_keys()
             mymenu.add_item( "Exit", False )
@@ -187,10 +188,10 @@ class Shop( object ):
                 if not s.identified:
                     if s.equipped:
                         mymenu.add_item( "*{0} ({1}gp)".format( s, self.IDENTIFY_PRICE), s )
-                    elif self.pc.can_equip(s):
-                        mymenu.add_item( "{0} ({1}gp)".format( s, self.IDENTIFY_PRICE ), s )
-                    else:
+                    elif s.slot != items.NOSLOT and not self.pc.can_equip(s):
                         mymenu.add_item( "#{0} ({1}gp)".format( s, self.IDENTIFY_PRICE ), s )
+                    else:
+                        mymenu.add_item( "{0} ({1}gp)".format( s, self.IDENTIFY_PRICE ), s )
             mymenu.sort()
             mymenu.add_alpha_keys()
             mymenu.add_item( "Exit", False )

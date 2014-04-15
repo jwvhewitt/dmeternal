@@ -146,12 +146,12 @@ class InvExchange( object ):
             for it in pc.contents:
                 if it.equipped:
                     lmenu.add_item( "*"+str( it ), it )
-                elif not pc.can_equip( it ):
+                elif it.slot != items.NOSLOT and not pc.can_equip( it ):
                     lmenu.add_item( "#"+str( it ), it )
                 else:
                     lmenu.add_item( str( it ), it )
             for it in self.ilist:
-                if not pc.can_equip( it ):
+                if it.slot != items.NOSLOT and not pc.can_equip( it ):
                     rmenu.add_item( "#"+str( it ), it )
                 else:
                     rmenu.add_item( str( it ), it )
@@ -629,7 +629,7 @@ class Explorer( object ):
             for i in pc.contents:
                 if i.equipped:
                     mymenu.add_item( "*" + str( i ) , i )
-                elif not pc.can_equip( i ):
+                elif i.slot != items.NOSLOT and not pc.can_equip( i ):
                     mymenu.add_item( "#" + str( i ) , i )
                 else:
                     mymenu.add_item( str( i ) , i )
