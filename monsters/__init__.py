@@ -7,9 +7,13 @@ import namegen
 from dialogue import voice
 
 import animals
+import aquan
+import auran
 import constructs
 import giants
 import goblins
+import ignan
+import terran
 import undead
 
 # Compile the monsters into a useful list.
@@ -21,9 +25,13 @@ def harvest( mod ):
             MONSTER_LIST.append( o )
 
 harvest( animals )
+harvest( aquan )
+harvest( auran )
 harvest( constructs )
 harvest( giants )
 harvest( goblins )
+harvest( ignan )
+harvest( terran )
 harvest( undead )
 
 VOICE_TO_NAMEGEN = { voice.ORCISH: namegen.ORC, voice.ELVEN: namegen.ELF, \

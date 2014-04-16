@@ -32,9 +32,15 @@ class Shop( object ):
         self.last_updated = -1
 
     def generate_item( self, itype, rank ):
-        it = items.choose_item( itype, rank )
-        if it and self.allow_magic and it.min_rank() < rank and random.randint(1,100)<=self.magic_chance:
-            items.make_item_magic( it, rank )
+        it = None
+        tries = 0
+        while ( tries < 200 ) and not it:
+            it = items.choose_item( itype, rank )
+            if it and self.allow_magic and it.min_rank() < rank and random.randint(1,100)<=self.magic_chance:
+                items.make_item_magic( it, rank )
+            if any( str( i ) == str( it ) for i in self.wares ):
+                it = None
+            tries += 1
         return it
 
     def update_wares( self, explo ):
@@ -64,14 +70,14 @@ class Shop( object ):
         tries = 0
         while len( self.wares ) < self.num_items:
             tries += 1
-            if self.allow_misc or tries > 1000:
+            if self.allow_misc or tries > 200:
                 itype = None
             else:
                 itype = random.choice( self.ware_types )
             it = self.generate_item( itype, rank )
-            if it and not any( str( i ) == str( it ) for i in self.wares ):
+            if it:
                 self.wares.append( it )
-            elif not it:
+            elif not it and not itype:
                 break
 
     def make_wares_menu( self, explo, myredraw ):
