@@ -67,6 +67,12 @@ HEAT_WAVE = Spell( "Heat Wave",
 
 # CIRCLE 6
 
+CALL_FIRE_ELEMENTAL = Spell( "Call Fire Elemental",
+    "This spell will call forth a living vortex of fire to serve you for the duration of combat.",
+    effects.CallMonster( {context.DES_FIRE: True, context.SUMMON_ELEMENTAL: True }, 12, anim=animobs.RedSparkle ),
+    rank=6, gems={FIRE:3}, com_tar=targetarea.SingleTarget(reach=5), mpfudge = 12 )
+
+
 # CIRCLE SEVEN
 
 DISINTEGRATION = Spell( "Disintegration",

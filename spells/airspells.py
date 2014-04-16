@@ -5,6 +5,7 @@ import enchantments
 import animobs
 import stats
 import invocations
+import context
 
 # CIRCLE ONE
 
@@ -89,6 +90,10 @@ DISMISSAL = Spell( "Dismissal",
         ), on_false = (effects.NoEffect( anim=animobs.Caption ),)
     ), rank=6, gems={AIR:2}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.MysticBolt )
 
+CALL_AIR_ELEMENTAL = Spell( "Call Air Elemental",
+    "This spell will summon a living embodiment of the skies to fight on your behalf.",
+    effects.CallMonster( {context.DES_AIR: True, context.SUMMON_ELEMENTAL: True }, 12, anim=animobs.BlueSparkle ),
+    rank=6, gems={AIR:3}, com_tar=targetarea.SingleTarget(reach=5), mpfudge = 12 )
 
 
 

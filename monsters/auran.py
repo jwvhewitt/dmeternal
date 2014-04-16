@@ -60,6 +60,43 @@ import enchantments
 #  ***   ENCOUNTER  LEVEL  12   ***
 #  ********************************
 
+class AirElemental( base.Monster ):
+    name = "Air Elemental"
+    statline = { stats.STRENGTH: 20, stats.TOUGHNESS: 20, stats.REFLEXES: 30, \
+        stats.INTELLIGENCE: 12, stats.PIETY: 12, stats.CHARISMA: 12,
+        stats.RESIST_WIND: 100 }
+    SPRITENAME = "monster_e_air.png"
+    FRAME = 0
+    TEMPLATES = (stats.ELEMENTAL,stats.AIR)
+    MOVE_POINTS = 20
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.DES_AIR, context.SUMMON_ELEMENTAL )
+    ENC_LEVEL = 12
+
+    ATTACK = items.Attack( (1,10,0), element = stats.RESIST_SLASHING, extra_effect =
+        effects.HealthDamage( (1,10,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_WIND, anim=animobs.Spiral )
+    )
+
+    TECHNIQUES = ( invocations.MPInvocation( "Tornado",
+        effects.OpposedRoll( def_stat=stats.REFLEXES, on_success = (
+            effects.HealthDamage( (3,8,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_WIND, anim=animobs.Spiral )
+        ,), on_failure = (
+            effects.HealthDamage( (1,12,0), stat_bonus=None, element=stats.RESIST_WIND, anim=animobs.Spiral )
+        ,) ), mp_cost=10, com_tar=targetarea.Blast(radius=3), shot_anim=animobs.Whirlwind, ai_tar=invocations.vs_enemy ),
+
+        invocations.MPInvocation( "Lightning Bolt",
+        effects.OpposedRoll( def_stat=stats.REFLEXES, on_success = (
+            effects.HealthDamage( (3,12,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_LIGHTNING, anim=animobs.BlueZap )
+        ,), on_failure = (
+            effects.HealthDamage( (2,10,0), stat_bonus=None, element=stats.RESIST_LIGHTNING, anim=animobs.BlueZap )
+        ,) ), 
+        mp_cost=5, com_tar=targetarea.SingleTarget(), shot_anim=animobs.Lightning, ai_tar=invocations.vs_enemy )
+    )
+
+    def init_monster( self ):
+        self.levels.append( base.Beast( 12, self ) )
+
+
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  13   ***
 #  ********************************

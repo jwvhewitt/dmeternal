@@ -86,7 +86,7 @@ MTY_BEAST, MTY_HUMANOID, MTY_FIGHTER, MTY_THIEF, MTY_PRIEST, MTY_MAGE, \
 GEN_GIANT, GEN_GOBLIN, GEN_CHAOS, GEN_UNDEAD, GEN_NATURE, GEN_DRAGON = range( 1400,1406 )
 
 # Summon Tags. Used to mark individual monsters for specific spells.
-SUMMON_FLAMINGSWORD = 2000
+SUMMON_FLAMINGSWORD, SUMMON_ELEMENTAL = range( 2000, 2002 )
 
 def matches_description( context_set, desc_request ):
     # context_set is a list of context tags.

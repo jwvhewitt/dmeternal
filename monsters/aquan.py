@@ -60,6 +60,34 @@ import enchantments
 #  ***   ENCOUNTER  LEVEL  12   ***
 #  ********************************
 
+class WaterElemental( base.Monster ):
+    name = "Water Elemental"
+    statline = { stats.STRENGTH: 25, stats.TOUGHNESS: 25, stats.REFLEXES: 20, \
+        stats.INTELLIGENCE: 12, stats.PIETY: 12, stats.CHARISMA: 12,
+        stats.RESIST_WATER: 100 }
+    SPRITENAME = "monster_e_water.png"
+    FRAME = 0
+    TEMPLATES = (stats.ELEMENTAL,stats.WATER)
+    MOVE_POINTS = 20
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.DES_WATER, context.SUMMON_ELEMENTAL )
+    ENC_LEVEL = 12
+
+    ATTACK = items.Attack( (1,10,0), element = stats.RESIST_CRUSHING, extra_effect =
+        effects.HealthDamage( (1,10,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_WATER, anim=animobs.Spiral )
+    )
+
+    TECHNIQUES = ( invocations.MPInvocation( "Tidal Wave",
+        effects.OpposedRoll( def_stat=stats.REFLEXES, on_success = (
+            effects.HealthDamage( (3,8,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_WATER, anim=animobs.Bubbles )
+        ,), on_failure = (
+            effects.HealthDamage( (1,12,0), stat_bonus=None, element=stats.RESIST_WATER, anim=animobs.Bubbles )
+        ,) ), mp_cost=10, com_tar=targetarea.Cone(), ai_tar=invocations.vs_enemy ),
+    )
+
+    def init_monster( self ):
+        self.levels.append( base.Beast( 12, self ) )
+
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  13   ***
 #  ********************************

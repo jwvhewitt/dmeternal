@@ -79,6 +79,11 @@ STONE_SKIN = Spell( "Stone Skin",
     effects.Enchant( enchantments.StoneSkinEn, anim=animobs.OrangeSparkle ),
     rank=6, gems={EARTH:3}, com_tar=targetarea.SingleTarget(), mpfudge=-2 )
 
+CALL_EARTH_ELEMENTAL = Spell( "Call Earth Elemental",
+    "This spell will call forth the living spirit of the mountains to fight alongside you.",
+    effects.CallMonster( {context.DES_EARTH: True, context.SUMMON_ELEMENTAL: True }, 12, anim=animobs.OrangeSparkle ),
+    rank=6, gems={EARTH:3}, com_tar=targetarea.SingleTarget(reach=5), mpfudge = 12 )
+
 
 # CIRCLE 7
 

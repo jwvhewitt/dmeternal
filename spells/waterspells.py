@@ -79,6 +79,11 @@ TSUNAMI = Spell( "Tsunami",
     ,) ), rank=6, gems={WATER:3}, com_tar=targetarea.Cone(reach=10),
     ai_tar=invocations.vs_enemy )
 
+CALL_WATER_ELEMENTAL = Spell( "Call Water Elemental",
+    "This spell will call forth a living embodiment of the seas to do your bidding.",
+    effects.CallMonster( {context.DES_WATER: True, context.SUMMON_ELEMENTAL: True }, 12, anim=animobs.GreenSparkle ),
+    rank=6, gems={WATER:3}, com_tar=targetarea.SingleTarget(reach=5), mpfudge = 12 )
+
 
 # CIRCLE SEVEN
 
