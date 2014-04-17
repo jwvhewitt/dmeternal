@@ -60,6 +60,30 @@ import enchantments
 #  ***   ENCOUNTER  LEVEL  12   ***
 #  ********************************
 
+class FireElemental( base.Monster ):
+    name = "Fire Elemental"
+    statline = { stats.STRENGTH: 35, stats.TOUGHNESS: 15, stats.REFLEXES: 20, \
+        stats.INTELLIGENCE: 12, stats.PIETY: 12, stats.CHARISMA: 12,
+        stats.RESIST_FIRE: 100 }
+    SPRITENAME = "monster_e_fire.png"
+    FRAME = 0
+    TEMPLATES = (stats.ELEMENTAL,stats.FIRE)
+    MOVE_POINTS = 10
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.DES_FIRE, context.SUMMON_ELEMENTAL )
+    ENC_LEVEL = 12
+
+    ATTACK = items.Attack( (2,8,0), element = stats.RESIST_ATOMIC, extra_effect =
+        effects.HealthDamage( (2,8,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.RedCloud,
+            on_success=( effects.Enchant( enchantments.BurnLowEn ),
+            )
+        )
+    )
+
+    def init_monster( self ):
+        self.levels.append( base.Beast( 12, self ) )
+
+
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  13   ***
 #  ********************************
