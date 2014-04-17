@@ -5,6 +5,7 @@ import items
 import random
 import copy
 import pfov
+import enchantments
 
 GENERAL_STORE = ( items.SWORD, items.AXE, items.MACE, items.DAGGER, items.STAFF,
     items.BOW, items.POLEARM, items.ARROW, items.SHIELD, items.SLING, items.BULLET,
@@ -479,10 +480,12 @@ class Inn( object ):
                 explo.alert( "You can't afford to stay here! Come back when you've earned some money." )
 
 class Temple( object ):
-    def __init__( self, cost_for_resurrection = 100, cost_for_restoration=25, caption="Temple",
+    def __init__( self, cost_for_resurrection = 100, cost_for_restoration=25, cost_for_curepoison=15, cost_for_removecurse=50, caption="Temple",
       desc = "Welcome to the temple. What prayers are you in need of?" ):
         self.cost_for_resurrection = cost_for_resurrection
         self.cost_for_restoration = cost_for_restoration
+        self.cost_for_curepoison = cost_for_curepoison
+        self.cost_for_removecurse = cost_for_removecurse
         self.caption = caption
         self.desc = desc
 
@@ -491,6 +494,12 @@ class Temple( object ):
 
     def restoration_cost( self, pc ):
         return pc.rank() * self.cost_for_restoration
+
+    def cure_poison_cost( self, pc ):
+        return pc.rank() * self.cost_for_curepoison
+
+    def remove_curse_cost( self, pc ):
+        return pc.rank() * self.cost_for_removecurse
 
     def get_return_pos( self, explo ):
         x0,y0 = explo.camp.first_living_pc().pos
@@ -563,18 +572,79 @@ class Temple( object ):
             else:
                 break
 
+    def cure_poison( self, explo ):
+        charsheets = dict()
+        for pc in explo.camp.party:
+            charsheets[ pc ] = charsheet.CharacterSheet( pc , screen=explo.screen, camp=explo.camp )
+        psr = charsheet.PartySelectRedrawer( predraw=explo.view, charsheets=charsheets, screen=explo.screen, caption="Cure Poison" )
+
+        while True:
+            rpm = charsheet.RightMenu( explo.screen, predraw=psr, add_desc=False )
+            psr.menu = rpm
+            for pc in explo.camp.party:
+                if pc.is_alright() and pc.condition.has_enchantment_of_type( enchantments.POISON ):
+                    rpm.add_item( "{0} - {1}gp".format( str( pc ), self.cure_poison_cost( pc ) ) , pc )
+            rpm.sort()
+            rpm.add_alpha_keys()
+            rpm.add_item( "Exit", None )
+
+            pc = rpm.query()
+
+            if pc:
+                if explo.camp.gold >= self.cure_poison_cost( pc ):
+                    explo.camp.gold -= self.cure_poison_cost( pc )
+                    pc.condition.tidy( enchantments.POISON )
+                    psr.caption = "{0} has been cured!".format( str(pc) )
+                else:
+                    psr.caption = "You can't afford it!"
+            else:
+                break
+
+    def remove_curse( self, explo ):
+        charsheets = dict()
+        for pc in explo.camp.party:
+            charsheets[ pc ] = charsheet.CharacterSheet( pc , screen=explo.screen, camp=explo.camp )
+        psr = charsheet.PartySelectRedrawer( predraw=explo.view, charsheets=charsheets, screen=explo.screen, caption="Remove Curse" )
+
+        while True:
+            rpm = charsheet.RightMenu( explo.screen, predraw=psr, add_desc=False )
+            psr.menu = rpm
+            for pc in explo.camp.party:
+                if pc.is_alright() and pc.condition.has_enchantment_of_type( enchantments.CURSE ):
+                    rpm.add_item( "{0} - {1}gp".format( str( pc ), self.remove_curse_cost( pc ) ) , pc )
+            rpm.sort()
+            rpm.add_alpha_keys()
+            rpm.add_item( "Exit", None )
+
+            pc = rpm.query()
+            if pc:
+                if explo.camp.gold >= self.remove_curse_cost( pc ):
+                    explo.camp.gold -= self.remove_curse_cost( pc )
+                    pc.condition.tidy( enchantments.CURSE )
+                    psr.caption = "{0} has been freed!".format( str(pc) )
+                else:
+                    psr.caption = "You can't afford it!"
+            else:
+                break
 
     def __call__( self, explo ):
         pc = explo.camp.party_spokesperson()
         myredraw = charsheet.CharacterViewRedrawer( csheet=charsheet.CharacterSheet( pc , screen=explo.screen, camp=explo.camp ), screen=explo.screen, predraw=explo.view, caption=self.caption )
-        rpm = charsheet.RightMenu( explo.screen, predraw=myredraw )
-
-        rpm.add_item( "Resurrection", self.resurrection, self.desc )
-        rpm.add_item( "Restoration", self.restoration, self.desc )
-        rpm.add_item( "Exit {0}".format(self.caption), False, self.desc )
-        rpm.add_alpha_keys()
 
         while True:
+            rpm = charsheet.RightMenu( explo.screen, predraw=myredraw )
+
+            if any( not pc.is_alright() for pc in explo.camp.party ):
+                rpm.add_item( "Resurrection", self.resurrection, self.desc )
+            if any( ( pc.is_alright() and pc.stat_damage ) for pc in explo.camp.party ):
+                rpm.add_item( "Restoration", self.restoration, self.desc )
+            if any( ( pc.is_alright() and pc.condition.has_enchantment_of_type( enchantments.POISON ) ) for pc in explo.camp.party ):
+                rpm.add_item( "Cure Poison", self.cure_poison, self.desc )
+            if any( ( pc.is_alright() and pc.condition.has_enchantment_of_type( enchantments.CURSE ) ) for pc in explo.camp.party ):
+                rpm.add_item( "Remove Curse", self.remove_curse, self.desc )
+            rpm.add_item( "Exit {0}".format(self.caption), False, self.desc )
+            rpm.add_alpha_keys()
+
             it = rpm.query()
 
             if it:

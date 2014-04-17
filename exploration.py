@@ -763,7 +763,7 @@ class Explorer( object ):
         pygame.display.flip()
 
         #import enchantments
-        #self.camp.party[0].condition.append( enchantments.PoisonClassic() )
+        #self.camp.party[0].condition.append( enchantments.CurseEn() )
 
         # Do a start trigger, unless we're in combat.
         if not self.camp.fight:

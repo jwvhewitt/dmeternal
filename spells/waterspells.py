@@ -5,6 +5,7 @@ import enchantments
 import animobs
 import stats
 import invocations
+import context
 
 # CIRCLE ONE
 
