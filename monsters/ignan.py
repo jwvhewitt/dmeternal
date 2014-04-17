@@ -10,6 +10,7 @@ import targetarea
 import invocations
 import animals
 import enchantments
+import spells
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  1   ***
@@ -44,6 +45,29 @@ import enchantments
 #  ***   ENCOUNTER  LEVEL  8   ***
 #  *******************************
 
+class Salamander( base.Monster ):
+    name = "Salamander"
+    statline = { stats.STRENGTH: 15, stats.TOUGHNESS: 14, stats.REFLEXES: 14, \
+        stats.INTELLIGENCE: 13, stats.PIETY: 15, stats.CHARISMA: 13 }
+    SPRITENAME = "monster_e_fire.png"
+    FRAME = 8
+    TEMPLATES = (stats.ELEMENTAL,stats.FIRE)
+    MOVE_POINTS = 6
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.DES_FIRE,
+     context.MTY_HUMANOID, context.MTY_FIGHTER )
+    ENC_LEVEL = 8
+
+    ATTACK = items.Attack( (1,8,0), element = stats.RESIST_PIERCING, reach=2, extra_effect =
+        effects.HealthDamage( (1,8,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE)
+    )
+
+    TECHNIQUES = ( spells.firespells.EXPLOSION, )
+
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 8, self ) )
+
+
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  9   ***
 #  *******************************
@@ -55,6 +79,31 @@ import enchantments
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  11   ***
 #  ********************************
+
+class SalamanderLeader( base.Monster ):
+    name = "Salamander Leader"
+    statline = { stats.STRENGTH: 24, stats.TOUGHNESS: 16, stats.REFLEXES: 14, \
+        stats.INTELLIGENCE: 16, stats.PIETY: 17, stats.CHARISMA: 15 }
+    SPRITENAME = "monster_e_fire.png"
+    FRAME = 9
+    TEMPLATES = (stats.ELEMENTAL,stats.FIRE)
+    MOVE_POINTS = 6
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.DES_FIRE,
+     context.MTY_HUMANOID, context.MTY_LEADER )
+    ENC_LEVEL = 11
+    LONER = True
+    COMPANIONS = (Salamander,)
+
+    ATTACK = items.Attack( (2,8,0), element = stats.RESIST_SLASHING, extra_effect =
+        effects.HealthDamage( (1,8,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE)
+    )
+
+    TECHNIQUES = ( spells.firespells.PYROTECHNICS, spells.airspells.DISPEL_MAGIC )
+
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 11, self ) )
+
 
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  12   ***
