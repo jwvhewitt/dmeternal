@@ -741,7 +741,7 @@ class CaveBear( base.Monster ):
     ATTACK = items.Attack( (3,6,0), element = stats.RESIST_SLASHING )
 
     def init_monster( self ):
-        self.levels.append( base.Beast( 9, self ) )
+        self.levels.append( base.Beast( 14, self ) )
 
 
 #  ********************************

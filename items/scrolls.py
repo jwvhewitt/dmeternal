@@ -5,6 +5,7 @@ import random
 
 class Rank1Scroll( Stackable ):
     spell_rank = 1
+    mass_per_q = 2
     itemtype = SCROLL
     def __init__( self ):
         # Select a random spell for this scroll.

@@ -13,6 +13,7 @@ import constructs
 import giants
 import goblins
 import ignan
+import misc
 import terran
 import undead
 
@@ -31,6 +32,7 @@ harvest( constructs )
 harvest( giants )
 harvest( goblins )
 harvest( ignan )
+harvest( misc )
 harvest( terran )
 harvest( undead )
 

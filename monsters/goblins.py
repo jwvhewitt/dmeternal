@@ -530,6 +530,93 @@ class Orc( base.Monster ):
     def init_monster( self ):
         self.levels.append( base.Humanoid( 3, self ) )
 
+class OrcWarrior( base.Monster ):
+    name = "Orc Warrior"
+    statline = { stats.STRENGTH: 16, stats.TOUGHNESS: 11, stats.REFLEXES: 11, \
+        stats.INTELLIGENCE: 7, stats.PIETY: 7, stats.CHARISMA: 7 }
+    SPRITENAME = "monster_goblins.png"
+    FRAME = 17
+    TEMPLATES = ()
+    MOVE_POINTS = 8
+    VOICE = dialogue.voice.ORCISH
+    GP_VALUE = 25
+    HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
+     context.MAP_DUNGEON,
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN )
+    ENC_LEVEL = 5
 
+    COMPANIONS = (Orc,HobgoblinFighter)
+
+    ATTACK = items.Attack( (1,10,0), element = stats.RESIST_SLASHING )
+
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 5, self ) )
+
+class OrcArcher( base.Monster ):
+    name = "Orc Archer"
+    statline = { stats.STRENGTH: 15, stats.TOUGHNESS: 11, stats.REFLEXES: 12, \
+        stats.INTELLIGENCE: 7, stats.PIETY: 7, stats.CHARISMA: 7 }
+    SPRITENAME = "monster_goblins.png"
+    FRAME = 25
+    TEMPLATES = ()
+    MOVE_POINTS = 10
+    VOICE = dialogue.voice.ORCISH
+    GP_VALUE = 30
+    HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
+     context.MAP_DUNGEON,
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN )
+    ENC_LEVEL = 5
+    COMBAT_AI = aibrain.BasicTechnicalAI()
+    COMPANIONS = (Orc,OrcWarrior,GoblinArcher,GoblinWarrior,HobgoblinThief)
+    ATTACK = items.Attack( (1,6,0), element = stats.RESIST_SLASHING )
+    TECHNIQUES = ( invocations.Invocation( "Arrow",
+      effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, on_success = (
+        effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_PIERCING, anim=animobs.RedBoom )
+      ,), on_failure = (
+        effects.NoEffect( anim=animobs.SmallBoom )
+      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.vs_enemy
+    ), )
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 5, self ) )
+
+class OrcThief( base.Monster ):
+    name = "Orc Thief"
+    statline = { stats.STRENGTH: 16, stats.TOUGHNESS: 11, stats.REFLEXES: 13, \
+        stats.INTELLIGENCE: 7, stats.PIETY: 6, stats.CHARISMA: 7, stats.STEALTH: 25 }
+    SPRITENAME = "monster_goblins.png"
+    FRAME = 42
+    TEMPLATES = ()
+    MOVE_POINTS = 10
+    VOICE = dialogue.voice.ORCISH
+    GP_VALUE = 36
+    HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
+     context.MAP_DUNGEON,
+     context.MTY_HUMANOID, context.MTY_THIEF, context.GEN_GOBLIN )
+    ENC_LEVEL = 6
+    LONER = True
+    COMPANIONS = (OrcWarrior,OrcArcher,HobgoblinThief)
+    ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING )
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 5, self ) )
+
+class OrcChampion( base.Monster ):
+    name = "Orc Champion"
+    statline = { stats.STRENGTH: 18, stats.TOUGHNESS: 14, stats.REFLEXES: 13, \
+        stats.INTELLIGENCE: 7, stats.PIETY: 7, stats.CHARISMA: 7, \
+        stats.NATURAL_DEFENSE: 5 }
+    SPRITENAME = "monster_goblins.png"
+    FRAME = 21
+    TEMPLATES = ()
+    MOVE_POINTS = 8
+    VOICE = dialogue.voice.ORCISH
+    GP_VALUE = 40
+    HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
+     context.MAP_DUNGEON,
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN )
+    ENC_LEVEL = 8
+    COMPANIONS = (OrcWarrior,OrcArcher,GoblinChampion)
+    ATTACK = items.Attack( (2,6,0), element = stats.RESIST_SLASHING )
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 8, self ) )
 
 
