@@ -200,3 +200,153 @@ class OgreLeader( base.Monster ):
     def init_monster( self ):
         self.levels.append( base.Humanoid( 8, self ) )
 
+class Ettin( base.Monster ):
+    name = "Ettin"
+    statline = { stats.STRENGTH: 20, stats.TOUGHNESS: 16, stats.REFLEXES: 12, \
+        stats.INTELLIGENCE: 4, stats.PIETY: 8, stats.CHARISMA: 6, \
+        stats.AWARENESS: 15 }
+    SPRITENAME = "monster_giants.png"
+    FRAME = 9
+    TEMPLATES = ()
+    MOVE_POINTS = 10
+    GP_VALUE = 50
+    HABITAT = ( context.HAB_EVERY,
+     context.SET_EVERY,
+     context.MAP_WILDERNESS,
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GIANT, context.GEN_CHAOS )
+    ENC_LEVEL = 9
+    ATTACK = items.Attack( (2,6,0), element = stats.RESIST_CRUSHING )
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 9, self ) )
+
+class OgreMage( base.Monster ):
+    name = "Ogre Mage"
+    statline = { stats.STRENGTH: 18, stats.TOUGHNESS: 18, stats.REFLEXES: 12, \
+        stats.INTELLIGENCE: 14, stats.PIETY: 14, stats.CHARISMA: 10 }
+    SPRITENAME = "monster_giants.png"
+    FRAME = 17
+    TEMPLATES = ()
+    MOVE_POINTS = 10
+    GP_VALUE = 120
+    HABITAT = ( context.HAB_EVERY, context.HAB_FOREST,
+     context.SET_EVERY, context.SET_RENFAN,
+     context.MTY_HUMANOID, context.MTY_MAGE, context.GEN_GIANT )
+    ENC_LEVEL = 10
+    LONER = True
+    COMPANIONS = ( Ogre, OgreChamp, OgreShaman, OgreLeader, Ettin )
+    ATTACK = items.Attack( (4,6,0), element = stats.RESIST_CRUSHING )
+    TECHNIQUES = ( spells.waterspells.WINTER_WIND, spells.solarspells.MODERATE_CURE,
+        spells.magespells.INCINERATE, spells.airspells.THUNDER_STRIKE
+    )
+    def init_monster( self ):
+        self.levels.append( base.Terror( 5, self ) )
+        self.levels.append( base.Spellcaster( 5, self ) )
+
+class HillGiant( base.Monster ):
+    name = "Hill Giant"
+    statline = { stats.STRENGTH: 23, stats.TOUGHNESS: 19, stats.REFLEXES: 12, \
+        stats.INTELLIGENCE: 10, stats.PIETY: 12, stats.CHARISMA: 12 }
+    SPRITENAME = "monster_giants.png"
+    FRAME = 0
+    TEMPLATES = ()
+    MOVE_POINTS = 10
+    GP_VALUE = 55
+    HABITAT = ( context.HAB_EVERY,
+     context.SET_EVERY,
+     context.MAP_WILDERNESS,
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GIANT )
+    ENC_LEVEL = 11
+    ATTACK = items.Attack( (3,6,0), element = stats.RESIST_CRUSHING )
+    TECHNIQUES = ( invocations.Invocation( "Rock",
+      effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, on_success = (
+        effects.HealthDamage( (2,8,0), stat_bonus=None, element=stats.RESIST_CRUSHING, anim=animobs.RedBoom )
+      ,), on_failure = (
+        effects.NoEffect( anim=animobs.SmallBoom )
+      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.SlingStone, ai_tar=invocations.vs_enemy
+    ), )
+
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 11, self ) )
+
+class StoneGiant( base.Monster ):
+    name = "Stone Giant"
+    statline = { stats.STRENGTH: 26, stats.TOUGHNESS: 27, stats.REFLEXES: 12, \
+        stats.INTELLIGENCE: 12, stats.PIETY: 16, stats.CHARISMA: 12, \
+        stats.RESIST_CRUSHING: 25, stats.RESIST_PIERCING: 25, stats.RESIST_SLASHING: 25 }
+    SPRITENAME = "monster_giants.png"
+    FRAME = 12
+    TEMPLATES = (stats.EARTH,)
+    MOVE_POINTS = 8
+    GP_VALUE = 60
+    HABITAT = ( context.HAB_EVERY,
+     context.SET_EVERY,
+     context.MAP_DUNGEON,
+     context.DES_EARTH,
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GIANT )
+    ENC_LEVEL = 12
+    ATTACK = items.Attack( (2,8,0), element = stats.RESIST_CRUSHING )
+    TECHNIQUES = ( invocations.Invocation( "Rock",
+      effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, on_success = (
+        effects.HealthDamage( (2,8,0), stat_bonus=None, element=stats.RESIST_CRUSHING, anim=animobs.RedBoom )
+      ,), on_failure = (
+        effects.NoEffect( anim=animobs.SmallBoom )
+      ,) ), com_tar=targetarea.SingleTarget(reach=9), shot_anim=animobs.SlingStone, ai_tar=invocations.vs_enemy
+    ), )
+
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 12, self ) )
+
+class FrostGiant( base.Monster ):
+    name = "Frost Giant"
+    statline = { stats.STRENGTH: 29, stats.TOUGHNESS: 23, stats.REFLEXES: 14, \
+        stats.INTELLIGENCE: 12, stats.PIETY: 12, stats.CHARISMA: 14 }
+    SPRITENAME = "monster_giants.png"
+    FRAME = 10
+    TEMPLATES = (stats.ICE,)
+    MOVE_POINTS = 10
+    GP_VALUE = 65
+    HABITAT = ( context.HAB_EVERY,
+     context.SET_EVERY,
+     context.DES_ICE,
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GIANT )
+    ENC_LEVEL = 13
+    ATTACK = items.Attack( (3,6,0), element = stats.RESIST_SLASHING )
+    TECHNIQUES = ( invocations.Invocation( "Rock",
+      effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, on_success = (
+        effects.HealthDamage( (2,10,0), stat_bonus=None, element=stats.RESIST_CRUSHING, anim=animobs.RedBoom )
+      ,), on_failure = (
+        effects.NoEffect( anim=animobs.SmallBoom )
+      ,) ), com_tar=targetarea.SingleTarget(reach=9), shot_anim=animobs.SlingStone, ai_tar=invocations.vs_enemy
+    ), )
+
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 13, self ) )
+
+class FireGiant( base.Monster ):
+    name = "Fire Giant"
+    statline = { stats.STRENGTH: 32, stats.TOUGHNESS: 25, stats.REFLEXES: 12, \
+        stats.INTELLIGENCE: 14, stats.PIETY: 14, stats.CHARISMA: 12 }
+    SPRITENAME = "monster_giants.png"
+    FRAME = 11
+    TEMPLATES = (stats.FIRE,)
+    MOVE_POINTS = 10
+    GP_VALUE = 70
+    HABITAT = ( context.HAB_EVERY,
+     context.SET_EVERY,
+     context.DES_FIRE,
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GIANT )
+    ENC_LEVEL = 14
+    ATTACK = items.Attack( (3,8,0), element = stats.RESIST_SLASHING )
+    TECHNIQUES = ( invocations.Invocation( "Rock",
+      effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, on_success = (
+        effects.HealthDamage( (2,10,0), stat_bonus=None, element=stats.RESIST_CRUSHING, anim=animobs.RedBoom )
+      ,), on_failure = (
+        effects.NoEffect( anim=animobs.SmallBoom )
+      ,) ), com_tar=targetarea.SingleTarget(reach=10), shot_anim=animobs.SlingStone, ai_tar=invocations.vs_enemy
+    ), )
+
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 14, self ) )
+
+
+
