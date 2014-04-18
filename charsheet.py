@@ -109,6 +109,16 @@ class CharacterSheet( pygame.Rect ):
             sg = self.pc.spell_gems_of_color(sgcolor)
             self.just_print( screen, self.x+15, y, "{0}:".format(COLOR_NAME[sgcolor]), "{0}/{1}".format( max(sg - self.pc.spell_gems_of_color_used(sgcolor),0), sg ) )
 
+        mystatus = list()
+        for sfx in self.pc.condition:
+            if sfx.NAME:
+                mystatus.append( sfx.NAME )
+        if mystatus:
+            y += pygwrap.SMALLFONT.get_linesize() * 2
+            status_dest = pygame.Rect( self.x, y, 120, self.y + self.height - y )
+            pygwrap.draw_text( screen, pygwrap.SMALLFONT, ", ".join( mystatus ), status_dest, color=(240,140,0) )
+
+            
 
         # Column 2 - skills
         y = self.y + self.BODY_Y

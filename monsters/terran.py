@@ -52,7 +52,7 @@ class Xorn( base.Monster ):
     name = "Xorn"
     statline = { stats.STRENGTH: 16, stats.TOUGHNESS: 15, stats.REFLEXES: 10, \
         stats.INTELLIGENCE: 10, stats.PIETY: 12, stats.CHARISMA: 10, \
-        stats.RESIST_PIERCING: 50, stats.RESIST_CRUSHING: -50, stats.RESIST_FIRE: 100, \
+        stats.RESIST_PIERCING: 50, stats.RESIST_SLASHING: 50, stats.RESIST_FIRE: 100, \
         stats.RESIST_COLD: 100, stats.STEALTH: 40 }
     SPRITENAME = "monster_e_earth.png"
     FRAME = 5

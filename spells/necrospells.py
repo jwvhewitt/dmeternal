@@ -68,6 +68,11 @@ RAISE_UNDEAD = Spell( "Raise Undead",
     effects.CallMonster( {context.MTY_UNDEAD: True, context.DES_LUNAR: context.MAYBE, context.GEN_UNDEAD: context.MAYBE}, 8, anim=animobs.PurpleSparkle ),
     rank=4, gems={EARTH:1,LUNAR:2}, com_tar=targetarea.SingleTarget(reach=2), mpfudge=6 )
 
+ICE_WEAPON = Spell( "Icy Weapon",
+    "One ally's weapon will glow with magical cold, causing an extra 1-10 points of damge per hit and potentially freezing enemies solid. This effect lasts until the end of combat.",
+    effects.Enchant( enchantments.FrostWepEn, anim=animobs.PurpleSparkle ),
+    rank=4, gems={LUNAR:1,WATER:1}, com_tar=targetarea.SinglePartyMember() )
+
 
 # CIRCLE FIVE
 
