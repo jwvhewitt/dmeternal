@@ -477,18 +477,20 @@ class Explorer( object ):
         if target:
             target.bump( self )
 
+    def converse_with_model( self, target, cue=dialogue.CUE_HELLO ):
+        pc = self.camp.party_spokesperson()
+        offers = list()
+        for p in self.camp.active_plots():
+            offers += p.get_dialogue_offers( target, self )
+        convo = dialogue.build_conversation( cue , offers )
+        dialogue.converse( self, pc, target, convo )
+
     def bump_model( self, target ):
         # Do the animation first.
         pc = self.camp.party_spokesperson()
-
         anims = [ animobs.SpeakHello(pos=pc.pos), animobs.SpeakHello(pos=target.pos)]
         animobs.handle_anim_sequence( self.screen, self.view, anims )
-
-        offers = list()
-        for p in self.camp.active_plots():
-            offers += p.get_dialogue_offers( target )
-        convo = dialogue.build_conversation( dialogue.CUE_HELLO , offers )
-        dialogue.converse( self, pc, target, convo )
+        self.converse_with_model( target )
 
     def pick_up( self, loc ):
         """Party will pick up items at this location."""
@@ -699,6 +701,10 @@ class Explorer( object ):
                             else:
                                 anims = [ animobs.SpeakAngry(m.pos,loop=16), ]
                                 animobs.handle_anim_sequence( self.screen, self.view, anims )
+                                # Start by setting this team to hostile- just in case the player
+                                # exits the dialogue w/o making a truce.
+                                m.team.charm_roll = -999
+                                self.converse_with_model( m, dialogue.CUE_THREATEN )
 
     def check_trigger( self, trigger, thing=None ):
         # Something is happened that plots may need to react to.
@@ -833,6 +839,10 @@ class Explorer( object ):
                     elif gdi.unicode == u"*":
                         for pc in self.camp.party:
                             pc.advance( pc.mr_level.__class__ )
+                    elif gdi.unicode == u"&":
+                        for x in range( self.scene.width ):
+                            for y in range( self.scene.height ):
+                                self.scene.map[x][y].visible = True
 
                 elif gdi.type == pygame.QUIT:
                     self.no_quit = False

@@ -51,7 +51,7 @@ class DATE_LowStandards( Plot ):
     def accept_invitation( self, explo ):
         explo.check_trigger( "DATE", self.elements[ "TARGET" ] )
         self.active = False
-    def _MYNPC_offers( self ):
+    def _MYNPC_offers( self, explo ):
         ol = list()
         if self.invited:
             npc = self.elements[ "TARGET" ]
@@ -87,7 +87,7 @@ class DATE_WaitingForAnInvitation( Plot ):
     def accept_invitation( self, explo ):
         explo.check_trigger( "DATE", self.elements[ "TARGET" ] )
         self.active = False
-    def TARGET_offers( self ):
+    def TARGET_offers( self, explo ):
         ol = list()
         if self.invited:
             npc = self.elements[ "ORIGIN" ]
@@ -117,7 +117,7 @@ class DI_Admirer( Plot ):
     def ask_invitation( self, explo ):
         explo.check_trigger( "DATEINVITE", self.elements[ "TARGET" ] )
         self.active = False
-    def ORIGIN_offers( self ):
+    def ORIGIN_offers( self, explo ):
         ol = list()
         npc = self.elements.get("TARGET")
         ol.append( dialogue.Offer( "{0} is cute and awesome, and I don't care who knows! I'd tell {1} myself, but I'm too scared...".format( npc, npc.object_pronoun() ),
@@ -148,7 +148,7 @@ class DI_MysteryDate( Plot ):
         self.active = False
     def tell_problem( self, explo ):
         self._told_problem = True
-    def ORIGIN_offers( self ):
+    def ORIGIN_offers( self, explo ):
         ol = list()
         npc = self.elements.get("TARGET")
         if self._interested and self._told_problem:
@@ -184,7 +184,7 @@ class LL_LonelyPlanet( Plot ):
     def desire_expressed( self, explo ):
         explo.check_trigger( "LOVELORN", self.elements[ "TARGET" ] )
         self.active = False
-    def TARGET_offers( self ):
+    def TARGET_offers( self, explo ):
         ol = list()
         ol.append( dialogue.Offer( "It's a lonely life out here... I wish I had someone to do fun things with." ,
          context = context.ContextTag([context.HELLO,]), effect=self.desire_expressed ) )

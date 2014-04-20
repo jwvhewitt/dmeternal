@@ -29,7 +29,7 @@ class CashReward( Plot ):
             pc.xp += 100
         explo.alert( "You gain {0}gp and 100XP.".format( gp ) )
         self.active = False
-    def ORIGIN_offers( self ):
+    def ORIGIN_offers( self, explo ):
         ol = list()
         ol.append( dialogue.Offer( "Here is some gold to thank you for your help.",
              context = context.ContextTag([context.REWARD]), effect=self.give_reward )

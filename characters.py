@@ -28,6 +28,7 @@ class Level( object ):
     LEVELS_PER_GEM = 0
     legal_equipment = ()
     XP_VALUE = 75
+    MIN_RANK = 0
     def __init__( self, rank=0, pc=None ):
         self.rank = 0
         self.hp = 0
@@ -62,6 +63,14 @@ class Level( object ):
         if pc:
             # If we've been passed a character, record the most recent level.
             pc.mr_level = self
+
+    @classmethod
+    def can_take_level( self, pc ):
+        is_legal = pc.rank() >= self.MIN_RANK
+        for k,v in self.requirements.iteritems():
+            if pc.get_stat( k, include_extras=False ) < v:
+                is_legal = False
+        return is_legal
 
     def __str__( self ):
         return self.name
@@ -546,6 +555,9 @@ class Character( stats.PhysicalThing ):
         """Return the XP needed for next level."""
         cr = self.rank()
         return cr * ( cr + 1 ) * 500
+
+    def eligible_for_next_level( self ):
+        return self.xp > self.xp_for_next_level()
 
     def get_move( self ):
         if self.species:

@@ -37,6 +37,7 @@ class PuzzleMenu( rpgmenu.Menu ):
 class Waypoint( object ):
     TILE = None
     ATTACH_TO_WALL = False
+    name = "Waypoint"
     desc = ""
     def __init__( self, scene=None, pos=(0,0), plot_locked=False ):
         """Place this waypoint in a scene."""
@@ -104,6 +105,21 @@ class GateDoor( Waypoint ):
         else:
             explo.alert( "This door doesn't seem to go anywhere." )
 
+class OpenGateDoor( Waypoint ):
+    TILE = maps.Tile( None, maps.FAKE_OPEN_DOOR, None )
+    ATTACH_TO_WALL = True
+    destination = None
+    otherside = None
+    desc = "You stand before a door."
+    mini_map_label = "Door"
+    def unlocked_use( self, explo ):
+        if self.destination and self.otherside:
+            explo.camp.destination = self.destination
+            explo.camp.entrance = self.otherside
+        else:
+            explo.alert( "This door doesn't seem to go anywhere." )
+
+
 class SpiralStairsUp( Waypoint ):
     TILE = maps.Tile( None, maps.SPIRAL_STAIRS_UP, None )
     destination = None
@@ -158,26 +174,17 @@ class PuzzleDoor( Waypoint ):
 class PuzzleSwitch( Waypoint ):
     TILE = maps.Tile( None, None, maps.SWITCH_UP )
     ATTACH_TO_WALL = True
-    CALL = None
-    RECALL = None
     UP = True
     desc = "You stand before a lever."
     mini_map_label = "Lever"
     def unlocked_use( self, explo ):
         if self.UP:
-            if self.CALL:
-                self.CALL( explo )
-                self.scene.map[self.pos[0]][self.pos[1]].decor = maps.SWITCH_DOWN
-                self.UP = False
-            else:
-                explo.alert( "This lever is stuck." )
+            self.scene.map[self.pos[0]][self.pos[1]].decor = maps.SWITCH_DOWN
+            self.UP = False
         else:
-            if self.RECALL:
-                self.RECALL( explo )
-                self.scene.map[self.pos[0]][self.pos[1]].decor = maps.SWITCH_UP
-                self.UP = True
-            else:
-                explo.alert( "This lever is stuck." )
+            self.scene.map[self.pos[0]][self.pos[1]].decor = maps.SWITCH_UP
+            self.UP = True
+        explo.check_trigger( "USE", self )
 
 class SmallChest( Waypoint ):
     TILE = maps.Tile( None, None, maps.SMALL_CHEST )
@@ -222,5 +229,13 @@ class Well( Waypoint ):
     TILE = maps.Tile( None, None, maps.WELL )
     desc = "You stand before a well."
     mini_map_label = "Well"
+
+class Signpost( Waypoint ):
+    TILE = maps.Tile( None, None, maps.SIGNPOST )
+    desc = "You stand before a sign."
+
+class TreeStump( Waypoint ):
+    TILE = maps.Tile( None, None, maps.TREE_STUMP )
+    desc = "You stand before a tree stump."
 
 

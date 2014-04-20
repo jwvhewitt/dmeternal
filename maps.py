@@ -307,6 +307,8 @@ CRYPT_ENTRANCE = SingTerrain( "CRYPT_ENTRANCE", spritesheet = SPRITE_DECOR, fram
 RUIN_ENTRANCE = SingTerrain( "RUIN_ENTRANCE", spritesheet = SPRITE_DECOR, frame = 83, block_walk=True )
 SECRET_ENTRANCE = SingTerrain( "SECRET_ENTRANCE", spritesheet = SPRITE_DECOR, frame = 84, block_walk=True )
 FLOOR_BLOOD = VariableTerrain( "FLOOR_BLOOD", spritesheet = SPRITE_DECOR, block_walk=False, frames = (85,86,87,88,89) )
+TREE_STUMP = VariableTerrain( "TREE_STUMP", spritesheet = SPRITE_DECOR, block_walk=True, frames = (90,91) )
+SIGNPOST = SingTerrain( "SIGNPOST", spritesheet = SPRITE_DECOR, block_walk=True, frame = 92 )
 
 BED_HEAD = BedHeadTerrain( "BED_HEAD", block_walk=True, frame=2 )
 BED_FOOT = BedFootTerrain( "BED_FOOT", block_walk=True, frame=4, partner=BED_HEAD )

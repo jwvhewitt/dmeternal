@@ -69,6 +69,7 @@ import complication
 import connections
 import dungeonlevel
 import encounters
+import getterbits
 import intros
 import puzzlebits
 import resources
@@ -80,6 +81,7 @@ harvest( complication )
 harvest( connections )
 harvest( dungeonlevel )
 harvest( encounters )
+harvest( getterbits )
 harvest( intros )
 harvest( puzzlebits )
 harvest( resources )

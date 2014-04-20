@@ -186,6 +186,56 @@ class DefaultGoDown( Plot ):
 ###  Usually some kind of puzzle needs to be solved before the entrance can be
 ###  used.
 
+class SecretTreeStumpEntrance( Plot ):
+    # There's a secret door in a tree stump. However, the player needs a way to
+    # open it...
+    LABEL = "SECRET_CONNECT"
+    UNIQUE = True
+    active = True
+    scope = True
+    @classmethod
+    def matches( self, pstate ):
+        """Requires PREV and NEXT to exist, and for PREV to be forest."""
+        return ( pstate.elements.get( "PREV" ) and pstate.elements.get( "NEXT" )
+         and context.HAB_FOREST is pstate.elements["PREV"].biome )
+    def seek_entrance_room( self, thing ):
+        # We need a room that is marked as an entrance.
+        return isinstance( thing, mapgen.Room ) and context.ENTRANCE in thing.tags
+    def custom_init( self, nart ):
+        prev = self.elements[ "PREV" ]
+        next = self.elements[ "NEXT" ]
+        self.move_element( next, prev )
+        myzone1 = self.register_element( "_P_ROOM", nart.get_map_generator( prev ).DEFAULT_ROOM(tags=(context.GOAL,)), "PREV" )
+        myzone2 = self.seek_element( nart, "_N_ROOM", self.seek_entrance_room, scope=next, check_subscenes=False, must_find=False )
+        if not myzone2:
+            myzone2 = self.register_element( "_N_ROOM", mapgen.SharpRoom(tags=(context.ENTRANCE,)), "NEXT" )
+        stairs_1 = waypoints.TreeStump()
+        stairs_1.mini_map_label = "Tree Stump"
+        stairs_1.plot_locked = True
+        stairs_2 = waypoints.GateDoor()
+        stairs_2.mini_map_label = "Exit"
+        self.stump_destination = next
+        self.stump_otherside = stairs_2
+        stairs_2.destination = prev
+        stairs_2.otherside = stairs_1
+        self.register_element( "TARGET", stairs_1, "_P_ROOM" )
+        self.register_element( "_EXIT", stairs_2, "_N_ROOM" )
+        self._stump_unlocked = False
+        self.add_sub_plot( nart, "PB_OPEN", PlotState().based_on( self ) )
+        return True
+    def use_stump( self, explo ):
+        explo.camp.destination = self.stump_destination
+        explo.camp.entrance = self.stump_otherside
+    def TARGET_OPEN( self, explo ):
+        self._stump_unlocked = True
+    def TARGET_menu( self, thingmenu ):
+        if self._stump_unlocked:
+            thingmenu.desc = "{0} There's a secret door in it.".format( thingmenu.desc )
+            thingmenu.add_item( "Enter the stump.", self.use_stump )
+            thingmenu.add_item( "Leave it alone.", None )
+        else:
+            thingmenu.desc = "{0} There's something odd about it.".format( thingmenu.desc )
+
 class ThroughTheWell( Plot ):
     LABEL = "SECRET_CONNECT"
     UNIQUE = True
@@ -213,7 +263,7 @@ class ThroughTheWell( Plot ):
             myzone2 = self.register_element( "_N_ROOM", mapgen.SharpRoom(tags=(context.ENTRANCE,)), "NEXT" )
         stairs_2 = waypoints.GateDoor()
         self.register_element( "_EXIT", stairs_2, "_N_ROOM" )
-
+        self._the_well_has_been_used = False
         if next.rank > prev.rank:
             # We're gonna add a dungeon.
             self.levels = list()
@@ -268,9 +318,17 @@ class ThroughTheWell( Plot ):
     def use_well( self, explo ):
         explo.camp.destination = self.well_destination
         explo.camp.entrance = self.well_otherside
+        self._the_well_has_been_used = True
     def _WELL_menu( self, thingmenu ):
         thingmenu.desc = "{0} There is a ladder inside, descending into darkness.".format( thingmenu.desc )
         thingmenu.add_item( "Climb down the well.", self.use_well )
         thingmenu.add_item( "Leave it alone.", None )
+    def get_generic_offers( self, npc, explo ):
+        """Get any offers that could apply to non-element NPCs."""
+        ol = list()
+        if explo.scene == self.elements["PREV"] and random.randint(1,3) == 1 and not self._the_well_has_been_used:
+            ol.append( dialogue.Offer( "Sometimes I hear strange noises coming from the well." ,
+             context = context.ContextTag([context.HELLO]) ) )
+        return ol
 
 

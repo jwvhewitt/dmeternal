@@ -875,6 +875,10 @@ class CaveScene( RandomScene ):
 class SubtleMonkeyTunnelScene( RandomScene ):
     gapfill = MonsterFiller()
     DEFAULT_ROOM = SharpRoom
+    def prepare( self, gb ):
+        # Step one- we're going to use a plasma map to set water/lo/hi ground.
+        # Fill all non-water tiles with True walls for now.
+        self.fill( gb, self.area, floor=maps.BASIC_FLOOR, wall=True )
     def arrange_contents( self, gb ):
         # Step Two: Arrange subcomponents within this area.
         closed_area = list()

@@ -59,15 +59,16 @@ def generate_npc( species=None, job=None, gender=None, rank=None, team=None ):
         choices = chargen.get_possible_levels( npc ) + chargen.get_possible_levels( npc, NPC_CLASSES )
         job = random.choice( choices )
 
-    if not chargen.can_take_level( npc, job ):
+    if not job.can_take_level( npc ):
         tries = 100
-        while ( tries > 0 ) and not chargen.can_take_level( npc, job ):
+        while ( tries > 0 ) and not job.can_take_level( npc ):
             npc.roll_stats()
             tries += -1
 
     ji = job( rank=rank, pc=npc )
     npc.levels.append( ji )
     chargen.give_starting_equipment( npc )
+    npc.npc_cred = True
 
     # Generate a random name. This is gonna depend on the voice.
     myvoice = npc.get_voice()

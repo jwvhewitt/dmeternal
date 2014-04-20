@@ -38,6 +38,7 @@ standard_replies = harvest( replies, Reply )
 standard_offers = harvest( offers, Offer )
 
 CUE_HELLO = Cue( context.ContextTag([context.HELLO]) )
+CUE_THREATEN = Cue( context.ContextTag([context.THREATEN]))
 
 def build_anchor_list( conversation , context_type ):
     # Find all offers in this conversation whose context matches the context_type.
@@ -240,8 +241,12 @@ class ConvoRedraw( pygame.Rect ):
 
 def converse( exp, pc, npc, conversation ):
     # The party is going to converse with someone.
+    # During the conversation, the Exploration object will have an attribute
+    # called "convo" which is a tuple containing the pc, npc, and conversation.
     crd = ConvoRedraw( npc, screen = exp.screen, predraw = exp.view )
     coff = conversation
+
+    exp.convo = (pc,npc,conversation)
 
     pc_voice = pc.get_voice()
     npc_voice = npc.get_voice()
@@ -261,6 +266,8 @@ def converse( exp, pc, npc, conversation ):
 
         if nextfx:
             nextfx( exp )
+
+    del exp.convo
 
 
 

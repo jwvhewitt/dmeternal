@@ -14,52 +14,6 @@ import random
 ### Sidestories get added to buildings in cities to flesh them out and to
 ### provide some things for the PC to do other than clearing the main dungeon.
 
-class TheBlackMarket( Plot ):
-    """There's a black market in town, but it's hidden."""
-    LABEL = "SIDE_STORY"
-    UNIQUE = True
-    active = True
-    scope = True
-    NAME_PATTERNS = ( "{0}'s Black Market", "{0}'s Contraband" )
-    @classmethod
-    def matches( self, pstate ):
-        """Requires the SHOPKEEPER and LOCALE to exist."""
-        return pstate.elements.get("SHOPKEEPER") and pstate.elements.get("LOCALE")
-    def custom_init( self, nart ):
-        """Create the black market, add secret connection."""
-        locale = self.elements["LOCALE"]
-        interior = maps.Scene( 50,50, sprites={maps.SPRITE_WALL: "terrain_wall_darkbrick.png", maps.SPRITE_FLOOR: "terrain_floor_wood.png" },
-            biome=context.HAB_BUILDING, setting=self.setting, desctags=(context.DES_CIVILIZED,) )
-        igen = mapgen.BuildingScene( interior )
-        self.register_scene( nart, interior, igen, ident="BUILDING_INT", dident="LOCALE" )
-        int_mainroom = mapgen.SharpRoom( tags=(context.CIVILIZED,context.ENTRANCE), anchor=mapgen.northwest, parent=interior )
-        int_mainroom.contents.append( maps.PILED_GOODS )
-        int_mainroom.contents.append( maps.PILED_GOODS )
-        int_mainroom.decorate = mapgen.GeneralStoreDec()
-        npc = monsters.generate_npc( job=monsters.base.Merchant )
-        interior.name = random.choice( self.NAME_PATTERNS ).format( npc )
-        int_mainroom.contents.append( npc )
-        self.register_element( "BMKEEPER", npc )
-        self.shop = services.Shop( rank=self.rank+3, allow_magic=True )
-        self.add_sub_plot( nart, "SECRET_CONNECT", PlotState( elements={"PREV":locale,"NEXT":interior} ).based_on( self ) )
-        return True
-    def BMKEEPER_offers( self ):
-        # Return list of shopkeeper offers.
-        ol = list()
-        ol.append( dialogue.Offer( "If anyone asks, you did not get this stuff from me, understand?",
-         context = context.ContextTag([context.SHOP,context.BLACKMARKET]), effect=self.shop ) )
-        return ol
-    def SHOPKEEPER_offers( self ):
-        # Return list of shopkeeper offers.
-        ol = list()
-        if random.randint(1,4)==1:
-            ol.append( dialogue.Offer( "If you are unhappy with the selection in my store, you can always try the black market. Good luck finding it, though." ,
-             context = context.ContextTag([context.HELLO,context.SHOP,context.GENERALSTORE]),
-             replies = [ dialogue.Reply( "I will just look at your wares, thanks." , destination = dialogue.Cue( context.ContextTag( [context.SHOP] ) ) ), ]
-             ) )
-        return ol
-
-
 class DateMyCousinPlease( Plot ):
     """The cousin of the shopkeeper must be removed from the house."""
     LABEL = "SIDE_STORY"
@@ -96,7 +50,7 @@ class DateMyCousinPlease( Plot ):
             the_cousin.place( scene, pos )
             self.started = True
 
-    def TARGET_offers( self ):
+    def TARGET_offers( self, explo ):
         ol = list()
         if self.dated:
             myoffer = dialogue.Offer( "Thanks for helping me out.",
@@ -104,7 +58,7 @@ class DateMyCousinPlease( Plot ):
             ol.append( myoffer )
         return ol
 
-    def SHOPKEEPER_offers( self ):
+    def SHOPKEEPER_offers( self, explo ):
         ol = list()
         the_cousin = self.elements["TARGET"]
         if self.dated and self.subplots["next"].active:
@@ -119,4 +73,51 @@ class DateMyCousinPlease( Plot ):
              context = context.ContextTag([context.PROBLEM,context.PERSONAL]), effect=self.tell_problem )
             ol.append( myoffer )
         return ol
+
+
+class TheBlackMarket( Plot ):
+    """There's a black market in town, but it's hidden."""
+    LABEL = "SIDE_STORY"
+    UNIQUE = True
+    active = True
+    scope = True
+    NAME_PATTERNS = ( "{0}'s Black Market", "{0}'s Contraband" )
+    @classmethod
+    def matches( self, pstate ):
+        """Requires the SHOPKEEPER and LOCALE to exist."""
+        return pstate.elements.get("SHOPKEEPER") and pstate.elements.get("LOCALE")
+    def custom_init( self, nart ):
+        """Create the black market, add secret connection."""
+        locale = self.elements["LOCALE"]
+        interior = maps.Scene( 50,50, sprites={maps.SPRITE_WALL: "terrain_wall_darkbrick.png", maps.SPRITE_FLOOR: "terrain_floor_wood.png" },
+            biome=context.HAB_BUILDING, setting=self.setting, desctags=(context.DES_CIVILIZED,) )
+        igen = mapgen.BuildingScene( interior )
+        self.register_scene( nart, interior, igen, ident="BUILDING_INT", dident="LOCALE" )
+        int_mainroom = mapgen.SharpRoom( tags=(context.CIVILIZED,context.ENTRANCE), anchor=mapgen.northwest, parent=interior )
+        int_mainroom.contents.append( maps.PILED_GOODS )
+        int_mainroom.contents.append( maps.PILED_GOODS )
+        int_mainroom.decorate = mapgen.GeneralStoreDec()
+        npc = monsters.generate_npc( job=monsters.base.Merchant )
+        interior.name = random.choice( self.NAME_PATTERNS ).format( npc )
+        int_mainroom.contents.append( npc )
+        self.register_element( "BMKEEPER", npc )
+        self.shop = services.Shop( rank=self.rank+3, allow_magic=True )
+        self.add_sub_plot( nart, "SECRET_CONNECT", PlotState( elements={"PREV":locale,"NEXT":interior} ).based_on( self ) )
+        return True
+    def BMKEEPER_offers( self, explo ):
+        # Return list of shopkeeper offers.
+        ol = list()
+        ol.append( dialogue.Offer( "If anyone asks, you did not get this stuff from me, understand?",
+         context = context.ContextTag([context.SHOP,context.BLACKMARKET]), effect=self.shop ) )
+        return ol
+    def SHOPKEEPER_offers( self, explo ):
+        # Return list of shopkeeper offers.
+        ol = list()
+        if random.randint(1,4)==1:
+            ol.append( dialogue.Offer( "If you are unhappy with the selection in my store, you can always try the black market. Good luck finding it, though." ,
+             context = context.ContextTag([context.HELLO,context.SHOP,context.GENERALSTORE]),
+             replies = [ dialogue.Reply( "I will just look at your wares, thanks." , destination = dialogue.Cue( context.ContextTag( [context.SHOP] ) ) ), ]
+             ) )
+        return ol
+
 

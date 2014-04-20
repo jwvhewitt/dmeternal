@@ -55,6 +55,7 @@ WAND = SingType( "WAND", "Wand", slot = HAND1 )
 FARMTOOL = SingType( "FARMTOOL", "Farm Tool", slot = HAND1 )
 SCROLL = SingType( "SCROLL", "Scroll" )
 POTION = SingType( "POTION", "Potion" )
+GEM = SingType( "GEM", "Gem" )
 
 class Attack( object ):
     def __init__( self, damage = (1,6,0), skill_mod = stats.STRENGTH, damage_mod = stats.STRENGTH,
@@ -381,6 +382,7 @@ import hats
 import heavyarmor
 import helms
 import holysymbols
+import knickknacks
 import lightarmor
 import maces
 import polearms
@@ -413,6 +415,7 @@ harvest( hats )
 harvest( heavyarmor )
 harvest( helms )
 harvest( holysymbols )
+harvest( knickknacks )
 harvest( lightarmor )
 harvest( maces )
 harvest( polearms )
@@ -463,7 +466,10 @@ def make_item_magic( item_to_enchant, target_rank ):
 
 PREMIUM_TYPES = (SWORD,AXE,MACE,DAGGER,STAFF,BOW,ARROW,SHIELD,POLEARM,SLING,BULLET,
     LIGHT_ARMOR,HEAVY_ARMOR,HELM,GAUNTLET,LIGHT_ARMOR,HEAVY_ARMOR,SWORD,AXE,MACE,SHIELD,
-    SCROLL,POTION)
+    SCROLL,POTION,GEM)
+MYSTERIOUS_TYPES = (GEM,)
+# These types are typically for resale only, so don't decrease gp of horde as much.
+CASHSALE_TYPES = (GEM,)
 
 def generate_hoard( drop_rank, drop_strength ):
     """Returns a tuple containing gold, list of items."""
@@ -495,8 +501,15 @@ def generate_hoard( drop_rank, drop_strength ):
                 it.identified = False
             elif random.randint(1,23) == 5:
                 it.identified = False
+            if it.itemtype in MYSTERIOUS_TYPES and random.randint(1,10) != 1:
+                it.identified = False
+            if hasattr( it, "quantity" ) and it.quantity == 1 and random.randint(1,3) != 2:
+                it.quantity = random.randint(1,4)
             hoard.append( it )
-            gp -= max( it.cost()//2 , 1 )
+            if it.itemtype not in CASHSALE_TYPES:
+                gp -= max( it.cost()//2 , 1 )
+            else:
+                gp -= max( it.cost()//5 , 1 )
         tries += 1
 
     return (max(gp,0),hoard)

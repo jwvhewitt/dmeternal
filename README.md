@@ -7,6 +7,14 @@ Requires Python 2 and PyGame.
 
 ![Screenshot](image/screenshot.png)
 
+INSTALLATION
+============
+
+This game requires Python 2.6 or 2.7 and PyGame to be installed on your system.
+Do that first.
+
+Unzip the game files and put them in a convenient folder. 
+
 HOW TO PLAY
 ===========
 

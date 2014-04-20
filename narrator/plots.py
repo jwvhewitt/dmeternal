@@ -224,16 +224,16 @@ class Plot( object ):
             if handler:
                 handler( explo )
 
-    def get_dialogue_offers( self, npc ):
+    def get_dialogue_offers( self, npc, explo ):
         """Get any dialogue offers this plot has for npc."""
         # Method [ELEMENTID]_offers will be called. This method should return a
         # list of offers to be built into the conversation.
-        ofrz = self.get_generic_offers( npc )
+        ofrz = self.get_generic_offers( npc, explo )
         npc_ids = self.get_element_idents( npc )
         for i in npc_ids:
             ogen = getattr( self, "{0}_offers".format(i), None )
             if ogen:
-                ofrz += ogen()
+                ofrz += ogen( explo )
         return ofrz
 
     def modify_puzzle_menu( self, thing, thingmenu ):
@@ -247,7 +247,7 @@ class Plot( object ):
             if ogen:
                 ogen( thingmenu )
 
-    def get_generic_offers( self, npc ):
+    def get_generic_offers( self, npc, explo ):
         """Get any offers that could apply to non-element NPCs."""
         return list()
 

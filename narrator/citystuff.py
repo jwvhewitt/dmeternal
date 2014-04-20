@@ -36,7 +36,7 @@ class CityOnEdgeOfCiv( Plot ):
         mymapgen = mapgen.EdgeOfCivilization( myscene )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
 
-        castle = self.register_element( "CITY", mapgen.CastleRoom( width=35,height=35,tags=(context.CIVILIZED,), parent=myscene ) )
+        castle = self.register_element( "CITY", mapgen.CastleRoom( width=35,height=35,tags=(context.CIVILIZED,context.ROOM_PUBLIC), parent=myscene ) )
         myroom = mapgen.FuzzyRoom( tags=(context.ENTRANCE,), parent=castle )
         myteam = teams.Team( strength=0, default_reaction=characters.SAFELY_FRIENDLY)
         castle.contents.append( myteam )
@@ -105,7 +105,7 @@ class GenerallyGeneralStore( Plot ):
         self.add_sub_plot( nart, "SIDE_STORY", PlotState(rank=self.random_rank_in_chapter()).based_on( self ) )
         return True
 
-    def SHOPKEEPER_offers( self ):
+    def SHOPKEEPER_offers( self, explo ):
         # Return list of shopkeeper offers.
         ol = list()
         ol.append( dialogue.Offer( "" ,
@@ -167,7 +167,7 @@ class GenericInn( Plot ):
 
         return True
 
-    def SHOPKEEPER_offers( self ):
+    def SHOPKEEPER_offers( self, explo ):
         # Return list of shopkeeper offers.
         ol = list()
         ol.append( dialogue.Offer( "We have some space in the back." ,
@@ -220,7 +220,7 @@ class GenericLibrary( Plot ):
         self.add_sub_plot( nart, "SIDE_STORY", PlotState(rank=self.random_rank_in_chapter()).based_on( self ) )
         return True
 
-    def SHOPKEEPER_offers( self ):
+    def SHOPKEEPER_offers( self, explo ):
         # Return list of shopkeeper offers.
         ol = list()
         ol.append( dialogue.Offer( "Knowledge is power. Some knowledge is more powerful than others." ,
@@ -275,7 +275,7 @@ class GenericTemple( Plot ):
 
         return True
 
-    def SHOPKEEPER_offers( self ):
+    def SHOPKEEPER_offers( self, explo ):
         # Return list of shopkeeper offers.
         ol = list()
         ol.append( dialogue.Offer( "Remember that it is better to give than to receive, which is why we insist that you pay up front." ,
@@ -329,7 +329,7 @@ class GenericWeaponShop( Plot ):
 
         return True
 
-    def SHOPKEEPER_offers( self ):
+    def SHOPKEEPER_offers( self, explo ):
         # Return list of shopkeeper offers.
         ol = list()
         ol.append( dialogue.Offer( "This is my shop. There is not much here yet." ,

@@ -79,4 +79,5 @@ HELLO_INNKEEPER = Offer( msg = "Welcome to the inn. Are you planning to spend th
         context = ContextTag( [context.HELLO,context.SERVICE] ) ,
         replies = [ Reply( "That depends on the price." , destination = Cue( ContextTag( [context.SERVICE,context.INN] ) ) ) ] )
 
+THREATEN_BASIC = Offer( msg = "You think you can defeat us? We will defeat you!" , context = ContextTag( [context.THREATEN] ) )
 

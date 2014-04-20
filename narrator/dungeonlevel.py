@@ -16,10 +16,11 @@ class BasicCave( Plot ):
     # This is the basic dungeon outline on which other classes will be based.
     LABEL = "DUNGEON_LEVEL"
     TAGS = set( (context.HAB_CAVE,) )
+    MIN_RANK = 0
     @classmethod
     def matches( self, pstate ):
         """Requires the dungeon type to have all the needed tags."""
-        return self.TAGS.issuperset( pstate.elements.get( "DUNGEON_TYPE" ) )
+        return self.TAGS.issuperset( pstate.elements.get( "DUNGEON_TYPE" ) ) and pstate.rank >= self.MIN_RANK
     def custom_init( self, nart ):
         myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
             sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_cthonic.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
@@ -28,7 +29,7 @@ class BasicCave( Plot ):
         mymapgen = mapgen.CaveScene( myscene )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
 
-        for t in range( random.randint(4,8) ):
+        for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
 
         return True
@@ -44,7 +45,7 @@ class SewerLevel( BasicCave ):
         mymapgen = mapgen.OpenTunnelScene( myscene )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
 
-        for t in range( random.randint(4,8) ):
+        for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
 
         return True
