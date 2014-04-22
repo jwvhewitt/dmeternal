@@ -57,6 +57,9 @@ class CityOnEdgeOfCiv( Plot ):
         for t in range( random.randint(1,4) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
 
+        self.add_sub_plot( nart, "CITY_STORY", PlotState(rank=self.random_rank_in_chapter()).based_on( self ) )
+
+
         return True
 
 
@@ -97,6 +100,7 @@ class GenerallyGeneralStore( Plot ):
         gate_2.anchor = mapgen.south
         int_mainroom.decorate = mapgen.GeneralStoreDec()
         npc = monsters.generate_npc( job=monsters.base.Merchant )
+        npc.tags.append( context.CHAR_SHOPKEEPER )
         interior.name = random.choice( self.NAME_PATTERNS ).format( npc )
         gate_1.mini_map_label = "General Store"
         int_mainroom.contents.append( npc )
@@ -149,6 +153,7 @@ class GenericInn( Plot ):
         int_mainroom.decorate = mapgen.TavernDec(win=maps.SMALL_WINDOW)
 
         npc = monsters.generate_npc()
+        npc.tags.append( context.CHAR_INNKEEPER )
         interior.name = random.choice( self.NAME_PATTERNS ).format( npc, random.choice(monsters.MONSTER_LIST).name, random.choice(monsters.MONSTER_LIST).name )
         gate_1.mini_map_label = "Inn"
         int_mainroom.contents.append( npc )
@@ -162,6 +167,7 @@ class GenericInn( Plot ):
         int_bedroom.contents.append( maps.LIGHT_STAND )
         int_bedroom.decorate = mapgen.BedroomDec()
 
+        self.add_sub_plot( nart, "SIDE_STORY", PlotState(rank=self.random_rank_in_chapter()).based_on( self ) )
 
         self.shop = services.Inn()
 
@@ -212,12 +218,12 @@ class GenericLibrary( Plot ):
         else:
             npc = monsters.generate_npc( job=random.choice((characters.Mage,characters.Mage,characters.Necromancer,
                 characters.Mage,characters.Mage,characters.Necromancer,characters.Bard) ))
+        npc.tags.append( context.CHAR_SHOPKEEPER )
         int_mainroom.contents.append( npc )
         self.register_element( "SHOPKEEPER", npc )
         int_mainroom.contents.append( maps.DESK )
         int_mainroom.contents.append( maps.TABLE )
         self.shop = services.Shop( services.MAGIC_STORE, rank=self.rank+5, allow_misc=False, allow_magic=True, num_items=9 )
-        self.add_sub_plot( nart, "SIDE_STORY", PlotState(rank=self.random_rank_in_chapter()).based_on( self ) )
         return True
 
     def SHOPKEEPER_offers( self, explo ):
@@ -268,6 +274,7 @@ class GenericTemple( Plot ):
         npc = monsters.generate_npc( job=random.choice((characters.Priest, characters.Priest,
             characters.Priest, characters.Priest, characters.Priest, characters.Priest, characters.Priest,
             characters.Druid, characters.Druid, characters.Priest, characters.Monk, characters.Knight) ))
+        npc.tags.append( context.CHAR_HEALER )
         int_mainroom.contents.append( npc )
         self.register_element( "SHOPKEEPER", npc )
 
@@ -319,6 +326,7 @@ class GenericWeaponShop( Plot ):
         int_mainroom.decorate = mapgen.WeaponShopDec()
 
         npc = monsters.generate_npc( job=monsters.base.Merchant )
+        npc.tags.append( context.CHAR_SHOPKEEPER )
         interior.name = random.choice( self.NAME_PATTERNS ).format( npc )
         gate_1.mini_map_label = "Weapon Shop"
         int_mainroom.contents.append( npc )

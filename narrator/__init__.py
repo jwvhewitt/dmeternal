@@ -64,7 +64,8 @@ def harvest( mod ):
         if inspect.isclass( o ) and issubclass( o , Plot ) and o is not Plot:
             PLOT_LIST[ o.LABEL ].append( o )
 
-import citystuff
+import citybits
+import citystories
 import complication
 import connections
 import dungeonlevel
@@ -76,7 +77,8 @@ import resources
 import rewards
 import sidestories
 import socialbits
-harvest( citystuff )
+harvest( citybits )
+harvest( citystories )
 harvest( complication )
 harvest( connections )
 harvest( dungeonlevel )

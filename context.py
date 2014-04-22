@@ -20,7 +20,7 @@
 HELLO,THREATEN,SHOP,SERVICE,INFO,PROBLEM,BRINGMESSAGE, REWARD, \
     GENERALSTORE,BLACKMARKET,WEAPON,HINT,INN,MAGICGOODS, \
     HEALING,PERSONAL,GOODNEWS,BADNEWS,QUESTION,REPLY_ATTACK, \
-    REPLY_PEACE = range(21)
+    REPLY_PEACE,GOODLUCK = range(22)
 
 
 class ContextTag( tuple ):
@@ -90,6 +90,9 @@ GEN_GIANT, GEN_GOBLIN, GEN_CHAOS, GEN_UNDEAD, GEN_NATURE, GEN_DRAGON = range( 14
 
 # Summon Tags. Used to mark individual monsters for specific spells.
 SUMMON_FLAMINGSWORD, SUMMON_ELEMENTAL = range( 2000, 2002 )
+
+# NPC Tags. Used to mark roles, etc.
+CHAR_NPC, CHAR_SHOPKEEPER, CHAR_INNKEEPER, CHAR_HEALER = range( 3000, 3004 )
 
 def matches_description( context_set, desc_request ):
     # context_set is a list of context tags.

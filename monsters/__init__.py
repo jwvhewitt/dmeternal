@@ -4,6 +4,7 @@ import characters
 import random
 import chargen
 import namegen
+import context
 from dialogue import voice
 
 import animals
@@ -68,7 +69,7 @@ def generate_npc( species=None, job=None, gender=None, rank=None, team=None ):
     ji = job( rank=rank, pc=npc )
     npc.levels.append( ji )
     chargen.give_starting_equipment( npc )
-    npc.npc_cred = True
+    npc.tags.append( context.CHAR_NPC )
 
     # Generate a random name. This is gonna depend on the voice.
     myvoice = npc.get_voice()

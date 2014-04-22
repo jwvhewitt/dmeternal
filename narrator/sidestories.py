@@ -10,9 +10,11 @@ import services
 import teams
 import characters
 import random
+import stats
 
-### Sidestories get added to buildings in cities to flesh them out and to
-### provide some things for the PC to do other than clearing the main dungeon.
+### SideStories are stories affecting the people in a building in a city.
+### They are there to add flavor, and typically won't be particularly
+### important.
 
 class DateMyCousinPlease( Plot ):
     """The cousin of the shopkeeper must be removed from the house."""
@@ -49,7 +51,6 @@ class DateMyCousinPlease( Plot ):
             the_cousin = self.elements["TARGET"]
             the_cousin.place( scene, pos )
             self.started = True
-
     def TARGET_offers( self, explo ):
         ol = list()
         if self.dated:
@@ -57,7 +58,6 @@ class DateMyCousinPlease( Plot ):
              context = context.ContextTag([context.HELLO]) )
             ol.append( myoffer )
         return ol
-
     def SHOPKEEPER_offers( self, explo ):
         ol = list()
         the_cousin = self.elements["TARGET"]
@@ -74,50 +74,91 @@ class DateMyCousinPlease( Plot ):
             ol.append( myoffer )
         return ol
 
-
-class TheBlackMarket( Plot ):
-    """There's a black market in town, but it's hidden."""
+class TooMuchWork( Plot ):
+    """The significant other of the shopkeeper sends you on a quest to find some
+       part time help."""
     LABEL = "SIDE_STORY"
     UNIQUE = True
     active = True
     scope = True
-    NAME_PATTERNS = ( "{0}'s Black Market", "{0}'s Contraband" )
     @classmethod
     def matches( self, pstate ):
-        """Requires the SHOPKEEPER and LOCALE to exist."""
-        return pstate.elements.get("SHOPKEEPER") and pstate.elements.get("LOCALE")
+        """Requires the SHOPKEEPER, SHOPKEEPER.species, and BUILDING_INT to exist."""
+        return pstate.elements.get("SHOPKEEPER") and pstate.elements.get("SHOPKEEPER").species and pstate.elements.get("BUILDING_INT")
+    def room_seeker( self, thing ):
+        return isinstance( thing, mapgen.Room ) and context.ROOM_PUBLIC in thing.tags
     def custom_init( self, nart ):
-        """Create the black market, add secret connection."""
-        locale = self.elements["LOCALE"]
-        interior = maps.Scene( 50,50, sprites={maps.SPRITE_WALL: "terrain_wall_darkbrick.png", maps.SPRITE_FLOOR: "terrain_floor_wood.png" },
-            biome=context.HAB_BUILDING, setting=self.setting, desctags=(context.DES_CIVILIZED,) )
-        igen = mapgen.BuildingScene( interior )
-        self.register_scene( nart, interior, igen, ident="BUILDING_INT", dident="LOCALE" )
-        int_mainroom = mapgen.SharpRoom( tags=(context.CIVILIZED,context.ENTRANCE), anchor=mapgen.northwest, parent=interior )
-        int_mainroom.contents.append( maps.PILED_GOODS )
-        int_mainroom.contents.append( maps.PILED_GOODS )
-        int_mainroom.decorate = mapgen.GeneralStoreDec()
-        npc = monsters.generate_npc( job=monsters.base.Merchant )
-        interior.name = random.choice( self.NAME_PATTERNS ).format( npc )
-        int_mainroom.contents.append( npc )
-        self.register_element( "BMKEEPER", npc )
-        self.shop = services.Shop( rank=self.rank+3, allow_magic=True )
-        self.add_sub_plot( nart, "SECRET_CONNECT", PlotState( elements={"PREV":locale,"NEXT":interior} ).based_on( self ) )
+        sk = self.elements["SHOPKEEPER"]
+        the_room = self.seek_element( nart, "_THE_ROOM", self.room_seeker, scope=self.elements.get("BUILDING_INT") )
+        npc = monsters.generate_npc(species=sk.species.__class__)
+        # Assume a heteronormativity rate of 50%.
+        if random.randint(1,2) == 1:
+            if sk.gender == stats.MALE:
+                npc.gender = stats.FEMALE
+            elif sk.gender == stats.FEMALE:
+                npc.gender = stats.MALE
+        self.register_element( "_NPC", npc, dident="_THE_ROOM" )
+        self.add_sub_plot( nart, "REWARD", PlotState(elements={"ORIGIN":npc}).based_on( self ), ident="next" )
+        self.quest_started = False
+        self.employees = [sk,npc]
+        self.needed_stat = random.choice( stats.PRIMARY_STATS )
         return True
-    def BMKEEPER_offers( self, explo ):
-        # Return list of shopkeeper offers.
+    def start_quest( self, explo ):
+        self.quest_started = True
+    def end_quest( self, explo ):
+        self.active = False
+    STAT_DESC = { stats.STRENGTH: "strong", stats.TOUGHNESS: "hardy", stats.REFLEXES: "quick", \
+        stats.INTELLIGENCE: "smart", stats.PIETY: "diligent", stats.CHARISMA: "friendly" }
+    def _NPC_offers( self, explo ):
         ol = list()
-        ol.append( dialogue.Offer( "If anyone asks, you did not get this stuff from me, understand?",
-         context = context.ContextTag([context.SHOP,context.BLACKMARKET]), effect=self.shop ) )
+        if not self.quest_started:
+            sk = self.elements["SHOPKEEPER"]
+            myoffer = dialogue.Offer( msg = "{0} is always busy these days. We should get some help, but we're too busy to go looking!".format(sk, sk.subject_pronoun()) ,
+             context = context.ContextTag( [context.HELLO] ) ,
+             replies = [ dialogue.Reply( "I could do that for you." ,
+                    destination = dialogue.Offer( msg = "Really? We need three {0} folks to cover all this work. Let me know if you find anyone.".format(self.STAT_DESC[self.needed_stat]) ,
+                     context = context.ContextTag( [context.PERSONAL] ), effect=self.start_quest )) ]
+             )
+            ol.append( myoffer )
+        else:
+            myoffer = dialogue.Offer( msg = "Have you found me three {0} folks yet?".format(self.STAT_DESC[self.needed_stat]),
+             context = context.ContextTag( [context.HELLO] ) )
+            if len( self.employees ) >= 5:
+                myoffer.replies.append( dialogue.Reply( "I found everyone you need." ,
+                    destination = dialogue.Offer( msg = "Great! With {0}, {1}, and {2} on staff things here will be much easier. Thank you so much.".format(self.employees[2],self.employees[3],self.employees[4]),
+                     context = context.ContextTag( [context.PERSONAL] ), effect=self.end_quest, replies=[ dialogue.Reply( "You're welcome." ,
+                    destination = dialogue.Cue( context.ContextTag( [context.REWARD] ) ) ) ] ))
+                )
+            else:
+                myoffer.replies.append( dialogue.Reply( "I'm still working on it." ,destination = dialogue.Cue( context.ContextTag( [context.GOODLUCK] ))))
+                ol.append( dialogue.Offer( msg = "Good luck with that. I'll be waiting right here... as if I had time to go anywhere else.",
+                     context = context.ContextTag( [context.GOODLUCK] ) ) )
+            ol.append( myoffer )
+
         return ol
-    def SHOPKEEPER_offers( self, explo ):
-        # Return list of shopkeeper offers.
+    def add_this_npc( self, explo ):
+        # Add the NPC in the current conversation to the list of employees.
+        npc = explo.convo[1]
+        self.employees.append( npc )
+        if len( self.employees ) >= 5:
+            self.subplots["next"].active = True
+    ACCEPT_JOB_REPLIES = ( "I could use the extra money. Tell {0} I can start next week.",
+        "Do I look like I need part time work? Yeah, I guess I probably do... Tell {0} I will take the job.",
+        "Why not? You can tell {0} I will help out.",
+        "Alright, I can do that.", "For {0} I would be glad to help out."
+        )
+    def get_generic_offers( self, npc, explo ):
         ol = list()
-        if random.randint(1,4)==1:
-            ol.append( dialogue.Offer( "If you are unhappy with the selection in my store, you can always try the black market. Good luck finding it, though." ,
-             context = context.ContextTag([context.HELLO,context.SHOP,context.GENERALSTORE]),
-             replies = [ dialogue.Reply( "I will just look at your wares, thanks." , destination = dialogue.Cue( context.ContextTag( [context.SHOP] ) ) ), ]
-             ) )
+        if self.quest_started and npc not in self.employees and npc.get_stat(self.needed_stat) > (9+self.rank) and len( self.employees ) < 5:
+            qgnpc = self.elements["_NPC"]
+            myoffer = dialogue.Offer( msg = "What is it?" ,
+             context = context.ContextTag( [context.BRINGMESSAGE,context.QUESTION] ) ,
+             replies = [ dialogue.Reply( "{0} is looking for help.".format(qgnpc) ,
+                    destination = dialogue.Offer( msg = random.choice(self.ACCEPT_JOB_REPLIES).format(qgnpc.object_pronoun()) ,
+                     context = context.ContextTag( [context.PERSONAL] ), effect=self.add_this_npc )) ]
+             )
+            ol.append( myoffer )
         return ol
+
 
 

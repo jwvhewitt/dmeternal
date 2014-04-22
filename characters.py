@@ -444,6 +444,7 @@ class Character( stats.PhysicalThing ):
         self.stat_damage = collections.defaultdict(int)
         self.techniques = CappedModifierList()
         self.condition = CappedModifierList()
+        self.tags = list()
 
     def get_stat( self , stat, include_extras=True ):
         if stat == None:

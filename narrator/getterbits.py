@@ -68,7 +68,7 @@ class GS_HintFromSomebodyCivilized( Plot ):
         return isinstance( thing, mapgen.Room ) and context.CIVILIZED in thing.tags and context.ROOM_PUBLIC in thing.tags
     def seek_npc( self, thing ):
         # We need a NPC.
-        return isinstance( thing, characters.Character ) and hasattr( thing, "npc_cred" )
+        return isinstance( thing, characters.Character ) and context.CHAR_NPC in thing.tags
     def custom_init( self, nart ):
         # Locate a room within LOCALE scope which is CIVILIZED and ROOM_PUBLIC
         room = self.seek_element( nart, "_ROOM", self.seek_room, scope=self.elements["LOCALE"] )
