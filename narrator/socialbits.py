@@ -21,6 +21,9 @@ import random
     affected by the action. When the action is performed, a script trigger
     will be sprung with a trigger ID equal to the action name (minus "SB_")
     and thing set to the target item.
+
+    It may also include an element ORIGIN, which is the originator of the
+    action which affects TARGET.
 """
 
 ###   *****************

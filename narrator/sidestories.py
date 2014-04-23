@@ -11,6 +11,7 @@ import teams
 import characters
 import random
 import stats
+import namegen
 
 ### SideStories are stories affecting the people in a building in a city.
 ### They are there to add flavor, and typically won't be particularly
@@ -73,6 +74,33 @@ class DateMyCousinPlease( Plot ):
              context = context.ContextTag([context.PROBLEM,context.PERSONAL]), effect=self.tell_problem )
             ol.append( myoffer )
         return ol
+
+class DungeonBreakthrough( Plot ):
+    """Work in the basement has broken through to a dungeon."""
+    LABEL = "SIDE_STORY"
+    UNIQUE = True
+    active = True
+    scope = "BUILDING_INT"
+    @classmethod
+    def matches( self, pstate ):
+        """Requires the SHOPKEEPER and BUILDING_INT to exist."""
+        return pstate.elements.get("SHOPKEEPER") and pstate.elements.get("BUILDING_INT")
+    def custom_init( self, nart ):
+        prev = self.elements["BUILDING_INT"]
+        # Generate the levels
+        self.levels = self.get_dungeon_levels( nart, tuple(), min( prev.rank+2, self.rank ), self.rank )
+        # Connect all the levels, and name them.
+        self.install_dungeon( nart, self.levels, prev, "Dungeon of {0}".format( namegen.ELDRITCH.gen_word() ) )
+        return True
+    def end_plot( self, explo ):
+        self.active = False
+    def SHOPKEEPER_offers( self, explo ):
+        ol = list()
+        myoffer = dialogue.Offer( msg = "When we were working on the basiment earlier we broke through into some kind of dungeon. You're free to go downstairs and check it out.",
+             context = context.ContextTag( [context.INFO,context.HINT] ), effect=self.end_plot)
+        ol.append( myoffer )
+        return ol
+
 
 class TooMuchWork( Plot ):
     """The significant other of the shopkeeper sends you on a quest to find some
@@ -149,7 +177,7 @@ class TooMuchWork( Plot ):
         )
     def get_generic_offers( self, npc, explo ):
         ol = list()
-        if self.quest_started and npc not in self.employees and npc.get_stat(self.needed_stat) > (9+self.rank) and len( self.employees ) < 5:
+        if self.quest_started and npc not in self.employees and npc.get_stat(self.needed_stat) > (12+self.rank//2) and len( self.employees ) < 5:
             qgnpc = self.elements["_NPC"]
             myoffer = dialogue.Offer( msg = "What is it?" ,
              context = context.ContextTag( [context.BRINGMESSAGE,context.QUESTION] ) ,

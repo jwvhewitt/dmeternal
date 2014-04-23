@@ -224,6 +224,7 @@ class GenericLibrary( Plot ):
         int_mainroom.contents.append( maps.DESK )
         int_mainroom.contents.append( maps.TABLE )
         self.shop = services.Shop( services.MAGIC_STORE, rank=self.rank+5, allow_misc=False, allow_magic=True, num_items=9 )
+        self.add_sub_plot( nart, "SIDE_STORY", PlotState(rank=self.random_rank_in_chapter()).based_on( self ) )
         return True
 
     def SHOPKEEPER_offers( self, explo ):

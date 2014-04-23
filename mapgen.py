@@ -934,7 +934,7 @@ class SubtleMonkeyTunnelScene( RandomScene ):
         # Generate list of rooms.
         myrooms = list()
         for r in self.contents:
-            if hasattr( r, "area" ):
+            if hasattr( r, "area" ) and r.area:
                 myrooms.append( r )
 
         # Start the list of connected points.

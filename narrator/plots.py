@@ -251,6 +251,31 @@ class Plot( object ):
         """Get any offers that could apply to non-element NPCs."""
         return list()
 
+    def get_dungeon_levels( self, nart, dtype, start_rank, end_rank ):
+        # Constructs a list of dungeon levels.
+        levels = list()
+        pstate = PlotState( rank = start_rank, elements={"DUNGEON_TYPE":dtype} ).based_on( self )
+        for l in range( start_rank, end_rank+1 ):
+            sp = self.add_sub_plot( nart, "DUNGEON_LEVEL", pstate )
+            if sp:
+                pstate.rank = l
+                pstate.elements["DUNGEON_TYPE"] = sp.TAGS
+                dunglev = sp.elements[ "LOCALE" ]
+                levels.append( dunglev )
+        return levels
+
+    def install_dungeon( self, nart, levels, dest, dname ):
+        # Connect all the levels, and name them.
+        prev = dest
+        n = 1
+        for next in levels:
+            next.name = "{0}, Lvl{1}".format( dname, n )
+            next.dname = dname
+            n += 1
+            pstate = PlotState( rank = next.rank, elements={"PREV":prev,"NEXT":next} ).based_on( self )
+            sp = self.add_sub_plot( nart, "CONNECT", pstate )
+            prev = next
+
 
     @classmethod
     def matches( self, pstate ):
