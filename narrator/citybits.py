@@ -105,7 +105,7 @@ class GenerallyGeneralStore( Plot ):
         gate_1.mini_map_label = "General Store"
         int_mainroom.contents.append( npc )
         self.register_element( "SHOPKEEPER", npc )
-        self.shop = services.Shop( rank=self.rank+2 )
+        self.shop = self.register_element( "SHOPSERVICE", services.Shop( rank=self.rank+2 ) )
         self.add_sub_plot( nart, "SIDE_STORY", PlotState(rank=self.random_rank_in_chapter()).based_on( self ) )
         return True
 
@@ -223,7 +223,7 @@ class GenericLibrary( Plot ):
         self.register_element( "SHOPKEEPER", npc )
         int_mainroom.contents.append( maps.DESK )
         int_mainroom.contents.append( maps.TABLE )
-        self.shop = services.Shop( services.MAGIC_STORE, rank=self.rank+5, allow_misc=False, allow_magic=True, num_items=9 )
+        self.shop = self.register_element( "SHOPSERVICE", services.Shop( services.MAGIC_STORE, rank=self.rank+5, allow_misc=False, allow_magic=True, num_items=9 ) )
         self.add_sub_plot( nart, "SIDE_STORY", PlotState(rank=self.random_rank_in_chapter()).based_on( self ) )
         return True
 
@@ -333,8 +333,8 @@ class GenericWeaponShop( Plot ):
         int_mainroom.contents.append( npc )
         self.register_element( "SHOPKEEPER", npc )
 
-        self.shop = services.Shop( ware_types=services.WEAPON_STORE, rank=self.rank+2,
-         allow_misc=False, allow_magic=True, num_items=14 )
+        self.shop = self.register_element( "SHOPSERVICE", services.Shop( ware_types=services.WEAPON_STORE, rank=self.rank+2,
+         allow_misc=False, allow_magic=True, num_items=14 ) )
 
         return True
 
