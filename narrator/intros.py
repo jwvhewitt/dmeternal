@@ -67,6 +67,7 @@ class BalrogMovesIntoTown( Plot ):
         if not nart.camp.scene:
             self.add_first_locale_sub_plot( nart )
         self.add_sub_plot( nart, "COMPLICATION", ident="next" )
+        self._welcomed = False
         return True
     def t_START( self, explo ):
         if self.do_message:
@@ -74,7 +75,13 @@ class BalrogMovesIntoTown( Plot ):
             explo.alert( "Unfortunately, the arrival of a fearsome monster has shattered the peace. Now the people of {0} live in fear, waiting for a hero to deliver them from this terror.".format( city.name ) )
             self.do_message = False
 
-
+    def get_generic_offers( self, npc, explo ):
+        ol = list()
+        city = self.elements["LOCALE"]
+        if explo.camp.current_root_scene() is city and not self._welcomed:
+            ol.append( dialogue.Offer( msg = "Welcome to {0}, but you have picked a ".format( city ),
+                     context = context.ContextTag( [context.HELLO,context.LOCAL] )))
+        return ol
 
 
 
