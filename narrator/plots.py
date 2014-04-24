@@ -14,6 +14,9 @@ class Chapter( object ):
             num = follows.num + 1
             start_rank = follows.end_rank
             end_rank = start_rank + random.randint( 3,5 )
+            self.active = False
+        else:
+            self.active = True
         self.num = num
         self.start_rank = start_rank
         self.end_rank = end_rank

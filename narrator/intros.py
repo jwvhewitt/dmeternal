@@ -74,13 +74,20 @@ class BalrogMovesIntoTown( Plot ):
             city = self.elements["LOCALE"]
             explo.alert( "Unfortunately, the arrival of a fearsome monster has shattered the peace. Now the people of {0} live in fear, waiting for a hero to deliver them from this terror.".format( city.name ) )
             self.do_message = False
-
+    def _do_welcome( self, explo ):
+        self._welcomed = True
     def get_generic_offers( self, npc, explo ):
         ol = list()
         city = self.elements["LOCALE"]
-        if explo.camp.current_root_scene() is city and not self._welcomed:
-            ol.append( dialogue.Offer( msg = "Welcome to {0}, but you have picked a ".format( city ),
-                     context = context.ContextTag( [context.HELLO,context.LOCAL] )))
+        if self.chapter.active and explo.camp.current_root_scene() is city:
+            if not self._welcomed:
+                ol.append( dialogue.Offer( msg = "Welcome to {0}, but you have picked a bad time to visit.".format( city ),
+                         context = context.ContextTag( [context.HELLO,context.PROBLEM,context.LOCAL] ), effect=self._do_welcome ))
+                ol.append( dialogue.Offer( msg = "Monsters have been appearing in the wilderness around town. People are frightened, and for good reason.".format( city ),
+                         context = context.ContextTag( [context.PROBLEM,context.LOCAL] )))
+            ol.append( dialogue.Offer( msg = "It is dangerous to go alone. Buy a nice big sword to protect yourself.",
+                 context = context.ContextTag( [context.HELLO,context.SHOP] ),
+                 replies=[dialogue.Reply( "Good idea." , destination = dialogue.Cue( context.ContextTag( [context.SHOP,context.WEAPON] ) ) )] ))
         return ol
 
 
