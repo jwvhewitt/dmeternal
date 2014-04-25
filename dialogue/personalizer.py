@@ -162,10 +162,10 @@ PT_DATABASE = {
         PTEntry( "'Ello, ello", { voice.ORCISH: True } ),
         PTEntry( "'Ello", { voice.ORCISH: True, voice.STUPID: False } ),
         PTEntry( "Greetings", { voice.SMART: True } ),
-        PTEntry( "Hey", { voice.STUPID: True } ),
+        PTEntry( "Hey", { voice.SMART: False, voice.DWARVEN: False, voice.ORCISH: False, voice.DRACONIAN: False } ),
         PTEntry( "Salutations", { voice.DRACONIAN: True, voice.STUPID: False } ),
         PTEntry( "Sss", { voice.DRACONIAN: True, voice.STUPID: True } ),
-        PTEntry( "Hi", { voice.SMART: False, voice.DWARVEN: False, voice.ORCISH: False, voice.DRACONIAN: False } ),
+        PTEntry( "Hi", { voice.STUPID: False, voice.DWARVEN: False, voice.ORCISH: False, voice.DRACONIAN: False } ),
         PTEntry( "Lali-ho", { voice.DWARVEN: True } ),
         PTEntry( "Hai", { voice.KITTEH: True } ),
         PTEntry( "Hullo", { voice.HURTHISH: True } ),
@@ -531,6 +531,11 @@ PT_DATABASE = {
         ),
     "what": (
         PTEntry( "wot", { voice.ORCISH: True } ),
+        ),
+    "wilderness": (
+        PTEntry( "wilds", { voice.GREEK: True } ),
+        PTEntry( "savage spaces", { voice.DRACONIAN: True } ),
+        PTEntry( "outdoors", { voice.DWARVEN: True } ),
         ),
     "wisdom":   (
         PTEntry( "philosophy", { voice.GREEK: True } ),

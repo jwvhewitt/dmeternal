@@ -16,6 +16,7 @@ import pygame
 import pygwrap
 import rpgmenu
 import voice
+import grammar
 import personalizer
 import context
 from context import ContextTag
@@ -297,10 +298,33 @@ def preprocess_out_text( otext ):
         nutext.append( p )
     return nutext
 
+
+def expand_token( token, gramdb ):
+    """Return an expansion of token according to gramdb. If no expansion possible, return token."""
+    if token in gramdb:
+        ex = random.choice( gramdb[token] )
+        all_words = list()
+        for word in ex.split():
+            if word[0] == "_":
+                word = expand_token( word, gramdb )
+            all_words.append( word )
+        return " ".join( all_words )
+    else:
+        return token
+
+def convert_tokens( in_text, gramdb ):
+    all_words = list()
+    for word in in_text.split():
+        if word[0] == "_":
+            word = expand_token( word, gramdb )
+        all_words.append( word )
+    return " ".join( all_words )
+
+
 def personalize_text( in_text, speaker_voice ):
     """Return text personalized for the provided context."""
     # Split the text into individual words.
-    all_words = split_words_and_punctuation( in_text )
+    all_words = split_words_and_punctuation( convert_tokens( in_text, grammar.GRAM_DATABASE ) )
     out_text = []
 
     # Going through the words, check for conversions in the conversion table.
