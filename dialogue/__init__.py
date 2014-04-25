@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# A few words on the division of labour here...
+#  - The conversation builder determines the order in which things get said
+#  - The grammar-based token expander determines what gets said
+#  - The phrase substitution personalizer determines how it's said
 
 # Offer: A line spoken by the NPC, with possible effects.
 #   An Offer has a Context, which describes what kind of thing is being said.

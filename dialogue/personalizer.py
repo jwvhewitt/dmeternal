@@ -32,6 +32,10 @@ import voice
 
     SMART: Why use a four letter word when there's a twelve letter alternative?
 
+    The personalizer determines how things are said. It contains options based
+    on the language/nature of the speaker, and is unconcerned with the greater
+    context.
+
 """
 
 class PTEntry( object ):

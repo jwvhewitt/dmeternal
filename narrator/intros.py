@@ -85,15 +85,15 @@ class BalrogMovesIntoTown( Plot ):
                          context = context.ContextTag( [context.HELLO,context.PROBLEM,context.LOCAL] ), effect=self._do_welcome ))
                 ol.append( dialogue.Offer( msg = "Monsters have been appearing in the wilderness around town. People are frightened, and for good reason.".format( city ),
                          context = context.ContextTag( [context.PROBLEM,context.LOCAL] )))
-            ol.append( dialogue.Offer( msg = "It is dangerous to go alone. Buy a nice big sword to protect yourself.",
-                 context = context.ContextTag( [context.HELLO,context.SHOP] ),
-                 replies=[dialogue.Reply( "Good idea." , destination = dialogue.Cue( context.ContextTag( [context.SHOP,context.WEAPON] ) ) )] ))
         return ol
 
     def get_dialogue_grammar( self, npc, explo ):
         city = self.elements["LOCALE"]
         if self.chapter.active and explo.camp.current_root_scene() is city:
             mygram = ({
+                "[BESTWISHES]": ["I hope you don't get eaten by a [monster]."],
+                "[HELLO_SHOP_GENERAL]": [ "These are dangerous times. You should stock up well if you plan to go far." ],
+                "[HELLO_SHOP_WEAPON]": [ "It is dangerous to go alone. Buy a nice big [weapon] to protect yourself." ],
                 "[HOWAREYOU]": ["You have not had any trouble with monsters, I hope."],
             })
             return mygram
