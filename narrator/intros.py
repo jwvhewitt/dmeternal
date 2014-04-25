@@ -90,6 +90,12 @@ class BalrogMovesIntoTown( Plot ):
                  replies=[dialogue.Reply( "Good idea." , destination = dialogue.Cue( context.ContextTag( [context.SHOP,context.WEAPON] ) ) )] ))
         return ol
 
-
+    def get_dialogue_grammar( self, npc, explo ):
+        city = self.elements["LOCALE"]
+        if self.chapter.active and explo.camp.current_root_scene() is city:
+            mygram = ({
+                "[HOWAREYOU]": ["You have not had any trouble with monsters, I hope."],
+            })
+            return mygram
 
 

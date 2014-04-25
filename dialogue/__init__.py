@@ -240,23 +240,34 @@ class ConvoRedraw( pygame.Rect ):
         pygwrap.draw_text( screen, pygwrap.SMALLFONT, self.text, self.text_rect, justify = -1 )
 
 
-def converse( exp, pc, npc, conversation ):
+def converse( explo, pc, npc, cue ):
     # The party is going to converse with someone.
     # During the conversation, the Exploration object will have an attribute
     # called "convo" which is a tuple containing the pc, npc, and conversation.
-    crd = ConvoRedraw( npc, screen = exp.screen, predraw = exp.view )
+    crd = ConvoRedraw( npc, screen = explo.screen, predraw = explo.view )
+
+    offers = list()
+    mygram = grammar.base_grammar( pc, npc, explo )
+
+    for p in explo.camp.active_plots():
+        offers += p.get_dialogue_offers( npc, explo )
+        pgram = p.get_dialogue_grammar( npc, explo )
+        if pgram:
+            grammar.absorb( mygram, pgram )
+    conversation = build_conversation( cue , offers )
     coff = conversation
 
-    exp.convo = (pc,npc,conversation)
+    explo.convo = (pc,npc,conversation)
 
     pc_voice = pc.get_voice()
     npc_voice = npc.get_voice()
 
+
     while coff:
-        crd.text = personalize_text( coff.msg , npc_voice )
-        mymenu = rpgmenu.Menu( exp.screen, crd.menu_rect.x, crd.menu_rect.y, crd.menu_rect.width, crd.menu_rect.height, border=None, predraw=crd )
+        crd.text = personalize_text( coff.msg , npc_voice, mygram )
+        mymenu = rpgmenu.Menu( explo.screen, crd.menu_rect.x, crd.menu_rect.y, crd.menu_rect.width, crd.menu_rect.height, border=None, predraw=crd )
         for i in coff.replies:
-            mymenu.add_item( personalize_text( i.msg, pc_voice ), i.destination )
+            mymenu.add_item( personalize_text( i.msg, pc_voice, mygram ), i.destination )
         if crd.text and not mymenu.items:
             mymenu.add_item( "[Continue]", None )
         else:
@@ -266,9 +277,9 @@ def converse( exp, pc, npc, conversation ):
         coff = mymenu.query()
 
         if nextfx:
-            nextfx( exp )
+            nextfx( explo )
 
-    del exp.convo
+    del explo.convo
 
 
 
@@ -299,15 +310,19 @@ def preprocess_out_text( otext ):
     return nutext
 
 
-def expand_token( token, gramdb ):
+def expand_token( token_block, gramdb ):
     """Return an expansion of token according to gramdb. If no expansion possible, return token."""
+    a,b,suffix = token_block.partition("]")
+    token = a + b
     if token in gramdb:
         ex = random.choice( gramdb[token] )
         all_words = list()
         for word in ex.split():
-            if word[0] == "_":
+            if word[0] == "[":
                 word = expand_token( word, gramdb )
             all_words.append( word )
+        if suffix and all_words:
+            all_words[-1] += suffix
         return " ".join( all_words )
     else:
         return token
@@ -315,16 +330,16 @@ def expand_token( token, gramdb ):
 def convert_tokens( in_text, gramdb ):
     all_words = list()
     for word in in_text.split():
-        if word[0] == "_":
+        if word[0] == "[":
             word = expand_token( word, gramdb )
         all_words.append( word )
     return " ".join( all_words )
 
 
-def personalize_text( in_text, speaker_voice ):
+def personalize_text( in_text, speaker_voice, gramdb ):
     """Return text personalized for the provided context."""
     # Split the text into individual words.
-    all_words = split_words_and_punctuation( convert_tokens( in_text, grammar.GRAM_DATABASE ) )
+    all_words = split_words_and_punctuation( convert_tokens( in_text, gramdb ) )
     out_text = []
 
     # Going through the words, check for conversions in the conversion table.

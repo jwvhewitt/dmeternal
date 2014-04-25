@@ -479,11 +479,7 @@ class Explorer( object ):
 
     def converse_with_model( self, target, cue=dialogue.CUE_HELLO ):
         pc = self.camp.party_spokesperson()
-        offers = list()
-        for p in self.camp.active_plots():
-            offers += p.get_dialogue_offers( target, self )
-        convo = dialogue.build_conversation( cue , offers )
-        dialogue.converse( self, pc, target, convo )
+        dialogue.converse( self, pc, target, cue )
 
     def bump_model( self, target ):
         # Do the animation first.

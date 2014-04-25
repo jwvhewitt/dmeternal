@@ -254,6 +254,10 @@ class Plot( object ):
         """Get any offers that could apply to non-element NPCs."""
         return list()
 
+    def get_dialogue_grammar( self, npc, explo ):
+        """Return any grammar rules appropriate to this situation."""
+        return None
+
     def get_dungeon_levels( self, nart, dtype, start_rank, end_rank ):
         # Constructs a list of dungeon levels.
         levels = list()

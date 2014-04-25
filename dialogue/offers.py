@@ -8,7 +8,7 @@ from base import Cue, Offer, Reply
 
 GOODLUCK_BASIC = Offer( msg = "Good luck with that." , context = ContextTag( [context.GOODLUCK] ) )
 
-HELLO_BASIC = Offer( msg = "_HELLO_MISC" , context = ContextTag( [context.HELLO] ) )
+HELLO_BASIC = Offer( msg = "[HELLO_MISC]" , context = ContextTag( [context.HELLO] ) )
 
 HELLO_INFO = Offer( msg = "You look like the curious type. Would you like to know something?" ,
         context = ContextTag( [context.HELLO,context.INFO] ) ,
