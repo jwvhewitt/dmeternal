@@ -235,6 +235,15 @@ class SecretTreeStumpEntrance( Plot ):
             thingmenu.add_item( "Leave it alone.", None )
         else:
             thingmenu.desc = "{0} There's something odd about it.".format( thingmenu.desc )
+    def get_dialogue_grammar( self, npc, explo ):
+        """Generate a rumour."""
+        if not self._stump_unlocked:
+            prev = self.elements["PREV"]
+            if explo.scene == prev or explo.camp.current_root_scene() == prev:
+                mygram = {
+                    "[RUMOUR]": ["I saw a person disappear through a tree stump. Mysterious."],
+                }
+                return mygram
 
 class ThroughTheWell( Plot ):
     LABEL = "SECRET_CONNECT"
@@ -323,12 +332,14 @@ class ThroughTheWell( Plot ):
         thingmenu.desc = "{0} There is a ladder inside, descending into darkness.".format( thingmenu.desc )
         thingmenu.add_item( "Climb down the well.", self.use_well )
         thingmenu.add_item( "Leave it alone.", None )
-    def get_generic_offers( self, npc, explo ):
-        """Get any offers that could apply to non-element NPCs."""
-        ol = list()
-        if explo.scene == self.elements["PREV"] and random.randint(1,3) == 1 and not self._the_well_has_been_used:
-            ol.append( dialogue.Offer( "Sometimes I hear strange noises coming from the well." ,
-             context = context.ContextTag([context.HELLO]) ) )
-        return ol
+    def get_dialogue_grammar( self, npc, explo ):
+        """Generate a rumour."""
+        if not self._the_well_has_been_used:
+            prev = self.elements["PREV"]
+            if explo.scene == prev or explo.camp.current_root_scene() == prev:
+                mygram = {
+                    "[RUMOUR]": ["Sometimes I hear strange noises coming from the well."],
+                }
+                return mygram
 
 

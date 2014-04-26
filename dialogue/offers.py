@@ -12,7 +12,7 @@ HELLO_BASIC = Offer( msg = "[HELLO_MISC]" , context = ContextTag( [context.HELLO
 
 HELLO_INFO = Offer( msg = "[HELLO_INFO]" ,
         context = ContextTag( [context.HELLO,context.INFO] ) ,
-        replies = [ Reply( "[HELLO:INFO]" ,
+        replies = [ Reply( "[HELLO_INFO:INFO]" ,
                     destination = Cue( ContextTag( [context.INFO] ) ) ) ]
         )
 
@@ -71,9 +71,9 @@ HELLO_TEMPLE = Offer( msg = "[HELLO_SERVICE_HEALING]" ,
         context = ContextTag( [context.HELLO,context.HEALING] ) ,
         replies = [ Reply( "[HELLO:SERVICE_HEALING]" , destination = Cue( ContextTag( [context.SERVICE,context.HEALING] ) ) ) ] )
 
-HELLO_INNKEEPER = Offer( msg = "Welcome to the inn. Are you planning to spend the night?" ,
+HELLO_INNKEEPER = Offer( msg = "[HELLO_SERVICE_INN]" ,
         context = ContextTag( [context.HELLO,context.SERVICE] ) ,
-        replies = [ Reply( "That depends on the price." , destination = Cue( ContextTag( [context.SERVICE,context.INN] ) ) ) ] )
+        replies = [ Reply( "[HELLO:SERVICE_INN]" , destination = Cue( ContextTag( [context.SERVICE,context.INN] ) ) ) ] )
 
 THREATEN_BASIC = Offer( msg = "You think you can defeat us? We will defeat you!" , context = ContextTag( [context.THREATEN] ) )
 

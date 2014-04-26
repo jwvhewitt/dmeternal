@@ -2,6 +2,7 @@ import characters
 import stats
 import image
 import items
+import random
 
 # NPC CLASSES
 
@@ -98,10 +99,13 @@ class Monster( characters.Character ):
     TECHNIQUES = ()
 
     def __init__( self, team = None ):
-        super(Monster, self).__init__( name=self.name, statline=self.statline )
+        statline = self.statline.copy()
+        super(Monster, self).__init__( name=self.name, statline=statline )
         self.team = team
         self.techniques += self.TECHNIQUES
         self.init_monster()
+        for t in range( random.randint(1,4) ):
+            self.statline[ random.choice( stats.PRIMARY_STATS ) ] += 1
 
     def init_monster( self ):
         """Initialize this monster's levels."""

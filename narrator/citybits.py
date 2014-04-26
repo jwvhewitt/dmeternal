@@ -112,7 +112,7 @@ class GenerallyGeneralStore( Plot ):
     def SHOPKEEPER_offers( self, explo ):
         # Return list of shopkeeper offers.
         ol = list()
-        ol.append( dialogue.Offer( "" ,
+        ol.append( dialogue.Offer( "[SHOP_GENERAL]" ,
          context = context.ContextTag([context.SHOP,context.GENERALSTORE]), effect=self.shop ) )
         return ol
 
@@ -176,7 +176,7 @@ class GenericInn( Plot ):
     def SHOPKEEPER_offers( self, explo ):
         # Return list of shopkeeper offers.
         ol = list()
-        ol.append( dialogue.Offer( "We have some space in the back." ,
+        ol.append( dialogue.Offer( "[SERVICE_INN]" ,
          context = context.ContextTag([context.SERVICE,context.INN]), effect=self.shop ) )
         return ol
 
@@ -230,7 +230,7 @@ class GenericLibrary( Plot ):
     def SHOPKEEPER_offers( self, explo ):
         # Return list of shopkeeper offers.
         ol = list()
-        ol.append( dialogue.Offer( "Knowledge is power. Some knowledge is more powerful than others." ,
+        ol.append( dialogue.Offer( "[SHOP_MAGIC]" ,
          context = context.ContextTag([context.SHOP,context.MAGICGOODS]), effect=self.shop ) )
         return ol
 
@@ -286,7 +286,7 @@ class GenericTemple( Plot ):
     def SHOPKEEPER_offers( self, explo ):
         # Return list of shopkeeper offers.
         ol = list()
-        ol.append( dialogue.Offer( "Remember that it is better to give than to receive, which is why we insist that you pay up front." ,
+        ol.append( dialogue.Offer( "[SERVICE_TEMPLE]" ,
          context = context.ContextTag([context.SERVICE,context.HEALING]), effect=self.shop ) )
         return ol
 
@@ -341,7 +341,7 @@ class GenericWeaponShop( Plot ):
     def SHOPKEEPER_offers( self, explo ):
         # Return list of shopkeeper offers.
         ol = list()
-        ol.append( dialogue.Offer( "This is my shop. There is not much here yet." ,
+        ol.append( dialogue.Offer( "[SHOP_WEAPON]" ,
          context = context.ContextTag([context.SHOP,context.WEAPON]), effect=self.shop ) )
         return ol
 

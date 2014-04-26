@@ -65,7 +65,7 @@ class TheBlackMarket( Plot ):
         ol = list()
         if self._still_looking and random.randint(1,4)==1 and npc is not self.elements["BMKEEPER"] and explo.camp.current_root_scene() is self.elements["LOCALE"]:
             ol.append( dialogue.Offer( "If you are unhappy with the selection in my store, you can always try the black market. Good luck finding it, though." ,
-             context = context.ContextTag([context.HELLO,context.SHOP,context.GENERALSTORE]),
+             context = context.ContextTag([context.HELLO,context.SHOP]),
              replies = [ dialogue.Reply( "I will just look at your wares, thanks." , destination = dialogue.Cue( context.ContextTag( [context.SHOP] ) ) ), ]
              ) )
         return ol

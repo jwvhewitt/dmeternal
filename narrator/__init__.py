@@ -9,11 +9,12 @@ import worlds
 
 class Narrative( object ):
     """The builder class which constructs a campaign."""
-    def __init__( self, pstate ):
+    def __init__( self, pstate, end_rank=5 ):
         self.camp = campaign.Campaign()
         self.generators = list()
         self.errors = list()
         self.uniques = set()
+        self.end_rank = end_rank
         # Add the seed plot.
         self.story = self.generate_sub_plot( pstate, "INTRO_1" )
 
@@ -67,6 +68,7 @@ def harvest( mod ):
 import citybits
 import citystories
 import complication
+import conclusion
 import connections
 import dungeonlevel
 import encounters
@@ -80,6 +82,7 @@ import socialbits
 harvest( citybits )
 harvest( citystories )
 harvest( complication )
+harvest( conclusion )
 harvest( connections )
 harvest( dungeonlevel )
 harvest( encounters )

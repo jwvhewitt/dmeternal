@@ -27,13 +27,6 @@ def display_contents2( thing, lead="" ):
         print lead + str( t )
 
 
-if nart.story:
-    nart.story.display()
-else:
-    print "Plot loading failed."
-    for e in nart.errors:
-        print e
-
 if __name__=='__main__':
     import pygame
     import pygwrap

@@ -418,21 +418,9 @@ class Scene( object ):
 
     def choose_monster( self, min_rank, max_rank, habitat=None ):
         """Choose a random monster class as close to range as possible."""
-        possible_list = list()
-        backup_list = list()
         if not habitat:
             habitat = self.get_encounter_request()
-        for m in monsters.MONSTER_LIST:
-            if m.ENC_LEVEL <= max_rank:
-                n = context.matches_description( m.HABITAT, habitat )
-                if n:
-                    backup_list += (m,) * m.ENC_LEVEL
-                    if m.ENC_LEVEL >= min_rank:
-                        possible_list += (m,) * max( n * 2 - 3, 1 )
-        if possible_list:
-            return random.choice( possible_list )
-        elif backup_list:
-            return random.choice( backup_list )
+        return monsters.choose_monster_type( min_rank, max_rank, habitat )
 
     def get_floor( self, x, y ):
         """Safely return floor of tile x,y, or None if off map."""

@@ -90,12 +90,17 @@ class BalrogMovesIntoTown( Plot ):
     def get_dialogue_grammar( self, npc, explo ):
         city = self.elements["LOCALE"]
         if self.chapter.active and explo.camp.current_root_scene() is city:
-            mygram = ({
+            mygram = {
                 "[BESTWISHES]": ["I hope you don't get eaten by a [monster]."],
+                "[HELLO_SERVICE_INN]": [ "Welcome to [scene]. All our rooms are guaranteed [monster] free." ],
+                "[HELLO_SERVICE_HEALING]": [ "Welcome to [scene]. We have been very busy since the monsters showed up." ],
                 "[HELLO_SHOP_GENERAL]": [ "These are dangerous times. You should stock up well if you plan to go far." ],
                 "[HELLO_SHOP_WEAPON]": [ "It is dangerous to go alone. Buy a nice big [weapon] to protect yourself." ],
-                "[HOWAREYOU]": ["You have not had any trouble with monsters, I hope."],
-            })
+                "[HOWAREYOU]": ["You have not had any trouble with monsters, I hope.",
+                    "Have any trouble with the [monsters]?"
+                    ],
+                "[RUMOUR]": ["[rumourleadin] [monsters] are gathering outside of town."],
+            }
             return mygram
 
 

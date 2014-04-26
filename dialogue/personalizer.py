@@ -67,6 +67,10 @@ PT_DATABASE = {
         PTEntry( "stuff", { voice.STUPID: True } ),
         PTEntry( "anythin'", { voice.KITTEH: True } ),
         ),
+    "any help": (
+        PTEntry( "some assistance", { voice.DRACONIAN: True } ),
+        PTEntry( "teh helps", { voice.KITTEH: True } ),
+        ),
     "Are you alright ?":   (
         PTEntry( "Is everything alright?" ),
         PTEntry( "Is everything okay?" ),
@@ -79,6 +83,13 @@ PT_DATABASE = {
         PTEntry( "eated", { voice.KITTEH: True, voice.SMART: False } ),
         PTEntry( "devoured", { voice.SMART: True } ),
         PTEntry( "consumed", { voice.DRACONIAN: True } ),
+        ),
+    "axe": (
+        PTEntry( "choppa", { voice.ORCISH: True } ),
+        PTEntry( "foe-cleaver", { voice.DWARVEN: True } ),
+        ),
+    "bow": (
+        PTEntry( "arrow-flinga", { voice.ORCISH: True } ),
         ),
     "buy":   (
         PTEntry( "purchase", { voice.SMART: True } ),
@@ -277,6 +288,9 @@ PT_DATABASE = {
         PTEntry( "Lookin fer", { voice.KITTEH: True } ),
         PTEntry( "In the market for", { voice.GNOMIC: True } ),
         ),
+    "mace": (
+        PTEntry( "clubba", { voice.ORCISH: True } ),
+        ),
     "makes":   (
         PTEntry( "makez", { voice.KITTEH: True } ),
         ),
@@ -324,10 +338,7 @@ PT_DATABASE = {
         PTEntry( "want some", { voice.HURTHISH: True } ),
         ),
     "need to":   (
-        PTEntry( "must", { voice.DWARVEN: True } ),
         PTEntry( "needz to", { voice.KITTEH: True } ),
-        PTEntry( "really should", { voice.HURTHISH: True } ),
-        PTEntry( "should" ),
         ),
     "no !":   (
         PTEntry( "noes!", { voice.KITTEH: True } ),
@@ -422,9 +433,16 @@ PT_DATABASE = {
         PTEntry( "wotever", { voice.ORCISH: True } ),
         PTEntry( "somethin'", { voice.KITTEH: True } ),
        ),
+    "staff": (
+        PTEntry( "stick", { voice.STUPID: True } ),
+       ),
     "sun": (
         PTEntry( "sky-candle", { voice.DWARVEN: True } ),
        ),
+    "sword": (
+        PTEntry( "stabba", { voice.ORCISH: True } ),
+        PTEntry( "foe-skewer", { voice.DWARVEN: True } ),
+        ),
     "than others .": (
         PTEntry( "than the rest." ),
         PTEntry( "den woteva.", { voice.ORCISH: True } ),

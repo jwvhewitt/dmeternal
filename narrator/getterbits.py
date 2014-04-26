@@ -110,7 +110,7 @@ class GT_HauntedHouse( Plot ):
         self.register_element( "_EXTERIOR", exterior, dident="LOCALE" )
         locale = self.elements.get( "LOCALE" )
         interior = maps.Scene( 50,50, sprites={maps.SPRITE_WALL: "terrain_wall_dungeon.png", 
-            maps.SPRITE_FLOOR: "terrain_floor_dungeon.png",
+            maps.SPRITE_FLOOR: "terrain_floor_dungeon.png", maps.SPRITE_CHEST: "terrain_chest_metal.png",
             maps.SPRITE_INTERIOR: "terrain_int_temple.png" },
             biome=context.HAB_BUILDING, setting=self.setting, desctags=(context.MAP_DUNGEON,context.GEN_UNDEAD,context.DES_LUNAR,context.MTY_UNDEAD) )
         igen = mapgen.SubtleMonkeyTunnelScene( interior )

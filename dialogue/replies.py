@@ -2,11 +2,11 @@ import context
 from context import ContextTag
 from base import Cue, Offer, Reply
 
-HELLO_INFO = Reply( "I am looking for information." ,
+HELLO_INFO = Reply( "[HELLO:INFO]" ,
             destination = Cue( ContextTag([context.INFO]) ) ,
             context = ContextTag([context.HELLO]) )
 
-HELLO_TO_SHOP = Reply( "Do you have anything for sale?" ,
+HELLO_TO_SHOP = Reply( "[HELLO:SHOP]" ,
             destination = Cue( ContextTag([context.SHOP]) ) ,
             context = ContextTag([context.HELLO]) )
 
@@ -15,24 +15,24 @@ HELLOHINT_TO_SHOP = Reply( "I just need to buy something." ,
             context = ContextTag([context.HELLO,context.INFO]) )
 
 
-HELLO_TO_WEAPON_SHOP = Reply( "I am looking for a new weapon.",
+HELLO_TO_WEAPON_SHOP = Reply( "[HELLO:SHOP_WEAPON]",
             destination = Cue( ContextTag([context.SHOP,context.WEAPON])),
             context = ContextTag([context.HELLO]) )
 
-HELLO_TO_GENERAL_SHOP = Reply( "We need to buy something.",
+HELLO_TO_GENERAL_SHOP = Reply( "[HELLO:SHOP_GENERAL]",
             destination = Cue( ContextTag([context.SHOP,context.GENERALSTORE])),
             context = ContextTag([context.HELLO]) )
 
 
-HELLO_TO_LIBRARY = Reply( "I need to research spells.",
+HELLO_TO_LIBRARY = Reply( "[HELLO:SHOP_MAGIC]",
             destination = Cue( ContextTag([context.SHOP,context.MAGICGOODS])),
             context = ContextTag([context.HELLO]) )
 
-HELLO_TO_HEALING = Reply( "We need some healing.",
+HELLO_TO_HEALING = Reply( "[HELLO:SERVICE_HEALING]",
             destination = Cue( ContextTag([context.SERVICE,context.HEALING])),
             context = ContextTag([context.HELLO]) )
 
-HELLO_TO_INN = Reply( "We need a room for the night.",
+HELLO_TO_INN = Reply( "[HELLO:SERVICE_INN]",
             destination = Cue( ContextTag([context.SERVICE,context.INN])),
             context = ContextTag([context.HELLO]) )
 

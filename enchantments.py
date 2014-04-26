@@ -33,7 +33,7 @@ class AirArmor( Enchantment ):
 class ArmorDamage( Enchantment ):
     NAME = "Armor Damage"
     def __init__( self ):
-        super(ArmorDamage, self).__init__(statline=stats.StatMod({stats.PHYSICAL_DEFENSE:-10,stats.NATURAL_DEFENSE:-10}),dispel=(COMBAT))
+        super(ArmorDamage, self).__init__(statline=stats.StatMod({stats.PHYSICAL_DEFENSE:-10,stats.NATURAL_DEFENSE:-10}),dispel=(COMBAT,))
 
 class AcidWepEn( Enchantment ):
     NAME = "Acid Weapon"

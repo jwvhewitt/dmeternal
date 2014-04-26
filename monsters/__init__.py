@@ -5,6 +5,7 @@ import random
 import chargen
 import namegen
 import context
+import stats
 from dialogue import voice
 
 import animals
@@ -44,6 +45,16 @@ VOICE_TO_NAMEGEN = { voice.ORCISH: namegen.ORC, voice.ELVEN: namegen.ELF, \
 
 NPC_CLASSES = ( base.Peasant, base.Merchant )
 
+def gen_monster_name( npc ):
+    # Generate a random name. This is gonna depend on the voice.
+    myvoice = npc.get_voice()
+    ng = namegen.DEFAULT
+    for lang in myvoice:
+        if lang in VOICE_TO_NAMEGEN:
+            ng = VOICE_TO_NAMEGEN[ lang ]
+            break
+    return ng.gen_word()
+
 def generate_npc( species=None, job=None, gender=None, rank=None, team=None ):
     if not species:
         species = random.choice( characters.PC_SPECIES )
@@ -71,16 +82,41 @@ def generate_npc( species=None, job=None, gender=None, rank=None, team=None ):
     chargen.give_starting_equipment( npc )
     npc.tags.append( context.CHAR_NPC )
 
-    # Generate a random name. This is gonna depend on the voice.
-    myvoice = npc.get_voice()
-    ng = namegen.DEFAULT
-    for lang in myvoice:
-        if lang in VOICE_TO_NAMEGEN:
-            ng = VOICE_TO_NAMEGEN[ lang ]
-            break
-    npc.name = ng.gen_word()
+    npc.name = gen_monster_name(npc)
     npc.choose_random_spells()
 
     return npc
+
+def choose_monster_type( min_rank, max_rank, habitat=() ):
+    """Choose a random monster class as close to range as possible."""
+    possible_list = list()
+    backup_list = list()
+    for m in MONSTER_LIST:
+        if m.ENC_LEVEL <= max_rank:
+            n = context.matches_description( m.HABITAT, habitat )
+            if n:
+                backup_list += (m,) * m.ENC_LEVEL
+                if m.ENC_LEVEL >= min_rank:
+                    possible_list += (m,) * max( n * 2 - 3, 1 )
+    if possible_list:
+        return random.choice( possible_list )
+    elif backup_list:
+        return random.choice( backup_list )
+
+def generate_boss( basemon, target_rank ):
+    boss = basemon()
+    if boss.ENC_LEVEL < target_rank:
+        boss.levels.append( base.Terror( target_rank-boss.ENC_LEVEL, boss ))
+    name = gen_monster_name( boss )
+    boss.monster_name, boss.name = boss.name, name
+    for t in range( target_rank ):
+        boss.statline[ random.choice( stats.PRIMARY_STATS ) ] += 1
+    if hasattr( boss, "GP_VALUE" ):
+        gp = boss.GP_VALUE
+    else:
+        gp = 0
+    boss.GP_VALUE = gp + target_rank * 100
+    return boss
+
 
 

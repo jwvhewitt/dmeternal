@@ -42,7 +42,39 @@ MAYBE = 999
 # The Propp State describes the progression of the main storyline. Note that the
 # state can only move forward- no backpedaling.
 
-PROPP_NONE, PROPP_ABSENTATION, PROPP_INTERDICTION, PROPP_VIOLATION = range( 4 )
+PROPP_NONE = 0          # The starting state
+PROPP_ABSENTATION = 1   # The characters leave home, looking for adventure
+PROPP_INTERDICTION = 2  # A warning/rule has been given
+PROPP_VIOLATION = 3     # The rule has been broken/peace has been shattered
+PROPP_RECONNAISSANCE = 4    # More information is needed
+PROPP_DELIVERY = 5      # The enemy gains information
+PROPP_TRICKERY = 6      # The PC is tricked somehow
+PROPP_COMPLICITY = 7    # The PC has aided the enemy
+PROPP_VILLAINY = 8      # The enemy has done something bad to the world
+PROPP_MEDIATION = 9     # A misfortune or lack is made known
+PROPP_COUNTERACT = 10   # The PC begins a counter-action against the enemy
+PROPP_DEPARTURE = 11    # The PC must travel to a distant land
+PROPP_DONOR = 12        # Hero is tested by donor
+PROPP_REACTION = 13     # Hero reacts to the donor, passes or fails test
+PROPP_RECEIPT = 14      # The PC gains magic items to aid quest
+PROPP_GUIDANCE = 15     # Hero is led to the villain
+PROPP_STRUGGLE = 16     # Hero and villain fight
+PROPP_BRANDING = 17     # The hero is marked, scarred, knighted, etc
+PROPP_VICTORY = 18      # The hero achieves victory over the villain
+PROPP_LIQUIDATION = 19  # Initial misfortune or lack is resolved
+PROPP_RETURN = 20
+PROPP_PURSUIT = 21
+PROPP_RESCUE = 22
+PROPP_ARRIVAL = 23
+PROPP_CLAIMS = 24
+PROPP_TASK = 25
+PROPP_SOLUTION = 26
+PROPP_RECOGNITION = 27
+PROPP_EXPOSURE = 28
+PROPP_TRANSFIGURATION = 29
+PROPP_PUNISHMENT = 30
+PROPP_WEDDING = 31
+
 
 
 # *****************************
