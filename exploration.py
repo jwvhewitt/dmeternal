@@ -352,13 +352,16 @@ class Explorer( object ):
                 self.probe( m )
                 m.probe_me = False
             if isinstance( m, characters.Character ) and not m.is_alright():
-                self.scene.contents.remove( m )
-                # Drop all held items.
-                for i in m.contents[:]:
-                    if hasattr( i, "place" ):
-                        m.contents.remove(i)
-                        i.equipped = False
-                        i.place( self.scene, m.pos )
+                self.check_trigger( "DEATH", m )
+                if not m.is_alright():
+                    # There may be a script keeping this model alive...
+                    self.scene.contents.remove( m )
+                    # Drop all held items.
+                    for i in m.contents[:]:
+                        if hasattr( i, "place" ):
+                            m.contents.remove(i)
+                            i.equipped = False
+                            i.place( self.scene, m.pos )
 
     def invoke_technique( self, tech, originator, area_of_effect, opening_anim = None, delay_point=None ):
         if self.camp.fight and self.camp.fight.cstat[originator].silent and isinstance( tech, spells.Spell ):
@@ -614,6 +617,31 @@ class Explorer( object ):
             else:
                 keep_going = False
 
+    def do_level_training( self, student ):
+        myredraw = charsheet.CharacterViewRedrawer( csheet=charsheet.CharacterSheet(student, screen=self.screen, camp=self.camp), screen=self.screen, predraw=self.view, caption="Advance Rank" )
+        mymenu = charsheet.RightMenu( self.screen, predraw = myredraw )
+        mymenu.add_item( "Advance {0}".format( student.mr_level.name ) , student.mr_level.__class__ )
+        for j in student.levels:
+            if j is not student.mr_level:
+                mymenu.add_item( "Change to {0}".format( j.name ) , j.__class__ )
+        jobs = set()
+        for pc in self.camp.party:
+            for j in pc.levels:
+                jobs.add( j.__class__ )
+        for j in student.levels:
+            jobs.remove( j.__class__ )
+        for j in jobs:
+            if j.can_take_level( student ):
+                mymenu.add_item( "Learn {0}".format( j.name ) , j )
+        mymenu.sort()
+        mymenu.add_alpha_keys()
+        mymenu.add_item( "Cancel", False )
+        myredraw.menu = mymenu
+        it = mymenu.query()
+        if it:
+            student.advance( it )
+            self.alert( "{0} gains a rank in {1}.".format( student, it.name ) )
+
     def view_party( self, n, can_switch=True ):
         if n >= len( self.camp.party ):
             n = 0
@@ -631,6 +659,8 @@ class Explorer( object ):
                     mymenu.add_item( "#" + str( i ) , i )
                 else:
                     mymenu.add_item( str( i ) , i )
+            if pc.xp > pc.xp_for_next_level():
+                mymenu.add_item( "!!!Advance Rank!!!", 999 )
             mymenu.sort()
             mymenu.add_alpha_keys()
             mymenu.add_item( "Exit", False )
@@ -648,7 +678,9 @@ class Explorer( object ):
                 n = ( n + 1 ) % len( self.camp.party )
                 pc = self.camp.party[n]
                 myredraw.csheet = charsheet.CharacterSheet(pc, screen=self.screen, camp=self.camp)
-
+            elif it is 999:
+                self.do_level_training( pc )
+                keep_going = False
             elif it:
                 # An item was selected. Deal with it.
                 if not self.equip_or_whatevs( it, pc, myredraw ):
@@ -819,6 +851,7 @@ class Explorer( object ):
                     elif gdi.unicode == u"4":
                         self.view_party(3)
                     elif gdi.unicode == u"Q":
+                        self.camp.save(self.screen)
                         self.no_quit = False
                     elif gdi.unicode == u"a":
                         self.alert( "This is a test of the alert system. Let me know how it turns out." )
@@ -841,6 +874,7 @@ class Explorer( object ):
                                 self.scene.map[x][y].visible = True
 
                 elif gdi.type == pygame.QUIT:
+                    self.camp.save(self.screen)
                     self.no_quit = False
                 elif gdi.type == pygame.MOUSEBUTTONUP:
                     if gdi.button == 1:

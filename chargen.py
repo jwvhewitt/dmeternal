@@ -198,16 +198,4 @@ if __name__=='__main__':
 
     pc = make_and_save_character( screen )
 
-    if pc:
-        myimg = pc.generate_avatar()
-
-        cs = charsheet.CharacterSheet( pc , 200, 30, screen )
-        rpm = charsheet.RightMenu( screen , cs )
-
-        rpm.add_item( "First Item", 1, "Something to fill the space." )
-        rpm.add_item( "Second Item", 1, "A different thing." )
-        rpm.add_item( "Third Item", 1, "What does the fox say?" )
-
-        rpm.query()
-
 

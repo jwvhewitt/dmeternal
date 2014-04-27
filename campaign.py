@@ -121,7 +121,9 @@ class Campaign( object ):
                 best = pscore
         return best
 
-    def save( self ):
+    def save( self, screen=None ):
+        if screen:
+            pygwrap.please_stand_by( screen, "Saving..." )
         f = open( util.user_dir( "rpg_" + self.name + ".sav" ) , "wb" )
         pickle.dump( self , f, -1 )
         f.close()

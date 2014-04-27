@@ -381,6 +381,7 @@ class Combat( object ):
             else:
                 if gdi.type == pygame.KEYDOWN:
                     if gdi.unicode == u"Q":
+                        self.camp.save(explo.screen)
                         self.no_quit = False
                     elif gdi.unicode == u"i":
                         explo.view_party( self.camp.party.index(chara), can_switch=False )
@@ -497,6 +498,7 @@ class Combat( object ):
         if self.num_enemies() == 0:
             # Combat has ended because we ran out of enemies. Dole experience.
             self.give_xp_and_treasure( explo )
+            explo.check_trigger( "COMBATOVER" )
 
         # PCs stop hiding when combat ends.
         for pc in self.camp.party:

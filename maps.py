@@ -320,7 +320,7 @@ TABLE = SingTerrain( "TABLE", block_walk=True, spritesheet=SPRITE_INTERIOR, fram
 ANKH_ALTAR = SingTerrain( "ANKH_ALTAR", block_walk=True, spritesheet=SPRITE_INTERIOR, frame = 11 )
 CANDLE_ALTAR = SingTerrain( "CANDLE_ALTAR", block_walk=True, spritesheet=SPRITE_INTERIOR, frame = 12 )
 SKULL_ALTAR = SingTerrain( "SKULL_ALTAR", block_walk=True, spritesheet=SPRITE_INTERIOR, frame = 13 )
-LIGHT_STAND = SingTerrain( "CANDLE_STAND", block_walk=True, spritesheet=SPRITE_INTERIOR, frame = 14 )
+LIGHT_STAND = SingTerrain( "LIGHT_STAND", block_walk=True, spritesheet=SPRITE_INTERIOR, frame = 14 )
 COLUMN = OnTheWallTerrain( "COLUMN", block_walk=True, spritesheet=SPRITE_INTERIOR, frame = 15 )
 WALL_LIGHT = OnTheWallTerrain( "WALL_LIGHT", block_walk=True, spritesheet=SPRITE_INTERIOR, frame = 17 )
 

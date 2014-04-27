@@ -22,3 +22,18 @@ Many other graphics obtained from http://opengameart.org
 Programming mostly by Joseph Hewitt, except the bits I stole from other people.
 
 
+Poster credits:
+
+Bogatyrs by Viktor Vasnetsov, obtained from Wikimedia Commons,
+  Public Domain in countries with a copyright term of life of the author plus 80 years or less.
+
+Book of Hours, from Très Riches Heures du Duc de Berry by the Limbourg brothers,
+  obtained from Wikimedia Commons. Public Domain.
+
+De Monstris from the 1665 edition of Fortunio Liceti’s De Monstris,
+  obtained from Public Domain Review. Public Domain.
+
+Yorimasa Awaiting the Nue by Tsukioka Yoshitoshi, 1882,
+  obtained from Public Domain Review. Public Domain.
+
+

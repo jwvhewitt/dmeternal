@@ -20,6 +20,8 @@
 #       
 # 
 import os
+import ConfigParser
+
 
 USERDIR = os.path.expanduser( os.path.join( '~' , 'dmeternal' ) )
 if not os.path.exists( USERDIR ):
@@ -33,5 +35,14 @@ def data_dir(fname=""):
     return os.path.join(game_dir('data'),fname)
 def user_dir( fname=""):
     return os.path.join(USERDIR,fname)
+
+# Load the configuration file.
+config = ConfigParser.SafeConfigParser()
+config.readfp( open(data_dir("config_defaults.cfg")) )
+if not config.read( [user_dir( "config.cfg" )] ):
+    f = open( user_dir( "config.cfg" ) , "wb" )
+    config.write( f )
+    f.close()
+
 
 

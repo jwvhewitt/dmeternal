@@ -10,6 +10,8 @@ import pygame
 from itertools import chain
 import image
 import util
+import glob
+import random
 
 # Import the android module. If we can't import it, set it to None - this
 # lets us test it, and check to see if we want android-specific behavior.
@@ -26,6 +28,7 @@ TINYFONT = None
 ITALICFONT = None
 BIGFONT = None
 ANIMFONT = None
+POSTERS = list()
 
 TEXT_COLOR = (240,240,50)
 
@@ -258,6 +261,16 @@ def input_string( screen , font = None, redrawer = None, prompt = "Enter text be
             keep_going = False
     return "".join( it )
 
+def please_stand_by( screen, caption ):
+    img = pygame.image.load( random.choice( POSTERS ) ).convert()
+    dest = img.get_rect( center=(screen.get_width()//2,screen.get_height()//2) )
+    screen.fill( (0,0,0) )
+    screen.blit(img,dest)
+    mytext = BIGFONT.render(caption, True, TEXT_COLOR )
+    dest2 = mytext.get_rect( topleft = (dest.x+32,dest.y+32) )
+    gold_border.render( screen, dest2 )
+    screen.blit( mytext, dest2 )
+    pygame.display.flip()
 
 def init():
     global INIT_DONE
@@ -279,6 +292,9 @@ def init():
 
         global BIGFONT
         BIGFONT = pygame.font.Font( util.image_dir( "Gamaliel.otf" ) , 23 )
+
+        global POSTERS
+        POSTERS += glob.glob( util.image_dir("poster_*.png") )
 
         if android:
             android.init()

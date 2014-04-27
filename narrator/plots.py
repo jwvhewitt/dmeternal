@@ -14,13 +14,20 @@ class Chapter( object ):
             num = follows.num + 1
             start_rank = follows.end_rank
             end_rank = start_rank + random.randint( 3,5 )
+            world = follows.world
             self.active = False
+            self.prev = follows
         else:
             self.active = True
+            self.prev = None
         self.num = num
         self.start_rank = start_rank
         self.end_rank = end_rank
         self.world = world
+    def activate( self ):
+        self.active = True
+        if self.prev:
+            self.prev.active = False
 
 class PlotState( object ):
     """For passing state information to subplots."""
@@ -126,6 +133,13 @@ class Plot( object ):
             nart.camp.entrance = sp.elements.get( "ENTRANCE" )
         return sp
 
+    def add_resolution( self, nart, spbase, ident="next" ):
+        if self.rank >= nart.end_rank:
+            splabel = spbase + "_E"
+        else:
+            splabel = spbase + "_C"
+        sp = self.add_sub_plot( nart, splabel, PlotState(chapter=Chapter(follows=self.chapter)).based_on(self), ident=ident)
+        return sp
 
     def move_element( self, ele, dest ):
         # Record when a plot places an element; if this plot is removed, the

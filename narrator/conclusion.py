@@ -29,7 +29,7 @@ class StraightBalrog( Plot ):
             and pstate.elements.get( "FINAL_DUNGEON" )
     def custom_init( self, nart ):
         """Create the final dungeon, boss encounter, and resolution."""
-        btype = monsters.choose_monster_type(self.rank+1,self.rank+4,{context.MTY_HUMANOID:True,context.MTY_LEADER:context.MAYBE})
+        btype = monsters.choose_monster_type(self.rank+1,self.rank+4,{(context.MTY_HUMANOID,context.MTY_LEADER):True,context.MTY_LEADER:context.MAYBE})
         boss = monsters.generate_boss( btype, self.rank+4 )
 
         interior = maps.Scene( 50,50, sprites={maps.SPRITE_WALL: "terrain_wall_darkbrick.png", 
@@ -48,7 +48,19 @@ class StraightBalrog( Plot ):
         self.register_element( "_LAIR_ROOM", int_goalroom )
         self.register_element( "ENEMY", boss, "_LAIR_ROOM" )
 
+        self.add_resolution( nart, "RESOLVE_FIGHT", ident="next" )
+        self.enemy_defeated = False
+
         return True
+
+    def ENEMY_DEATH( self, explo ):
+        self.enemy_defeated = True
+
+    def t_COMBATOVER( self, explo ):
+        if self.enemy_defeated:
+            # Activate the resolution, whatever that is.
+            self.subplots["next"].activate( explo )
+            self.active = False
 
     def get_dialogue_grammar( self, npc, explo ):
         if self.chapter.active:

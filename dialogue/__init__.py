@@ -29,6 +29,8 @@ from base import Cue, Offer, Reply
 import offers
 import replies
 import re
+import characters
+import services
 
 def harvest( mod, class_to_collect ):
     mylist = []
@@ -258,6 +260,11 @@ def converse( explo, pc, npc, cue ):
         pgram = p.get_dialogue_grammar( npc, explo )
         if pgram:
             grammar.absorb( mygram, pgram )
+
+    # Add special offers- Job Training. That's it for now.
+    if npc.mr_level and npc.mr_level.__class__ in characters.PC_CLASSES:
+        pass
+
     conversation = build_conversation( cue , offers )
     coff = conversation
 

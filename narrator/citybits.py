@@ -223,7 +223,7 @@ class GenericLibrary( Plot ):
         self.register_element( "SHOPKEEPER", npc )
         int_mainroom.contents.append( maps.DESK )
         int_mainroom.contents.append( maps.TABLE )
-        self.shop = self.register_element( "SHOPSERVICE", services.Shop( services.MAGIC_STORE, rank=self.rank+5, allow_misc=False, allow_magic=True, num_items=9 ) )
+        self.shop = self.register_element( "SHOPSERVICE", services.Shop( services.MAGIC_STORE, rank=self.rank+5, allow_misc=False, allow_magic=True, num_items=25 ) )
         self.add_sub_plot( nart, "SIDE_STORY", PlotState(rank=self.random_rank_in_chapter()).based_on( self ) )
         return True
 

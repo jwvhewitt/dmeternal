@@ -75,6 +75,7 @@ import encounters
 import getterbits
 import intros
 import puzzlebits
+import resolution
 import resources
 import rewards
 import sidestories
@@ -89,6 +90,7 @@ harvest( encounters )
 harvest( getterbits )
 harvest( intros )
 harvest( puzzlebits )
+harvest( resolution )
 harvest( resources )
 harvest( rewards )
 harvest( sidestories )
