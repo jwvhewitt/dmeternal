@@ -479,6 +479,40 @@ class Inn( object ):
             else:
                 explo.alert( "You can't afford to stay here! Come back when you've earned some money." )
 
+class JobTraining( object ):
+    def __init__( self, jobs = list(), caption = "Job Training" ):
+        self.jobs = jobs
+        self.caption = caption
+    def __call__( self, explo ):
+        self.charsheets = dict()
+        for pc in explo.camp.party:
+            self.charsheets[ pc ] = charsheet.CharacterSheet( pc , screen=explo.screen, camp=explo.camp )
+        psr = charsheet.PartySelectRedrawer( predraw=explo.view, charsheets=self.charsheets, screen=explo.screen, caption=self.caption )
+
+        rpm = charsheet.RightMenu( explo.screen, predraw=psr, add_desc=False )
+        psr.menu = rpm
+        for pc in explo.camp.party:
+            rpm.add_item( str( pc ), pc )
+        rpm.sort()
+        rpm.add_alpha_keys()
+        rpm.add_item( "Exit", None )
+        keep_going = True
+        self.pc = explo.camp.first_living_pc()
+
+        while keep_going:
+            rpm.set_item_by_value( self.pc )
+            pc = rpm.query()
+
+            if pc == 1:
+                self.browse_spells( explo )
+            elif pc:
+                self.pc = pc
+                self.enter_library( explo )
+            else:
+                keep_going = False
+
+        del self.charsheets
+
 class Temple( object ):
     def __init__( self, cost_for_resurrection = 100, cost_for_restoration=25, cost_for_curepoison=15, cost_for_removecurse=50, caption="Temple",
       desc = "Welcome to the temple. What prayers are you in need of?" ):

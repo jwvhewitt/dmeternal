@@ -45,6 +45,12 @@ class Rank1Scroll( Stackable ):
             return msg
         else:
             return "???"
+    def stat_desc( self ):
+        """Return descriptions of circle + needed gems."""
+        smod = ["Circle {0}".format( self.spell.rank )]
+        for color,num in self.spell.gems.iteritems():
+            smod.append( "{0}:{1}".format( spells.COLOR_NAME[color], num ) )
+        return ", ".join( smod )
 
     def can_stack_with( self, other ):
         # Return True if these things can stack.

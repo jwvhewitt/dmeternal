@@ -99,7 +99,7 @@ DIVINE_HAMMER = Spell( "Divine Hammer",
         effects.HealthDamage( (2,8,2), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_SOLAR, anim=animobs.RedBoom )
     ,) ), rank=4, gems={AIR:1,SOLAR:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.YellowVortex, ai_tar=invocations.vs_enemy )
 
-SANCTUARY = Spell( "Samctuary",
+SANCTUARY = Spell( "Sanctuary",
     "Enemies within 4 tiles will be frozen in place for a short time.",
     effects.TargetIsEnemy( on_true = (
         effects.OpposedRoll( on_success = (
