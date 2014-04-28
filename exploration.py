@@ -780,6 +780,55 @@ class Explorer( object ):
 
             self.scene.last_updated = self.camp.day
 
+    def pop_explo_menu( self ):
+        mymenu = rpgmenu.PopUpMenu( self.screen, self.view )
+        pc = self.scene.get_character_at_spot( explo.view.mouse_tile, None )
+
+        if pc and pc in self.camp.party:
+            # Add the techniques.
+            techs = pc.get_invocations( False )
+            for t in techs:
+                mymenu.add_item( t.menu_str(), t )
+            mymenu.sort()
+            mymenu.add_alpha_keys()
+
+        mymenu.add_item( "-----", False )
+        if chara.can_use_holy_sign() and chara.holy_signs_used < chara.holy_signs_per_day():
+            mymenu.add_item( "Skill: Holy Sign [{0}/{1}]".format(chara.holy_signs_per_day()-chara.holy_signs_used,chara.holy_signs_per_day()) , 6 )
+        if chara.can_use_stealth() and not chara.hidden:
+            mymenu.add_item( "Skill: Stealth", 4 )
+        if self.num_enemies_hiding(chara):
+            mymenu.add_item( "Skill: Awareness", 5 )
+        if any( hasattr( i, "use" ) for i in chara.contents ):
+            mymenu.add_item( "Use Item", 7 )
+        mymenu.add_item( "View Inventory".format(str(chara)), 2 )
+        mymenu.add_item( "Focus on {0}".format(str(chara)), 1 )
+        mymenu.add_item( "End Turn".format(str(chara)), 3 )
+
+        choice = mymenu.query()
+
+        if choice == 1:
+            explo.view.focus( explo.screen, *chara.pos )
+        elif choice == 2:
+            explo.view_party( self.camp.party.index(chara), can_switch=False )
+            self.end_turn( chara )
+        elif choice == 3:
+            self.end_turn( chara )
+        elif choice == 4:
+            self.attempt_stealth( explo, chara )
+        elif choice == 5:
+            self.attempt_awareness( explo, chara )
+        elif choice == 6:
+            self.attempt_holy_sign( explo, chara )
+        elif choice == 7:
+            self.pop_useitem_menu( explo, chara )
+
+        elif choice:
+            # Presumably, this is an invocation of some kind.
+            if explo.pc_use_technique( chara, choice, choice.com_tar ):
+                self.end_turn( chara )
+
+
     def go( self ):
         self.no_quit = True
         self.order = None
