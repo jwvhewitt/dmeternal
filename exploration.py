@@ -780,9 +780,21 @@ class Explorer( object ):
 
             self.scene.last_updated = self.camp.day
 
+    def pop_spell_menu( self ):
+        mymenu = rpgmenu.PopUpMenu( self.screen, self.view )
+        techs = pc.get_invocations( False )
+        for t in techs:
+            mymenu.add_item( t.menu_str(), t )
+        mymenu.sort()
+        mymenu.add_alpha_keys()
+        mymenu.add_item( "Cancel", False )
+        choice = mymenu.query()
+        if choice:
+            self.pc_use_technique( pc, choice, choice.exp_tar )
+
     def pop_explo_menu( self ):
         mymenu = rpgmenu.PopUpMenu( self.screen, self.view )
-        pc = self.scene.get_character_at_spot( explo.view.mouse_tile, None )
+        pc = self.scene.get_character_at_spot( self.view.mouse_tile )
 
         if pc and pc in self.camp.party:
             # Add the techniques.
@@ -791,42 +803,41 @@ class Explorer( object ):
                 mymenu.add_item( t.menu_str(), t )
             mymenu.sort()
             mymenu.add_alpha_keys()
-
+        else:
+            # Add the characters.
+            for pc in self.camp.party:
+                if pc.is_alright():
+                    mymenu.add_item( "{0} cast spell".format( pc ), pc )
+            pc = self.camp.first_living_pc()
         mymenu.add_item( "-----", False )
-        if chara.can_use_holy_sign() and chara.holy_signs_used < chara.holy_signs_per_day():
-            mymenu.add_item( "Skill: Holy Sign [{0}/{1}]".format(chara.holy_signs_per_day()-chara.holy_signs_used,chara.holy_signs_per_day()) , 6 )
-        if chara.can_use_stealth() and not chara.hidden:
-            mymenu.add_item( "Skill: Stealth", 4 )
-        if self.num_enemies_hiding(chara):
-            mymenu.add_item( "Skill: Awareness", 5 )
-        if any( hasattr( i, "use" ) for i in chara.contents ):
-            mymenu.add_item( "Use Item", 7 )
-        mymenu.add_item( "View Inventory".format(str(chara)), 2 )
-        mymenu.add_item( "Focus on {0}".format(str(chara)), 1 )
-        mymenu.add_item( "End Turn".format(str(chara)), 3 )
+
+        mymenu.add_item( "Center on {0}".format(pc), 1 )
+        mymenu.add_item( "View Map", 2 )
+        mymenu.add_item( "Manage Spells", 3 )
+        mymenu.add_item( "Camp and Rest", 4 )
+        mymenu.add_item( "Quit Game", 5 )
 
         choice = mymenu.query()
 
         if choice == 1:
-            explo.view.focus( explo.screen, *chara.pos )
+            self.view.focus( self.screen, *pc.pos )
         elif choice == 2:
-            explo.view_party( self.camp.party.index(chara), can_switch=False )
-            self.end_turn( chara )
+            MiniMap( self )
         elif choice == 3:
-            self.end_turn( chara )
+            services.SpellManager()(self)
         elif choice == 4:
-            self.attempt_stealth( explo, chara )
+            self.field_camp()
         elif choice == 5:
-            self.attempt_awareness( explo, chara )
-        elif choice == 6:
-            self.attempt_holy_sign( explo, chara )
-        elif choice == 7:
-            self.pop_useitem_menu( explo, chara )
+            self.camp.save(self.screen)
+            self.no_quit = False
+
+        elif choice in self.camp.party:
+            # Picked a PC. Cast one of their spells.
+            self.pop_spell_menu( pc )
 
         elif choice:
             # Presumably, this is an invocation of some kind.
-            if explo.pc_use_technique( chara, choice, choice.com_tar ):
-                self.end_turn( chara )
+            self.pc_use_technique( pc, choice, choice.exp_tar )
 
 
     def go( self ):
@@ -902,8 +913,6 @@ class Explorer( object ):
                     elif gdi.unicode == u"Q":
                         self.camp.save(self.screen)
                         self.no_quit = False
-                    elif gdi.unicode == u"a":
-                        self.alert( "This is a test of the alert system. Let me know how it turns out." )
                     elif gdi.unicode == u"c":
                         self.view.focus( self.screen, *self.camp.first_living_pc().pos )
                     elif gdi.unicode == u"m":
@@ -934,36 +943,5 @@ class Explorer( object ):
                         else:
                             self.pick_up( self.view.mouse_tile )
                     else:
-                        # If YouTube comments were as good as these comments, we'd all have ponies by now.
-                        animobpos = self.view.mouse_tile
-#                        ao_pro = animobs.GreenSpray(self.camp.first_living_pc().pos,self.view.mouse_tile )
-#                        anims = [ ao_pro, ]
-#                        ao_pro.children.append( animobs.Pearl( pos=animobpos ) )
-
-
-#                        area = pfov.PointOfView( self.scene, animobpos[0], animobpos[1], 5 )
-#                        for a in area.tiles:
-#                            ao = animobs.SnowCloud( pos=a )
-#                            ao = animobs.BlueCloud( pos=a, delay=self.scene.distance(a,animobpos ) * 2 + 1 )
-#                            ao.y_off = -25 + 5 * ( abs( a[0]-animobpos[0] ) + abs( a[1]-animobpos[1] ) )
-#                            ao_pro.children.append( ao )
-
-#                        animobpos = self.view.mouse_tile
-                        pcpos = self.camp.first_living_pc().pos
-                        anims = list()
-
-#                        area = pfov.Cone( self.scene, pcpos, animobpos ).tiles
-                        area = animobs.get_line( pcpos[0], pcpos[1], animobpos[0], animobpos[1] )
-                        area.remove( pcpos )
-                        for a in area:
-                            ao = animobs.Spark( pos=a, delay=self.scene.distance(a,pcpos ) + 1 )
-                            anims.append( ao )
-#                        for a in self.scene.contents:
-#                            if a.pos in area:
-#                                ao = animobs.Caption( str(random.randint(5,27)), a.pos, delay=self.scene.distance(a.pos,pcpos ) + 1 )
-#                                anims.append( ao )
-
-                        animobs.handle_anim_sequence( self.screen, self.view, anims )
-
-
+                        self.pop_explo_menu()
 

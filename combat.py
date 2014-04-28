@@ -463,7 +463,7 @@ class Combat( object ):
                 xp += m.xp_value()
                 if hasattr( m, "GP_VALUE" ) and m.GP_VALUE > 1:
                     gold += random.randint( 1, m.GP_VALUE )
-        xp = xp // self.camp.num_pcs()
+        xp = int( xp * self.camp.xp_scale ) // self.camp.num_pcs()
         if xp or gold:
             if xp and gold:
                 explo.alert( "You earn {0} experience points and {1} gold pieces.".format( xp, gold ) )

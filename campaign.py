@@ -40,7 +40,7 @@ import spells
 
 class Campaign( object ):
     """A general holder for all the stuff that goes into a DME campaign."""
-    def __init__( self, name = "BobDwarf19", scene=None, entrance=None ):
+    def __init__( self, name = "BobDwarf19", scene=None, entrance=None, xp_scale = 0.5 ):
         self.name = name
         self.party = list()
         self.scene = scene
@@ -52,6 +52,7 @@ class Campaign( object ):
         self.fight = None
         self.gold = 300
         self.day = 1
+        self.xp_scale = xp_scale
 
     def add_party( self, party ):
         """Add the party, give them random spells, fill the known spell list."""
