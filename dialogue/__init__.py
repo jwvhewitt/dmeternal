@@ -263,7 +263,12 @@ def converse( explo, pc, npc, cue ):
 
     # Add special offers- Job Training. That's it for now.
     if npc.mr_level and npc.mr_level.__class__ in characters.PC_CLASSES:
-        pass
+        add_ok = False
+        for chara in explo.camp.party:
+            if chara.xp >= chara.xp_for_next_level() and npc.mr_level.can_take_level( chara ):
+                add_ok = True
+        if add_ok:
+            offers.append( Offer( "[TRAINING]", context = context.ContextTag([context.TRAINING]), effect=services.JobTraining([npc.mr_level.__class__]) ) )
 
     conversation = build_conversation( cue , offers )
     coff = conversation

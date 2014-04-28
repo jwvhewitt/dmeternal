@@ -113,6 +113,13 @@ GRAM_DATABASE = {
     "[HELLO:SHOP_WEAPON]": [ "[HELLO:SHOP]",
         "I need a new [weapon].",
         ],
+    "[HELLO_TRAINING]": [ "[HELLO] You look like you could use some training.",
+        ],
+    "[HELLO_TRAINING:TRAINING]": [ "[HELLO:TRAINING]",
+        "Can you teach me?"
+        ],
+    "[HELLO:TRAINING]": [ "I was wondering if you could train me.",
+        ],
     "[HOWAREYOU]": ["How are you doing?","I trust your adventure is going well."
         ],
     "[magicgoods]": ["spells","potions","scrolls","magic"],
@@ -160,6 +167,8 @@ GRAM_DATABASE = {
     "[SHOP_WEAPON]": [ "[SHOP]","You will be happy to own a good [weapon] the next time you see a [monster].",
         ],
     "[thing]": [ "[weapon]","[monster]","[adjective] [monster]"
+        ],
+    "[TRAINING]": [ "", "Let me show you how it is done."
         ],
     "[verbed]": ["saw","fought","bought","found","married","made","discovered",
         "wrestled","visited","remembered","painted", "rescued"

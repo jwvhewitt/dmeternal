@@ -7,54 +7,44 @@ Requires Python 2 and PyGame.
 
 ![Screenshot](image/screenshot.png)
 
+ABOUT
+=====
+
+DME is a party-based fantasy roguelike roleplaying game. You control a group of
+up to four adventurers, who set off on a randomly determined quest in a randomly
+constructed world.
+
 INSTALLATION
 ============
 
-This game requires Python 2.6 or 2.7 and PyGame to be installed on your system.
+This game requires Pygame and Python 2.6 or 2.7 to be installed on your system.
 Do that first.
 
-Unzip the game files and put them in a convenient folder. 
+  https://www.python.org/
+  http://www.pygame.org/
+
+Unzip the game files and put them in a convenient folder. The file you want
+to run is "game.py"; with any luck you will just be able to double click that
+file and the game will start. If not, try right clicking and select "open
+with Python".
+
+The first time it's run, the game will create a "dmeternal" folder in your
+home directory and place a configuration file there. This is where all of your
+characters and saved games are stored, in case you want to delete them or
+make backups. The configuration file can be edited in any text editor.
 
 HOW TO PLAY
 ===========
 
-There's not much to play at the moment, but you can do a bit...
+Run game.py.
 
-Run chargen.py to make some characters. From the command line type:
+Create four characters. You could do worse than starting with a warrior, thief,
+priest, and mage.
 
-  python chargen.py
+Start a campaign. After the game world is constructed, you will be asked to
+choose four characters and enter a name for the save file.
 
-Or maybe just double click chargen.py, which should work. Or right click and
-select "Open with Python". You'll find a way.
-
-If updating from a previous version, old characters may no longer be compatible.
-Sorry. You can delete them from the "dmeternal" folder in your home directory.
-
-After that, you can load up to four characters in campaign.py:
-
-  python campaign.py
-
-You will find your party on a mostly empty map. Here are the things you can do:
-- Talk to the NPCs, though they don't have much to say right now.
-- Check out the big treasure chest. There may be magic items!
-- See if there's anything useful lying on the ground.
-- There are some monsters on the other side of the river.
-- The door in the building leads to the Edge of Civilization map, containing
-  another chest, another fight, and a deserted city.
-- The stairs going down lead to a dungeon, containing yet another chest, another
-  fight, and a locked door which can be opened.
-- Use the bookshelf to change your characters' prepared spells
-- Press "s" to access the debugging store at any time. Useful for identifying
-  potentially magic items.
-
-New! You can check out the current progress on the random story/world builder
-by running tp.py:
-
-    python tp.py
-
-Right now, it generates a scene kind of like campaign.py's edge of civ map,
-but without any monsters or treasure. Take a look in the narrator package to
-see what's going on under the hood. Maybe try adding some content of your own?
+Explore the world. Beat up monsters and take their stuff.
 
 
 COMMANDS
@@ -68,9 +58,13 @@ Right click: Open popup menu
 
 c: Center the screen on the party/active character
 
-Q: Quit the game. There is no saving because there is no point.
+Q: Quit and save the game.
 
-s: Open the store. This cheat code is there for testing purposes, since
-   there is currently no other way to access store functionality.
+s: Spell management. You will be able to change each character's prepared
+  spells.
+
+m: Magic. You will be able to cast spells.
+
+M: Map.
 
 

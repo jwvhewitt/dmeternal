@@ -16,6 +16,13 @@ HELLO_INFO = Offer( msg = "[HELLO_INFO]" ,
                     destination = Cue( ContextTag( [context.INFO] ) ) ) ]
         )
 
+HELLO_TRAINING = Offer( msg = "[HELLO_TRAINING]" ,
+        context = ContextTag( [context.HELLO,context.TRAINING] ) ,
+        replies = [ Reply( "[HELLO_TRAINING:TRAINING]" ,
+                    destination = Cue( ContextTag( [context.TRAINING] ) ) ) ]
+        )
+
+
 HELLO_INFO_PERSONAL = Offer( msg = "[HELLO_INFO_PERSONAL]" ,
         context = ContextTag( [context.HELLO,context.INFO] ) ,
         replies = [ Reply( "[HELLO:INFO_PERSONAL]" ,

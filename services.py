@@ -480,34 +480,57 @@ class Inn( object ):
                 explo.alert( "You can't afford to stay here! Come back when you've earned some money." )
 
 class JobTraining( object ):
-    def __init__( self, jobs = list(), caption = "Job Training" ):
+    def __init__( self, jobs = list() ):
         self.jobs = jobs
-        self.caption = caption
+    def can_take_at_least_one_job( self, pc ):
+        # Return True if this PC can take at least one of the jobs on offer.
+        ok = False
+        for j in self.jobs:
+            if j.can_take_level( pc ):
+                ok = True
+                break
+        return ok
+    def choose_job( self, explo ):
+        myredraw = charsheet.CharacterViewRedrawer( csheet=self.charsheets[ self.pc ], screen=explo.screen, predraw=explo.view, caption="What job will {0} learn?".format(self.pc) )
+        mymenu = charsheet.RightMenu( explo.screen, predraw = myredraw, add_desc=False )
+
+        for j in self.jobs:
+            if j.can_take_level( self.pc ):
+                mymenu.add_item( j.name, j )
+        mymenu.sort()
+        mymenu.add_alpha_keys()
+        mymenu.add_item( "Exit", False )
+        myredraw.menu = mymenu
+
+        it = mymenu.query()
+        if it:
+            self.pc.advance( it )
+
     def __call__( self, explo ):
         self.charsheets = dict()
         for pc in explo.camp.party:
             self.charsheets[ pc ] = charsheet.CharacterSheet( pc , screen=explo.screen, camp=explo.camp )
-        psr = charsheet.PartySelectRedrawer( predraw=explo.view, charsheets=self.charsheets, screen=explo.screen, caption=self.caption )
+        psr = charsheet.PartySelectRedrawer( predraw=explo.view, charsheets=self.charsheets, screen=explo.screen, caption="Who needs to learn a new job?" )
 
-        rpm = charsheet.RightMenu( explo.screen, predraw=psr, add_desc=False )
-        psr.menu = rpm
-        for pc in explo.camp.party:
-            rpm.add_item( str( pc ), pc )
-        rpm.sort()
-        rpm.add_alpha_keys()
-        rpm.add_item( "Exit", None )
         keep_going = True
         self.pc = explo.camp.first_living_pc()
 
         while keep_going:
+            rpm = charsheet.RightMenu( explo.screen, predraw=psr, add_desc=False )
+            psr.menu = rpm
+            for pc in explo.camp.party:
+                if self.can_take_at_least_one_job( pc ) and pc.xp >= pc.xp_for_next_level():
+                    rpm.add_item( str( pc ), pc )
+            rpm.sort()
+            rpm.add_alpha_keys()
+            rpm.add_item( "Exit", None )
+
             rpm.set_item_by_value( self.pc )
             pc = rpm.query()
 
-            if pc == 1:
-                self.browse_spells( explo )
-            elif pc:
+            if pc:
                 self.pc = pc
-                self.enter_library( explo )
+                self.choose_job( explo )
             else:
                 keep_going = False
 

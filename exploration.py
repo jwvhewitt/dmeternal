@@ -867,7 +867,7 @@ class Explorer( object ):
                         services.SpellManager()(self)
                     elif gdi.unicode == u"*":
                         for pc in self.camp.party:
-                            pc.advance( pc.mr_level.__class__ )
+                            pc.xp += 1000
                     elif gdi.unicode == u"&":
                         for x in range( self.scene.width ):
                             for y in range( self.scene.height ):

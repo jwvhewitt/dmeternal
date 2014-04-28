@@ -32,6 +32,10 @@ HELLO_TO_HEALING = Reply( "[HELLO:SERVICE_HEALING]",
             destination = Cue( ContextTag([context.SERVICE,context.HEALING])),
             context = ContextTag([context.HELLO]) )
 
+HELLO_TO_TRAINING = Reply( "[HELLO:TRAINING]",
+            destination = Cue( ContextTag([context.TRAINING])),
+            context = ContextTag([context.HELLO]) )
+
 HELLO_TO_INN = Reply( "[HELLO:SERVICE_INN]",
             destination = Cue( ContextTag([context.SERVICE,context.INN])),
             context = ContextTag([context.HELLO]) )
