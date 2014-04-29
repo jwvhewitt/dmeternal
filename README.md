@@ -63,8 +63,6 @@ Q: Quit and save the game.
 s: Spell management. You will be able to change each character's prepared
   spells.
 
-m: Magic. You will be able to cast spells.
-
 M: Map.
 
 

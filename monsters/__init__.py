@@ -16,6 +16,7 @@ import giants
 import goblins
 import ignan
 import misc
+import people
 import terran
 import undead
 
@@ -35,6 +36,7 @@ harvest( giants )
 harvest( goblins )
 harvest( ignan )
 harvest( misc )
+harvest( people )
 harvest( terran )
 harvest( undead )
 

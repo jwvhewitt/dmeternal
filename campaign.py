@@ -40,7 +40,7 @@ import spells
 
 class Campaign( object ):
     """A general holder for all the stuff that goes into a DME campaign."""
-    def __init__( self, name = "BobDwarf19", scene=None, entrance=None, xp_scale = 0.5 ):
+    def __init__( self, name = "BobDwarf19", scene=None, entrance=None, xp_scale = 0.65 ):
         self.name = name
         self.party = list()
         self.scene = scene
