@@ -250,11 +250,13 @@ class MiniMap( object ):
         self.dest = self.pic.bitmap.get_rect( center=(self.explo.screen.get_width()//2-100, self.explo.screen.get_height()//2 ) )
         self.menu = rpgmenu.Menu(self.explo.screen,self.explo.screen.get_width()//2+215, self.explo.screen.get_height()//2-200, 150, 400, predraw=self.draw )
 
-        self.menu.add_item( "Party", self.explo.camp.first_living_pc().pos )
+        pcpos = self.explo.camp.first_living_pc().pos
+        self.menu.add_item( "Party", pcpos )
         for t in self.explo.scene.contents:
             if hasattr( t, "mini_map_label" ) and self.explo.scene.get_visible( *t.pos ):
                 self.menu.add_item( t.mini_map_label, t.pos )
         self.menu.sort()
+        self.menu.set_item_by_value( pcpos )
         if hasattr( self.explo.scene, "world_map_pos" ):
             self.menu.add_item( "[World Map]", 0 )
 

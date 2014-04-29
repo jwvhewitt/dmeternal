@@ -46,7 +46,7 @@ class Cockatrice( base.Monster ):
     COMPANIONS = (animals.Chicken,)
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING, skill_mod=stats.REFLEXES )
     TECHNIQUES = ( invocations.MPInvocation( "Death Gaze",
-      effects.OpposedRoll( att_stat=stats.PIETY, att_modifier=-20, on_success = (
+      effects.OpposedRoll( att_stat=stats.PIETY, att_modifier=-10, on_success = (
         effects.InstaKill( anim=animobs.CriticalHit )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )

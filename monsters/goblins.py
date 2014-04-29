@@ -9,6 +9,7 @@ import effects
 import animobs
 import targetarea
 import aibrain
+import random
 
 #  *******************
 #  ***   GOBLINS   ***
@@ -54,7 +55,7 @@ class GoblinArcher( base.Monster ):
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_CRUSHING )
 
     TECHNIQUES = ( invocations.Invocation( "Arrow",
-      effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, on_success = (
+      effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, att_modifier=5, on_success = (
         effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_PIERCING, anim=animobs.RedBoom )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
@@ -62,7 +63,7 @@ class GoblinArcher( base.Monster ):
     ), )
 
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 2, self ) )
+        self.levels.append( base.Humanoid( 1, self ) )
 
 class GoblinShaman( base.Monster ):
     name = "Goblin Shaman"    
@@ -84,6 +85,8 @@ class GoblinShaman( base.Monster ):
         spells.solarspells.MINOR_CURE )
     def init_monster( self ):
         self.levels.append( base.Spellcaster( 3, self ) )
+        if random.randint(1,20) == 1:
+            self.contents.append( items.scrolls.Rank1Scroll() )
 
 class GoblinWarrior( base.Monster ):
     name = "Goblin Warrior"
@@ -224,6 +227,8 @@ class GoblinMage( base.Monster ):
 
     def init_monster( self ):
         self.levels.append( base.Spellcaster( 8, self ) )
+        if random.randint(1,10) == 1:
+            self.contents.append( items.scrolls.Rank3Scroll() )
 
 class GoblinElite( base.Monster ):
     name = "Goblin Elite"
@@ -454,6 +459,9 @@ class HobgoblinMage( base.Monster ):
 
     def init_monster( self ):
         self.levels.append( base.Spellcaster( 5, self ) )
+        if random.randint(1,20) == 1:
+            self.contents.append( items.scrolls.Rank2Scroll() )
+
 
 class HobgoblinPriest( base.Monster ):
     name = "Hobgoblin Priest"
@@ -479,6 +487,8 @@ class HobgoblinPriest( base.Monster ):
 
     def init_monster( self ):
         self.levels.append( base.Spellcaster( 6, self ) )
+        if random.randint(1,20) == 1:
+            self.contents.append( items.scrolls.Rank3Scroll() )
 
 class HobgoblinWarlord( base.Monster ):
     name = "Hobgoblin Warlord"
@@ -570,14 +580,14 @@ class OrcArcher( base.Monster ):
     COMPANIONS = (Orc,OrcWarrior,GoblinArcher,GoblinWarrior,HobgoblinThief)
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_SLASHING )
     TECHNIQUES = ( invocations.Invocation( "Arrow",
-      effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, on_success = (
+      effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, att_modifier=5, on_success = (
         effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_PIERCING, anim=animobs.RedBoom )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
       ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.vs_enemy
     ), )
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 5, self ) )
+        self.levels.append( base.Humanoid( 4, self ) )
 
 class OrcThief( base.Monster ):
     name = "Orc Thief"

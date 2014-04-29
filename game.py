@@ -85,6 +85,7 @@ def load_campaign( screen ):
     rpm.add_item( "Cancel Load Campaign", None )
     cmd = rpm.query()
     if cmd:
+        pygwrap.please_stand_by( screen, "Loading..." )
         f = open( cmd, "rb" )
         camp = pickle.load( f )
         f.close()

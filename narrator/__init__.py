@@ -16,7 +16,7 @@ class Narrative( object ):
         self.uniques = set()
         self.end_rank = end_rank
         # Add the seed plot.
-        self.story = self.generate_sub_plot( pstate, "INTRO_1" )
+        self.story = self.generate_sub_plot( pstate, "ADVSTUB" )
 
     def generate_sub_plot( self, pstate, label ):
         """Locate a plot which matches the request, init it, and return it."""
@@ -65,6 +65,7 @@ def harvest( mod ):
         if inspect.isclass( o ) and issubclass( o , Plot ) and o is not Plot:
             PLOT_LIST[ o.LABEL ].append( o )
 
+import advstub
 import citybits
 import citystories
 import complication
@@ -80,6 +81,7 @@ import resources
 import rewards
 import sidestories
 import socialbits
+harvest( advstub )
 harvest( citybits )
 harvest( citystories )
 harvest( complication )

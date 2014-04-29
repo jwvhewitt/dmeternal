@@ -38,9 +38,6 @@ class OurFineCity( Plot ):
             return True
     def custom_init( self, nart ):
         """Create the world + chapter + city, then load INTRO_2"""
-        w = worlds.World()
-        self.chapter = Chapter( world=w )
-        self.add_first_locale_sub_plot( nart )
         self.add_sub_plot( nart, "INTRO_2", ident="next" )
         return True
     def t_START( self, explo ):
@@ -59,13 +56,10 @@ class BalrogMovesIntoTown( Plot ):
     do_message = True
     @classmethod
     def matches( self, pstate ):
-        """Requires the propp to be INTERDICTION, MACGUFFIN to exist."""
+        """Requires the propp to be NONE or ABSENTATION."""
         return pstate.propp in ( context.PROPP_NONE, context.PROPP_ABSENTATION )
     def custom_init( self, nart ):
-        # Create the monster, load the complication.
-        # Make sure a LOCALE exists; if not, create one.
-        if not nart.camp.scene:
-            self.add_first_locale_sub_plot( nart )
+        # Load the complication.
         self.add_sub_plot( nart, "COMPLICATION", ident="next" )
         self._welcomed = False
         return True

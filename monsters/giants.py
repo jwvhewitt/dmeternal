@@ -53,7 +53,7 @@ class BarbarianScout( base.Monster ):
       ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.vs_enemy
     ), )
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 3, self ) )
+        self.levels.append( base.Humanoid( 2, self ) )
 
 class BarbarianShaman( base.Monster ):
     name = "Barbarian Shaman"    
