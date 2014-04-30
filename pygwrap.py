@@ -35,7 +35,7 @@ TEXT_COLOR = (240,240,50)
 INIT_DONE = False
 
 # The FPS the game runs at.
-FPS = 16
+FPS = util.config.getint( "DEFAULT", "frames_per_second" )
 
 # Use a timer to control FPS.
 TIMEREVENT = pygame.USEREVENT
