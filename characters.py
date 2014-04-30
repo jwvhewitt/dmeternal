@@ -708,10 +708,10 @@ class Character( stats.PhysicalThing ):
                 return not other.is_hostile( camp )
 
     KUNG_FU_DAMAGE = ( ( 1, 2, 0, 0 ),
-        ( 1, 2, 0, 0 ),( 1, 3, 0, 0 ),( 1, 4, 0, 0 ),( 1, 6, 0, 0 ),( 1, 8, 0, 0 ),
-        ( 1, 8, 0, 0 ),( 1,10, 0, 0 ),( 1,10, 0, 0 ),( 2, 6, 0, 0 ),( 2, 6, 0, 0 ),
-        ( 2, 6, 1, 2 ),( 2, 6, 1, 3 ),( 2, 8, 1, 4 ),( 2, 8, 1, 5 ),( 2, 8, 1, 6 ),
-        ( 2, 9, 1, 6 ),( 2, 9, 1, 7 ),( 2,10, 1, 7 ),( 2,10, 1, 8 ),( 2,10, 1,10 ) )
+        ( 1, 3, 0, 0 ),( 1, 4, 0, 0 ),( 1, 5, 0, 0 ),( 1, 6, 0, 0 ),( 1, 8, 0, 0 ),
+        ( 1, 8, 1, 2 ),( 1,10, 1, 2 ),( 1,10, 1, 4 ),( 2, 6, 1, 4 ),( 2, 6, 1, 6 ),
+        ( 2, 6, 1, 8 ),( 2, 7, 1, 8 ),( 2, 7, 1, 10 ),( 2, 8, 2, 6 ),( 2, 8, 2, 7 ),
+        ( 2, 9, 2, 7 ),( 2, 9, 2, 8 ),( 2,10, 2, 8 ),( 2,10, 2, 9 ),( 2,10, 2,10 ) )
 
     def critical_hit_effect( self, roll_mod=0 ):
         return effects.TargetIs( effects.ANIMAL, on_true=(
@@ -817,9 +817,18 @@ class Character( stats.PhysicalThing ):
         if weapon:
             weapon.spend_attack_price( self )
 
-    def number_of_attacks( self ):
+    def series_of_attacks( self ):
+        """ Return a list of attack modifiers corresponding to the number of
+            attacks this character gets.
+        """
+        soa = [0,]
+        # Unarmed combatants with kung fu get an extra attack at +0.
+        if self.get_stat( stats.KUNG_FU ) > 0 and not ( self.contents.get_equip( items.HAND1 ) or self.contents.get_equip( items.HAND2 ) ):
+            soa.append( 0 )
         # Extra attacks = unmodified PHYSICAL_ATTACK score divided by 20
-        return sum( l.get_stat( stats.PHYSICAL_ATTACK ) for l in self.levels ) // 20 + 1
+        for t in range( sum( l.get_stat( stats.PHYSICAL_ATTACK ) for l in self.levels ) // 20 ):
+            soa.append( -(t+1) * 10 )
+        return soa
 
     def holy_signs_per_day( self ):
         # Skill can be used value/25 + 1 times.

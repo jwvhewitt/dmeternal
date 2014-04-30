@@ -191,14 +191,16 @@ class Combat( object ):
         """Perform chara's attack against target."""
         # Determine number of attacks. If have moved one step or less, can make full attack.
         if attack_of_opportunity:
-            num_attacks = 1
+            # One attack at a +0 modifier
+            num_attacks = [0]
         elif self.ap_spent[chara] <= 3:
-            num_attacks = chara.number_of_attacks()
+            num_attacks = chara.series_of_attacks()
         else:
-            num_attacks = 1
-        for a in range( num_attacks ):
+            # One attack at a +0 modifier
+            num_attacks = [0]
+        for a in num_attacks:
             if chara.can_attack() and target.is_alright():
-                at_fx = chara.get_attack_effect( roll_mod = -10 * a )
+                at_fx = chara.get_attack_effect( roll_mod = a )
                 at_anim = chara.get_attack_shot_anim()
                 if at_anim:
                     opening_shot = at_anim( chara.pos, target.pos )
