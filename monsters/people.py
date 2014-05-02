@@ -51,7 +51,6 @@ class NoviceWarrior( base.Monster ):
     FRAME = 0
     TEMPLATES = ()
     MOVE_POINTS = 10
-    VOICE = dialogue.voice.HURTHISH
     GP_VALUE = 10
     HABITAT = ( context.HAB_EVERY, context.HAB_BUILDING, context.SET_EVERY,
      context.DES_CIVILIZED,
@@ -62,6 +61,26 @@ class NoviceWarrior( base.Monster ):
 
     def init_monster( self ):
         self.levels.append( base.Humanoid( 2, self ) )
+
+class NoviceThief( base.Monster ):
+    name = "Novice Thief"
+    statline = { stats.STRENGTH: 10, stats.TOUGHNESS: 10, stats.REFLEXES: 12, \
+        stats.INTELLIGENCE: 12, stats.PIETY: 10, stats.CHARISMA: 10,
+        stats.STEALTH: 10 }
+    SPRITENAME = "monster_people.png"
+    FRAME = 2
+    TEMPLATES = ()
+    MOVE_POINTS = 10
+    GP_VALUE = 25
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.DES_CIVILIZED,
+     context.MTY_HUMANOID, context.MTY_THIEF )
+    ENC_LEVEL = 2
+    COMPANIONS = (NoviceWarrior,)
+    ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING )
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 1, self ) )
+
 
 
 #  *******************************
@@ -116,6 +135,24 @@ class NoviceMage( base.Monster ):
         if random.randint(1,10) == 1:
             self.contents.append( random.choice( self.TREASURE )() )
 
+class Highwayman( base.Monster ):
+    name = "Highwayman"
+    statline = { stats.STRENGTH: 12, stats.TOUGHNESS: 10, stats.REFLEXES: 12, \
+        stats.INTELLIGENCE: 10, stats.PIETY: 10, stats.CHARISMA: 10 }
+    SPRITENAME = "monster_people.png"
+    FRAME = 4
+    TEMPLATES = ()
+    MOVE_POINTS = 10
+    GP_VALUE = 15
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.SET_RENFAN,
+     context.MAP_WILDERNESS,
+     context.DES_CIVILIZED,
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.MTY_THIEF )
+    ENC_LEVEL = 3
+    COMPANIONS = (NoviceThief,)
+    ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 3, self ) )
 
 
 #  *******************************
@@ -148,6 +185,25 @@ class NoviceDruid( base.Monster ):
         if random.randint(1,10) == 1:
             self.contents.append( random.choice( self.TREASURE )() )
 
+class Bushwhacker( base.Monster ):
+    name = "Bushwhacker"
+    statline = { stats.STRENGTH: 13, stats.TOUGHNESS: 13, stats.REFLEXES: 12, \
+        stats.INTELLIGENCE: 12, stats.PIETY: 12, stats.CHARISMA: 12,
+        stats.NATURAL_DEFENSE: 10 }
+    SPRITENAME = "monster_people.png"
+    FRAME = 1
+    TEMPLATES = ()
+    MOVE_POINTS = 10
+    GP_VALUE = 20
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.MTY_LEADER )
+    ENC_LEVEL = 4
+    COMPANIONS = (Highwayman,)
+    ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )
+
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 4, self ) )
+
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  5   ***
@@ -177,6 +233,26 @@ class Necromancer( base.Monster ):
         if random.randint(1,10) == 1:
             self.contents.append( random.choice( self.TREASURE )() )
 
+class Warrior( base.Monster ):
+    name = "Warrior"
+    statline = { stats.STRENGTH: 14, stats.TOUGHNESS: 14, stats.REFLEXES: 13, \
+        stats.INTELLIGENCE: 10, stats.PIETY: 12, stats.CHARISMA: 12,
+        stats.NATURAL_DEFENSE: 10 }
+    SPRITENAME = "monster_people.png"
+    FRAME = 9
+    TEMPLATES = ()
+    MOVE_POINTS = 8
+    GP_VALUE = 25
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.DES_CIVILIZED,
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.MTY_LEADER )
+    ENC_LEVEL = 5
+    ATTACK = items.Attack( (1,10,0), element = stats.RESIST_SLASHING )
+
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 5, self ) )
+
+
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  6   ***
 #  *******************************
@@ -195,7 +271,7 @@ class Priest( base.Monster ):
      context.MTY_HUMANOID, context.MTY_PRIEST )
     ENC_LEVEL = 6
     COMBAT_AI = aibrain.BasicTechnicalAI()
-    COMPANIONS = (NoviceWarrior,NovicePriest)
+    COMPANIONS = (NoviceWarrior,NovicePriest,Warrior)
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_CRUSHING )
     TECHNIQUES = ( spells.waterspells.FREEZE_FOE, spells.airspells.SILENCE,
         spells.priestspells.HEALING_LIGHT, spells.solarspells.SUNRAY,
@@ -205,6 +281,24 @@ class Priest( base.Monster ):
         self.levels.append( base.Humanoid( 6, self ) )
         if random.randint(1,10) == 1:
             self.contents.append( random.choice( self.TREASURE )() )
+
+class Mercenary( base.Monster ):
+    name = "Mercenary"
+    statline = { stats.STRENGTH: 14, stats.TOUGHNESS: 14, stats.REFLEXES: 13, \
+        stats.INTELLIGENCE: 10, stats.PIETY: 12, stats.CHARISMA: 12 }
+    SPRITENAME = "monster_people.png"
+    FRAME = 17
+    TEMPLATES = ()
+    MOVE_POINTS = 10
+    GP_VALUE = 35
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.MAP_DUNGEON,
+     context.MTY_HUMANOID, context.MTY_FIGHTER )
+    ENC_LEVEL = 6
+    ATTACK = items.Attack( (2,6,0), element = stats.RESIST_SLASHING, reach=2 )
+
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 6, self ) )
 
 
 #  *******************************
@@ -225,7 +319,7 @@ class Conjuoror( base.Monster ):
      context.MTY_HUMANOID, context.MTY_MAGE )
     ENC_LEVEL = 7
     COMBAT_AI = aibrain.BasicTechnicalAI()
-    COMPANIONS = (NovicePriest,NoviceWarrior)
+    COMPANIONS = (NovicePriest,NoviceWarrior,Warrior,Mercenary)
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_CRUSHING )
     TECHNIQUES = ( spells.magespells.LIGHTNING_BOLT, spells.lunarspells.SLEEP,
         spells.lunarspells.HELLBLAST, spells.firespells.EXPLOSION,
