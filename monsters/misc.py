@@ -96,20 +96,20 @@ class CorpseEater( base.Monster ):
      context.DES_LUNAR,
      context.MTY_BEAST )
     ENC_LEVEL = 4
-    ATTACK = items.Attack( (3,4,0), element = stats.RESIST_PIERCING, , extra_effect =
+    ATTACK = items.Attack( (3,4,0), element = stats.RESIST_PIERCING, extra_effect =
          effects.OpposedRoll( att_stat=stats.TOUGHNESS, on_success = (
             effects.Paralyze( max_duration = 6 )
         ,) )
      )
     TECHNIQUES = ( invocations.MPInvocation( "Tentacle Slime",
-      effect.TargetIsEnemy( on_true = (
+      effects.TargetIsEnemy( on_true = (
           effects.OpposedRoll( anim=animobs.GreenSplat, att_stat=stats.TOUGHNESS, on_success = (
             effects.Paralyze( max_duration = 3 )
           ,), on_failure = (
             effects.NoEffect( anim=animobs.SmallBoom )
           ,) ),
           )
-      ), com_tar=targetarea.SelfCentered(radius=1,exclude_middle=True), ai_tar=invocations.vs_enemy, mp_cost=8 ) )
+      ), com_tar=targetarea.SelfCentered(radius=1,exclude_middle=True), ai_tar=invocations.vs_enemy, mp_cost=8 ), )
     def init_monster( self ):
         self.levels.append( base.Beast( 4, self ) )
 
