@@ -782,7 +782,7 @@ class Explorer( object ):
 
             self.scene.last_updated = self.camp.day
 
-    def pop_spell_menu( self ):
+    def pop_spell_menu( self, pc ):
         mymenu = rpgmenu.PopUpMenu( self.screen, self.view )
         techs = pc.get_invocations( False )
         for t in techs:
@@ -835,7 +835,7 @@ class Explorer( object ):
 
         elif choice in self.camp.party:
             # Picked a PC. Cast one of their spells.
-            self.pop_spell_menu( pc )
+            self.pop_spell_menu( choice )
 
         elif choice:
             # Presumably, this is an invocation of some kind.

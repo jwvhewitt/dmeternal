@@ -22,7 +22,7 @@
 import util
 import charsheet
 import glob
-import pickle
+import cPickle
 import stats
 import combat
 import context
@@ -126,7 +126,7 @@ class Campaign( object ):
         if screen:
             pygwrap.please_stand_by( screen, "Saving..." )
         f = open( util.user_dir( "rpg_" + self.name + ".sav" ) , "wb" )
-        pickle.dump( self , f, -1 )
+        cPickle.dump( self , f, -1 )
         f.close()
 
     def activate_monster( self, mon ):
@@ -217,7 +217,7 @@ def load_party( screen ):
     party = []
     for fname in file_list:
         f = open( fname, "rb" )
-        pc = pickle.load( f )
+        pc = cPickle.load( f )
         f.close()
         if pc:
             pc_list.append( pc )
@@ -245,13 +245,13 @@ def fix_characters():
     file_list = glob.glob( util.user_dir( "c_*.sav" ) )
     for fname in file_list:
         f = open( fname, "rb" )
-        pc = pickle.load( f )
+        pc = cPickle.load( f )
         f.close()
 
         pc.stat_damage = collections.defaultdict(int)
 
         f = open( util.user_dir( "c_" + pc.name + ".sav" ) , "wb" )
-        pickle.dump( pc , f, -1 )
+        cPickle.dump( pc , f, -1 )
         f.close()
 
 

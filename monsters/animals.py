@@ -775,8 +775,8 @@ class CaveBear( base.Monster ):
 class Unicorn( base.Monster ):
     name = "Unicorn"
     statline = { stats.STRENGTH: 16, stats.TOUGHNESS: 18, stats.REFLEXES: 16, \
-        stats.INTELLIGENCE: 12, stats.PIETY: 20, stats.CHARISMA: 18, \
-        stats.RESIST_LUNAR: 100 }
+        stats.INTELLIGENCE: 16, stats.PIETY: 20, stats.CHARISMA: 18, \
+        stats.RESIST_LUNAR: 100, stats.MAGIC_DEFENSE: 25 }
     SPRITENAME = "monster_animals.png"
     FRAME = 31
     TEMPLATES = ()
@@ -785,11 +785,11 @@ class Unicorn( base.Monster ):
     GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.SET_EVERY,
      context.DES_SOLAR,
-     context.MTY_BEAST, context.MTY_CREATURE,
+     context.MTY_BEAST, context.MTY_CREATURE, context.MTY_LEADER,
      context.GEN_NATURE )
     ENC_LEVEL = 13
     ATTACK = items.Attack( (3,6,0), element = stats.RESIST_PIERCING )
-    TECHNIQUES = ( invocations.MPInvocation( "Healing Light",
+    TECHNIQUES = ( invocations.MPInvocation( "Radiance",
         effects.HealthRestore( dice=(5,8,0) ),
         mp_cost=7, com_tar=targetarea.SingleTarget(reach=10), ai_tar=invocations.vs_wounded_ally,
         exp_tar=targetarea.SinglePartyMember(), shot_anim=animobs.YellowVortex ),

@@ -497,7 +497,7 @@ class Combat( object ):
                 self.ap_spent.clear()
                 explo.update_monsters()
 
-        if self.num_enemies() == 0:
+        if self.num_enemies() == 0 and self.camp.num_pcs() > 0:
             # Combat has ended because we ran out of enemies. Dole experience.
             self.give_xp_and_treasure( explo )
             explo.check_trigger( "COMBATOVER" )

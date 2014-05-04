@@ -300,6 +300,35 @@ class Mercenary( base.Monster ):
     def init_monster( self ):
         self.levels.append( base.Humanoid( 6, self ) )
 
+class Ranger( base.Monster ):
+    name = "Ranger"
+    statline = { stats.STRENGTH: 12, stats.TOUGHNESS: 12, stats.REFLEXES: 14, \
+        stats.INTELLIGENCE: 12, stats.PIETY: 12, stats.CHARISMA: 12, \
+        stats.STEALTH: 24 }
+    SPRITENAME = "monster_people.png"
+    FRAME = 16
+    TEMPLATES = ()
+    MOVE_POINTS = 10
+    GP_VALUE = 35
+    HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
+     context.MAP_WILDERNESS,
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_NATURE )
+    ENC_LEVEL = 6
+    COMPANIONS = (NoviceDruid,)
+    COMBAT_AI = aibrain.BasicTechnicalAI()
+    ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )
+    TECHNIQUES = ( invocations.Invocation( "Arrow",
+      effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, on_success = (
+        effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_PIERCING, anim=animobs.RedBoom )
+      ,), on_failure = (
+        effects.NoEffect( anim=animobs.SmallBoom )
+      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.vs_enemy
+    ), spells.earthspells.EARTHBIND )
+
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 5, self ) )
+
+
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  7   ***
@@ -332,33 +361,69 @@ class Conjuoror( base.Monster ):
             self.contents.append( random.choice( self.TREASURE )() )
 
 
+class Executioner( base.Monster ):
+    name = "Executioner"
+    statline = { stats.STRENGTH: 15, stats.TOUGHNESS: 13, stats.REFLEXES: 12,
+        stats.INTELLIGENCE: 10, stats.PIETY: 12, stats.CHARISMA: 10,
+        stats.CRITICAL_HIT: 20 }
+    SPRITENAME = "monster_people.png"
+    FRAME = 6
+    TEMPLATES = ()
+    MOVE_POINTS = 8
+    GP_VALUE = 60
+    HABITAT = ( context.HAB_EVERY, context.SET_RENFAN,
+     context.MTY_HUMANOID, context.MTY_FIGHTER )
+    ENC_LEVEL = 7
+    COMPANIONS = (Bushwhacker,)
+    ATTACK = items.Attack( (1,10,0), element = stats.RESIST_SLASHING )
+
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 6, self ) )
+
+# Lieutenant - Sprite 11
+
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  8   ***
 #  *******************************
 
+# Warden - spellcaster Sprite 5
+
+# Druid - Sprite 6
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  9   ***
 #  *******************************
 
+
+# Commander - Sprite 10
+
+# High Priest - Sprite 1
+
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  10   ***
 #  ********************************
 
+
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  11   ***
 #  ********************************
+
+# Ranger Champion - Sprite 12
 
 
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  12   ***
 #  ********************************
 
+# Antihero - Sprite 18
 
+# Bishop - Sprite 3
 
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  13   ***
 #  ********************************
+
+# High Druid - Sprite 7
 
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  14   ***
@@ -372,6 +437,8 @@ class Conjuoror( base.Monster ):
 #  ***   ENCOUNTER  LEVEL  16   ***
 #  ********************************
 
+# Master Druid - Sprite 11
+
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  17   ***
 #  ********************************
@@ -381,13 +448,19 @@ class Conjuoror( base.Monster ):
 #  ***   ENCOUNTER  LEVEL  18   ***
 #  ********************************
 
+# Cannoness - Sprite 4
+
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  19   ***
 #  ********************************
 
+# Elder Druid - Sprite 9
 
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  20   ***
 #  ********************************
+
+# Archmage - Sprite 24
+
 
 

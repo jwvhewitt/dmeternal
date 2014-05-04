@@ -12,6 +12,7 @@ import animals
 import aquan
 import auran
 import constructs
+import dragons
 import giants
 import goblins
 import ignan
@@ -32,6 +33,7 @@ harvest( animals )
 harvest( aquan )
 harvest( auran )
 harvest( constructs )
+harvest( dragons )
 harvest( giants )
 harvest( goblins )
 harvest( ignan )

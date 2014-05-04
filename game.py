@@ -28,7 +28,7 @@ import pygwrap
 import rpgmenu
 import campaign
 import util
-import pickle
+import cPickle
 import image
 import glob
 import random
@@ -87,7 +87,7 @@ def load_campaign( screen ):
     if cmd:
         pygwrap.please_stand_by( screen, "Loading..." )
         f = open( cmd, "rb" )
-        camp = pickle.load( f )
+        camp = cPickle.load( f )
         f.close()
         if camp:
             camp.play( screen )

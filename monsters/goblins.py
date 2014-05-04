@@ -243,7 +243,8 @@ class GoblinElite( base.Monster ):
     GP_VALUE = 45
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.HAB_TUNNELS,
      context.SET_EVERY,
-     context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN )
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.MTY_LEADER,
+     context.GEN_GOBLIN )
     ENC_LEVEL = 9
 
     ATTACK = items.Attack( (2,8,0), element = stats.RESIST_CRUSHING )
@@ -334,7 +335,8 @@ class GoblinKing( base.Monster ):
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.HAB_TUNNELS,
      context.SET_EVERY,
      context.MAP_DUNGEON,
-     context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN )
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.MTY_LEADER,
+     context.GEN_GOBLIN )
     ENC_LEVEL = 13
     COMBAT_AI = aibrain.GoblinKingAI()
     LONER = True
@@ -363,7 +365,8 @@ class GoblinKing( base.Monster ):
      )
 
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 13, self ) )
+        self.levels.append( base.Terror( 5, self ) )
+        self.levels.append( base.Humanoid( 8, self ) )
 
 
 #  **********************
