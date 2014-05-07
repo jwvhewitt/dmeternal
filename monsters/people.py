@@ -386,29 +386,29 @@ class Executioner( base.Monster ):
 #  ***   ENCOUNTER  LEVEL  8   ***
 #  *******************************
 
-# Warden - spellcaster Sprite 5
-
+# Crusader - Get knightly sprite, PRIEST+WARRIOR, Sprite 21
 # Druid - Sprite 6
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  9   ***
 #  *******************************
 
-
+# Warden - spellcaster Sprite 5
+# Witch - spellcaster Sprite 18
 # Commander - Sprite 10
 
-# High Priest - Sprite 1
 
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  10   ***
 #  ********************************
 
+# Unspecified other Priest type
 
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  11   ***
 #  ********************************
 
-# Ranger Champion - Sprite 12
+# Ranger Hero - Sprite 12
 
 
 #  ********************************
@@ -416,8 +416,8 @@ class Executioner( base.Monster ):
 #  ********************************
 
 # Antihero - Sprite 18
+# High Priest - Sprite 1
 
-# Bishop - Sprite 3
 
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  13   ***
@@ -429,9 +429,12 @@ class Executioner( base.Monster ):
 #  ***   ENCOUNTER  LEVEL  14   ***
 #  ********************************
 
+
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  15   ***
 #  ********************************
+
+# Bishop - Sprite 3
 
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  16   ***
@@ -452,6 +455,7 @@ class Executioner( base.Monster ):
 
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  19   ***
+
 #  ********************************
 
 # Elder Druid - Sprite 9
