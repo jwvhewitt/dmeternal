@@ -21,6 +21,7 @@ This game requires Pygame and Python 2.6 or 2.7 to be installed on your system.
 Do that first.
 
   https://www.python.org/
+
   http://www.pygame.org/
 
 Unzip the game files and put them in a convenient folder. The file you want
@@ -50,7 +51,10 @@ Explore the world. Beat up monsters and take their stuff.
 COMMANDS
 ========
 
-Left click: Move to spot/Pick up items
+Note that commands are case sensitive- "Q" is different from "q".
+
+Left click: Move to spot
+    After moving, click on spot again to pick up items on ground
 
 Right click: Open popup menu
 

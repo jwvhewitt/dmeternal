@@ -387,7 +387,7 @@ class BlackBear( base.Monster ):
 class GiantLizard( base.Monster ):
     name = "Giant Lizard"
     statline = { stats.STRENGTH: 15, stats.TOUGHNESS: 13, stats.REFLEXES: 9, \
-        stats.INTELLIGENCE: 1, stats.PIETY: 9, stats.CHARISMA: 1 }
+        stats.INTELLIGENCE: 1, stats.PIETY: 12, stats.CHARISMA: 1 }
     SPRITENAME = "monster_default.png"
     FRAME = 48
     TEMPLATES = (stats.REPTILE,)

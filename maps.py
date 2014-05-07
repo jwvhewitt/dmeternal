@@ -715,7 +715,7 @@ class SceneView( object ):
         screen.fill( (36,37,36), myfill )
         screen.blit( myimage, mydest )
 
-    def quick_model_status( self, screen, dest, model ):
+    def quick_model_status( self, screen, dest, model, add_item_note ):
         # Do a quick model status for this model.
         self.draw_caption( screen, (dest.centerx,dest.y-8), str( model ) )
 
@@ -737,8 +737,12 @@ class SceneView( object ):
             box.w = dest.x + 7 + box.w - box.x
             screen.fill( (0, 0, 120, 100), box )
 
+        if add_item_note:
+            self.draw_caption( screen, (dest.centerx,dest.y+8), "ITEM" )
 
-    def __call__( self , screen, show_quick_stats=True ):
+
+
+    def __call__( self , screen, show_quick_stats=True, first_pc_pos=None ):
         """Draws this mapview to the provided screen."""
         screen_area = screen.get_rect()
         mouse_x,mouse_y = pygame.mouse.get_pos()
@@ -844,7 +848,11 @@ class SceneView( object ):
 
 
                     if ( x==tile_x ) and ( y==tile_y) and modl and show_quick_stats and not modl.hidden:
-                        self.quick_model_status( screen, dest, modl )
+                        if first_pc_pos == (x,y):
+                            add_item_note = itemmap.get( (x,y), False )
+                        else:
+                            add_item_note = False
+                        self.quick_model_status( screen, dest, modl, add_item_note )
 
                     mlist = self.anims.get( (x,y) , None )
                     if mlist:

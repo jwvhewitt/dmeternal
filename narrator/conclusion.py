@@ -66,7 +66,8 @@ class StraightBalrog( Plot ):
         if self.chapter.active:
             boss = self.elements["ENEMY"]
             mygram = {
-                "[monsters]": ["invaders"],
+                "[HOWAREYOU]": ["Heavens save us from {0}.".format(boss)],
+                "[monsters]": ["invaders","{0}'s minions".format(boss)],
                 "[RUMOUR]": ["[rumourleadin] {0} the {1} commands the [monsters].".format( boss, boss.monster_name )],
             }
             city = self.elements.get( "LOCALE" )

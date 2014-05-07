@@ -818,6 +818,7 @@ class Explorer( object ):
         mymenu.add_item( "Manage Spells", 3 )
         mymenu.add_item( "Camp and Rest", 4 )
         mymenu.add_item( "Quit Game", 5 )
+        mymenu.add_item( "Exit", False )
 
         choice = mymenu.query()
 
@@ -866,6 +867,7 @@ class Explorer( object ):
             self.check_trigger( "START" )
 
         while self.keep_exploring():
+            first_pc_pos=self.camp.first_living_pc().pos
             if self.camp.fight:
                 self.order = None
                 self.camp.fight.go( self )
@@ -878,7 +880,7 @@ class Explorer( object ):
             gdi = pygwrap.wait_event()
 
             if gdi.type == pygwrap.TIMEREVENT:
-                self.view( self.screen )
+                self.view( self.screen, first_pc_pos=first_pc_pos )
                 if caption and caption_timer > 0:
                     pygwrap.default_border.render( self.screen, caption_rect )
                     self.screen.blit( caption, caption_rect )
