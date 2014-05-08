@@ -34,6 +34,8 @@ import glob
 import random
 import chargen
 
+VERSION_ID = "0.2.0 Alpha"
+
 
 class PosterRedraw( object ):
     def __init__( self, screen ):
@@ -49,6 +51,8 @@ class TitleScreenRedraw( object ):
         self.screen_center_y = screen.get_height() // 2
         self.logo = image.Image( "sys_logo.png" )
         self.logo_dest = self.logo.bitmap.get_rect( midbottom=(self.screen_center_x,self.screen_center_y-25) )
+        self.version = pygwrap.ITALICFONT.render( VERSION_ID, True, pygwrap.TEXT_COLOR )
+        self.version_dest = self.version.get_rect( midtop = self.logo_dest.midbottom )
         self.get_bg_image()
 
     def get_bg_image( self ):
@@ -59,6 +63,7 @@ class TitleScreenRedraw( object ):
         screen.fill( (0,0,0) )
         screen.blit(self.image , self.image_dest )
         screen.blit(self.logo.bitmap , self.logo_dest )
+        screen.blit(self.version , self.version_dest )
 
 
 def start_campaign( init, screen ):

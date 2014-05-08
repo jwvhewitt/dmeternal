@@ -31,10 +31,12 @@ class AdventureStub( Plot ):
         self.chapter = Chapter( world=w )
         self.add_first_locale_sub_plot( nart )
 
-        self.add_sub_plot( nart, "INTRO_1" )
+        sp = self.add_sub_plot( nart, "INTRO_1" )
 
         for job in characters.PC_CLASSES:
             self.add_sub_plot( nart, "RESOURCE_JOBTRAINER", PlotState( elements={"JOB":job} ) )
+
+        self.add_sub_plot( nart, "TESTPLOT", spstate=PlotState().based_on(sp), necessary=False )
 
         return True
 

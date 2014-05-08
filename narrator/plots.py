@@ -112,15 +112,15 @@ class Plot( object ):
         """Return list of element idents assigned to this object."""
         return [key for key,value in self.elements.items() if value is ele]
 
-    def add_sub_plot( self, nart, splabel, spstate=None, ident=None ):
+    def add_sub_plot( self, nart, splabel, spstate=None, ident=None, necessary=True ):
         if not spstate:
             spstate = PlotState().based_on(self)
         if not ident:
             ident = "_autoident_{0}".format( len( self.subplots ) )
         sp = nart.generate_sub_plot( spstate, splabel )
-        if not sp:
+        if necessary and not sp:
             self.fail( nart )
-        else:
+        elif sp:
             self.subplots[ident] = sp
         return sp
 
