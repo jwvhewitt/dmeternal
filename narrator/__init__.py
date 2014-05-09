@@ -71,6 +71,7 @@ import citystories
 import complication
 import conclusion
 import connections
+import dungeonbits
 import dungeonlevel
 import encounters
 import getterbits
@@ -87,6 +88,7 @@ harvest( citystories )
 harvest( complication )
 harvest( conclusion )
 harvest( connections )
+harvest( dungeonbits )
 harvest( dungeonlevel )
 harvest( encounters )
 harvest( getterbits )

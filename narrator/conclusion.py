@@ -32,7 +32,7 @@ class StraightBalrog( Plot ):
         btype = monsters.choose_monster_type(self.rank+1,self.rank+4,{(context.MTY_HUMANOID,context.MTY_LEADER):True,context.MTY_LEADER:context.MAYBE})
         boss = monsters.generate_boss( btype, self.rank+4 )
 
-        interior = maps.Scene( 50,50, sprites={maps.SPRITE_WALL: "terrain_wall_darkbrick.png", 
+        interior = maps.Scene( 65,65, sprites={maps.SPRITE_WALL: "terrain_wall_darkbrick.png", 
             maps.SPRITE_FLOOR: "terrain_floor_dungeon.png", },
             biome=context.HAB_BUILDING, setting=self.setting, desctags=(context.MAP_DUNGEON,context.MTY_HUMANOID) )
         igen = mapgen.SubtleMonkeyTunnelScene( interior )
@@ -47,9 +47,11 @@ class StraightBalrog( Plot ):
         boss.team = team
         self.register_element( "_LAIR_ROOM", int_goalroom )
         self.register_element( "ENEMY", boss, "_LAIR_ROOM" )
-
+        self.add_sub_plot( nart, "DUNGEON_ARMORY", PlotState( elements={"LOCALE":interior} ).based_on( self ) )
         self.add_resolution( nart, "RESOLVE_FIGHT", ident="next" )
         self.enemy_defeated = False
+
+        #self.add_sub_plot( nart, "CONNECT", PlotState( elements={"PREV":self.elements["LOCALE"],"NEXT":interior} ).based_on( self ) )
 
         return True
 

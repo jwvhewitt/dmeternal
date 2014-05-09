@@ -160,6 +160,7 @@ class OnTheWallTerrain( SingTerrain ):
         self.block_walk = block_walk
         self.block_fly = block_fly
         self.frame = frame
+    ATTACH_TO_WALL = True
     def render( self, screen, dest, view, data ):
         view.sprites[ self.spritesheet ].render( screen, dest, self.frame + data )
     def get_data( self, view, x, y ):
@@ -178,6 +179,7 @@ class OnTheWallVariable( SingTerrain ):
         self.block_walk = block_walk
         self.block_fly = block_fly
         self.frames = frames
+    ATTACH_TO_WALL = True
     def render( self, screen, dest, view, data ):
         view.sprites[ self.spritesheet ].render( screen, dest, data )
     def get_data( self, view, x, y ):
