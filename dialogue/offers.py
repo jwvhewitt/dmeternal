@@ -39,6 +39,12 @@ HELLO_SHOPKEEPER = Offer( msg = "[HELLO_SHOP]" ,
         context = ContextTag( [context.HELLO,context.SHOP] ) ,
         replies = [ Reply( "[HELLO:SHOP]" , destination = Cue( ContextTag( [context.SHOP] ) ) ) ] )
 
+HELLO_ARMOR_SHOPKEEPER = Offer( msg = "[HELLO_SHOP_ARMOR]" ,
+        context = ContextTag( [context.HELLO,context.SHOP,context.ARMOR] ) ,
+        replies = [ Reply( "[HELLO:SHOP_ARMOR]" ,
+                    destination = Cue( ContextTag( [context.SHOP,context.ARMOR] ) ) ) ]
+        )
+
 HELLO_WEAPON_SHOPKEEPER = Offer( msg = "[HELLO_SHOP_WEAPON]" ,
         context = ContextTag( [context.HELLO,context.SHOP,context.WEAPON] ) ,
         replies = [ Reply( "[HELLO:SHOP_WEAPON]" ,

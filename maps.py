@@ -281,7 +281,7 @@ MOON_PICTURE = OnTheWallTerrain( "MOON_PICTURE", frame = 9 )
 LANDSCAPE_PICTURE = OnTheWallTerrain( "LANDSCAPE_PICTURE", frame = 11 )
 BOOKSHELF = OnTheWallTerrain( "BOOKSHELF", frame = 13, block_walk=True )
 MESSAGE_SIGN = OnTheWallTerrain( "MESSAGE_SIGN", frame = 15 )
-FIREPLACE = OnTheWallTerrain( "HANGING_SKELETON", frame = 17 )
+FIREPLACE = OnTheWallTerrain( "FIREPLACE", frame = 17 )
 SWITCH_UP = OnTheWallTerrain( "SWITCH_UP", frame = 19 )
 SWITCH_DOWN = OnTheWallTerrain( "SWITCH_DOWN", frame = 21 )
 KEG = SingTerrain( "KEG", spritesheet = SPRITE_DECOR, frame = 23, block_walk = True )
@@ -335,6 +335,9 @@ WEAPONS_SIGN = OnTheWallTerrain( "WEAPONS_SIGN", spritesheet=SPRITE_SIGNS, frame
 POTION_SIGN = OnTheWallTerrain( "POTION_SIGN", spritesheet=SPRITE_SIGNS, frame = 12 )
 BOW_SIGN = OnTheWallTerrain( "BOW_SIGN", spritesheet=SPRITE_SIGNS, frame = 14 )
 TOWER_SIGN = OnTheWallTerrain( "TOWER_SIGN", spritesheet=SPRITE_SIGNS, frame = 16 )
+HELMET_SIGN = OnTheWallTerrain( "HELMET_SIGN", spritesheet=SPRITE_SIGNS, frame = 18 )
+RING_SIGN = OnTheWallTerrain( "RING_SIGN", spritesheet=SPRITE_SIGNS, frame = 20 )
+BED_SIGN = OnTheWallTerrain( "BED_SIGN", spritesheet=SPRITE_SIGNS, frame = 22 )
 
 
 SMALL_CHEST = VariableTerrain( "SMALL_CHEST", spritesheet = SPRITE_CHEST, frames = (0,1), block_walk=True )

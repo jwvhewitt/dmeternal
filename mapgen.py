@@ -226,6 +226,11 @@ class WeaponShopDec( BuildingDec ):
     """Add windows + signs of inhabitation to a (sharp) room."""
     WALL_DECOR = ( maps.WALL_WEAPON_RACK, maps.WALL_WEAPON_RACK, maps.WALL_CRATES )
 
+class ArmorShopDec( BuildingDec ):
+    """Add windows + signs of inhabitation to a (sharp) room."""
+    WALL_DECOR = ( maps.BENCH, maps.DRESSER, maps.DRESSER, maps.WALL_CRATES )
+
+
 class GeneralStoreDec( BuildingDec ):
     """Add windows + signs of inhabitation to a (sharp) room."""
     WALL_DECOR = ( maps.PROVISIONS, maps.PROVISIONS, maps.WALL_CRATES, maps.WALL_WEAPON_RACK,

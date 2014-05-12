@@ -314,28 +314,28 @@ class FireArmor( Enhancer ):
     DESCPAT = "{0} It provides 25% protection against fire."
     PLUSRANK = 4
     AFFECTS = (CLOTHES, LIGHT_ARMOR, HEAVY_ARMOR, SHIELD)
-    BONUSES = stats.StatMod({ stats.RESIST_FIRE:25 })
+    BONUSES = stats.StatMod({ stats.RESIST_FIRE:25, stats.PHYSICAL_DEFENSE: 5, stats.NATURAL_DEFENSE: 5 })
 
 class ColdArmor( Enhancer ):
     NAMEPAT = "Cold {0}"
     DESCPAT = "{0} It provides 25% protection against cold."
     PLUSRANK = 4
     AFFECTS = (CLOTHES, LIGHT_ARMOR, HEAVY_ARMOR, SHIELD)
-    BONUSES = stats.StatMod({ stats.RESIST_COLD:25 })
+    BONUSES = stats.StatMod({ stats.RESIST_COLD:25, stats.PHYSICAL_DEFENSE: 5, stats.NATURAL_DEFENSE: 5 })
 
 class AcidArmor( Enhancer ):
     NAMEPAT = "Acid {0}"
     DESCPAT = "{0} It provides 25% protection against acid."
     PLUSRANK = 4
     AFFECTS = (CLOTHES, LIGHT_ARMOR, HEAVY_ARMOR, SHIELD)
-    BONUSES = stats.StatMod({ stats.RESIST_ACID:25 })
+    BONUSES = stats.StatMod({ stats.RESIST_ACID:25, stats.PHYSICAL_DEFENSE: 5, stats.NATURAL_DEFENSE: 5 })
 
 class LightningArmor( Enhancer ):
     NAMEPAT = "Lightning {0}"
     DESCPAT = "{0} It provides 25% protection against lightning."
     PLUSRANK = 4
     AFFECTS = (CLOTHES, LIGHT_ARMOR, HEAVY_ARMOR, SHIELD)
-    BONUSES = stats.StatMod({ stats.RESIST_LIGHTNING:25 })
+    BONUSES = stats.StatMod({ stats.RESIST_LIGHTNING:25, stats.PHYSICAL_DEFENSE: 5, stats.NATURAL_DEFENSE: 5 })
 
 class SturdyArmor( Enhancer ):
     NAMEPAT = "Sturdy {0}"
@@ -349,14 +349,14 @@ class WardedArmor( Enhancer ):
     DESCPAT = "{0} It is covered in protective sigils which give +10% to aura."
     PLUSRANK = 5
     AFFECTS = (CLOTHES, LIGHT_ARMOR, HEAVY_ARMOR)
-    BONUSES = stats.StatMod({ stats.MAGIC_DEFENSE: 10 })
+    BONUSES = stats.StatMod({ stats.MAGIC_DEFENSE: 10, stats.PHYSICAL_DEFENSE: 5, stats.NATURAL_DEFENSE: 5 })
 
 class ShadowArmor( Enhancer ):
     NAMEPAT = "Shadow {0}"
     DESCPAT = "{0} It has been enchanted to give +20% to stealth."
     PLUSRANK = 6
     AFFECTS = (CLOTHES, LIGHT_ARMOR)
-    BONUSES = stats.StatMod({ stats.STEALTH: 20 })
+    BONUSES = stats.StatMod({ stats.STEALTH: 20, stats.PHYSICAL_DEFENSE: 5, stats.NATURAL_DEFENSE: 5 })
 
 class HeroicArmor( Enhancer ):
     NAMEPAT = "Heroic {0}"

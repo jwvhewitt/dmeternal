@@ -13,6 +13,10 @@ GENERAL_STORE = ( items.SWORD, items.AXE, items.MACE, items.DAGGER, items.STAFF,
     items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES, items.BOOTS,
     items.CLOAK, items.FARMTOOL )
 
+ARMOR_STORE = ( items.SHIELD, items.CLOTHES, items.LIGHT_ARMOR, items.HEAVY_ARMOR,
+    items.HAT, items.HELM, items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES,
+    items.BOOTS, items.CLOAK )
+
 WEAPON_STORE = ( items.SWORD, items.AXE, items.MACE, items.DAGGER, items.STAFF,
     items.BOW, items.POLEARM, items.ARROW, items.SLING, items.BULLET,
     items.FARMTOOL )

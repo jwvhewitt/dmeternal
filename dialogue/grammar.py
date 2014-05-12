@@ -41,6 +41,8 @@ GRAM_DATABASE = {
         ],
     "[adjective]": ["[positive_adjective]","[negative_adjective]","[neutral_adjective]"
         ],
+    "[armor]": ["outfit","suit of armor","shield","helm","hat"
+        ],
     "[BESTWISHES]": ["May fortune smile on you."
         ],
     "[GOODLUCK]": ["Good luck with that.","Good luck.",
@@ -83,6 +85,9 @@ GRAM_DATABASE = {
         "[HELLO] Do you need to buy anything?", "Welcome to [scene]. [RUMOUR]",
         "Welcome to [scene]. [HOWAREYOU]",
         ],
+    "[HELLO_SHOP_ARMOR]": [ "[HELLO_SHOP]",
+        "[HELLO] You look like you could use a new [armor].",
+        ],
     "[HELLO_SHOP_BLACKMARKET]": [ "[HELLO_SHOP]",
         "Looking for something out of the ordinary? I have it all right here, and I promise you will not find it anywhere else.",
         ],
@@ -98,6 +103,10 @@ GRAM_DATABASE = {
         ],
     "[HELLO:SHOP]": [ "I would like to see your wares.",
         "Shall we barter?"
+        ],
+    "[HELLO:SHOP_ARMOR]": [ "[HELLO:SHOP]",
+        "We need some armor.",
+        "What do you have in my size?",
         ],
     "[HELLO:SHOP_BLACKMARKET]": [ "[HELLO:SHOP]",
         "I will take a look at your wares.",
@@ -159,6 +168,8 @@ GRAM_DATABASE = {
         ],
     "[SHOP]": [ "", "Take a look around. Let me know if you need any help."
         ],
+    "[SHOP_ARMOR]": [ "[SHOP]","[rumourleadin] it is better to be safe than sorry.",
+        ],
     "[SHOP_GENERAL]": [ "[SHOP]","Remember, you get what you pay for."
         ],
     "[SHOP_MAGIC]": [ "[SHOP]","Knowledge is power. Some knowledge is more powerful than others.",
@@ -166,7 +177,7 @@ GRAM_DATABASE = {
         ],
     "[SHOP_WEAPON]": [ "[SHOP]","You will be happy to own a good [weapon] the next time you see a [monster].",
         ],
-    "[thing]": [ "[weapon]","[monster]","[adjective] [monster]"
+    "[thing]": [ "[weapon]","[monster]","[adjective] [monster]", "[armor]"
         ],
     "[TRAINING]": [ "", "Let me show you how it is done."
         ],

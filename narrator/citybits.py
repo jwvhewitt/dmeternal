@@ -50,10 +50,10 @@ class CityOnEdgeOfCiv( Plot ):
         self.chapter.world.add_entrance( myscene, myscene.name, worlds.W_CITY, myent, True )
 
         self.add_sub_plot( nart, "CITY_GENERALSTORE" )
-        self.add_sub_plot( nart, "CITY_WEAPONSHOP" )
         self.add_sub_plot( nart, "CITY_LIBRARY" )
         self.add_sub_plot( nart, "CITY_INN" )
         self.add_sub_plot( nart, "CITY_TEMPLE" )
+        self.add_sub_plot( nart, "CITY_EXTRASHOP" )
         for t in range( random.randint(1,4) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
 
@@ -105,7 +105,7 @@ class GenerallyGeneralStore( Plot ):
         gate_1.mini_map_label = "General Store"
         int_mainroom.contents.append( npc )
         self.register_element( "SHOPKEEPER", npc )
-        self.shop = self.register_element( "SHOPSERVICE", services.Shop( rank=self.rank+2 ) )
+        self.shop = self.register_element( "SHOPSERVICE", services.Shop( rank=self.rank+3 ) )
         self.add_sub_plot( nart, "SIDE_STORY", PlotState(rank=self.random_rank_in_chapter()).based_on( self ) )
         return True
 
@@ -149,6 +149,7 @@ class GenericInn( Plot ):
          tags=(context.CIVILIZED,context.ROOM_PUBLIC), anchor=mapgen.south, parent=interior )
         int_mainroom.contents.append( gate_2 )
         int_mainroom.contents.append( waypoints.Bookshelf() )
+        int_mainroom.contents.append( maps.FIREPLACE )
         gate_2.anchor = mapgen.south
         int_mainroom.decorate = mapgen.TavernDec(win=maps.SMALL_WINDOW)
 
@@ -288,6 +289,82 @@ class GenericTemple( Plot ):
         ol = list()
         ol.append( dialogue.Offer( "[SERVICE_TEMPLE]" ,
          context = context.ContextTag([context.SERVICE,context.HEALING]), effect=self.shop ) )
+        return ol
+
+#  **************************
+#  ***   CITY_EXTRASHOP   ***
+#  **************************
+#
+# After the general shop, library, temple, and inn are taken care of, extra shops
+# can be added.
+
+class ExtraWeaponShop( Plot ):
+    # Just add a weapon shop...
+    LABEL = "CITY_EXTRASHOP"
+    def custom_init( self, nart ):
+        self.add_sub_plot( nart, "CITY_WEAPONSHOP" )
+        return True
+
+class ExtraArmorShop( Plot ):
+    # Just add an armor shop...
+    LABEL = "CITY_EXTRASHOP"
+    def custom_init( self, nart ):
+        self.add_sub_plot( nart, "CITY_ARMORSHOP" )
+        return True
+
+
+#  ***************************
+#  ***   CITY_ARMORSHOP   ***
+#  ***************************
+
+class GenericArmorShop( Plot ):
+    LABEL = "CITY_ARMORSHOP"
+    active = True
+    scope = "BUILDING_INT"
+    NAME_PATTERNS = ( "{0}'s Armor", "{0}'s Clothes" )
+    def custom_init( self, nart ):
+        exterior = mapgen.BuildingRoom( tags=(context.CIVILIZED,) )
+        exterior.special_c[ "window" ] = maps.SMALL_WINDOW
+        exterior.special_c[ "sign1" ] = maps.SHIELD_SIGN
+        exterior.special_c[ "sign2" ] = maps.HELMET_SIGN
+        self.register_element( "_EXTERIOR", exterior, dident="CITY" )
+
+        interior = maps.Scene( 50,50, sprites={maps.SPRITE_FLOOR: "terrain_floor_wood.png" },
+            biome=context.HAB_BUILDING, setting=self.setting, desctags=(context.DES_CIVILIZED,) )
+        igen = mapgen.BuildingScene( interior )
+
+        gate_1 = waypoints.GateDoor()
+        gate_2 = waypoints.GateDoor()
+        gate_1.destination = interior
+        gate_1.otherside = gate_2
+        gate_2.destination = self.elements.get( "LOCALE" )
+        gate_2.otherside = gate_1
+
+        self.register_scene( nart, interior, igen, ident="BUILDING_INT", dident="LOCALE" )
+
+        exterior.special_c[ "door" ] = gate_1
+        int_mainroom = mapgen.SharpRoom( tags=(context.CIVILIZED,context.ROOM_PUBLIC), anchor=mapgen.south, parent=interior )
+        int_mainroom.contents.append( gate_2 )
+        gate_2.anchor = mapgen.south
+        int_mainroom.decorate = mapgen.ArmorShopDec()
+
+        npc = monsters.generate_npc( job=monsters.base.Merchant )
+        npc.tags.append( context.CHAR_SHOPKEEPER )
+        interior.name = random.choice( self.NAME_PATTERNS ).format( npc )
+        gate_1.mini_map_label = "Armor Shop"
+        int_mainroom.contents.append( npc )
+        self.register_element( "SHOPKEEPER", npc )
+
+        self.shop = self.register_element( "SHOPSERVICE", services.Shop( ware_types=services.ARMOR_STORE, rank=self.rank+3,
+         allow_misc=False, allow_magic=True, num_items=14 ) )
+
+        return True
+
+    def SHOPKEEPER_offers( self, explo ):
+        # Return list of shopkeeper offers.
+        ol = list()
+        ol.append( dialogue.Offer( "[SHOP_ARMOR]" ,
+         context = context.ContextTag([context.SHOP,context.ARMOR]), effect=self.shop ) )
         return ol
 
 

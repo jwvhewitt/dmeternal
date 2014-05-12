@@ -14,6 +14,9 @@ HELLOHINT_TO_SHOP = Reply( "I just need to buy something." ,
             destination = Cue( ContextTag([context.SHOP]) ) ,
             context = ContextTag([context.HELLO,context.INFO]) )
 
+HELLO_TO_ARMOR_SHOP = Reply( "[HELLO:SHOP_ARMOR]",
+            destination = Cue( ContextTag([context.SHOP,context.ARMOR])),
+            context = ContextTag([context.HELLO]) )
 
 HELLO_TO_WEAPON_SHOP = Reply( "[HELLO:SHOP_WEAPON]",
             destination = Cue( ContextTag([context.SHOP,context.WEAPON])),
