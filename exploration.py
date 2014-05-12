@@ -494,6 +494,7 @@ class Explorer( object ):
 
     def bump_model( self, target ):
         # Do the animation first.
+        self.view.focus( self.screen, *target.pos )
         pc = self.camp.party_spokesperson()
         anims = [ animobs.SpeakHello(pos=pc.pos), animobs.SpeakHello(pos=target.pos)]
         animobs.handle_anim_sequence( self.screen, self.view, anims )
@@ -729,6 +730,7 @@ class Explorer( object ):
                     if in_sight:
                         react = m.get_reaction( self.camp )
                         if react < characters.FRIENDLY_THRESHOLD:
+                            self.view.focus( self.screen, *m.pos )
                             if react < characters.ENEMY_THRESHOLD:
                                 anims = [ animobs.SpeakAttack(m.pos,loop=16), ]
                                 animobs.handle_anim_sequence( self.screen, self.view, anims )
