@@ -877,6 +877,41 @@ class CaveScene( RandomScene ):
         # Fill all non-water tiles with True walls for now.
         self.fill( gb, self.area, floor=maps.BASIC_FLOOR, wall=True )
 
+class WalledForestScene( RandomScene ):
+    # Like a cave, but replace certain True walls with trees.
+    gapfill = MonsterFiller()
+    mutate = CellMutator(noise_throttle=100)
+    def prepare( self, gb ):
+        # Step one- we're going to use a plasma map to set water/lo/hi ground.
+        # Fill all non-water tiles with True walls for now.
+        self.fill( gb, self.area, floor=maps.BASIC_FLOOR, wall=True )
+    def count_true_walls( self,x0,y0 ):
+        n = 0
+        for x in range(x0-1,x0+2):
+            for y in range(y0-1,y0+2):
+                if self.gb.on_the_map(x,y):
+                    if self.gb.map[x][y].wall == True:
+                        n += 1
+                else:
+                    n += 1
+        return n
+    def mutate_walls( self ):
+        to_convert = list()
+        for x in range( self.width ):
+            for y in range( self.height ):
+                if self.gb.map[x][y].wall == True and self.count_true_walls(x,y) < 6:
+                    to_convert.append( (x,y) )
+        for p in to_convert:
+            self.gb.map[p[0]][p[1]].wall = maps.TREES
+    def convert_true_walls( self ):
+        for x in range( random.randint(1,3) ):
+            self.mutate_walls()
+        for x in range( self.width ):
+            for y in range( self.height ):
+                if self.gb.map[x][y].wall == True:
+                    self.gb.map[x][y].wall = maps.BASIC_WALL
+
+
 class SubtleMonkeyTunnelScene( RandomScene ):
     gapfill = MonsterFiller()
     DEFAULT_ROOM = SharpRoom

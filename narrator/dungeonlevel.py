@@ -23,10 +23,11 @@ class BasicCave( Plot ):
         return self.TAGS.issuperset( pstate.elements.get( "DUNGEON_TYPE" ) ) and pstate.rank >= self.MIN_RANK
     def custom_init( self, nart ):
         myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
-            sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_cthonic.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
+            sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_under.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
             biome=context.HAB_CAVE, setting=self.setting,
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN) )
         mymapgen = mapgen.CaveScene( myscene )
+#        mymapgen = mapgen.WalledForestScene( myscene )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
 
         for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
