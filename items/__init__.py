@@ -482,14 +482,14 @@ def generate_hoard( drop_rank, drop_strength ):
     gp = max( ( drop_rank//2 + random.randint( 1, drop_rank + 1 ) ) * drop_strength + random.randint(1,100) - random.randint(1,100), random.randint(51,150) )
     hoard = list()
 
-    tries = 10 - ( drop_rank + 1 ) // 2 - random.randint(0,4)
-    while ( gp > 0 ) and ( tries < 10 ):
+    tries = random.randint( 0 , 3 + ( drop_rank + 1 ) // 2 )
+    while ( gp > 0 ) and ( tries > 0 ):
         i_rank = drop_rank
-        if random.randint(1,25) == 23:
+        if random.randint(1,20) == 17:
             # Generate an out-of-depth item.
             i_rank += random.randint(3,5)
             it = choose_item( item_type = random.choice( PREMIUM_TYPES ), max_rank = i_rank )
-            tries += 1
+            tries -= 1
             if it:
                 it.identified = False
         elif random.randint(1,3) != 1:
@@ -498,7 +498,10 @@ def generate_hoard( drop_rank, drop_strength ):
             it = choose_item( max_rank = drop_rank )
         if it:
             delta_rank = i_rank - it.min_rank()
-            if random.randint(1,10) <= delta_rank:
+            if random.randint(1,5) <= delta_rank:
+                if tries > 1 and random.randint(1,3) == 2:
+                    i_rank += 1
+                    tries += -1
                 make_item_magic( it, i_rank )
                 it.identified = False
             elif random.randint(1,23) == 5:
@@ -512,7 +515,7 @@ def generate_hoard( drop_rank, drop_strength ):
                 gp -= max( it.cost()//2 , 1 )
             else:
                 gp -= max( it.cost()//5 , 1 )
-        tries += 1
+        tries -= 1
 
     return (max(gp,0),hoard)
 
