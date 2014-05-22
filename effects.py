@@ -203,6 +203,10 @@ class HealthDamage( NoEffect ):
             camp.activate_monster( target )
             target.hidden = False
 
+            # Check to see if this model mitoses.
+            if hasattr( target, "mitose" ) and target.mitose( self.element ):
+                target.mitose_me = True
+
             if target.is_alright():
                 if dmg > 0:
                     return self.on_success

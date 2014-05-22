@@ -334,6 +334,21 @@ class Explorer( object ):
         mymenu.add_item( "Close" , -1 )
         mymenu.query()
 
+    def mitose( self, target ):
+        """Divide this target into two."""
+        # Seek a location for the new clone.
+        x0,y0 = target.pos
+        entry_points = self.scene.find_free_points_in_rect( pygame.Rect(x0-1,y0-1,3,3) )
+        if entry_points:
+            # We have found a location. Proceed with cloning.
+            nupos = random.choice( list( entry_points ) )
+            numon = target.__class__(team=target.team)
+            hppool = target.current_hp()
+            target.hp_damage = target.max_hp() - ( hppool + 1 ) // 2
+            numon.hp_damage = numon.max_hp() - ( hppool + 1 ) // 2
+            numon.mp_damage = min( target.mp_damage, numon.max_mp() - 1 )
+            numon.place( self.scene, nupos )
+
     def invoke_effect( self, effect, originator, area_of_effect, opening_anim = None, delay_point=None ):
         all_anims = list()
         if opening_anim:
@@ -348,7 +363,7 @@ class Explorer( object ):
             effect( self.camp, originator, p, anims, delay )
         animobs.handle_anim_sequence( self.screen, self.view, all_anims )
 
-        # Remove dead models from the map, and handle probes.
+        # Remove dead models from the map, and handle probes and mitoses.
         for m in self.scene.contents[:]:
             if hasattr( m, "probe_me" ) and m.probe_me:
                 self.probe( m )
@@ -364,6 +379,9 @@ class Explorer( object ):
                             m.contents.remove(i)
                             i.equipped = False
                             i.place( self.scene, m.pos )
+            elif hasattr( m, "mitose_me" ) and m.mitose_me:
+                self.mitose( m )
+                del( m.mitose_me )
 
     def invoke_technique( self, tech, originator, area_of_effect, opening_anim = None, delay_point=None ):
         if self.camp.fight and self.camp.fight.cstat[originator].silent and isinstance( tech, spells.Spell ):

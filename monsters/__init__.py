@@ -18,6 +18,7 @@ import goblins
 import ignan
 import misc
 import people
+import plants
 import terran
 import undead
 
@@ -39,6 +40,7 @@ harvest( goblins )
 harvest( ignan )
 harvest( misc )
 harvest( people )
+harvest( plants )
 harvest( terran )
 harvest( undead )
 
