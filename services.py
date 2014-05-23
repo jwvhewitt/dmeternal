@@ -53,7 +53,7 @@ class Shop( object ):
         # there's at least one item of every ware_type, and then fill up the
         # store to full capacity.
         days = explo.camp.day - self.last_updated
-        for n in range( random.randint(0,4) + days ):
+        for n in range( random.randint(1,6) + days ):
             if self.wares:
                 it = random.choice( self.wares )
                 self.wares.remove( it )
