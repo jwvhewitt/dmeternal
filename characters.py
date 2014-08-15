@@ -625,7 +625,7 @@ class Character( stats.PhysicalThing ):
                 self.statline[ stat ] = sum( rolls )
 
     def advance( self, level_class ):
-        """Give this character one level in the provided class."""
+        """Give this character one level in the provided class, return improved stat."""
         # Try to find any previous training...
         level = None
         for l in self.levels:
@@ -636,8 +636,10 @@ class Character( stats.PhysicalThing ):
             self.levels.append( level )
 
         # If advancing same level, get stat bonus.
+        stat_to_advance = None
         if level is self.mr_level:
-            self.statline[ random.choice( stats.PRIMARY_STATS ) ] += 1
+            stat_to_advance = random.choice( stats.PRIMARY_STATS )
+            self.statline[ stat_to_advance ] += 1
         else:
             # If adding a new level, unequip items.
             self.mr_level = level
@@ -646,6 +648,7 @@ class Character( stats.PhysicalThing ):
                     self.contents.unequip( i )
 
         level.advance( pc = self )
+        return( stat_to_advance )
 
     def alter_hair( self ):
         try:

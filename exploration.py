@@ -659,8 +659,11 @@ class Explorer( object ):
         myredraw.menu = mymenu
         it = mymenu.query()
         if it:
-            student.advance( it )
-            self.alert( "{0} gains a rank in {1}.".format( student, it.name ) )
+            improved_stat = student.advance( it )
+            if improved_stat:
+                self.alert( "{0} gains a rank in {1} \n and +1 {2}.".format( student, it.name, improved_stat ) )
+            else:
+                self.alert( "{0} gains a rank in {1}.".format( student, it.name ) )
 
     def view_party( self, n, can_switch=True ):
         if n >= len( self.camp.party ):

@@ -89,10 +89,13 @@ class Shop( object ):
         mymenu = charsheet.RightMenu( explo.screen, predraw = myredraw )
 
         for s in self.wares:
+            sname = str( s )
+            if hasattr( s, "spell" ) and not any( s.spell.name == t.name for t in explo.camp.known_spells ):
+                sname = "(New) {0}".format( sname )
             if s.slot != items.NOSLOT and not self.pc.can_equip(s):
-                mymenu.add_item( "#" + str( s ), s )
+                mymenu.add_item( "#" + sname, s )
             else:
-                mymenu.add_item( str( s ), s )
+                mymenu.add_item( sname, s )
         mymenu.sort()
         mymenu.add_alpha_keys()
         mymenu.add_item( "Exit", False )
