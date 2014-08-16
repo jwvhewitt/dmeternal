@@ -183,11 +183,11 @@ def wrap_multi_line(text, font, maxwidth):
     return list(lines)
 
 
-def render_text(font, text, width, color = TEXT_COLOR, justify = -1 ):
+def render_text(font, text, width, color = TEXT_COLOR, justify = -1, antialias=True ):
     # Return an image with prettyprinted text.
     lines = wrap_multi_line( text , font , width )
 
-    imgs = [ font.render(l, True, color ) for l in lines]
+    imgs = [ font.render(l, antialias, color ) for l in lines]
     h = sum(i.get_height() for i in imgs)
     s = pygame.surface.Surface((width,h))
     s.fill((0,0,0))
@@ -204,9 +204,9 @@ def render_text(font, text, width, color = TEXT_COLOR, justify = -1 ):
     s.set_colorkey((0,0,0),pygame.RLEACCEL)
     return s
 
-def draw_text( screen , font , text , rect , color = TEXT_COLOR, justify=-1 ):
+def draw_text( screen , font , text , rect , color = TEXT_COLOR, justify=-1, antialias=True ):
     # Draw some text to the screen with the provided options.
-    myimage = render_text( font , text , rect.width , color , justify )
+    myimage = render_text( font , text , rect.width , color , justify, antialias )
     if justify == 0:
         myrect = myimage.get_rect( midtop = rect.midtop )
     elif justify > 0:

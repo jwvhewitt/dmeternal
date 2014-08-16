@@ -75,6 +75,18 @@ class Level( object ):
     def __str__( self ):
         return self.name
 
+    @classmethod
+    def stat_desc( self ):
+        """Return a text description of this level's stat modifiers."""
+        smod = list()
+        smod.append( "HP: 1d{0}".format( self.HP_DIE ) )
+        smod.append( "MP: 1d{0}".format( self.MP_DIE ) )
+
+        for k,v in self.statline.iteritems():
+            smod.append( str(k) + ":" + "{0:+}".format( v ) )
+        return ", ".join( smod )
+
+
 class Warrior( Level ):
     name = 'Warrior'
     desc = 'Highly trained fighters who can dish out- and take- a whole lot of physical damage.'
@@ -112,7 +124,7 @@ class Thief( Level ):
 
 class Bard( Level ):
     name = 'Bard'
-    desc = 'Jacks of all trades, bards know a bit of fighting, thievery, and magic.'
+    desc = 'Jacks of all trades, bards know a bit of fighting, thievery, and air magic.'
     requirements = { stats.REFLEXES: 13, stats.INTELLIGENCE: 11, stats.CHARISMA: 13 }
     statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 5, stats.MAGIC_ATTACK: 4, stats.MAGIC_DEFENSE: 3, \
         stats.DISARM_TRAPS: 4, stats.AWARENESS: 4 } )
@@ -179,7 +191,7 @@ class Druid( Level ):
 
 class Knight( Level ):
     name = 'Knight'
-    desc = 'Blessed warrior with limited healing magic.'
+    desc = 'Blessed warrior with limited solar magic.'
     requirements = { stats.STRENGTH: 11, stats.TOUGHNESS: 11, stats.PIETY: 17, stats.CHARISMA: 13 }
     statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 5, stats.MAGIC_ATTACK: 3, stats.MAGIC_DEFENSE: 5, \
         stats.RESIST_LUNAR: 3, stats.AWARENESS: 2 } )
@@ -314,6 +326,15 @@ class Human( object ):
 
     def __str__( self ):
         return self.name
+
+    @classmethod
+    def stat_desc( self ):
+        """Return a text description of this species's stat modifiers."""
+        smod = list()
+        for k,v in self.statline.iteritems():
+            smod.append( str(k) + ":" + "{0:+}".format( v ) )
+        return ", ".join( smod )
+
 
 class Dwarf( Human ):
     name = "Dwarf"

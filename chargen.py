@@ -28,6 +28,7 @@ import rpgmenu
 import util
 import cPickle
 import charsheet
+import inspect
 
 
 def give_starting_equipment( pc ):
@@ -60,11 +61,44 @@ def choose_gender( screen, redraw ):
     redraw.caption = "Select this character's gender."
     return rpm.query()
 
-def choose_species( screen, redraw ):
+class ChooseSpeciesRedrawer( object ):
+    def __init__( self , menu=None, predraw=None ):
+        self.menu = menu
+        self.predraw = predraw
+    def display_species_info( self, screen, it, myrect ):
+        y = myrect.y
+        myimg = pygwrap.render_text( pygwrap.BIGFONT, it.name, myrect.width, justify=0, color=(240,240,240) )
+        myrect = myimg.get_rect( topleft = ( myrect.x, y ) )
+        screen.blit( myimg , myrect )
+        y += myrect.height
+        msg = it.desc
+        if msg:
+            myimg = pygwrap.render_text(pygwrap.SMALLFONT, msg, myrect.width, justify = -1 )
+            myrect = myimg.get_rect( topleft = ( myrect.x, y ) )
+            screen.blit( myimg , myrect )
+            y += myrect.height + 6
+        msg = it.stat_desc()
+        if msg:
+            myimg = pygwrap.render_text(pygwrap.ITALICFONT, msg, myrect.width, justify = 0 )
+            myrect = myimg.get_rect( topleft = ( myrect.x, y ) )
+            screen.blit( myimg , myrect )
+    def __call__( self , screen ):
+        if self.predraw:
+            self.predraw( screen )
+        if self.menu:
+            # Display the item info in the upper display rect.
+            it = self.menu.items[ self.menu.selected_item ].value
+            if inspect.isclass( it ) and issubclass( it, characters.Human ):
+                self.display_species_info( screen, it, self.menu.descbox )
+
+
+def choose_species( screen, predraw ):
     """Return the species chosen by the player."""
+    redraw = ChooseSpeciesRedrawer( predraw=predraw )
     rpm = charsheet.RightMenu( screen , predraw = redraw )
+    redraw.menu = rpm
     for s in characters.PC_SPECIES:
-        rpm.add_item( s.name, s, s.desc )
+        rpm.add_item( s.name, s )
     rpm.sort()
     rpm.add_alpha_keys()
     redraw.caption = "Select this character's species."
@@ -78,10 +112,42 @@ def get_possible_levels( pc, source=characters.PC_CLASSES ):
             pl.append( l )
     return pl
 
-def choose_level( screen, redraw, pc ):
+class ChooseLevelRedrawer( object ):
+    def __init__( self , menu=None, predraw=None ):
+        self.menu = menu
+        self.predraw = predraw
+    def display_level_info( self, screen, it, myrect ):
+        y = myrect.y
+        myimg = pygwrap.render_text( pygwrap.BIGFONT, it.name, myrect.width, justify=0, color=(240,240,240) )
+        myrect = myimg.get_rect( topleft = ( myrect.x, y ) )
+        screen.blit( myimg , myrect )
+        y += myrect.height
+        msg = it.desc
+        if msg:
+            myimg = pygwrap.render_text(pygwrap.SMALLFONT, msg, myrect.width, justify = -1 )
+            myrect = myimg.get_rect( topleft = ( myrect.x, y ) )
+            screen.blit( myimg , myrect )
+            y += myrect.height + 6
+        msg = it.stat_desc()
+        if msg:
+            myimg = pygwrap.render_text(pygwrap.ITALICFONT, msg, myrect.width, justify = 0 )
+            myrect = myimg.get_rect( topleft = ( myrect.x, y ) )
+            screen.blit( myimg , myrect )
+    def __call__( self , screen ):
+        if self.predraw:
+            self.predraw( screen )
+        if self.menu:
+            # Display the item info in the upper display rect.
+            it = self.menu.items[ self.menu.selected_item ].value
+            if inspect.isclass( it ) and issubclass( it, characters.Level ):
+                self.display_level_info( screen, it, self.menu.descbox )
+
+
+def choose_level( screen, predraw, pc ):
     """Roll stats, return the level chosen by the player."""
     level = None
-    redraw.caption = "Roll your stats and choose a profession."
+    predraw.caption = "Roll your stats and choose a profession."
+    redraw = ChooseLevelRedrawer( predraw=predraw )
     while not level:
         possible_levels = []
         while not possible_levels:
@@ -89,8 +155,9 @@ def choose_level( screen, redraw, pc ):
             possible_levels = get_possible_levels( pc )
 
         rpm = charsheet.RightMenu( screen , predraw = redraw )
+        redraw.menu = rpm
         for l in possible_levels:
-            rpm.add_item( l.name, l, l.desc )
+            rpm.add_item( l.name, l )
         rpm.sort()
         rpm.add_alpha_keys()
         rpm.add_item( "Reroll Stats", -1 )

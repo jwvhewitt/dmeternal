@@ -32,21 +32,21 @@ class Enhancer( object ):
 
 class ProtectionStaff( Enhancer ):
     NAMEPAT = "{0} of Protection"
-    DESCPAT = "{0} It allows its user to cast Shield of Wind."
+    DESCPAT = "{0} It allows its user to cast Shield of Wind in combat."
     PLUSRANK = 1
     AFFECTS = (STAFF,WAND)
     TECH = (spells.airspells.AIR_ARMOR,)
 
 class BlessingStaff( Enhancer ):
     NAMEPAT = "{0} of Blessing"
-    DESCPAT = "{0} It allows its user to cast Blessing."
+    DESCPAT = "{0} It allows its user to cast Blessing in combat."
     PLUSRANK = 1
     AFFECTS = (STAFF,WAND)
     TECH = (spells.solarspells.BLESSING,)
 
 class CursingStaff( Enhancer ):
     NAMEPAT = "{0} of Cursing"
-    DESCPAT = "{0} It allows its user to cast Curse."
+    DESCPAT = "{0} It allows its user to cast Curse in combat."
     PLUSRANK = 1
     AFFECTS = (STAFF,WAND)
     TECH = (spells.lunarspells.CURSE,)

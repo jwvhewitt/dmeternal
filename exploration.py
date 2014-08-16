@@ -235,7 +235,8 @@ class MiniMap( object ):
             self.quill.render( screen, ( self.dest.x + pos[0] * 4 + 2, self.dest.y + pos[1] * 4 - 16 ) )
 
     def view( self ):
-        self.pic = image.Image( frame_width = self.explo.scene.width * 4, frame_height = self.explo.scene.height * 4 )
+        map_width = max( self.explo.scene.width * 4, 240 )
+        self.pic = image.Image( frame_width = map_width, frame_height = self.explo.scene.height * 4 + pygwrap.BIGFONT.get_height() )
         self.quill = image.Image( "sys_quill.png", 21, 18 )
         mmbits = image.Image( "sys_mapbits.png", 4, 4 )
         for x in range( self.explo.scene.width ):
@@ -247,6 +248,9 @@ class MiniMap( object ):
                     if self.explo.scene.map[x][y].blocks_walking():
                         t += 1
                     mmbits.render( self.pic.bitmap, (x*4,y*4), t )
+        pygwrap.draw_text( self.pic.bitmap, pygwrap.BIGFONT, str(self.explo.scene),
+          pygame.Rect(0,self.explo.scene.height*4+1, map_width, pygwrap.BIGFONT.get_height()),
+          color=(71,35,0), justify=0, antialias=False )
         self.dest = self.pic.bitmap.get_rect( center=(self.explo.screen.get_width()//2-100, self.explo.screen.get_height()//2 ) )
         self.menu = rpgmenu.Menu(self.explo.screen,self.explo.screen.get_width()//2+215, self.explo.screen.get_height()//2-200, 150, 400, predraw=self.draw )
 
