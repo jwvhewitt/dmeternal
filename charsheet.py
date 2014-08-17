@@ -102,7 +102,7 @@ class CharacterSheet( pygame.Rect ):
 
         y += pygwrap.SMALLFONT.get_linesize() * 2
         sg = self.pc.total_spell_gems()
-        self.just_print( screen, self.x, y, "Spell Gems:", "{0}/{1}".format( max(sg - self.pc.spell_gems_used(),0), sg ), width=135 )
+        self.just_print( screen, self.x, y, "Spell Slots:", "{0}/{1}".format( max(sg - self.pc.spell_gems_used(),0), sg ), width=135 )
         for sgcolor in COLORS:
             y += pygwrap.SMALLFONT.get_linesize()
             self.spell_gem_sprite.render( screen, ( self.x+2, y ), sgcolor+1 )
