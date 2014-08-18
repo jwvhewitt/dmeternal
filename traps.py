@@ -58,30 +58,36 @@ class AlarmTrap( SingleTrap ):
     MIN_RANK = 3
     DIFFICULTY = -10
     ONE_SHOT = False
+    already_triggered_once = False
     def trigger( self, explo, pos ):
         """Handle trap effect, return True if trap disabled."""
         # This trap is triggered. The party must make a DISARM_TRAPS roll or
         # suffer the consequences.
-        disarm = max( explo.camp.party_stat( stats.DISARM_TRAPS, stats.DISARM_TRAPS.default_bonus ) - self.DIFFICULTY, 5 )
-        if random.randint(1,100) <= disarm:
-            explo.alert( "There was a {0}, but you managed to disarm it.".format( self ) )
+        if already_triggered_once:
+            explo.alert( "This time you avoid the alarm." )
             return True
         else:
-            explo.alert( "You have set off an alarm!" )
-            aoe = self.get_area( explo, pos )
-            req = explo.scene.get_encounter_request()
-            req[context.MTY_HUMANOID] = context.MAYBE
-            req[context.MTY_FIGHTER] = context.MAYBE
-            team = teams.Team(default_reaction=-999, rank=self.MIN_RANK-1, strength=75, habitat=req)
-            mons = team.build_encounter( explo.scene )
-            for m in mons:
-                if aoe:
-                    p = random.choice( aoe )
-                    aoe.remove( p )
-                else:
-                    break
-                m.place( explo.scene, p )
-            return self.ONE_SHOT
+            disarm = max( explo.camp.party_stat( stats.DISARM_TRAPS, stats.DISARM_TRAPS.default_bonus ) - self.DIFFICULTY, 5 )
+            if random.randint(1,100) <= disarm:
+                explo.alert( "There was a {0}, but you managed to disarm it.".format( self ) )
+                return True
+            else:
+                explo.alert( "You have set off an alarm!" )
+                self.already_triggered_once = True
+                aoe = self.get_area( explo, pos )
+                req = explo.scene.get_encounter_request()
+                req[context.MTY_HUMANOID] = context.MAYBE
+                req[context.MTY_FIGHTER] = context.MAYBE
+                team = teams.Team(default_reaction=-999, rank=self.MIN_RANK-1, strength=75, habitat=req)
+                mons = team.build_encounter( explo.scene )
+                for m in mons:
+                    if aoe:
+                        p = random.choice( aoe )
+                        aoe.remove( p )
+                    else:
+                        break
+                    m.place( explo.scene, p )
+                return self.ONE_SHOT
     def get_area( self, explo, pos ):
         aoe = list()
         for x in range( pos[0]-2, pos[0]+3 ):

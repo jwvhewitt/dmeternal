@@ -904,7 +904,9 @@ class Explorer( object ):
             # Get input and process it.
             gdi = pygwrap.wait_event()
 
-            if gdi.type == pygwrap.TIMEREVENT:
+            if not self.keep_exploring():
+                pass
+            elif gdi.type == pygwrap.TIMEREVENT:
                 self.view( self.screen, first_pc_pos=first_pc_pos )
                 if caption and caption_timer > 0:
                     pygwrap.default_border.render( self.screen, caption_rect )

@@ -109,7 +109,7 @@ class Combat( object ):
 
     def still_fighting( self ):
         """Keep playing as long as there are enemies, players, and no quit."""
-        return self.num_enemies() and self.camp.first_living_pc() and self.no_quit and not pygwrap.GOT_QUIT
+        return self.num_enemies() and self.camp.first_living_pc() and self.no_quit and not pygwrap.GOT_QUIT and not self.camp.destination
 
 
     def get_threatened_area( self, chara ):
@@ -131,7 +131,7 @@ class Combat( object ):
                 if not target.is_alright():
                     break
 
-    def step( self, explo, chara, hmap ):
+    def step( self, explo, chara, hmap, do_bump=False ):
         """Move chara according to hmap, return True if movement ended."""
         # See if the movement starts in a threatened area- may be attacked if it ends
         # in a threatened area as well.
@@ -146,6 +146,9 @@ class Combat( object ):
             target = self.scene.get_character_at_spot( (x2,y2) )
 
             if explo.scene.map[x2][y2].blocks_walking():
+                if do_bump:
+                    explo.bump_tile( (x2,y2) )
+                    self.end_turn( chara )
                 return True
             elif not target:
                 # Move the character.
@@ -172,11 +175,12 @@ class Combat( object ):
         if not redraw:
             redraw = explo.view
         explo.view.overlays.clear()
-        if self.scene.on_the_map( *pos ) and not self.scene.map[pos[0]][pos[1]].blocks_walking():
+#        if self.scene.on_the_map( *pos ) and not self.scene.map[pos[0]][pos[1]].blocks_walking():
+        if self.scene.on_the_map( *pos ):
             hmap = hotmaps.PointMap( self.scene, pos, avoid_models=True )
 
             while self.ap_spent[ chara ] < chara.get_move():
-                result = self.step( explo, chara, hmap )
+                result = self.step( explo, chara, hmap, do_bump=True )
                 self.scene.update_party_position( explo.camp.party )
                 if result:
                     break
@@ -484,6 +488,11 @@ class Combat( object ):
 
         n = 0
         while self.still_fighting():
+            if n >= len( self.active ):
+                # It's the end of the round.
+                n = 0
+                self.ap_spent.clear()
+                explo.update_monsters()
             if self.active[n].is_alright():
                 chara = self.active[n]
                 self.do_combat_action( explo, chara )
@@ -491,13 +500,8 @@ class Combat( object ):
                 explo.invoke_enchantments( chara )
                 self.cstat[chara].aoo_readied = True
             n += 1
-            if n >= len( self.active ):
-                # It's the end of the round.
-                n = 0
-                self.ap_spent.clear()
-                explo.update_monsters()
 
-        if self.num_enemies() == 0 and self.camp.num_pcs() > 0:
+        if self.camp.num_pcs() > 0 and self.no_quit and not pygwrap.GOT_QUIT:
             # Combat has ended because we ran out of enemies. Dole experience.
             self.give_xp_and_treasure( explo )
             explo.check_trigger( "COMBATOVER" )
