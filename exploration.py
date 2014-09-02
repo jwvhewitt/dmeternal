@@ -216,9 +216,11 @@ class WorldExplorer( object ):
                 mmbits.render( self.pic.bitmap, (t.world_map_pos.coords[0]*32,t.world_map_pos.coords[1]*32), t.world_map_pos.icon )
 
         self.menu.sort()
+        self.menu.set_item_by_value( self.explo.scene )
         dest = self.menu.query()
-        if dest:
-            pass
+        if dest and dest is not self.explo.scene:
+            self.explo.camp.destination = dest
+            self.explo.camp.entrance = dest.world_map_pos.entrance
 
 
 class MiniMap( object ):

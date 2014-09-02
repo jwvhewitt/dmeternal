@@ -10,17 +10,64 @@ import services
 import teams
 import characters
 import random
+import worlds
 
 ### CityStories are added to cities to provide extra things to do other than the 
 ### main dungeon. They will generally result in a big reward/resource for the
 ### player.
 
 
+class TheCrypt( Plot ):
+    """There's a haunted crypt outside of town."""
+    LABEL = "CITY_STORY"
+    UNIQUE = True
+    active = True
+    scope = True
+    NAME_PATTERNS = ( "{0}'s Black Market", "{0}'s Contraband" )
+    @classmethod
+    def matches( self, pstate ):
+        """Requires the LOCALE to exist."""
+        return pstate.elements.get("LOCALE")
+    def seek_room( self, thing ):
+        # We need a room that is marked as CIVILIZED and PUBLIC.
+        return isinstance( thing, mapgen.Room ) and context.CIVILIZED in thing.tags and context.ROOM_PUBLIC in thing.tags
+    def custom_init( self, nart ):
+        """Create the crypt and add a person saying where."""
+        myscene = maps.Scene( 129, 129, sprites={maps.SPRITE_GROUND: "terrain_ground_forest.png", maps.SPRITE_WALL: "terrain_wall_darkbrick.png"},
+            biome=context.HAB_FOREST, setting=self.setting,
+            desctags=(context.MAP_WILDERNESS,context.DES_CIVILIZED,) )
+        myscene.name = "Crypt Thing"
+        mymapgen = mapgen.RandomScene( myscene )
+        self.register_scene( nart, myscene, mymapgen, ident="WILDERNESS" )
+
+        myroom = mapgen.FuzzyRoom( tags=(context.ENTRANCE,), parent=myscene, anchor=mapgen.northwest )
+        myent = waypoints.Well()
+        myroom.contents.append( myent )
+
+        wme = self.chapter.world.add_entrance( myscene, myscene.name, worlds.W_DUNGEON, myent, False )
+        self.wme = wme
+
+        room = self.seek_element( nart, "_ROOM", self.seek_room )
+        npc = monsters.generate_npc( job=characters.Necromancer )
+        self.register_element( "_NPC", npc, dident="_ROOM" )
+
+        print npc, room
+
+        return True
+    def open_crypt( self, explo ):
+        self.wme.visible = True
+    def _NPC_offers( self, explo ):
+        # Return list of necromancer offers.
+        ol = list()
+        if not self.wme.visible:
+            ol.append( dialogue.Offer( "There's a haunted crypt near here. The place is dangerous, but I hear it's full of treasure.",
+             context = context.ContextTag([context.INFO,context.HINT]), effect=self.open_crypt ) )
+        return ol
 
 
 class TheBlackMarket( Plot ):
     """There's a black market in town, but it's hidden."""
-    LABEL = "CITY_STORY"
+    LABEL = "CITY_STORYz"
     UNIQUE = True
     active = True
     scope = True

@@ -411,7 +411,7 @@ class Room( object ):
                     closed_area.append( myrect )
         # Assign areas for unplaced rooms.
         for r in self.contents:
-            if hasattr( r, "area" ):
+            if hasattr( r, "area" ) and not r.area:
                 myrect = pygame.Rect( 0, 0, r.width, r.height )
                 count = 0
                 while ( count < 1000 ) and not r.area:
@@ -936,7 +936,7 @@ class SubtleMonkeyTunnelScene( RandomScene ):
                     closed_area.append( myrect )
         # Assign areas for unplaced rooms.
         for r in self.contents:
-            if hasattr( r, "area" ):
+            if hasattr( r, "area" ) and not r.area:
                 myrect = pygame.Rect( 0, 0, r.width, r.height )
                 count = 0
                 while ( count < 1000 ) and not r.area:

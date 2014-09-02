@@ -63,13 +63,13 @@ class AlarmTrap( SingleTrap ):
         """Handle trap effect, return True if trap disabled."""
         # This trap is triggered. The party must make a DISARM_TRAPS roll or
         # suffer the consequences.
-        if already_triggered_once:
+        if self.already_triggered_once:
             explo.alert( "This time you avoid the alarm." )
             return True
         else:
             disarm = max( explo.camp.party_stat( stats.DISARM_TRAPS, stats.DISARM_TRAPS.default_bonus ) - self.DIFFICULTY, 5 )
             if random.randint(1,100) <= disarm:
-                explo.alert( "There was a {0}, but you managed to disarm it.".format( self ) )
+                explo.alert( "There was an {0}, but you managed to disarm it.".format( self ) )
                 return True
             else:
                 explo.alert( "You have set off an alarm!" )
