@@ -2,7 +2,7 @@ from plots import Plot,PlotError,PlotState
 import context
 import items
 import maps
-import mapgen
+import randmaps
 import waypoints
 import monsters
 import dialogue
@@ -65,7 +65,7 @@ class GS_HintFromSomebodyCivilized( Plot ):
         return pstate.elements.get("TARGET") and pstate.elements.get("LOCALE")
     def seek_room( self, thing ):
         # We need a room that is marked as CIVILIZED and PUBLIC.
-        return isinstance( thing, mapgen.Room ) and context.CIVILIZED in thing.tags and context.ROOM_PUBLIC in thing.tags
+        return isinstance( thing, randmaps.Room ) and context.CIVILIZED in thing.tags and context.ROOM_PUBLIC in thing.tags
     def seek_npc( self, thing ):
         # We need a NPC.
         return isinstance( thing, characters.Character ) and context.CHAR_NPC in thing.tags
@@ -105,7 +105,7 @@ class GT_HauntedHouse( Plot ):
         return ( pstate.elements.get("TARGET") and pstate.elements.get("LOCALE")
             and context.MAP_WILDERNESS in pstate.elements["LOCALE"].desctags )
     def custom_init( self, nart ):
-        exterior = mapgen.BuildingRoom( tags=(context.CIVILIZED,) )
+        exterior = randmaps.BuildingRoom( tags=(context.CIVILIZED,) )
         exterior.special_c[ "window" ] = maps.DARK_WINDOW
         self.register_element( "_EXTERIOR", exterior, dident="LOCALE" )
         locale = self.elements.get( "LOCALE" )
@@ -113,7 +113,7 @@ class GT_HauntedHouse( Plot ):
             maps.SPRITE_FLOOR: "terrain_floor_dungeon.png", maps.SPRITE_CHEST: "terrain_chest_metal.png",
             maps.SPRITE_INTERIOR: "terrain_int_temple.png" },
             biome=context.HAB_BUILDING, setting=self.setting, desctags=(context.MAP_DUNGEON,context.GEN_UNDEAD,context.DES_LUNAR,context.MTY_UNDEAD) )
-        igen = mapgen.SubtleMonkeyTunnelScene( interior )
+        igen = randmaps.SubtleMonkeyTunnelScene( interior )
         interior.name = "{0} Manor".format( namegen.ELDRITCH.gen_word() )
         gate_1 = waypoints.OpenGateDoor()
         gate_2 = waypoints.GateDoor()
@@ -124,13 +124,13 @@ class GT_HauntedHouse( Plot ):
         gate_2.otherside = gate_1
         self.register_scene( nart, interior, igen, ident="BUILDING_INT", dident="LOCALE" )
         exterior.special_c[ "door" ] = gate_1
-        int_mainroom = mapgen.SharpRoom( tags=(context.ENTRANCE,), anchor=mapgen.south, parent=interior )
+        int_mainroom = randmaps.SharpRoom( tags=(context.ENTRANCE,), anchor=randmaps.anchors.south, parent=interior )
         int_mainroom.contents.append( gate_2 )
         int_mainroom.contents.append( maps.SKULL_ALTAR )
-        gate_2.anchor = mapgen.south
+        gate_2.anchor = randmaps.anchors.south
 
         # Add the goal room, move the target there.
-        int_goalroom = mapgen.SharpRoom( tags=(context.GOAL,), parent=interior )
+        int_goalroom = randmaps.SharpRoom( tags=(context.GOAL,), parent=interior )
         target = self.elements[ "TARGET" ]
         if isinstance( target, items.Item ):
             dest = waypoints.SmallChest()

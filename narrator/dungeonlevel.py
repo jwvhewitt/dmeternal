@@ -2,7 +2,7 @@ from plots import Plot,PlotError,PlotState
 import context
 import items
 import maps
-import mapgen
+import randmaps
 import waypoints
 import monsters
 import dialogue
@@ -26,8 +26,8 @@ class BasicCave( Plot ):
             sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_under.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
             biome=context.HAB_CAVE, setting=self.setting,
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN) )
-        mymapgen = mapgen.CaveScene( myscene )
-#        mymapgen = mapgen.WalledForestScene( myscene )
+        mymapgen = randmaps.CaveScene( myscene )
+#        mymapgen = randmaps.WalledForestScene( myscene )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
 
         for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
@@ -43,7 +43,7 @@ class SewerLevel( BasicCave ):
             sprites={maps.SPRITE_WALL: "terrain_wall_darkstone.png", maps.SPRITE_GROUND: "terrain_ground_under.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
             biome=context.HAB_TUNNELS, setting=self.setting,
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_WATER) )
-        mymapgen = mapgen.OpenTunnelScene( myscene )
+        mymapgen = randmaps.OpenTunnelScene( myscene )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
 
         for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):

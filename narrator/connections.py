@@ -2,7 +2,7 @@ from plots import Plot,PlotError,PlotState
 import context
 import items
 import maps
-import mapgen
+import randmaps
 import waypoints
 import monsters
 import dialogue
@@ -31,8 +31,8 @@ class AbandonedMineEntrance( Plot ):
         next = self.elements[ "NEXT" ]
         self.move_element( next, prev )
 
-        myzone1 = self.register_element( "_P_ROOM", mapgen.MountainRoom(tags=(context.GOAL,context.CIVILIZED,)), "PREV" )
-        myzone2 = self.register_element( "_N_ROOM", mapgen.SharpRoom(tags=(context.ENTRANCE,)), "NEXT" )
+        myzone1 = self.register_element( "_P_ROOM", randmaps.MountainRoom(tags=(context.GOAL,context.CIVILIZED,)), "PREV" )
+        myzone2 = self.register_element( "_N_ROOM", randmaps.SharpRoom(tags=(context.ENTRANCE,)), "NEXT" )
 
         stairs_1 = waypoints.MineEntrance()
         stairs_2 = waypoints.GateDoor()
@@ -66,17 +66,17 @@ class DefaultDungeonEntrance( Plot ):
         next = self.elements[ "NEXT" ]
         self.move_element( next, prev )
 
-        myzone1 = self.register_element( "_P_ROOM", mapgen.MountainRoom(tags=(context.GOAL,)), "PREV" )
+        myzone1 = self.register_element( "_P_ROOM", randmaps.MountainRoom(tags=(context.GOAL,)), "PREV" )
         myzone2 = self.register_element( "_N_ROOM", nart.get_map_generator( next ).DEFAULT_ROOM(tags=(context.ENTRANCE,)), "NEXT" )
 
         stairs_1 = waypoints.DungeonEntrance()
         if context.MAP_GOUP in next.desctags:
-            if isinstance( myzone2, mapgen.SharpRoom ):
+            if isinstance( myzone2, randmaps.SharpRoom ):
                 stairs_2 = waypoints.StairsDown()
             else:
                 stairs_2 = waypoints.SpiralStairsDown()
         else:
-            if isinstance( myzone2, mapgen.SharpRoom ):
+            if isinstance( myzone2, randmaps.SharpRoom ):
                 stairs_2 = waypoints.StairsUp()
             else:
                 stairs_2 = waypoints.SpiralStairsUp()
@@ -117,12 +117,12 @@ class DefaultGoUp( Plot ):
         # Depending on whether we're going to a sharp room (with a guaranteed
         # border wall) or another room type, either go with the wall-mounted
         # default stairs or the free-standing spiral stairs.
-        if isinstance( myzone1, mapgen.SharpRoom ):
+        if isinstance( myzone1, randmaps.SharpRoom ):
             stairs_1 = waypoints.StairsUp()
         else:
             stairs_1 = waypoints.SpiralStairsUp()
 
-        if isinstance( myzone2, mapgen.SharpRoom ):
+        if isinstance( myzone2, randmaps.SharpRoom ):
             stairs_2 = waypoints.StairsDown()
         else:
             stairs_2 = waypoints.SpiralStairsDown()
@@ -159,12 +159,12 @@ class DefaultGoDown( Plot ):
         # Depending on whether we're going to a sharp room (with a guaranteed
         # border wall) or another room type, either go with the wall-mounted
         # default stairs or the free-standing spiral stairs.
-        if isinstance( myzone1, mapgen.SharpRoom ):
+        if isinstance( myzone1, randmaps.SharpRoom ):
             stairs_1 = waypoints.StairsDown()
         else:
             stairs_1 = waypoints.SpiralStairsDown()
 
-        if isinstance( myzone2, mapgen.SharpRoom ):
+        if isinstance( myzone2, randmaps.SharpRoom ):
             stairs_2 = waypoints.StairsUp()
         else:
             stairs_2 = waypoints.SpiralStairsUp()
@@ -200,7 +200,7 @@ class SecretTreeStumpEntrance( Plot ):
          and context.HAB_FOREST is pstate.elements["PREV"].biome )
     def seek_entrance_room( self, thing ):
         # We need a room that is marked as an entrance.
-        return isinstance( thing, mapgen.Room ) and context.ENTRANCE in thing.tags
+        return isinstance( thing, randmaps.Room ) and context.ENTRANCE in thing.tags
     def custom_init( self, nart ):
         prev = self.elements[ "PREV" ]
         next = self.elements[ "NEXT" ]
@@ -208,7 +208,7 @@ class SecretTreeStumpEntrance( Plot ):
         myzone1 = self.register_element( "_P_ROOM", nart.get_map_generator( prev ).DEFAULT_ROOM(tags=(context.GOAL,)), "PREV" )
         myzone2 = self.seek_element( nart, "_N_ROOM", self.seek_entrance_room, scope=next, check_subscenes=False, must_find=False )
         if not myzone2:
-            myzone2 = self.register_element( "_N_ROOM", mapgen.SharpRoom(tags=(context.ENTRANCE,)), "NEXT" )
+            myzone2 = self.register_element( "_N_ROOM", randmaps.SharpRoom(tags=(context.ENTRANCE,)), "NEXT" )
         stairs_1 = waypoints.TreeStump()
         stairs_1.mini_map_label = "Tree Stump"
         stairs_1.plot_locked = True
@@ -261,7 +261,7 @@ class ThroughTheWell( Plot ):
         return isinstance( thing, waypoints.Well ) and not thing.plot_locked
     def seek_entrance_room( self, thing ):
         # We need a room that is marked as an entrance.
-        return isinstance( thing, mapgen.Room ) and context.ENTRANCE in thing.tags
+        return isinstance( thing, randmaps.Room ) and context.ENTRANCE in thing.tags
     def custom_init( self, nart ):
         prev = self.elements[ "PREV" ]
         next = self.elements[ "NEXT" ]
@@ -269,7 +269,7 @@ class ThroughTheWell( Plot ):
         well.plot_locked = True
         myzone2 = self.seek_element( nart, "_N_ROOM", self.seek_entrance_room, scope=next, check_subscenes=False, must_find=False )
         if not myzone2:
-            myzone2 = self.register_element( "_N_ROOM", mapgen.SharpRoom(tags=(context.ENTRANCE,)), "NEXT" )
+            myzone2 = self.register_element( "_N_ROOM", randmaps.SharpRoom(tags=(context.ENTRANCE,)), "NEXT" )
         stairs_2 = waypoints.GateDoor()
         self.register_element( "_EXIT", stairs_2, "_N_ROOM" )
         self._the_well_has_been_used = False
@@ -301,8 +301,8 @@ class ThroughTheWell( Plot ):
             # Connect to well and black market.
             stairs_3 = waypoints.StairsUp()
             stairs_4 = waypoints.StairsDown()
-            myzone_3 = mapgen.SharpRoom(tags=(context.ENTRANCE,),parent=self.levels[0])
-            myzone_4 = mapgen.SharpRoom(tags=(context.GOAL,),parent=self.levels[-1])
+            myzone_3 = randmaps.SharpRoom(tags=(context.ENTRANCE,),parent=self.levels[0])
+            myzone_4 = randmaps.SharpRoom(tags=(context.GOAL,),parent=self.levels[-1])
             myzone_3.contents.append( stairs_3 )
             myzone_4.contents.append( stairs_4 )
 

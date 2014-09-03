@@ -2,7 +2,7 @@ from plots import Plot,PlotError,PlotState
 import context
 import items
 import maps
-import mapgen
+import randmaps
 import waypoints
 import monsters
 import dialogue
@@ -35,14 +35,14 @@ class StraightBalrog( Plot ):
         interior = maps.Scene( 65,65, sprites={maps.SPRITE_WALL: "terrain_wall_darkbrick.png", 
             maps.SPRITE_FLOOR: "terrain_floor_dungeon.png", },
             biome=context.HAB_BUILDING, setting=self.setting, desctags=(context.MAP_DUNGEON,context.MTY_HUMANOID) )
-        igen = mapgen.SubtleMonkeyTunnelScene( interior )
+        igen = randmaps.SubtleMonkeyTunnelScene( interior )
         interior.name = "{0}'s Base".format( boss )
 
         self.register_scene( nart, interior, igen, ident="_LAIR" )
         self.add_sub_plot( nart, "CONNECT", PlotState( elements={"PREV":self.elements["FINAL_DUNGEON"],"NEXT":interior} ).based_on( self ) )
 
         team = teams.Team(default_reaction=-999, rank=self.rank, strength=50, habitat=interior.get_encounter_request(), respawn=False )
-        int_goalroom = mapgen.SharpRoom( tags=(context.GOAL,), parent=interior )
+        int_goalroom = randmaps.SharpRoom( tags=(context.GOAL,), parent=interior )
         int_goalroom.contents.append( team )
         boss.team = team
         self.register_element( "_LAIR_ROOM", int_goalroom )

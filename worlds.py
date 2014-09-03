@@ -1,7 +1,6 @@
 import context
 import container
 import random
-import mapgen
 
 W_VILLAGE = 0
 W_CITY = 1

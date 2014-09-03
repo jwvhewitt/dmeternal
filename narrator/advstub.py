@@ -3,7 +3,6 @@ from plots import Plot,PlotError,Chapter,PlotState
 import context
 import items
 import maps
-import mapgen
 import waypoints
 import monsters
 import dialogue

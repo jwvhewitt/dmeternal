@@ -2,7 +2,7 @@ from plots import Plot,PlotError,PlotState
 import context
 import items
 import maps
-import mapgen
+import randmaps
 import waypoints
 import monsters
 import dialogue
@@ -30,17 +30,17 @@ class TheCrypt( Plot ):
         return pstate.elements.get("LOCALE")
     def seek_room( self, thing ):
         # We need a room that is marked as CIVILIZED and PUBLIC.
-        return isinstance( thing, mapgen.Room ) and context.CIVILIZED in thing.tags and context.ROOM_PUBLIC in thing.tags
+        return isinstance( thing, randmaps.Room ) and context.CIVILIZED in thing.tags and context.ROOM_PUBLIC in thing.tags
     def custom_init( self, nart ):
         """Create the crypt and add a person saying where."""
         myscene = maps.Scene( 129, 129, sprites={maps.SPRITE_GROUND: "terrain_ground_forest.png", maps.SPRITE_WALL: "terrain_wall_darkbrick.png"},
             biome=context.HAB_FOREST, setting=self.setting,
             desctags=(context.MAP_WILDERNESS,context.DES_CIVILIZED,) )
         myscene.name = "Crypt Thing"
-        mymapgen = mapgen.RandomScene( myscene )
+        mymapgen = randmaps.RandomScene( myscene )
         self.register_scene( nart, myscene, mymapgen, ident="WILDERNESS" )
 
-        myroom = mapgen.FuzzyRoom( tags=(context.ENTRANCE,), parent=myscene, anchor=mapgen.northwest )
+        myroom = randmaps.FuzzyRoom( tags=(context.ENTRANCE,), parent=myscene, anchor=randmaps.anchors.northwest )
         myent = waypoints.Well()
         myroom.contents.append( myent )
 
@@ -50,8 +50,6 @@ class TheCrypt( Plot ):
         room = self.seek_element( nart, "_ROOM", self.seek_room )
         npc = monsters.generate_npc( job=characters.Necromancer )
         self.register_element( "_NPC", npc, dident="_ROOM" )
-
-        print npc, room
 
         return True
     def open_crypt( self, explo ):
@@ -81,12 +79,12 @@ class TheBlackMarket( Plot ):
         locale = self.elements["LOCALE"]
         interior = maps.Scene( 50,50, sprites={maps.SPRITE_WALL: "terrain_wall_darkbrick.png", maps.SPRITE_FLOOR: "terrain_floor_wood.png" },
             biome=context.HAB_BUILDING, setting=self.setting, desctags=(context.DES_CIVILIZED,) )
-        igen = mapgen.BuildingScene( interior )
+        igen = randmaps.BuildingScene( interior )
         self.register_scene( nart, interior, igen, ident="BUILDING_INT", dident="LOCALE" )
-        int_mainroom = mapgen.SharpRoom( tags=(context.CIVILIZED,context.ENTRANCE), anchor=mapgen.northwest, parent=interior )
+        int_mainroom = randmaps.SharpRoom( tags=(context.CIVILIZED,context.ENTRANCE), anchor=randmaps.anchors.northwest, parent=interior )
         int_mainroom.contents.append( maps.PILED_GOODS )
         int_mainroom.contents.append( maps.PILED_GOODS )
-        int_mainroom.decorate = mapgen.GeneralStoreDec()
+        int_mainroom.decorate = randmaps.decor.GeneralStoreDec()
         npc = monsters.generate_npc( job=monsters.base.Merchant )
         npc.tags.append( context.CHAR_SHOPKEEPER )
         interior.name = random.choice( self.NAME_PATTERNS ).format( npc )

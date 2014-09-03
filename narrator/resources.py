@@ -2,7 +2,7 @@ from plots import Plot,PlotError,PlotState
 import context
 import items
 import maps
-import mapgen
+import randmaps
 import waypoints
 import monsters
 import dialogue
@@ -24,7 +24,7 @@ class RJT_Default( Plot ):
     LABEL = "RESOURCE_JOBTRAINER"
     def seek_room( self, thing ):
         # We need a room that is marked as CIVILIZED and PUBLIC.
-        return isinstance( thing, mapgen.Room ) and context.CIVILIZED in thing.tags and context.ROOM_PUBLIC in thing.tags
+        return isinstance( thing, randmaps.Room ) and context.CIVILIZED in thing.tags and context.ROOM_PUBLIC in thing.tags
     def seek_npc( self, thing ):
         # We need a NPC.
         return isinstance( thing, characters.Character ) and context.CHAR_NPC in thing.tags and isinstance( thing.mr_level, self.elements[ "JOB" ] )
@@ -47,14 +47,14 @@ class RJT_DungeonShop( Plot ):
         return isinstance( thing, maps.Scene ) and context.MAP_DUNGEON in thing.desctags
     def custom_init( self, nart ):
         locale = self.seek_element( nart, "_LOCALE", self.seek_scene )
-        exterior = mapgen.BuildingRoom( tags=(context.CIVILIZED,) )
+        exterior = randmaps.BuildingRoom( tags=(context.CIVILIZED,) )
         exterior.special_c[ "window" ] = maps.CASTLE_WINDOW
         exterior.special_c[ "sign1" ] = maps.SWORD_SIGN
         exterior.special_c[ "sign2" ] = maps.SHIELD_SIGN
         self.register_element( "_EXTERIOR", exterior, dident="_LOCALE" )
         interior = maps.Scene( 50,50, sprites={maps.SPRITE_WALL: "terrain_wall_darkbrick.png", maps.SPRITE_FLOOR: "terrain_floor_stone.png" },
             biome=context.HAB_BUILDING, setting=self.setting, desctags=(context.DES_CIVILIZED,) )
-        igen = mapgen.BuildingScene( interior )
+        igen = randmaps.BuildingScene( interior )
         gate_1 = waypoints.GateDoor()
         gate_2 = waypoints.GateDoor()
         gate_1.destination = interior
@@ -63,12 +63,12 @@ class RJT_DungeonShop( Plot ):
         gate_2.otherside = gate_1
         self.register_scene( nart, interior, igen, ident="BUILDING_INT", dident="_LOCALE" )
         exterior.special_c[ "door" ] = gate_1
-        int_mainroom = mapgen.SharpRoom( tags=(context.CIVILIZED,context.ROOM_PUBLIC), anchor=mapgen.south, parent=interior )
+        int_mainroom = randmaps.SharpRoom( tags=(context.CIVILIZED,context.ROOM_PUBLIC), anchor=randmaps.anchors.south, parent=interior )
         int_mainroom.contents.append( gate_2 )
         int_mainroom.contents.append( maps.PILED_GOODS )
         int_mainroom.contents.append( maps.PILED_GOODS )
-        gate_2.anchor = mapgen.south
-        int_mainroom.decorate = mapgen.GeneralStoreDec(win=maps.CASTLE_WINDOW)
+        gate_2.anchor = randmaps.anchors.south
+        int_mainroom.decorate = randmaps.decor.GeneralStoreDec(win=maps.CASTLE_WINDOW)
         npc = monsters.generate_npc( job=self.elements["JOB"] )
         npc.tags.append( context.CHAR_SHOPKEEPER )
         interior.name = random.choice( self.NAME_PATTERNS ).format( npc )
@@ -108,13 +108,13 @@ class RLI_VillagePerson( Plot ):
 
     def custom_init( self, nart ):
         w = random.randint(7,10)
-        exterior = mapgen.BuildingRoom(w,17-w,tags=(context.CIVILIZED,) )
+        exterior = randmaps.BuildingRoom(w,17-w,tags=(context.CIVILIZED,) )
         exterior.special_c[ "window" ] = maps.SMALL_WINDOW
         self.register_element( "_EXTERIOR", exterior, dident="LOCALE" )
 
         interior = maps.Scene( 50,50, sprites={maps.SPRITE_FLOOR: "terrain_floor_wood.png" },
             biome=context.HAB_BUILDING, setting=self.setting, desctags=(context.DES_CIVILIZED,) )
-        igen = mapgen.BuildingScene( interior )
+        igen = randmaps.BuildingScene( interior )
 
         gate_1 = waypoints.GateDoor()
         gate_2 = waypoints.GateDoor()
@@ -126,10 +126,10 @@ class RLI_VillagePerson( Plot ):
         self.register_scene( nart, interior, igen, ident="_INTERIOR", dident="LOCALE" )
         exterior.special_c[ "door" ] = gate_1
 
-        int_mainroom = mapgen.SharpRoom( tags=(context.CIVILIZED,), anchor=mapgen.south, parent=interior )
+        int_mainroom = randmaps.SharpRoom( tags=(context.CIVILIZED,), anchor=randmaps.anchors.south, parent=interior )
         int_mainroom.contents.append( gate_2 )
-        gate_2.anchor = mapgen.south
-        int_mainroom.decorate = mapgen.BedroomDec()
+        gate_2.anchor = randmaps.anchors.south
+        int_mainroom.decorate = randmaps.decor.BedroomDec()
 
         npc = monsters.generate_npc()
         interior.name = "{0}'s Home".format( npc )

@@ -2,7 +2,7 @@ from plots import Plot,PlotError,PlotState
 import context
 import items
 import maps
-import mapgen
+import randmaps
 import waypoints
 import monsters
 import dialogue
@@ -28,7 +28,7 @@ class DateMyCousinPlease( Plot ):
         """Requires the SHOPKEEPER, SHOPKEEPER.species, and BUILDING_INT to exist."""
         return pstate.elements.get("SHOPKEEPER") and pstate.elements.get("SHOPKEEPER").species and pstate.elements.get("BUILDING_INT")
     def room_seeker( self, thing ):
-        return isinstance( thing, mapgen.Room ) and context.ROOM_PUBLIC in thing.tags
+        return isinstance( thing, randmaps.Room ) and context.ROOM_PUBLIC in thing.tags
     def custom_init( self, nart ):
         """Create the cousin, add puzzle subplot."""
         npc = self.elements["SHOPKEEPER"]
@@ -114,7 +114,7 @@ class TooMuchWork( Plot ):
         """Requires the SHOPKEEPER, SHOPKEEPER.species, and BUILDING_INT to exist."""
         return pstate.elements.get("SHOPKEEPER") and pstate.elements.get("SHOPKEEPER").species and pstate.elements.get("BUILDING_INT")
     def room_seeker( self, thing ):
-        return isinstance( thing, mapgen.Room ) and context.ROOM_PUBLIC in thing.tags
+        return isinstance( thing, randmaps.Room ) and context.ROOM_PUBLIC in thing.tags
     def custom_init( self, nart ):
         sk = self.elements["SHOPKEEPER"]
         the_room = self.seek_element( nart, "_THE_ROOM", self.room_seeker, scope=self.elements.get("BUILDING_INT") )
