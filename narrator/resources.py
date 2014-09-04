@@ -47,7 +47,7 @@ class RJT_DungeonShop( Plot ):
         return isinstance( thing, maps.Scene ) and context.MAP_DUNGEON in thing.desctags
     def custom_init( self, nart ):
         locale = self.seek_element( nart, "_LOCALE", self.seek_scene )
-        exterior = randmaps.BuildingRoom( tags=(context.CIVILIZED,) )
+        exterior = randmaps.rooms.BuildingRoom( tags=(context.CIVILIZED,) )
         exterior.special_c[ "window" ] = maps.CASTLE_WINDOW
         exterior.special_c[ "sign1" ] = maps.SWORD_SIGN
         exterior.special_c[ "sign2" ] = maps.SHIELD_SIGN
@@ -63,12 +63,12 @@ class RJT_DungeonShop( Plot ):
         gate_2.otherside = gate_1
         self.register_scene( nart, interior, igen, ident="BUILDING_INT", dident="_LOCALE" )
         exterior.special_c[ "door" ] = gate_1
-        int_mainroom = randmaps.SharpRoom( tags=(context.CIVILIZED,context.ROOM_PUBLIC), anchor=randmaps.anchors.south, parent=interior )
+        int_mainroom = randmaps.rooms.SharpRoom( tags=(context.CIVILIZED,context.ROOM_PUBLIC), anchor=randmaps.anchors.south, parent=interior )
         int_mainroom.contents.append( gate_2 )
         int_mainroom.contents.append( maps.PILED_GOODS )
         int_mainroom.contents.append( maps.PILED_GOODS )
         gate_2.anchor = randmaps.anchors.south
-        int_mainroom.decorate = randmaps.decor.GeneralStoreDec(win=maps.CASTLE_WINDOW)
+        int_mainroom.DECORATE = randmaps.decor.GeneralStoreDec(win=maps.CASTLE_WINDOW)
         npc = monsters.generate_npc( job=self.elements["JOB"] )
         npc.tags.append( context.CHAR_SHOPKEEPER )
         interior.name = random.choice( self.NAME_PATTERNS ).format( npc )
@@ -108,7 +108,7 @@ class RLI_VillagePerson( Plot ):
 
     def custom_init( self, nart ):
         w = random.randint(7,10)
-        exterior = randmaps.BuildingRoom(w,17-w,tags=(context.CIVILIZED,) )
+        exterior = randmaps.rooms.BuildingRoom(w,17-w,tags=(context.CIVILIZED,) )
         exterior.special_c[ "window" ] = maps.SMALL_WINDOW
         self.register_element( "_EXTERIOR", exterior, dident="LOCALE" )
 
@@ -126,10 +126,10 @@ class RLI_VillagePerson( Plot ):
         self.register_scene( nart, interior, igen, ident="_INTERIOR", dident="LOCALE" )
         exterior.special_c[ "door" ] = gate_1
 
-        int_mainroom = randmaps.SharpRoom( tags=(context.CIVILIZED,), anchor=randmaps.anchors.south, parent=interior )
+        int_mainroom = randmaps.rooms.SharpRoom( tags=(context.CIVILIZED,), anchor=randmaps.anchors.south, parent=interior )
         int_mainroom.contents.append( gate_2 )
         gate_2.anchor = randmaps.anchors.south
-        int_mainroom.decorate = randmaps.decor.BedroomDec()
+        int_mainroom.DECORATE = randmaps.decor.BedroomDec()
 
         npc = monsters.generate_npc()
         interior.name = "{0}'s Home".format( npc )

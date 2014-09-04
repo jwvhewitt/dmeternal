@@ -42,7 +42,7 @@ class StraightBalrog( Plot ):
         self.add_sub_plot( nart, "CONNECT", PlotState( elements={"PREV":self.elements["FINAL_DUNGEON"],"NEXT":interior} ).based_on( self ) )
 
         team = teams.Team(default_reaction=-999, rank=self.rank, strength=50, habitat=interior.get_encounter_request(), respawn=False )
-        int_goalroom = randmaps.SharpRoom( tags=(context.GOAL,), parent=interior )
+        int_goalroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=interior )
         int_goalroom.contents.append( team )
         boss.team = team
         self.register_element( "_LAIR_ROOM", int_goalroom )

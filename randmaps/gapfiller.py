@@ -2,6 +2,7 @@
 import random
 import pygame
 import decor
+import rooms
 
 
 #  **********************
@@ -24,12 +25,12 @@ class MonsterFiller( object ):
         if hasattr( room, "DEFAULT_ROOM" ):
             rclass = room.DEFAULT_ROOM
         else:
-            rclass = FuzzyRoom
+            rclass = rooms.FuzzyRoom
 
         # Attempt to add some random rooms.
         for t in range( random.randint(self.min_mz,self.max_mz) ):
             myroom = rclass()
-            myroom.decorate = decor.MonsterDec()
+            myroom.DECORATE = decor.MonsterDec()
             myrect = pygame.Rect( 0, 0, myroom.width, myroom.height )
             count = 0
             while ( count < 100 ) and not myroom.area:

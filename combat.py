@@ -55,6 +55,7 @@ class CombatStat( object ):
         self.asleep = False
         self.silent = False
         self.aoo_readied = False
+        self.attacks_so_far = 0
     def can_act( self ):
         return self.paralysis < 1 and not self.asleep
 
@@ -204,7 +205,10 @@ class Combat( object ):
             num_attacks = [0]
         for a in num_attacks:
             if chara.can_attack() and target.is_alright():
-                at_fx = chara.get_attack_effect( roll_mod = a )
+                # The attack modifier is based on whether this is the character's
+                # first, second, etc attack and also if the target is being ganged
+                # up on.
+                at_fx = chara.get_attack_effect( roll_mod = a + self.cstat[target].attacks_so_far * 5 )
                 at_anim = chara.get_attack_shot_anim()
                 if at_anim:
                     opening_shot = at_anim( chara.pos, target.pos )
@@ -215,6 +219,8 @@ class Combat( object ):
                 # A hidden character will likely be revealed if the target survived.
                 if target.is_alright() and chara.hidden and random.randint(1,100) + target.get_stat(stats.AWARENESS) + target.get_stat_bonus(stats.INTELLIGENCE) > chara.get_stat(stats.STEALTH) + chara.get_stat_bonus(stats.REFLEXES):
                     chara.hidden = False
+                # Record the fact that this target has been attacked.
+                self.cstat[target].attacks_so_far += 1
             else:
                 break
         self.end_turn( chara )
@@ -499,6 +505,7 @@ class Combat( object ):
                 # After action, invoke enchantments and renew attacks of opportunity
                 explo.invoke_enchantments( chara )
                 self.cstat[chara].aoo_readied = True
+                self.cstat[chara].attacks_so_far = 0
             n += 1
 
         if self.camp.num_pcs() > 0 and self.no_quit and not pygwrap.GOT_QUIT:

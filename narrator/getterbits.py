@@ -105,7 +105,7 @@ class GT_HauntedHouse( Plot ):
         return ( pstate.elements.get("TARGET") and pstate.elements.get("LOCALE")
             and context.MAP_WILDERNESS in pstate.elements["LOCALE"].desctags )
     def custom_init( self, nart ):
-        exterior = randmaps.BuildingRoom( tags=(context.CIVILIZED,) )
+        exterior = randmaps.rooms.BuildingRoom( tags=(context.CIVILIZED,) )
         exterior.special_c[ "window" ] = maps.DARK_WINDOW
         self.register_element( "_EXTERIOR", exterior, dident="LOCALE" )
         locale = self.elements.get( "LOCALE" )
@@ -124,13 +124,13 @@ class GT_HauntedHouse( Plot ):
         gate_2.otherside = gate_1
         self.register_scene( nart, interior, igen, ident="BUILDING_INT", dident="LOCALE" )
         exterior.special_c[ "door" ] = gate_1
-        int_mainroom = randmaps.SharpRoom( tags=(context.ENTRANCE,), anchor=randmaps.anchors.south, parent=interior )
+        int_mainroom = randmaps.rooms.SharpRoom( tags=(context.ENTRANCE,), anchor=randmaps.anchors.south, parent=interior )
         int_mainroom.contents.append( gate_2 )
         int_mainroom.contents.append( maps.SKULL_ALTAR )
         gate_2.anchor = randmaps.anchors.south
 
         # Add the goal room, move the target there.
-        int_goalroom = randmaps.SharpRoom( tags=(context.GOAL,), parent=interior )
+        int_goalroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=interior )
         target = self.elements[ "TARGET" ]
         if isinstance( target, items.Item ):
             dest = waypoints.SmallChest()

@@ -37,10 +37,10 @@ class TheCrypt( Plot ):
             biome=context.HAB_FOREST, setting=self.setting,
             desctags=(context.MAP_WILDERNESS,context.DES_CIVILIZED,) )
         myscene.name = "Crypt Thing"
-        mymapgen = randmaps.RandomScene( myscene )
+        mymapgen = randmaps.ForestScene( myscene )
         self.register_scene( nart, myscene, mymapgen, ident="WILDERNESS" )
 
-        myroom = randmaps.FuzzyRoom( tags=(context.ENTRANCE,), parent=myscene, anchor=randmaps.anchors.northwest )
+        myroom = randmaps.rooms.FuzzyRoom( tags=(context.ENTRANCE,), parent=myscene, anchor=randmaps.anchors.northwest )
         myent = waypoints.Well()
         myroom.contents.append( myent )
 
@@ -81,10 +81,10 @@ class TheBlackMarket( Plot ):
             biome=context.HAB_BUILDING, setting=self.setting, desctags=(context.DES_CIVILIZED,) )
         igen = randmaps.BuildingScene( interior )
         self.register_scene( nart, interior, igen, ident="BUILDING_INT", dident="LOCALE" )
-        int_mainroom = randmaps.SharpRoom( tags=(context.CIVILIZED,context.ENTRANCE), anchor=randmaps.anchors.northwest, parent=interior )
+        int_mainroom = randmaps.rooms.SharpRoom( tags=(context.CIVILIZED,context.ENTRANCE), anchor=randmaps.anchors.northwest, parent=interior )
         int_mainroom.contents.append( maps.PILED_GOODS )
         int_mainroom.contents.append( maps.PILED_GOODS )
-        int_mainroom.decorate = randmaps.decor.GeneralStoreDec()
+        int_mainroom.DECORATE = randmaps.decor.GeneralStoreDec()
         npc = monsters.generate_npc( job=monsters.base.Merchant )
         npc.tags.append( context.CHAR_SHOPKEEPER )
         interior.name = random.choice( self.NAME_PATTERNS ).format( npc )
