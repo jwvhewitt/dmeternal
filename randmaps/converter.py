@@ -89,4 +89,38 @@ class ForestConverter( object ):
                         else:
                             mapgen.gb.map[x][y].wall = maps.ROCKS
 
+class DesertConverter( ForestConverter ):
+    """Convert True walls to rocks and trees and trees and rocks and rocks and trees and trees and rocks and mountains."""
+    def desert_nearby( self, mapgen, x, y ):
+        """Return True if all adjacent tiles are LOGROUND."""
+        all_hi = True
+        for d in mapgen.gb.DELTA8:
+            if mapgen.gb.get_floor( x + d[0], y + d[1] ) not in ( maps.HIGROUND, maps.HIHILL, None ):
+                all_hi = False
+                break
+        return all_hi
+    def __call__( self, mapgen ):
+        for x in range( mapgen.width ):
+            for y in range( mapgen.height ):
+                if mapgen.gb.map[x][y].wall is True:
+                    if x%3 == 0 and y%3 == 0 and self.four_true_walls(mapgen,x,y) and random.randint(1,100) == 1:
+                        mapgen.gb.map[x][y].wall = maps.MOUNTAIN_TOP
+                        mapgen.gb.map[x+1][y].wall = maps.MOUNTAIN_RIGHT
+                        mapgen.gb.map[x][y+1].wall = maps.MOUNTAIN_LEFT
+                        mapgen.gb.map[x+1][y+1].wall = maps.MOUNTAIN_BOTTOM
+                    elif self.water_nearby( mapgen, x, y ):
+                        if random.randint(1,3) == 2:
+                            mapgen.gb.map[x][y].wall = maps.TREES
+                        else:
+                            mapgen.gb.map[x][y].wall = None
+                    elif mapgen.gb.get_floor(x,y) is maps.HIGROUND:
+                        if self.desert_nearby( mapgen, x, y ) and random.randint(1,10) != 1:
+                            mapgen.gb.map[x][y].wall = None
+                            mapgen.gb.map[x][y].floor = maps.HIHILL
+
+                        else:
+                            mapgen.gb.map[x][y].wall = maps.ROCKS
+                    else:
+                        mapgen.gb.map[x][y].wall = maps.TREES
+
 
