@@ -65,7 +65,7 @@ class TheCrypt( Plot ):
 
 class TheBlackMarket( Plot ):
     """There's a black market in town, but it's hidden."""
-    LABEL = "CITY_STORYz"
+    LABEL = "CITY_STORY"
     UNIQUE = True
     active = True
     scope = True
