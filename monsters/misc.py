@@ -28,7 +28,8 @@ import animals
 class EvilEye( base.Monster ):
     name = "Evil Eye"
     statline = { stats.STRENGTH: 6, stats.TOUGHNESS: 12, stats.REFLEXES: 12, \
-        stats.INTELLIGENCE: 10, stats.PIETY: 10, stats.CHARISMA: 2 }
+        stats.INTELLIGENCE: 10, stats.PIETY: 10, stats.CHARISMA: 2, \
+        stats.MAGIC_ATTACK: 20, stats.MAGIC_DEFENSE: 10 }
     SPRITENAME = "monster_default.png"
     FRAME = 18
     TEMPLATES = ()
@@ -40,9 +41,13 @@ class EvilEye( base.Monster ):
      context.MTY_BEAST, context.GEN_CHAOS )
     ENC_LEVEL = 3
     ATTACK = items.Attack( (2,4,0), element = stats.RESIST_LUNAR,
-     skill_mod=stats.REFLEXES, hit_anim=animobs.PurpleExplosion )
+     skill_mod=stats.REFLEXES, hit_anim=animobs.PurpleExplosion, extra_effect =
+         effects.OpposedRoll( att_stat=stats.REFLEXES, def_stat=stats.REFLEXES, on_success = (
+            effects.Paralyze( max_duration = 3 )
+        ,) )
+     )
     TECHNIQUES = ( invocations.MPInvocation( "Evil Gaze",
-      effects.OpposedRoll( att_stat=stats.REFLEXES, def_stat=stats.REFLEXES, on_success = (
+      effects.OpposedRoll( att_stat=stats.REFLEXES, def_stat=stats.REFLEXES, att_modifier=10, on_success = (
         effects.Paralyze( max_duration = 3 )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
