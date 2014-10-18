@@ -56,6 +56,7 @@ FARMTOOL = SingType( "FARMTOOL", "Farm Tool", slot = HAND1 )
 SCROLL = SingType( "SCROLL", "Scroll" )
 POTION = SingType( "POTION", "Potion" )
 GEM = SingType( "GEM", "Gem" )
+LANCE = SingType( "LANCE", "Lance", slot = HAND1 )
 
 class Attack( object ):
     def __init__( self, damage = (1,6,0), skill_mod = stats.STRENGTH, damage_mod = stats.STRENGTH,
@@ -464,11 +465,11 @@ def make_item_magic( item_to_enchant, target_rank ):
         e = random.choice( elist )
         item_to_enchant.enhancement = e()
 
-WEAPON_TYPES = (SWORD,AXE,MACE,DAGGER,STAFF,BOW,SHIELD,POLEARM,SLING,FARMTOOL)
+WEAPON_TYPES = (SWORD,AXE,MACE,DAGGER,STAFF,BOW,SHIELD,POLEARM,SLING,FARMTOOL,LANCE)
 
 PREMIUM_TYPES = (SWORD,AXE,MACE,DAGGER,STAFF,BOW,ARROW,SHIELD,POLEARM,SLING,BULLET,
     LIGHT_ARMOR,HEAVY_ARMOR,HELM,GAUNTLET,LIGHT_ARMOR,HEAVY_ARMOR,SWORD,AXE,MACE,SHIELD,
-    SCROLL,POTION,GEM)
+    SCROLL,POTION,GEM,LANCE)
 MYSTERIOUS_TYPES = (GEM,)
 # These types are typically for resale only, so don't decrease gp of horde as much.
 CASHSALE_TYPES = (GEM,)

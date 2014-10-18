@@ -25,7 +25,8 @@ class CharacterSheet( pygame.Rect ):
     BODY_Y = 70
     RIGHT_COLUMN = 155
 
-    MISC_STATS = ( stats.AWARENESS, stats.CRITICAL_HIT, stats.DISARM_TRAPS, \
+    MISC_STATS = ( stats.AWARENESS, stats.COUNTER_ATTACK, stats.CRITICAL_HIT, \
+        stats.DISARM_TRAPS, \
         stats.HOLY_SIGN, stats.KUNG_FU, stats.NATURAL_DEFENSE, stats.STEALTH, \
         stats.RESIST_SLASHING, stats.RESIST_PIERCING, stats.RESIST_CRUSHING, \
         stats.RESIST_ACID, stats.RESIST_COLD, stats.RESIST_FIRE, stats.RESIST_LIGHTNING, \

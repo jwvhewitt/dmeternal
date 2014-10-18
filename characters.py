@@ -92,7 +92,7 @@ class Warrior( Level ):
     desc = 'Highly trained fighters who can dish out- and take- a whole lot of physical damage.'
     requirements = { stats.STRENGTH: 11 }
     statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 5, stats.MAGIC_ATTACK: 3, stats.MAGIC_DEFENSE: 3, \
-        stats.AWARENESS: 4 } )
+        stats.AWARENESS: 4, stats.COUNTER_ATTACK: 3 } )
     HP_DIE = 12
     MP_DIE = 4
     LEVELS_PER_GEM = 0
@@ -100,7 +100,7 @@ class Warrior( Level ):
         items.BOW, items.POLEARM, items.ARROW, items.SHIELD, items.SLING, \
         items.BULLET, items.CLOTHES, items.LIGHT_ARMOR, items.HEAVY_ARMOR, items.HAT, \
         items.HELM, items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES, \
-        items.BOOTS, items.CLOAK, items.FARMTOOL )
+        items.BOOTS, items.CLOAK, items.FARMTOOL, items.LANCE )
     starting_equipment = ( items.lightarmor.GladiatorArmor, items.swords.Broadsword, items.shoes.NormalBoots )
 
 
@@ -112,7 +112,7 @@ class Thief( Level ):
         stats.DISARM_TRAPS: 6, stats.STEALTH: 5, stats.AWARENESS: 4 } )
     spell_circles = ()
     HP_DIE = 6
-    MP_DIE = 6
+    MP_DIE = 4
     LEVELS_PER_GEM = 0
     legal_equipment = ( items.DAGGER, items.STAFF, \
         items.BOW, items.ARROW, items.SLING, \
@@ -126,7 +126,7 @@ class Bard( Level ):
     name = 'Bard'
     desc = 'Jacks of all trades, bards know a bit of fighting, thievery, and air magic.'
     requirements = { stats.REFLEXES: 13, stats.INTELLIGENCE: 11, stats.CHARISMA: 13 }
-    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 5, stats.MAGIC_ATTACK: 4, stats.MAGIC_DEFENSE: 3, \
+    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 4, stats.MAGIC_ATTACK: 4, stats.MAGIC_DEFENSE: 4, \
         stats.DISARM_TRAPS: 4, stats.AWARENESS: 4 } )
     spell_circles = ( spells.AIR, )
     HP_DIE = 8
@@ -146,12 +146,12 @@ class Priest( Level ):
     statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 4, stats.MAGIC_ATTACK: 4, stats.MAGIC_DEFENSE: 4, \
         stats.HOLY_SIGN: 5, stats.AWARENESS: 3 } )
     spell_circles = ( spells.WATER, spells.SOLAR, spells.AIR )
-    HP_DIE = 8
+    HP_DIE = 6
     MP_DIE = 10
     LEVELS_PER_GEM = 1
     legal_equipment = ( items.MACE, items.STAFF, \
         items.SHIELD, items.SLING, \
-        items.BULLET, items.CLOTHES, items.LIGHT_ARMOR, items.HEAVY_ARMOR, items.HAT, \
+        items.BULLET, items.CLOTHES, items.LIGHT_ARMOR, items.HAT, \
         items.HELM, items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK, items.HOLYSYMBOL )
     starting_equipment = ( items.maces.FlangedMace, items.lightarmor.PaddedRobe, items.shoes.NormalBoots, items.holysymbols.WoodSymbol )
@@ -160,11 +160,11 @@ class Mage( Level ):
     name = 'Mage'
     desc = 'Spellcasters who learn lunar, fire, and air magic.'
     requirements = { stats.INTELLIGENCE: 11 }
-    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 3, stats.MAGIC_ATTACK: 5, stats.MAGIC_DEFENSE: 4, \
+    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 3, stats.MAGIC_ATTACK: 5, stats.MAGIC_DEFENSE: 5, \
         stats.AWARENESS: 3 } )
     spell_circles = ( spells.LUNAR, spells.FIRE, spells.AIR )
     HP_DIE = 4
-    MP_DIE = 14
+    MP_DIE = 12
     LEVELS_PER_GEM = 1
     legal_equipment = ( items.DAGGER, items.STAFF, items.SLING, \
         items.BULLET, items.CLOTHES, items.HAT, \
@@ -176,7 +176,7 @@ class Druid( Level ):
     name = 'Druid'
     desc = 'A natural spellcaster who learns earth, solar, and fire magic.'
     requirements = { stats.TOUGHNESS: 9, stats.INTELLIGENCE: 11 }
-    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 3, stats.MAGIC_ATTACK: 5, stats.MAGIC_DEFENSE: 3, \
+    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 3, stats.MAGIC_ATTACK: 5, stats.MAGIC_DEFENSE: 4, \
         stats.AWARENESS: 4 } )
     spell_circles = ( spells.EARTH, spells.SOLAR, spells.FIRE )
     HP_DIE = 6
@@ -186,7 +186,7 @@ class Druid( Level ):
         items.BOW, items.POLEARM, items.ARROW, items.SLING, \
         items.BULLET, items.CLOTHES, items.HAT, \
         items.GLOVE, items.SANDALS, items.SHOES, \
-        items.BOOTS, items.CLOAK, items.WAND, items.FARMTOOL )
+        items.BOOTS, items.CLOAK, items.FARMTOOL )
     starting_equipment = ( items.farmtools.Sickle, items.clothes.DruidRobe, items.cloaks.NormalCloak )
 
 class Knight( Level ):
@@ -198,19 +198,19 @@ class Knight( Level ):
     spell_circles = ( spells.SOLAR, )
     HP_DIE = 10
     MP_DIE = 4
-    LEVELS_PER_GEM = 3
+    LEVELS_PER_GEM = 4
     legal_equipment = ( items.SWORD, items.MACE, \
-        items.POLEARM, items.SHIELD, \
+        items.SHIELD, \
         items.CLOTHES, items.LIGHT_ARMOR, items.HEAVY_ARMOR, items.HAT, \
         items.HELM, items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES, \
-        items.BOOTS, items.CLOAK )
+        items.BOOTS, items.CLOAK, items.LANCE )
     starting_equipment = ( items.swords.Longsword, items.lightarmor.BrigandineArmor, items.shoes.NormalBoots )
 
 class Ranger( Level ):
     name = 'Ranger'
     desc = 'Stealthy warriors with limited earth magic.'
     requirements = { stats.STRENGTH: 11, stats.REFLEXES: 13, stats.INTELLIGENCE: 11 }
-    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 5, stats.MAGIC_ATTACK: 3, stats.MAGIC_DEFENSE: 3, \
+    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 4, stats.MAGIC_ATTACK: 4, stats.MAGIC_DEFENSE: 3, \
         stats.DISARM_TRAPS: 3, stats.STEALTH: 4, stats.AWARENESS: 5 } )
     spell_circles = ( spells.EARTH, )
     HP_DIE = 8
@@ -227,7 +227,7 @@ class Necromancer( Level ):
     name = 'Necromancer'
     desc = 'Wizards who explore the secrets of life and death. They learn lunar, earth, and water magic.'
     requirements = { stats.INTELLIGENCE: 13, stats.PIETY: 13 }
-    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 3, stats.MAGIC_ATTACK: 5, stats.MAGIC_DEFENSE: 4, \
+    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 3, stats.MAGIC_ATTACK: 5, stats.MAGIC_DEFENSE: 5, \
         stats.AWARENESS: 3 } )
     spell_circles = ( spells.LUNAR, spells.EARTH, spells.WATER )
     HP_DIE = 4

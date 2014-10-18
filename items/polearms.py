@@ -1,5 +1,5 @@
 import stats
-from . import Item,Attack,POLEARM
+from . import Item,Attack,POLEARM,LANCE
 
 
 class Spear( Item ):
@@ -76,4 +76,24 @@ class Glaive( Item ):
     attackdata = Attack( (2,6,0), double_handed = True, element = stats.RESIST_SLASHING, reach=2 )
     mass = 150
 
+
+# Gonna stick the lances in here too, since there aren't many of them.
+
+class Lance( Item ):
+    true_name = "Lance"
+    true_desc = "A long spear designed for jousting."
+    itemtype = LANCE
+    avatar_image = "avatar_polearm.png"
+    avatar_frame = 8
+    attackdata = Attack( (1,10,0), double_handed=False, element=stats.RESIST_PIERCING, reach=2 )
+    mass = 130
+
+class HeavyLance( Item ):
+    true_name = "Heavy Lance"
+    true_desc = "A long spear designed for jousting."
+    itemtype = LANCE
+    avatar_image = "avatar_polearm.png"
+    avatar_frame = 9
+    attackdata = Attack( (2,8,0), double_handed=False, element=stats.RESIST_PIERCING, reach=2 )
+    mass = 165
 

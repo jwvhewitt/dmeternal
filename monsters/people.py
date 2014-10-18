@@ -46,7 +46,8 @@ class Hurthling( base.Monster ):
 class NoviceWarrior( base.Monster ):
     name = "Novice Warrior"
     statline = { stats.STRENGTH: 13, stats.TOUGHNESS: 13, stats.REFLEXES: 10, \
-        stats.INTELLIGENCE: 10, stats.PIETY: 10, stats.CHARISMA: 10 }
+        stats.INTELLIGENCE: 10, stats.PIETY: 10, stats.CHARISMA: 10, \
+        stats.COUNTER_ATTACK: 5 }
     SPRITENAME = "monster_people.png"
     FRAME = 0
     TEMPLATES = ()
@@ -237,7 +238,7 @@ class Warrior( base.Monster ):
     name = "Warrior"
     statline = { stats.STRENGTH: 14, stats.TOUGHNESS: 14, stats.REFLEXES: 13, \
         stats.INTELLIGENCE: 10, stats.PIETY: 12, stats.CHARISMA: 12,
-        stats.NATURAL_DEFENSE: 10 }
+        stats.NATURAL_DEFENSE: 10, stats.COUNTER_ATTACK: 15 }
     SPRITENAME = "monster_people.png"
     FRAME = 9
     TEMPLATES = ()
@@ -267,7 +268,7 @@ class Priest( base.Monster ):
     MOVE_POINTS = 10
     GP_VALUE = 30
     HABITAT = ( context.HAB_EVERY, context.HAB_BUILDING, context.SET_EVERY,
-     context.DES_CIVILIZED, context.DES_SOLAR,
+     context.DES_CIVILIZED, context.DES_SOLAR, context.MTY_LEADER,
      context.MTY_HUMANOID, context.MTY_PRIEST )
     ENC_LEVEL = 6
     COMBAT_AI = aibrain.BasicTechnicalAI()

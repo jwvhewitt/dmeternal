@@ -85,7 +85,7 @@ class AnimatedSword( base.Monster ):
     name = "Animated Sword"
     statline = { stats.STRENGTH: 12, stats.TOUGHNESS: 12, stats.REFLEXES: 12, \
         stats.INTELLIGENCE: 1, stats.PIETY: 10, stats.CHARISMA: 1,
-        stats.RESIST_SLASHING: 50 }
+        stats.RESIST_SLASHING: 50, stats.COUNTER_ATTACK: 50 }
     SPRITENAME = "monster_constructs.png"
     FRAME = 16
     TEMPLATES = (stats.CONSTRUCT,)
@@ -98,7 +98,7 @@ class AnimatedSword( base.Monster ):
 
     COMBAT_AI = aibrain.SteadyAI()
 
-    ATTACK = items.Attack( (2,6,0), element = stats.RESIST_SLASHING )
+    ATTACK = items.Attack( (1,12,0), element = stats.RESIST_SLASHING )
 
     def init_monster( self ):
         self.levels.append( base.Beast( 7, self ) )
@@ -120,7 +120,7 @@ class AnimatedFlail( base.Monster ):
 
     COMBAT_AI = aibrain.SteadyAI()
 
-    ATTACK = items.Attack( (2,6,0), element = stats.RESIST_CRUSHING )
+    ATTACK = items.Attack( (3,6,0), element = stats.RESIST_CRUSHING )
 
     def init_monster( self ):
         self.levels.append( base.Beast( 7, self ) )
@@ -254,7 +254,7 @@ class FlamingSword( base.Monster ):
     name = "Flaming Sword"
     statline = { stats.STRENGTH: 16, stats.TOUGHNESS: 14, stats.REFLEXES: 18, \
         stats.INTELLIGENCE: 12, stats.PIETY: 20, stats.CHARISMA: 14,
-        stats.RESIST_SLASHING: 50, stats.MAGIC_DEFENSE: 50 }
+        stats.RESIST_SLASHING: 50, stats.MAGIC_DEFENSE: 50, stats.COUNTER_ATTACK: 50 }
     SPRITENAME = "monster_constructs.png"
     FRAME = 9
     TEMPLATES = (stats.CONSTRUCT,)

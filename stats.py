@@ -75,6 +75,7 @@ KUNG_FU = SingStat( "KUNG_FU", "Kung Fu", cost_mod = 55 )
 NATURAL_DEFENSE = SingStat( "NATURAL_DEFENSE", "Natural Defense", default_bonus = REFLEXES, cost_mod = 35 )
 CRITICAL_HIT = SingStat( "CRITICAL_HIT", "Critical Hit", cost_mod = 85 )
 AWARENESS = SingStat( "AWARENESS", "Awareness", default_bonus = INTELLIGENCE, cost_mod = 15 )
+COUNTER_ATTACK = SingStat( "COUNTER_ATTACK", "Counter Attack", cost_mod = 50 )
 
 PRIMARY_STATS = ( STRENGTH, TOUGHNESS, REFLEXES, INTELLIGENCE, PIETY, CHARISMA )
 

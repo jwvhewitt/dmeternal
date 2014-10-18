@@ -223,7 +223,13 @@ class Combat( object ):
                 self.cstat[target].attacks_so_far += 1
             else:
                 break
-        self.end_turn( chara )
+        if ( target.is_alright() and target.can_attack_of_opportunity() and self.cstat[target].can_act() 
+         and self.scene.distance(target.pos,chara.pos) <= target.get_attack_reach() and not attack_of_opportunity ):
+            # Target may be able to counterattack.
+            if random.randint(1,100) <= min( target.get_stat( stats.COUNTER_ATTACK ), 95 ):
+                self.attack( explo, target, chara, redraw, True )
+        if not attack_of_opportunity:
+            self.end_turn( chara )
 
 
     def move_to_attack( self, explo, chara, target, redraw=None ):
