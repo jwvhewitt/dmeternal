@@ -48,9 +48,9 @@ PIETY = SingStat( "PIETY", "Piety", cost_mod = 1500 )
 CHARISMA = SingStat( "CHARISMA", "Charisma", cost_mod = 1500 )
 
 PHYSICAL_ATTACK = SingStat( "PHYSICAL_ATTACK", "Attack", cost_mod = 25 )
-PHYSICAL_DEFENSE = SingStat( "PHYSICAL_DEFENSE", "Defense", default_bonus = REFLEXES, cost_mod = 10 )
+PHYSICAL_DEFENSE = SingStat( "PHYSICAL_DEFENSE", "Defense", default_bonus = REFLEXES, cost_mod = 15 )
 MAGIC_ATTACK = SingStat( "MAGIC_ATTACK", "Magic", default_bonus = INTELLIGENCE, cost_mod = 25 )
-MAGIC_DEFENSE = SingStat( "MAGIC_DEFENSE", "Aura", default_bonus = PIETY, cost_mod = 15 )
+MAGIC_DEFENSE = SingStat( "MAGIC_DEFENSE", "Aura", default_bonus = PIETY, cost_mod = 20 )
 DISARM_TRAPS = SingStat( "DISARM_TRAPS", "Disarm Traps", default_bonus = INTELLIGENCE, cost_mod = 20 )
 
 STEALTH = SingStat( "STEALTH", "Stealth", default_bonus = REFLEXES, cost_mod = 25 )

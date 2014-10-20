@@ -54,7 +54,7 @@ class EvilEye( base.Monster ):
       ,) ), com_tar=targetarea.SingleTarget(reach=4), shot_anim=animobs.PurpleVortex, ai_tar=invocations.vs_enemy, mp_cost=3
     ), )
     def init_monster( self ):
-        self.levels.append( base.Beast( 2, self ) )
+        self.levels.append( base.Beast( 3, self ) )
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  4   ***

@@ -7,7 +7,7 @@ class SteelHelmet( Item ):
     itemtype = HELM
     avatar_image = "avatar_helm.png"
     avatar_frame = 0
-    mass = 25
+    mass = 30
     statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 5 })
 
 class ChainCoif( Item ):
@@ -25,8 +25,8 @@ class HornedHelmet( Item ):
     itemtype = HELM
     avatar_image = "avatar_helm.png"
     avatar_frame = 2
-    mass = 30
-    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 5 })
+    mass = 25
+    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 5, stats.STEALTH: -5 })
 
 class SteelHelm( Item ):
     true_name = "Steel Helm"
@@ -44,5 +44,5 @@ class PlumedHelm( Item ):
     avatar_image = "avatar_helm.png"
     avatar_frame = 4
     mass = 55
-    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 10, stats.AWARENESS: -10 })
+    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 10, stats.AWARENESS: -10, stats.STEALTH: -5 })
 

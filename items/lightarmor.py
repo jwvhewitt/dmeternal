@@ -111,7 +111,7 @@ class ChainShirt( Clothing ):
     avatar_image = "avatar_lightarmor.png"
     avatar_frame = 13
     pants_frame = 4
-    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 15 })
+    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 15, stats.MAGIC_ATTACK: -5 })
     mass = 75
 
 class ScaleMail( Clothing ):
@@ -121,7 +121,7 @@ class ScaleMail( Clothing ):
     avatar_image = "avatar_lightarmor.png"
     avatar_frame = 12
     pants_frame = 14
-    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 20, stats.MAGIC_ATTACK:-10, stats.STEALTH:-5 })
+    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 20, stats.MAGIC_ATTACK:-5, stats.STEALTH:-10 })
     mass = 135
 
 class Breastplate( Clothing ):
@@ -131,7 +131,7 @@ class Breastplate( Clothing ):
     avatar_image = "avatar_lightarmor.png"
     avatar_frame = 15
     pants_frame = 24
-    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 20, stats.MAGIC_ATTACK:-5, stats.STEALTH:-10 })
+    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 20, stats.MAGIC_ATTACK:-10, stats.STEALTH:-5 })
     mass = 140
 
 class ElvenChain( Clothing ):

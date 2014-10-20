@@ -36,7 +36,7 @@ STAFF = SingType( "STAFF", "Staff", slot = HAND1, rank_adjust=2.0 )
 BOW = SingType( "BOW", "Bow", slot = HAND1 )
 POLEARM = SingType( "POLEARM", "Polearm", slot = HAND1 )
 ARROW = SingType( "ARROW", "Arrow", slot = HAND2 )
-SHIELD = SingType( "SHIELD", "Shield", slot = HAND2, cost_adjust=1.5, rank_adjust=0.9 )
+SHIELD = SingType( "SHIELD", "Shield", slot = HAND2, cost_adjust=1.75, rank_adjust=0.8 )
 SLING = SingType( "SLING", "Sling", slot = HAND1 )
 BULLET = SingType( "BULLET", "Bullet", slot = HAND2 )
 CLOTHES = SingType( "CLOTHES", "Clothes", slot = BODY, cost_adjust=1.25 )
@@ -51,12 +51,12 @@ SHOES = SingType( "SHOES", "Shoes", slot = FEET )
 BOOTS = SingType( "BOOTS", "Boots", slot = FEET )
 CLOAK = SingType( "CLOAK", "Cloak", slot = BACK )
 HOLYSYMBOL = SingType( "HOLYSYMBOL", "Symbol", slot = HAND2 )
-WAND = SingType( "WAND", "Wand", slot = HAND1 )
+WAND = SingType( "WAND", "Wand", slot = HAND1, cost_adjust=3.0 )
 FARMTOOL = SingType( "FARMTOOL", "Farm Tool", slot = HAND1 )
 SCROLL = SingType( "SCROLL", "Scroll" )
 POTION = SingType( "POTION", "Potion" )
 GEM = SingType( "GEM", "Gem" )
-LANCE = SingType( "LANCE", "Lance", slot = HAND1 )
+LANCE = SingType( "LANCE", "Lance", slot = HAND1, cost_adjust=1.2 )
 
 class Attack( object ):
     def __init__( self, damage = (1,6,0), skill_mod = stats.STRENGTH, damage_mod = stats.STRENGTH,
@@ -139,13 +139,14 @@ class Item( stats.PhysicalThing ):
     equipped = False
     shot_anim=None
     enhancement = None
-    def cost( self, include_enhancement=True ):
+    def cost( self, include_enhancement=True, include_adjust=True ):
         it = 1
         if self.statline:
             it += self.statline.cost()
         if self.attackdata:
             it += self.attackdata.cost()
-        it = int( it * self.itemtype.cost_adjust )
+        if include_adjust:
+            it = int( it * self.itemtype.cost_adjust )
         if self.enhancement and include_enhancement:
             it += self.enhancement.cost()
         return it
@@ -432,7 +433,8 @@ harvest( wands )
 # Test Items
 #for ic in ITEM_LIST:
 #    i = ic()
-#    print "{0}: {1}/{2}gp".format( i, i.min_rank(), i.cost() )
+#    if i.itemtype in (GAUNTLET, HELM, SHIELD ):
+#        print "{0}: {1}/{2}gp".format( i, i.min_rank(), i.cost() )
 
 import enhancers
 # Compile the enhancements into a useful list.

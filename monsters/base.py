@@ -45,9 +45,11 @@ class Humanoid( characters.Level ):
     desc = ''
     statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 4, stats.NATURAL_DEFENSE: 4,
         stats.MAGIC_ATTACK: 4, stats.MAGIC_DEFENSE: 4, stats.AWARENESS: 3} )
-    HP_DIE = 6
-    MP_DIE = 6
+    HP_DIE = 8
+    MP_DIE = 8
     XP_VALUE = 100
+    FULL_HP_AT_FIRST = False
+
 
 class Spellcaster( characters.Level ):
     name = 'Spellcaster'
@@ -57,15 +59,17 @@ class Spellcaster( characters.Level ):
     HP_DIE = 4
     MP_DIE = 12
     XP_VALUE = 100
+    FULL_HP_AT_FIRST = False
 
 class Beast( characters.Level ):
     name = 'Beast'
     desc = ''
     statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 5, stats.NATURAL_DEFENSE: 4,
         stats.MAGIC_ATTACK: 3, stats.MAGIC_DEFENSE: 3, stats.AWARENESS: 4} )
-    HP_DIE = 8
-    MP_DIE = 4
+    HP_DIE = 10
+    MP_DIE = 6
     XP_VALUE = 115
+    FULL_HP_AT_FIRST = False
 
 class Terror( characters.Level ):
     name = 'Terror'

@@ -7,6 +7,7 @@ import invocations
 import effects
 import animobs
 import targetarea
+import enchantments
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  1   ***
@@ -407,7 +408,7 @@ class GiantLizard( base.Monster ):
 
 class FireBat( base.Monster ):
     name = "Fire Bat"
-    statline = { stats.STRENGTH: 10, stats.TOUGHNESS: 10, stats.REFLEXES: 14, \
+    statline = { stats.STRENGTH: 12, stats.TOUGHNESS: 12, stats.REFLEXES: 14, \
         stats.INTELLIGENCE: 2, stats.PIETY: 9, stats.CHARISMA: 3, }
     SPRITENAME = "monster_animals.png"
     FRAME = 26
@@ -419,13 +420,19 @@ class FireBat( base.Monster ):
      context.DES_LUNAR, context.MTY_BEAST )
     ENC_LEVEL = 4
 
-    ATTACK = items.Attack( (2,4,0), element = stats.RESIST_PIERCING )
+    ATTACK = items.Attack( (2,4,0), element = stats.RESIST_PIERCING, extra_effect =
+         effects.OpposedRoll( att_stat=stats.TOUGHNESS, att_modifier=-10, on_success = (
+            effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion ),
+            effects.Enchant( enchantments.BurnLowEn )
+        ,) )
+     )
 
     TECHNIQUES = ( invocations.MPInvocation( "Fire Breath",
-      effects.OpposedRoll( att_skill=stats.PHYSICAL_ATTACK, att_stat=stats.REFLEXES, att_modifier=10, def_stat=stats.REFLEXES, on_success = (
-        effects.HealthDamage( (1,10,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion )
+      effects.OpposedRoll( att_skill=stats.PHYSICAL_ATTACK, att_stat=stats.REFLEXES, att_modifier=-10, def_stat=stats.REFLEXES, on_success = (
+        effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion ),
+        effects.Enchant( enchantments.BurnLowEn )
       ,), on_failure = (
-        effects.NoEffect( anim=animobs.SmallBoom )
+        effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion )
       ,) ), com_tar=targetarea.SingleTarget(), shot_anim=animobs.Fireball, ai_tar=invocations.vs_enemy, mp_cost=3
     ), )
 

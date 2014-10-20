@@ -29,6 +29,7 @@ class Level( object ):
     legal_equipment = ()
     XP_VALUE = 75
     MIN_RANK = 0
+    FULL_HP_AT_FIRST = True
     def __init__( self, rank=0, pc=None ):
         self.rank = 0
         self.hp = 0
@@ -44,8 +45,12 @@ class Level( object ):
         for r in range( ranks ):
             self.rank += 1
             if self.rank == 1:
-                self.hp = self.HP_DIE
-                self.mp = self.MP_DIE
+                if self.FULL_HP_AT_FIRST:
+                    self.hp = self.HP_DIE
+                    self.mp = self.MP_DIE
+                else:
+                    self.hp = max( random.randint( 1, self.HP_DIE ) , random.randint( 1, self.HP_DIE ) )
+                    self.mp = max( random.randint( 1, self.MP_DIE ) , random.randint( 1, self.MP_DIE ) )
                 for c in self.spell_circles:
                     self.spell_gems[ c ] = 1
             else:
@@ -539,7 +544,7 @@ class Character( stats.PhysicalThing ):
             return 0
 
         statval = max( self.get_stat( stat ) , 1 )
-        return statval * 3 - 36
+        return ( statval - 12 ) * 2
 
     def get_defense( self ):
         """Return higher of physical, natural defense plus reflexes bonus"""

@@ -19,7 +19,7 @@ ARMOR_STORE = ( items.SHIELD, items.CLOTHES, items.LIGHT_ARMOR, items.HEAVY_ARMO
 
 WEAPON_STORE = ( items.SWORD, items.AXE, items.MACE, items.DAGGER, items.STAFF,
     items.BOW, items.POLEARM, items.ARROW, items.SLING, items.BULLET,
-    items.FARMTOOL )
+    items.FARMTOOL, items.LANCE )
 
 MAGIC_STORE = ( items.SCROLL, items.SCROLL, items.SCROLL, items.SCROLL, items.SCROLL, 
     items.POTION, items.HOLYSYMBOL, items.WAND )

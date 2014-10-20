@@ -85,13 +85,14 @@ class GoblinShaman( base.Monster ):
         spells.solarspells.MINOR_CURE )
     def init_monster( self ):
         self.levels.append( base.Spellcaster( 3, self ) )
-        if random.randint(1,20) == 1:
+        if random.randint(1,10) == 1:
             self.contents.append( items.scrolls.Rank1Scroll() )
 
 class GoblinWarrior( base.Monster ):
     name = "Goblin Warrior"
     statline = { stats.STRENGTH: 11, stats.TOUGHNESS: 8, stats.REFLEXES: 14, \
-        stats.INTELLIGENCE: 8, stats.PIETY: 8, stats.CHARISMA: 6 }
+        stats.INTELLIGENCE: 8, stats.PIETY: 8, stats.CHARISMA: 6,
+        stats.COUNTER_ATTACK: 15 }
     SPRITENAME = "monster_goblins.png"
     FRAME = 3
     TEMPLATES = ()
@@ -134,7 +135,8 @@ class GoblinCook( base.Monster ):
 class GoblinChampion( base.Monster ):
     name = "Goblin Champion"
     statline = { stats.STRENGTH: 12, stats.TOUGHNESS: 10, stats.REFLEXES: 14, \
-        stats.INTELLIGENCE: 8, stats.PIETY: 10, stats.CHARISMA: 8 }
+        stats.INTELLIGENCE: 8, stats.PIETY: 10, stats.CHARISMA: 8,
+        stats.COUNTER_ATTACK: 20 }
     SPRITENAME = "monster_goblins.png"
     FRAME = 2
     TEMPLATES = ()
@@ -156,7 +158,7 @@ class GoblinRanger( base.Monster ):
     name = "Goblin Ranger"
     statline = { stats.STRENGTH: 11, stats.TOUGHNESS: 8, stats.REFLEXES: 14, \
         stats.INTELLIGENCE: 8, stats.PIETY: 8, stats.CHARISMA: 6, \
-        stats.STEALTH: 24 }
+        stats.STEALTH: 30 }
     SPRITENAME = "monster_goblins.png"
     FRAME = 12
     TEMPLATES = ()
@@ -186,7 +188,7 @@ class GoblinLeader( base.Monster ):
     name = "Goblin Leader"
     statline = { stats.STRENGTH: 13, stats.TOUGHNESS: 11, stats.REFLEXES: 14, \
         stats.INTELLIGENCE: 14, stats.PIETY: 16, stats.CHARISMA: 12, \
-        stats.NATURAL_DEFENSE: 10 }
+        stats.NATURAL_DEFENSE: 10, stats.COUNTER_ATTACK: 25 }
     SPRITENAME = "monster_goblins.png"
     FRAME = 1
     TEMPLATES = ()
@@ -234,7 +236,7 @@ class GoblinElite( base.Monster ):
     name = "Goblin Elite"
     statline = { stats.STRENGTH: 13, stats.TOUGHNESS: 12, stats.REFLEXES: 16, \
         stats.INTELLIGENCE: 8, stats.PIETY: 10, stats.CHARISMA: 8, \
-        stats.NATURAL_DEFENSE: 10 }
+        stats.NATURAL_DEFENSE: 10, stats.COUNTER_ATTACK: 30 }
     SPRITENAME = "monster_goblins.png"
     FRAME = 5
     TEMPLATES = ()
@@ -284,7 +286,8 @@ class GoblinSamurai( base.Monster ):
 class GoblinGuard( base.Monster ):
     name = "Goblin Guard"
     statline = { stats.STRENGTH: 14, stats.TOUGHNESS: 13, stats.REFLEXES: 17, \
-        stats.INTELLIGENCE: 9, stats.PIETY: 11, stats.CHARISMA: 9 }
+        stats.INTELLIGENCE: 9, stats.PIETY: 11, stats.CHARISMA: 9,
+        stats.COUNTER_ATTACK: 25 }
     SPRITENAME = "monster_goblins.png"
     FRAME = 10
     TEMPLATES = ()
@@ -304,7 +307,7 @@ class GoblinHero( base.Monster ):
     name = "Goblin Hero"
     statline = { stats.STRENGTH: 15, stats.TOUGHNESS: 14, stats.REFLEXES: 18, \
         stats.INTELLIGENCE: 8, stats.PIETY: 12, stats.CHARISMA: 8, \
-        stats.NATURAL_DEFENSE: 20 }
+        stats.NATURAL_DEFENSE: 20, stats.COUNTER_ATTACK: 25 }
     SPRITENAME = "monster_goblins.png"
     FRAME = 4
     TEMPLATES = ()
@@ -398,7 +401,7 @@ class HobgoblinFighter( base.Monster ):
     name = "Hobgoblin Fighter"
     statline = { stats.STRENGTH: 13, stats.TOUGHNESS: 11, stats.REFLEXES: 14, \
         stats.INTELLIGENCE: 10, stats.PIETY: 9, stats.CHARISMA: 9, \
-        stats.NATURAL_DEFENSE: 10 }
+        stats.NATURAL_DEFENSE: 10, stats.COUNTER_ATTACK: 15 }
     SPRITENAME = "monster_goblins.png"
     FRAME = 41
     TEMPLATES = ()
@@ -497,7 +500,8 @@ class HobgoblinWarlord( base.Monster ):
     name = "Hobgoblin Warlord"
     statline = { stats.STRENGTH: 15, stats.TOUGHNESS: 13, stats.REFLEXES: 16, \
         stats.INTELLIGENCE: 12, stats.PIETY: 11, stats.CHARISMA: 11, \
-        stats.NATURAL_DEFENSE: 10, stats.PHYSICAL_ATTACK: 10, stats.RESIST_FIRE: 50 }
+        stats.NATURAL_DEFENSE: 10, stats.PHYSICAL_ATTACK: 10, stats.RESIST_FIRE: 50,
+        stats.COUNTER_ATTACK: 30 }
     SPRITENAME = "monster_goblins.png"
     FRAME = 16
     TEMPLATES = ()
@@ -546,7 +550,8 @@ class Orc( base.Monster ):
 class OrcWarrior( base.Monster ):
     name = "Orc Warrior"
     statline = { stats.STRENGTH: 16, stats.TOUGHNESS: 11, stats.REFLEXES: 11, \
-        stats.INTELLIGENCE: 7, stats.PIETY: 7, stats.CHARISMA: 7 }
+        stats.INTELLIGENCE: 7, stats.PIETY: 7, stats.CHARISMA: 7,
+        stats.COUNTER_ATTACK: 20 }
     SPRITENAME = "monster_goblins.png"
     FRAME = 17
     TEMPLATES = ()
@@ -616,7 +621,7 @@ class OrcChampion( base.Monster ):
     name = "Orc Champion"
     statline = { stats.STRENGTH: 18, stats.TOUGHNESS: 14, stats.REFLEXES: 13, \
         stats.INTELLIGENCE: 7, stats.PIETY: 7, stats.CHARISMA: 7, \
-        stats.NATURAL_DEFENSE: 5 }
+        stats.NATURAL_DEFENSE: 5, stats.COUNTER_ATTACK: 30 }
     SPRITENAME = "monster_goblins.png"
     FRAME = 21
     TEMPLATES = ()
