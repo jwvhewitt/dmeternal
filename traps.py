@@ -5,6 +5,7 @@ import animobs
 import inspect
 import teams
 import context
+import enchantments
 
 class MultiTrap( object ):
     NAME = "Boring Trap"
@@ -43,6 +44,10 @@ class SingleTrap( MultiTrap ):
         aoe = ( random.choice( candidates ), )
         return aoe
 
+#  *********************
+#  ***   The Traps   ***
+#  *********************
+
 class BlockTrap( SingleTrap ):
     NAME = "Stone Block Trap"
     FX = effects.SavingThrow( on_success = ( effects.NoEffect( anim=animobs.SmallBoom ), ),
@@ -51,6 +56,25 @@ class BlockTrap( SingleTrap ):
     MIN_RANK = 1
     DIFFICULTY = -20
     ONE_SHOT = True
+
+class BladeTrap( MultiTrap ):
+    NAME = "Blade Trap"
+    FX = effects.SavingThrow( on_success = ( effects.NoEffect( anim=animobs.SmallBoom ), ),
+        on_failure=( effects.HealthDamage((1,6,0), stat_bonus=None, element=stats.RESIST_SLASHING, anim=animobs.RedBoom ), ),
+        roll_modifier = 20 )
+    MIN_RANK = 2
+    DIFFICULTY = -15
+    ONE_SHOT = True
+
+class CrossbowTrap( SingleTrap ):
+    NAME = "Crossbow Bolt Trap"
+    FX = effects.SavingThrow( on_success = ( effects.NoEffect( anim=animobs.SmallBoom ), ),
+        on_failure=( effects.HealthDamage((2,6,0), stat_bonus=None, element=stats.RESIST_PIERCING, anim=animobs.RedBoom ), ),
+        roll_modifier = -5 )
+    MIN_RANK = 2
+    DIFFICULTY = -15
+    ONE_SHOT = True
+
 
 class AlarmTrap( SingleTrap ):
     NAME = "Alarm Trap"
@@ -96,9 +120,58 @@ class AlarmTrap( SingleTrap ):
                     aoe.append( (x,y) )
         return aoe
 
+class ShockTrap( SingleTrap ):
+    NAME = "Shocker Trap"
+    FX = effects.SavingThrow( on_success = ( effects.NoEffect( anim=animobs.SmallBoom ), ),
+        on_failure=( effects.HealthDamage((1,8,0), stat_bonus=None, element=stats.RESIST_LIGHTNING, anim=animobs.BlueZap ), ),
+        roll_modifier = -10 )
+    MIN_RANK = 3
+    DIFFICULTY = -15
+    ONE_SHOT = False
+
+class PoisonNeedleTrap( SingleTrap ):
+    NAME = "Poison Needle"
+    FX = effects.SavingThrow( on_success = ( effects.NoEffect( anim=animobs.SmallBoom ), ),
+        on_failure=( effects.HealthDamage((1,4,0), stat_bonus=None, element=stats.RESIST_POISON, anim=animobs.PoisonCloud ),
+                effects.Enchant( enchantments.PoisonClassic )
+             ),
+        roll_modifier = -10 )
+    MIN_RANK = 4
+    DIFFICULTY = -5
+    ONE_SHOT = True
+
+class FireTrap( MultiTrap ):
+    NAME = "Fire Trap"
+    FX = effects.SavingThrow( on_success = ( effects.HealthDamage((1,6,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion ), ),
+        on_failure=( effects.HealthDamage((3,6,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion ), ),
+        roll_modifier = 10 )
+    MIN_RANK = 4
+    DIFFICULTY = -5
+    ONE_SHOT = True
+
 class AlarmTrap2( AlarmTrap ):
     MIN_RANK = 5
     DIFFICULTY = 0
+
+class MageBlasterTrap( MultiTrap ):
+    NAME = "Mage Blaster"
+    FX = effects.SavingThrow( on_success = ( effects.NoEffect( anim=animobs.SmallBoom ), ),
+        on_failure=( effects.ManaDamage((10,6,0), stat_bonus=None, anim=animobs.PurpleSparkle ), ),
+        roll_modifier = -25 )
+    MIN_RANK = 5
+    DIFFICULTY = 0
+    ONE_SHOT = True
+
+class GasBombTrap( MultiTrap ):
+    NAME = "Gas Bomb"
+    FX = effects.SavingThrow( roll_stat=stats.TOUGHNESS, on_success = ( effects.NoEffect( anim=animobs.SmallBoom ), ),
+        on_failure=( effects.HealthDamage((2,4,0), stat_bonus=None, element=stats.RESIST_POISON, anim=animobs.PoisonCloud ),
+                effects.Enchant( enchantments.PoisonClassic )
+             ),
+        roll_modifier = 0 )
+    MIN_RANK = 6
+    DIFFICULTY = 5
+    ONE_SHOT = True
 
 class AlarmTrap3( AlarmTrap ):
     MIN_RANK = 7
@@ -120,14 +193,6 @@ class AlarmTrap7( AlarmTrap ):
     MIN_RANK = 15
     DIFFICULTY = 50
 
-class BladeTrap( MultiTrap ):
-    NAME = "Blade Trap"
-    FX = effects.SavingThrow( on_success = ( effects.NoEffect( anim=animobs.SmallBoom ), ),
-        on_failure=( effects.HealthDamage((1,6,0), stat_bonus=None, element=stats.RESIST_SLASHING, anim=animobs.RedBoom ), ),
-        roll_modifier = 20 )
-    MIN_RANK = 6
-    DIFFICULTY = -20
-    ONE_SHOT = True
 
 
 #  **************************************

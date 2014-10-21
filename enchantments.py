@@ -64,7 +64,7 @@ class BlessingEn( Enchantment ):
 class BlindedEn( Enchantment ):
     NAME = "Dazzled"
     def __init__( self ):
-        super(BlindedEn, self).__init__(statline=stats.StatMod({stats.PHYSICAL_ATTACK:-10}),dispel=(COMBAT,MAGIC,CURSE))
+        super(BlindedEn, self).__init__(statline=stats.StatMod({stats.PHYSICAL_ATTACK:-10,stats.AWARENESS:-30}),dispel=(COMBAT,MAGIC,CURSE))
 
 class BurnLowEn( Enchantment ):
     NAME = "Burning"
