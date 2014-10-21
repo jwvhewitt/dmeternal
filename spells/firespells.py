@@ -33,6 +33,15 @@ BLINDING_FLASH = Spell( "Blinding Flash",
         ,) )
     ) ), rank=2, gems={FIRE:2}, com_tar=targetarea.SelfCentered(radius=4), ai_tar=invocations.vs_enemy )
 
+IGNITE = Spell( "Ignite",
+    "You touch one opponent, causing them to burst into flame. The target suffers 2d5 fire damage and may continue burning.",
+    effects.OpposedRoll( on_success = (
+        effects.HealthDamage( (2,5,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion ),
+        effects.Enchant( enchantments.BurnLowEn )
+    ,), on_failure = (
+        effects.HealthDamage( (2,5,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion )
+    ,) ), rank=2, gems={FIRE:1}, com_tar=targetarea.SingleTarget(reach=1),ai_tar=invocations.vs_enemy )
+
 # CIRCLE 3
 
 EXPLOSION = Spell( "Explosion",

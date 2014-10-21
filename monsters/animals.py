@@ -15,12 +15,13 @@ import enchantments
 
 class GiantBat( base.Monster ):
     name = "Giant Bat"
-    statline = { stats.STRENGTH: 10, stats.TOUGHNESS: 6, stats.REFLEXES: 13, \
-        stats.INTELLIGENCE: 1, stats.PIETY: 9, stats.CHARISMA: 8 }
+    statline = { stats.STRENGTH: 10, stats.TOUGHNESS: 10, stats.REFLEXES: 15, \
+        stats.INTELLIGENCE: 1, stats.PIETY: 9, stats.CHARISMA: 8,
+        stats.NATURAL_DEFENSE: 5 }
     SPRITENAME = "monster_animals.png"
     FRAME = 0
     TEMPLATES = ()
-    MOVE_POINTS = 12
+    MOVE_POINTS = 16
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.HAB_CAVE, context.HAB_TUNNELS,
@@ -36,8 +37,9 @@ class GiantBat( base.Monster ):
 
 class GiantRat( base.Monster ):
     name = "Giant Rat"
-    statline = { stats.STRENGTH: 8, stats.TOUGHNESS: 8, stats.REFLEXES: 15, \
-        stats.INTELLIGENCE: 4, stats.PIETY: 9, stats.CHARISMA: 3 }
+    statline = { stats.STRENGTH: 10, stats.TOUGHNESS: 12, stats.REFLEXES: 17, \
+        stats.INTELLIGENCE: 2, stats.PIETY: 12, stats.CHARISMA: 4,
+        stats.PHYSICAL_ATTACK: 5, stats.NATURAL_DEFENSE: 5 }
     SPRITENAME = "monster_animals.png"
     FRAME = 2
     TEMPLATES = ()
@@ -57,12 +59,13 @@ class GiantRat( base.Monster ):
 
 class DireNewt( base.Monster ):
     name = "Dire Newt"
-    statline = { stats.STRENGTH: 10, stats.TOUGHNESS: 9, stats.REFLEXES: 12, \
-        stats.INTELLIGENCE: 1, stats.PIETY: 2, stats.CHARISMA: 1 }
+    statline = { stats.STRENGTH: 10, stats.TOUGHNESS: 8, stats.REFLEXES: 12, \
+        stats.INTELLIGENCE: 1, stats.PIETY: 2, stats.CHARISMA: 1,
+        stats.PHYSICAL_ATTACK: 10 }
     SPRITENAME = "monster_animals.png"
     FRAME = 5
     TEMPLATES = (stats.REPTILE,)
-    MOVE_POINTS = 8
+    MOVE_POINTS = 6
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.HAB_CAVE,
@@ -70,7 +73,7 @@ class DireNewt( base.Monster ):
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
     ENC_LEVEL = 1
 
-    ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING )
+    ATTACK = items.Attack( (1,8,0), element = stats.RESIST_PIERCING )
 
     def init_monster( self ):
         self.levels.append( base.Beast( 1, self ) )
@@ -78,7 +81,8 @@ class DireNewt( base.Monster ):
 class Chicken( base.Monster ):
     name = "Chicken"
     statline = { stats.STRENGTH: 9, stats.TOUGHNESS: 8, stats.REFLEXES: 12, \
-        stats.INTELLIGENCE: 1, stats.PIETY: 1, stats.CHARISMA: 4 }
+        stats.INTELLIGENCE: 1, stats.PIETY: 6, stats.CHARISMA: 4,
+        stats.PHYSICAL_ATTACK: 10 }
     SPRITENAME = "monster_animals.png"
     FRAME = 23
     TEMPLATES = ()

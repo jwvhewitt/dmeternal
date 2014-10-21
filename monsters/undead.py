@@ -17,7 +17,8 @@ import animals
 class SkeletalHound( base.Monster ):
     name = "Skeletal Hound"
     statline = { stats.STRENGTH: 9, stats.TOUGHNESS: 9, stats.REFLEXES: 10, \
-        stats.INTELLIGENCE: 1, stats.PIETY: 1, stats.CHARISMA: 1 }
+        stats.INTELLIGENCE: 1, stats.PIETY: 1, stats.CHARISMA: 1,
+        stats.AWARENESS: 25 }
     SPRITENAME = "monster_undead2.png"
     FRAME = 0
     TEMPLATES = (stats.UNDEAD,stats.BONE)
@@ -32,7 +33,7 @@ class SkeletalHound( base.Monster ):
 
     COMBAT_AI = aibrain.BrainDeadAI()
 
-    ATTACK = items.Attack( (1,4,0), element = stats.RESIST_PIERCING )
+    ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING )
 
     def init_monster( self ):
         self.levels.append( base.Beast( 1, self ) )
