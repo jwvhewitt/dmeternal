@@ -38,7 +38,7 @@ class FullPlate( Clothing ):
     avatar_image = "avatar_heavyarmor.png"
     avatar_frame = 10
     pants_frame = 16
-    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 35, stats.MAGIC_ATTACK: -30, stats.STEALTH: -15 })
+    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 35, stats.MAGIC_ATTACK: -25, stats.STEALTH: -20 })
     mass = 400
 
 class ElvenPlate( Clothing ):

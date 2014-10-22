@@ -433,7 +433,7 @@ harvest( wands )
 # Test Items
 #for ic in ITEM_LIST:
 #    i = ic()
-#    if i.itemtype in (GAUNTLET, HELM, SHIELD ):
+#    if i.itemtype in (LIGHT_ARMOR, HEAVY_ARMOR ):
 #        print "{0}: {1}/{2}gp".format( i, i.min_rank(), i.cost() )
 
 import enhancers

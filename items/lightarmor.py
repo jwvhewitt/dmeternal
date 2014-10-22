@@ -81,7 +81,7 @@ class HideArmor( Clothing ):
     avatar_image = "avatar_lightarmor.png"
     avatar_frame = 0
     pants_frame = 5
-    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 15 })
+    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 15, stats.STEALTH: -15 })
     mass = 105
 
 class StuddedLeather( Clothing ):
@@ -101,7 +101,7 @@ class LaminatedArmor( Clothing ):
     avatar_image = "avatar_lightarmor.png"
     avatar_frame = 2
     pants_frame = 3
-    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 15 })
+    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 15, stats.STEALTH: -5 })
     mass = 120
 
 class ChainShirt( Clothing ):
@@ -113,6 +113,17 @@ class ChainShirt( Clothing ):
     pants_frame = 4
     statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 15, stats.MAGIC_ATTACK: -5 })
     mass = 75
+
+class RingMail( Clothing ):
+    true_name = "Ringmail Armor"
+    true_desc = ""
+    itemtype = LIGHT_ARMOR
+    avatar_image = "avatar_lightarmor.png"
+    avatar_frame = 23
+    pants_frame = 1
+    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 15, stats.MAGIC_ATTACK: -15, stats.STEALTH: -10 })
+    mass = 125
+
 
 class ScaleMail( Clothing ):
     true_name = "Scale Mail"
