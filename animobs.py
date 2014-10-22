@@ -327,6 +327,13 @@ class Pearl( AnimOb ):
                     self.frame = self.start_frame
                     self.counter = 0
 
+# fx_ignite.png
+
+class Ignite( AnimOb ):
+    def __init__(self, pos=(0,0), loop=0, delay=1 ):
+        super(Ignite, self).__init__(sprite_name="fx_ignite.png",pos=pos,start_frame=0,end_frame=9,loop=loop,ticks_per_frame=1, delay=delay)
+
+
 # fx_emoticons.png
 
 class SpeakHello( AnimOb ):

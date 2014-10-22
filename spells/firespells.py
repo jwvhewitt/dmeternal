@@ -36,10 +36,10 @@ BLINDING_FLASH = Spell( "Blinding Flash",
 IGNITE = Spell( "Ignite",
     "You touch one opponent, causing them to burst into flame. The target suffers 2d5 fire damage and may continue burning.",
     effects.OpposedRoll( on_success = (
-        effects.HealthDamage( (2,5,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion ),
+        effects.HealthDamage( (2,5,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.Ignite ),
         effects.Enchant( enchantments.BurnLowEn )
     ,), on_failure = (
-        effects.HealthDamage( (2,5,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion )
+        effects.HealthDamage( (2,5,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.Ignite )
     ,) ), rank=2, gems={FIRE:1}, com_tar=targetarea.SingleTarget(reach=1),ai_tar=invocations.vs_enemy )
 
 # CIRCLE 3
@@ -57,9 +57,9 @@ EXPLOSION = Spell( "Explosion",
 PYROTECHNICS = Spell( "Pyrotechnics",
     "Conjures magical fireworks which do 4d6 fire damage to all targets in a straight line.",
     effects.OpposedRoll( on_success = (
-        effects.HealthDamage( (4,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion )
+        effects.HealthDamage( (4,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.Ignite )
     ,), on_failure = (
-        effects.HealthDamage( (1,12,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion )
+        effects.HealthDamage( (1,12,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.Ignite )
     ,) ), rank=4, gems={FIRE:3}, com_tar=targetarea.Line(), ai_tar=invocations.vs_enemy )
 
 
