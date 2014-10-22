@@ -17,4 +17,10 @@ class Dirk( Dagger ):
     mass = 16
     attackdata = Attack( (1,6,0) )
 
+class Stiletto( Dagger ):
+    true_name = "Stiletto"
+    true_desc = ""
+    avatar_frame = 5
+    mass = 13
+    attackdata = Attack( (1,6,0), element = stats.RESIST_PIERCING, skill_mod=stats.REFLEXES )
 

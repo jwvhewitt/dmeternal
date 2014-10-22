@@ -119,12 +119,12 @@ class Thief( Level ):
     HP_DIE = 6
     MP_DIE = 4
     LEVELS_PER_GEM = 0
-    legal_equipment = ( items.DAGGER, items.STAFF, \
+    legal_equipment = ( items.SWORD, items.DAGGER, items.STAFF, \
         items.BOW, items.ARROW, items.SLING, \
         items.BULLET, items.CLOTHES, items.LIGHT_ARMOR, \
         items.HAT, items.GLOVE, items.SANDALS, \
         items.SHOES, items.BOOTS, items.CLOAK, items.WAND )
-    starting_equipment = ( items.hats.Bandana, items.daggers.Dagger, items.lightarmor.PaddedArmor, items.cloaks.ThiefCloak )
+    starting_equipment = ( items.hats.Bandana, items.daggers.Stiletto, items.lightarmor.PaddedArmor, items.cloaks.ThiefCloak )
 
 
 class Bard( Level ):
@@ -291,8 +291,7 @@ class Ninja( Level ):
     MP_DIE = 4
     LEVELS_PER_GEM = 0
     legal_equipment = ( items.SWORD, items.DAGGER, items.STAFF, \
-        items.BOW, items.ARROW, items.SLING, \
-        items.BULLET, items.CLOTHES, items.HAT, \
+        items.CLOTHES, items.HAT, \
         items.GLOVE, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK )
     starting_equipment = (items.clothes.NinjaGear,items.swords.Wakizashi,items.hats.NinjaMask)
