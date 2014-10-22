@@ -86,7 +86,7 @@ EXTERMINATE = Spell( "Exterminate",
 FLAMING_SWORD = Spell( "Flaming Sword",
     "Conjures an animated flaming sword, which will fight for your party until the end of combat.",
     effects.CallMonster( {context.SUMMON_FLAMINGSWORD: True, context.DES_AIR: context.MAYBE, context.DES_FIRE: context.MAYBE}, 14, anim=animobs.RedSparkle ),
-    rank=7, gems={AIR:2,FIRE:2}, com_tar=targetarea.SingleTarget(reach=2), mpfudge = 16 )
+    rank=7, gems={AIR:2,FIRE:2}, com_tar=targetarea.SingleTarget(reach=5), mpfudge = 16 )
 
 FROSTFIRE = Spell( "Frostfire",
     "This spell creates a sphere of pure anti-fire, which freezes all targets in a 3 tile radius for 4d12 cold damage. The frostfire may continue to burn until the victim is frozen solid.",
