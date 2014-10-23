@@ -119,6 +119,7 @@ if __name__=='__main__':
     rpm.add_item( "Create Character", chargen.make_and_save_character )
     rpm.add_item( "Load Campaign", load_campaign )
     rpm.add_item( "Start Campaign", default_start_campaign )
+    rpm.add_item( "Browse Characters", campaign.browse_pcs )
     rpm.add_item( "Quit Game", None )
 
     cmd = True
