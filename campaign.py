@@ -137,7 +137,7 @@ class Campaign( object ):
             self.fight = combat.Combat( self, mon )
 
 
-    def place_party( self ):
+    def old_place_party( self ):
         """Stick the party close to the waypoint."""
         good_points = list()
         x0,y0 = self.entrance.pos
@@ -150,6 +150,24 @@ class Campaign( object ):
                 if good_points:
                     pos = random.choice( good_points )
                     good_points.remove( pos )
+                else:
+                    pos = self.entrance.pos
+                pc.pos = pos
+                self.scene.contents.append( pc )
+                pfov.PCPointOfView( self.scene, pos[0], pos[1], 15 )
+
+    def place_party( self ):
+        """Stick the party close to the waypoint."""
+        x0,y0 = self.entrance.pos
+        entry_points = list( pfov.AttackReach( self.scene, x0, y0, 3, True ).tiles )
+        for m in self.scene.contents:
+            if self.scene.is_model(m) and m.pos in entry_points:
+                entry_points.remove( m.pos )
+        for pc in self.party:
+            if pc.is_alright():
+                if entry_points:
+                    pos = random.choice( entry_points )
+                    entry_points.remove( pos )
                 else:
                     pos = self.entrance.pos
                 pc.pos = pos
