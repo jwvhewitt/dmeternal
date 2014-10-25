@@ -19,9 +19,10 @@ FREEZE_FOE = Spell( "Freeze Foe",
     ai_tar=invocations.vs_enemy )
 
 RESTORE_FLUIDITY = Spell( "Restore Fluidity",
-    "This spell restores mobility to an ally who has been paralyzed or sedated.",
-    effects.RestoreMobility( anim=animobs.GreenSparkle ),
-    rank=1, gems={WATER:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.BlueComet, mpfudge=-1 )
+    "This spell restores mobility to all allies within 6 tiles who have been paralyzed or sedated.",
+    effects.TargetIsAlly( on_true = (
+        effects.RestoreMobility( anim=animobs.GreenSparkle ),
+    )), rank=1, gems={WATER:1}, com_tar=targetarea.SelfCentered() )
 
 # CIRCLE 2
 
@@ -45,8 +46,10 @@ WINTER_WIND = Spell( "Winter Wind",
 
 REGENERATION = Spell( "Regeneration",
     "Infuses a single ally will life energy, allowing them to regenerate 1d6 health per turn.",
-    effects.Enchant( enchantments.RegeneratEn, anim=animobs.GreenSparkle ),
-    rank=2, gems={WATER:2}, com_tar=targetarea.SingleTarget(), exp_tar=targetarea.SinglePartyMember(),
+    effects.Enchant( enchantments.RegeneratEn, anim=animobs.GreenSparkle, children=(
+        effects.HealthRestore( dice=(1,6,0) )
+    ,) ),
+    rank=3, gems={WATER:1}, com_tar=targetarea.SingleTarget(), exp_tar=targetarea.SinglePartyMember(),
     ai_tar=invocations.vs_wounded_ally )
 
 # CIRCLE FOUR

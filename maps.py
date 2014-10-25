@@ -463,6 +463,12 @@ class Scene( object ):
         else:
             return True
 
+    def tile_blocks_walking( self, x, y ):
+        if self.on_the_map(x,y):
+            return self.map[x][y].blocks_walking()
+        else:
+            return True
+
     def validate_terrain( self ):
         """Make sure that HIGROUND never touches water."""
         for x in range( self.width ):

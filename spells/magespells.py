@@ -17,7 +17,7 @@ FIRE_ARC = Spell( "Fire Arc",
         effects.HealthDamage( (1,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion )
     ,), on_failure = (
         effects.HealthDamage( (1,2,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion )
-    ,) ), rank=1, gems={FIRE:1,LUNAR:1}, com_tar=targetarea.Cone(reach=3), ai_tar=invocations.vs_enemy )
+    ,) ), rank=1, gems={FIRE:1,LUNAR:1}, com_tar=targetarea.Cone(reach=3), ai_tar=invocations.vs_enemy, mpfudge=-2 )
 
 SHOCK_SPHERE = Spell( "Shock Sphere",
     "An electrical burst will deal 1-6 points of damage to all enemies within two tiles of the caster.",
@@ -26,25 +26,26 @@ SHOCK_SPHERE = Spell( "Shock Sphere",
             effects.HealthDamage( (1,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_LIGHTNING, anim=animobs.BlueZap )
         ,), on_failure = (
             effects.HealthDamage( (1,3,0), stat_bonus=None, element=stats.RESIST_LIGHTNING, anim=animobs.BlueZap )
-    ,) ) ,) ), rank=1, gems={AIR:1,LUNAR:1}, com_tar=targetarea.SelfCentered(radius=2,exclude_middle=True), mpfudge=-2,
+    ,) ) ,) ), rank=1, gems={AIR:1,LUNAR:1}, com_tar=targetarea.SelfCentered(radius=2,exclude_middle=True), mpfudge=-1,
     ai_tar=invocations.vs_enemy )
 
 # CIRCLE TWO
 
 LIGHTNING_BOLT = Spell( "Lightning Bolt",
-    "This spell conjures magical lightning, which will unerringly hit one foe for 1d10 damage.",
-    effects.HealthDamage((1,10,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_LIGHTNING, anim=animobs.BlueZap ),
-    rank=2, gems={AIR:1,LUNAR:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.Lightning, ai_tar=invocations.vs_enemy )
+    "This spell conjures magical lightning, which will unerringly hit one foe for 2d8 damage.",
+    effects.HealthDamage((2,8,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_LIGHTNING, anim=animobs.BlueZap ),
+    rank=2, gems={AIR:1,LUNAR:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.Lightning, ai_tar=invocations.vs_enemy,
+    mpfudge=-1 )
 
 # CIRCLE THREE
 
 FIRE_SIGN = Spell( "Fire Sign",
-    "Marks all enemies within 6 tiles with a flaming sigil, preventing them from hiding.",
+    "Burns all enemies within 6 tiles with a flaming sigil, doing 2d4 damage and preventing them from hiding.",
     effects.TargetIsEnemy( on_true = (
         effects.OpposedRoll( on_success = (
             effects.HealthDamage( (2,4,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.RedCloud )
         ,), on_failure = (
-            effects.HealthDamage( (1,4,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.RedCloud )
+            effects.HealthDamage( (1,4,1), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.RedCloud )
         ,)),
         effects.Enchant( enchantments.FireSignEn, anim=None )
     ) ), rank=3, gems={AIR:1,FIRE:1}, com_tar=targetarea.SelfCentered(), ai_tar=invocations.vs_enemy )

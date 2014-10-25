@@ -74,6 +74,16 @@ class PaddedRobe( Clothing ):
     statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 10 })
     mass = 85
 
+class BeastfurArmor( Clothing ):
+    true_name = "Beastfur Armor"
+    true_desc = "Constructed from the skin of an unknown creature, this armor provides good physical and magical defense."
+    itemtype = LIGHT_ARMOR
+    avatar_image = "avatar_lightarmor.png"
+    avatar_frame = 24
+    pants_image = None
+    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 10, stats.MAGIC_DEFENSE: 5 })
+    mass = 95
+
 class HideArmor( Clothing ):
     true_name = "Hide Armor"
     true_desc = ""
@@ -124,6 +134,16 @@ class RingMail( Clothing ):
     statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 15, stats.MAGIC_ATTACK: -15, stats.STEALTH: -10 })
     mass = 125
 
+class WyvernskinArmor( Clothing ):
+    true_name = "Wyvernskin Armor"
+    true_desc = "Made only in the barbarious northlands, this armor is highly valued because of its magical properties."
+    itemtype = LIGHT_ARMOR
+    avatar_image = "avatar_lightarmor.png"
+    avatar_frame = 41
+    pants_image = None
+    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 15, stats.MAGIC_DEFENSE: 5, stats.RESIST_POISON: 10 })
+    mass = 90
+
 
 class ScaleMail( Clothing ):
     true_name = "Scale Mail"
@@ -140,10 +160,20 @@ class Breastplate( Clothing ):
     true_desc = ""
     itemtype = LIGHT_ARMOR
     avatar_image = "avatar_lightarmor.png"
-    avatar_frame = 15
+    avatar_frame = 14
     pants_frame = 24
     statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 20, stats.MAGIC_ATTACK:-10, stats.STEALTH:-5 })
     mass = 140
+
+class LamellarArmor( Clothing ):
+    true_name = "Lamellar Armor"
+    true_desc = ""
+    itemtype = LIGHT_ARMOR
+    avatar_image = "avatar_lightarmor.png"
+    avatar_frame = 24
+    pants_frame = 0
+    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 20, stats.STEALTH:-15 })
+    mass = 150
 
 class ElvenChain( Clothing ):
     true_name = "Elven Chainmail"

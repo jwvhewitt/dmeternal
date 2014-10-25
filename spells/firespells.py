@@ -10,12 +10,13 @@ import context
 # CIRCLE ONE
 
 FIRE_BOLT = Spell( "Fire Bolt",
-    "This attack does 2d6 fire damage when it hits.",
+    "This attack does 1d8 fire damage to a single target.",
     effects.OpposedRoll( att_modifier=10, on_success = (
-        effects.HealthDamage( (2,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion )
+        effects.HealthDamage( (1,8,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion )
     ,), on_failure = (
-        effects.NoEffect( anim=animobs.SmallBoom )
-    ,) ), rank=1, gems={FIRE:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.FireBolt, ai_tar=invocations.vs_enemy )
+        effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion )
+    ,) ), rank=1, gems={FIRE:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.FireBolt, ai_tar=invocations.vs_enemy,
+    mpfudge=-1 )
 
 BURNING_WEAPON = Spell( "Burning Weapon",
     "Magical flames burst from an ally's weapon, causing an extra 1-6 points of damge per hit. This effect lasts until the end of combat.",
@@ -40,7 +41,7 @@ IGNITE = Spell( "Ignite",
         effects.Enchant( enchantments.BurnLowEn )
     ,), on_failure = (
         effects.HealthDamage( (2,5,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.Ignite )
-    ,) ), rank=2, gems={FIRE:1}, com_tar=targetarea.SingleTarget(reach=1),ai_tar=invocations.vs_enemy )
+    ,) ), rank=2, gems={FIRE:1}, com_tar=targetarea.SingleTarget(reach=1),ai_tar=invocations.vs_enemy, mpfudge=-1 )
 
 # CIRCLE 3
 

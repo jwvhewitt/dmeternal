@@ -31,7 +31,7 @@ ACID_BOLT = Spell( "Acid Bolt",
     ), on_failure = (
         effects.HealthDamage( (1,5,0), stat_bonus=None, element=stats.RESIST_ACID, anim=animobs.GreenExplosion )
     ,) ), rank=2, gems={EARTH:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.GreenSpray,
-    ai_tar=invocations.vs_enemy )
+    ai_tar=invocations.vs_enemy, mpfudge=-1 )
 
 BEASTLY_MIGHT = Spell( "Beastly Might",
     "Imbues a single ally with supernatural strength, giving +4 strength, +4 toughness, and +5% to attack.",

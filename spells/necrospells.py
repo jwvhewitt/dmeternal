@@ -14,11 +14,11 @@ import invocations
 
 ICE_BOLT = Spell( "Icy Bolt",
     "This attack does 1d8 cold damage to a single target.",
-    effects.OpposedRoll( on_success = (
+    effects.OpposedRoll( att_modifier=15, on_success = (
         effects.HealthDamage( (1,8,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_COLD, anim=animobs.BlueExplosion )
     ,), on_failure = (
         effects.HealthDamage( (1,3,0), stat_bonus=None, element=stats.RESIST_COLD, anim=animobs.BlueExplosion )
-    ,) ), rank=1, gems={LUNAR:1,WATER:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.BlueBolt, mpfudge=-2,
+    ,) ), rank=1, gems={LUNAR:1,WATER:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.BlueBolt, mpfudge=-3,
     ai_tar=invocations.vs_enemy )
 
 RAISE_SKELETON = Spell( "Raise Skeleton",
@@ -35,12 +35,12 @@ RAISE_CORPSE = Spell( "Raise Corpse",
 
 TOUCH_OF_DEATH = Spell( "Touch of Death",
     "You touch one opponent, delivering the chill of the grave. The target suffers 2d5 cold damage and may be paralyzed.",
-    effects.OpposedRoll( on_success = (
+    effects.OpposedRoll( att_modifier=10, on_success = (
         effects.HealthDamage( (2,5,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_COLD, anim=animobs.BlueExplosion ),
         effects.Paralyze( max_duration = 3 )
     ,), on_failure = (
         effects.HealthDamage( (2,5,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_COLD, anim=animobs.BlueExplosion )
-    ,) ), rank=2, gems={LUNAR:1,WATER:1}, com_tar=targetarea.SingleTarget(reach=1),ai_tar=invocations.vs_enemy )
+    ,) ), rank=2, gems={LUNAR:1,WATER:1}, com_tar=targetarea.SingleTarget(reach=1),ai_tar=invocations.vs_enemy, mpfudge=-2 )
 
 
 # CIRCLE 3

@@ -510,19 +510,6 @@ class TargetIs( NoEffect ):
         """Do whatever is required of effect; return list of child effects."""
         target = camp.scene.get_character_at_spot( pos )
         if target:
-#            match = True
-#            for k,v in self.pat.iteritems():
-#                if v:
-                    # This key must exist in target's templates.
-#                    if k not in target.TEMPLATES:
-#                        match = False
-#                        break
-#                else:
-                    # This key must not exist in target's templates.
-#                    if k in target.TEMPLATES:
-#                        match = False
-#                        break
-
             if context.matches_description( target.TEMPLATES, self.pat ):
                 return self.on_true
             else:

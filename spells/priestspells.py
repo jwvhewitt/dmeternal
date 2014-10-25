@@ -26,7 +26,7 @@ BLAST_UNDEAD = Spell( "Blast Undead",
     ,), on_false = (
         effects.NoEffect( anim=animobs.SmallBoom )
     ,) ),
-    rank=1, gems={SOLAR:1,WATER:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.YellowBolt, mpfudge=-1 )
+    rank=1, gems={SOLAR:1,WATER:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.YellowBolt, mpfudge=-2 )
 
 
 # CIRCLE TWO

@@ -12,10 +12,10 @@ CURSE = Spell( "Curse",
     "Decreases the physical attack score of enemies within 6 tiles by 5%. This effect lasts until the end of combat.",
     effects.TargetIsEnemy( on_true = (
         effects.Enchant( enchantments.CurseEn, anim=animobs.PurpleSparkle )
-    ,) ), rank=1, gems={LUNAR:1}, com_tar=targetarea.SelfCentered(), ai_tar=invocations.vs_enemy )
+    ,) ), rank=1, gems={LUNAR:1}, com_tar=targetarea.SelfCentered(), ai_tar=invocations.vs_enemy, mpfudge=-1 )
 
 WIZARD_MISSILE = Spell( "Wizard Missile",
-    "This mystic bolt always strikes its target for at most 1-6 damage.",
+    "This mystic bolt always strikes its target for 1-6 damage.",
     effects.HealthDamage((1,6,0), stat_bonus=None, element=stats.RESIST_LUNAR, anim=animobs.PurpleExplosion ),
     rank=1, gems={LUNAR:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.WizardMissile, ai_tar=invocations.vs_enemy, mpfudge=-2 )
 
@@ -35,13 +35,14 @@ SLEEP = Spell( "Sleep",
 # CIRCLE 4
 
 HELLBLAST = Spell( "Hellblast",
-    "Eldritch flames spew forth to damage targets for 3d6 dark damage.",
+    "Eldritch flames spew forth to damage targets for 3d6 dark damage. Those touched by the flames will be cursed for the remainder of combat.",
     effects.OpposedRoll( on_success = (
         effects.HealthDamage( (3,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_LUNAR, anim=animobs.PurpleExplosion ),
-        effects.Enchant( enchantments.CurseEn, anim=animobs.PurpleSparkle )
+        effects.Enchant( enchantments.CurseEn )
     ), on_failure = (
-        effects.HealthDamage( (1,9,0), stat_bonus=None, element=stats.RESIST_LUNAR, anim=animobs.PurpleExplosion )
-    ,) ), rank=4, gems={LUNAR:2}, com_tar=targetarea.Cone(reach=8),
+        effects.HealthDamage( (1,6,2), stat_bonus=None, element=stats.RESIST_LUNAR, anim=animobs.PurpleExplosion ),
+        effects.Enchant( enchantments.CurseEn )
+    ) ), rank=4, gems={LUNAR:2}, com_tar=targetarea.Cone(reach=8),
     ai_tar=invocations.vs_enemy )
 
 

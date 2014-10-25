@@ -12,7 +12,7 @@ BLESSING = Spell( "Blessing",
     "Increases the physical and magic attack scores of all allies within 6 tiles by +5%. This effect lasts until the end of combat.",
     effects.TargetIsAlly( on_true = (
         effects.Enchant( enchantments.BlessingEn, anim=animobs.YellowSparkle )
-    ,) ), rank=1, gems={SOLAR:1}, com_tar=targetarea.SelfCentered() )
+    ,) ), rank=1, gems={SOLAR:1}, com_tar=targetarea.SelfCentered(), mpfudge=-1 )
 
 MINOR_CURE = Spell( "Minor Cure",
     "This spell will heal one nearby ally for 1-10 damage.",
@@ -23,8 +23,8 @@ MINOR_CURE = Spell( "Minor Cure",
 # CIRCLE 2
 
 MODERATE_CURE = Spell( "Moderate Cure",
-    "This spell will heal one nearby ally for 2-20 damage.",
-    effects.HealthRestore( dice=(2,10,0) ),
+    "This spell will heal one nearby ally for 6-20 damage.",
+    effects.HealthRestore( dice=(2,8,4) ),
     rank=2, gems={SOLAR:2}, com_tar=targetarea.SingleTarget(reach=1), ai_tar=invocations.vs_wounded_ally,
     exp_tar=targetarea.SinglePartyMember(), mpfudge = -2 )
 
@@ -49,8 +49,8 @@ CURE_POISON = Spell( "Cure Poison",
 # CIRCLE 4
 
 MAJOR_CURE = Spell( "Major Cure",
-    "This spell will heal one nearby ally for 3-36 damage.",
-    effects.HealthRestore( dice=(3,12,0) ),
+    "This spell will heal one nearby ally for 15-36 damage.",
+    effects.HealthRestore( dice=(3,8,12) ),
     rank=4, gems={SOLAR:2}, com_tar=targetarea.SingleTarget(reach=1), ai_tar=invocations.vs_wounded_ally,
     exp_tar=targetarea.SinglePartyMember(), mpfudge = -2 )
 
