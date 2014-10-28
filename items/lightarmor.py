@@ -79,7 +79,7 @@ class BeastfurArmor( Clothing ):
     true_desc = "Constructed from the skin of an unknown creature, this armor provides good physical and magical defense."
     itemtype = LIGHT_ARMOR
     avatar_image = "avatar_lightarmor.png"
-    avatar_frame = 24
+    avatar_frame = 25
     pants_image = None
     statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 10, stats.MAGIC_DEFENSE: 5 })
     mass = 95
