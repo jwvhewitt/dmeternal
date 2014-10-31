@@ -24,7 +24,7 @@ PROBE = Spell( "Probe",
 # CIRCLE TWO
 
 SILENCE = Spell( "Silence",
-    "Causes living creatures in a 2 tile radius to fall asleep.",
+    "Targets within a 2 tile radius may be silenced, preventing them from casting spells.",
     effects.OpposedRoll( att_modifier=0, on_success = (
         effects.CauseSilence(),
     ), on_failure = (
@@ -38,7 +38,7 @@ SHOUT = Spell( "Shout",
         effects.HealthDamage( (1,8,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_WIND, anim=animobs.SonicHit )
     ,), on_failure = (
         effects.HealthDamage( (1,4,0), stat_bonus=None, element=stats.RESIST_WIND, anim=animobs.SonicHit )
-    ,) ), rank=2, gems={AIR:2}, com_tar=targetarea.Cone(reach=4), ai_tar=invocations.vs_enemy )
+    ,) ), rank=2, gems={AIR:2}, com_tar=targetarea.Cone(reach=4), ai_tar=invocations.vs_enemy, mpfudge=-1 )
 
 # CIRCLE THREE
 
