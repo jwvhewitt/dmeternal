@@ -165,8 +165,8 @@ class CaveDragon( base.Monster ):
     ENC_LEVEL = 8
     LONER = True
     COMPANIONS = ( YoungCaveDragon, )
-    ATTACK = items.Attack( (3,6,0), element = stats.RESIST_SLASHING, extra_effect=
-        effects.SavingThrow( roll_skill=stats.RESIST_POISON, roll_stat=stats.TOUGHNESS, roll_modifier=25, on_failure = (
+    ATTACK = items.Attack( (2,6,0), element = stats.RESIST_SLASHING, extra_effect=
+        effects.SavingThrow( roll_skill=stats.RESIST_POISON, roll_stat=stats.TOUGHNESS, roll_modifier=50, on_failure = (
             effects.Enchant( enchantments.PoisonClassic, anim=animobs.DeathSparkle )
         ,)) )
     TECHNIQUES = ( invocations.MPInvocation( "Toxic Breath",

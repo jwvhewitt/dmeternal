@@ -70,7 +70,7 @@ class ElvenWeapon( Enhancer ):
     NAMEPAT = "Elven {0}"
     DESCPAT = "{0} It has been balanced for parrying, providing +5% to defense."
     PLUSRANK = 1
-    AFFECTS = (SWORD,DAGGER,STAFF)
+    AFFECTS = (SWORD,DAGGER,STAFF,LANCE)
     BONUSES = stats.StatMod({ stats.PHYSICAL_DEFENSE: 5, stats.NATURAL_DEFENSE: 5 })
 
 class ElvenBow( Enhancer ):
@@ -120,6 +120,7 @@ class DreadWeapon( Enhancer ):
     DESCPAT = "{0} Targets struck by this weapon may find themselves cursed."
     PLUSRANK = 3
     AFFECTS = (SWORD, AXE, MACE, DAGGER, STAFF, POLEARM, FARMTOOL, BOW, SLING)
+    BONUSES = stats.StatMod({ stats.PHYSICAL_ATTACK: 5 })
     ATTACK_ON_HIT = effects.Enchant( enchantments.CurseEn, anim=animobs.PurpleSparkle )
 
 class Smasher( Enhancer ):

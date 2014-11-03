@@ -11,7 +11,7 @@ import context
 
 FREEZE_FOE = Spell( "Freeze Foe",
     "A single target will be frozen in its tracks, unable to act for 1 to 3 rounds.",
-    effects.OpposedRoll( on_success = (
+    effects.OpposedRoll( att_modifier=20, on_success = (
         effects.Paralyze( max_duration = 3 )
     ,), on_failure =(
         effects.NoEffect( anim=animobs.SmallBoom )

@@ -12,6 +12,7 @@ import aibrain
 import random
 import animals
 import undead
+import enchantments
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  1   ***
@@ -231,7 +232,7 @@ class Necromancer( base.Monster ):
     TREASURE = ( items.scrolls.Rank2Scroll, items.scrolls.Rank3Scroll )
     def init_monster( self ):
         self.levels.append( base.Spellcaster( 5, self ) )
-        if random.randint(1,10) == 1:
+        if random.randint(1,5) == 1:
             self.contents.append( random.choice( self.TREASURE )() )
 
 class Warrior( base.Monster ):
@@ -280,7 +281,7 @@ class Priest( base.Monster ):
     TREASURE = ( items.scrolls.Rank2Scroll, items.scrolls.Rank3Scroll )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 6, self ) )
-        if random.randint(1,10) == 1:
+        if random.randint(1,5) == 1:
             self.contents.append( random.choice( self.TREASURE )() )
 
 class Mercenary( base.Monster ):
@@ -358,7 +359,7 @@ class Conjuoror( base.Monster ):
     TREASURE = ( items.scrolls.Rank3Scroll, items.scrolls.Rank4Scroll )
     def init_monster( self ):
         self.levels.append( base.Spellcaster( 7, self ) )
-        if random.randint(1,10) == 1:
+        if random.randint(1,5) == 1:
             self.contents.append( random.choice( self.TREASURE )() )
 
 
@@ -403,7 +404,43 @@ class Executioner( base.Monster ):
 #  ***   ENCOUNTER  LEVEL  10   ***
 #  ********************************
 
-# Unspecified other Priest type
+class Healer( base.Monster ):
+    name = "Healer"
+    statline = { stats.STRENGTH: 12, stats.TOUGHNESS: 16, stats.REFLEXES: 12, \
+        stats.INTELLIGENCE: 14, stats.PIETY: 18, stats.CHARISMA: 18 }
+    SPRITENAME = "monster_spellcasters.png"
+    FRAME = 16
+    TEMPLATES = ()
+    MOVE_POINTS = 10
+    GP_VALUE = 50
+    HABITAT = ( context.HAB_EVERY, context.HAB_BUILDING, context.SET_EVERY,
+     context.DES_CIVILIZED, context.DES_SOLAR, context.DES_WATER, context.MTY_LEADER,
+     context.MTY_HUMANOID, context.MTY_PRIEST )
+    ENC_LEVEL = 10
+    COMBAT_AI = aibrain.BasicTechnicalAI()
+    COMPANIONS = (NoviceWarrior,NovicePriest,Warrior)
+    ATTACK = items.Attack( (3,6,0), element = stats.RESIST_SOLAR,
+        hit_anim=animobs.YellowExplosion )
+    TECHNIQUES = ( spells.priestspells.SMITE, spells.solarspells.MASS_CURE,
+        spells.solarspells.MAXIMUM_CURE, invocations.MPInvocation( "Repent",
+            effects.TargetIsAlly( on_true = (
+                effects.Enchant( enchantments.BlessingEn, anim=animobs.GreenSparkle ),
+                effects.TargetIsDamaged( on_true= (
+                    effects.HealthRestore( dice=(3,12,12) ),
+                ))
+            ), on_false=(
+                effects.TargetIsEnemy( on_true = (
+                    effects.HealthDamage( (3,12,0), stat_bonus=stats.CHARISMA, element=stats.RESIST_WATER, anim=animobs.Bubbles ),
+                )),
+            )), shot_anim=animobs.BlueComet, com_tar=targetarea.Blast(radius=3),
+            ai_tar=invocations.vs_enemy, mp_cost=12 )
+        )
+    TREASURE = ( items.potions.PotionOfHealing, items.scrolls.Rank4Scroll, items.scrolls.Rank5Scroll )
+    def init_monster( self ):
+        self.levels.append( base.Spellcaster( 6, self ) )
+        self.levels.append( base.Defender( 4, self ) )
+        if random.randint(1,3) == 1:
+            self.contents.append( random.choice( self.TREASURE )() )
 
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  11   ***

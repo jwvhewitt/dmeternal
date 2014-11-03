@@ -229,7 +229,7 @@ class GoblinMage( base.Monster ):
 
     def init_monster( self ):
         self.levels.append( base.Spellcaster( 8, self ) )
-        if random.randint(1,10) == 1:
+        if random.randint(1,5) == 1:
             self.contents.append( items.scrolls.Rank3Scroll() )
 
 class GoblinElite( base.Monster ):
@@ -450,7 +450,7 @@ class HobgoblinMage( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 10
     VOICE = dialogue.voice.ORCISH
-    GP_VALUE = 30
+    GP_VALUE = 20
     HABITAT = ( context.HAB_EVERY, context.HAB_CAVE, context.SET_EVERY,
      context.DES_LUNAR,
      context.MTY_HUMANOID, context.MTY_MAGE, context.GEN_GOBLIN )
@@ -465,7 +465,7 @@ class HobgoblinMage( base.Monster ):
 
     def init_monster( self ):
         self.levels.append( base.Spellcaster( 5, self ) )
-        if random.randint(1,20) == 1:
+        if random.randint(1,5) == 1:
             self.contents.append( items.scrolls.Rank2Scroll() )
 
 
@@ -478,7 +478,7 @@ class HobgoblinPriest( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 10
     VOICE = dialogue.voice.ORCISH
-    GP_VALUE = 36
+    GP_VALUE = 30
     HABITAT = ( context.HAB_EVERY, context.HAB_CAVE, context.SET_EVERY,
      context.DES_LUNAR, context.MTY_LEADER,
      context.MTY_HUMANOID, context.MTY_PRIEST, context.GEN_GOBLIN )
@@ -493,7 +493,7 @@ class HobgoblinPriest( base.Monster ):
 
     def init_monster( self ):
         self.levels.append( base.Spellcaster( 6, self ) )
-        if random.randint(1,20) == 1:
+        if random.randint(1,10) == 1:
             self.contents.append( items.scrolls.Rank3Scroll() )
 
 class HobgoblinWarlord( base.Monster ):
@@ -518,7 +518,8 @@ class HobgoblinWarlord( base.Monster ):
     ATTACK = items.Attack( (2,8,1), element = stats.RESIST_SLASHING )
 
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 8, self ) )
+        self.levels.append( base.Terror( 4, self ) )
+        self.levels.append( base.Humanoid( 4, self ) )
 
 
 #  ****************
