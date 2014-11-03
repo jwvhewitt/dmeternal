@@ -19,6 +19,28 @@ import worlds
 # adventure components. Yay ADVSTUB!
 #
 
+class BardicStub( Plot ):
+    LABEL = "STUB_BARDIC"
+    # Creates a simple, plot-free dungeon adventure.
+
+    def custom_init( self, nart ):
+        """Create the world + chapter + city, then load INTRO_2"""
+        w = worlds.World()
+        nart.camp.contents.append( w )
+        self.register_element( "WORLD", w )
+        self.chapter = Chapter( world=w )
+        self.add_first_locale_sub_plot( nart )
+
+        sp = self.add_sub_plot( nart, "INTRO_1" )
+
+        for job in characters.PC_CLASSES:
+            self.add_sub_plot( nart, "RESOURCE_JOBTRAINER", PlotState( elements={"JOB":job} ) )
+
+        self.add_sub_plot( nart, "TESTPLOT", spstate=PlotState().based_on(sp), necessary=False )
+
+        return True
+
+
 class AdventureStub( Plot ):
     LABEL = "ADVSTUB"
 

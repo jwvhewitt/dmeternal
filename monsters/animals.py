@@ -700,7 +700,8 @@ class GreatStag( base.Monster ):
 class PolarBear( base.Monster ):
     name = "Polar Bear"
     statline = { stats.STRENGTH: 20, stats.TOUGHNESS: 18, stats.REFLEXES: 12, \
-        stats.INTELLIGENCE: 1, stats.PIETY: 10, stats.CHARISMA: 6 }
+        stats.INTELLIGENCE: 1, stats.PIETY: 10, stats.CHARISMA: 6,
+        stats.RESIST_FIRE: -50, stats.RESIST_COLD: 50 }
     SPRITENAME = "monster_animals.png"
     FRAME = 16
     TEMPLATES = ()
