@@ -12,8 +12,8 @@ class Chapter( object ):
     def __init__( self, num=1, start_rank=1, end_rank=5, world = None, follows=None ):
         if follows:
             num = follows.num + 1
-            start_rank = follows.end_rank
-            end_rank = start_rank + random.randint( 3,5 )
+            start_rank = follows.end_rank+1
+            end_rank = start_rank + random.randint( 2,4 )
             world = follows.world
             self.active = False
             self.prev = follows
@@ -279,7 +279,7 @@ class Plot( object ):
         for l in range( start_rank, end_rank+1 ):
             sp = self.add_sub_plot( nart, "DUNGEON_LEVEL", pstate )
             if sp:
-                pstate.rank = l
+                pstate.rank = l+1
                 pstate.elements["DUNGEON_TYPE"] = sp.TAGS
                 dunglev = sp.elements[ "LOCALE" ]
                 levels.append( dunglev )

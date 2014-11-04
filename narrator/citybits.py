@@ -106,7 +106,7 @@ class GenerallyGeneralStore( Plot ):
         int_mainroom.contents.append( npc )
         self.register_element( "SHOPKEEPER", npc )
         self.shop = self.register_element( "SHOPSERVICE", services.Shop( rank=self.rank+3 ) )
-        self.add_sub_plot( nart, "SIDE_STORY", PlotState(rank=self.random_rank_in_chapter()).based_on( self ) )
+        #self.add_sub_plot( nart, "SIDE_STORY", PlotState(rank=self.random_rank_in_chapter()).based_on( self ) )
         return True
 
     def SHOPKEEPER_offers( self, explo ):
@@ -168,7 +168,7 @@ class GenericInn( Plot ):
         int_bedroom.contents.append( maps.LIGHT_STAND )
         int_bedroom.DECORATE = randmaps.decor.BedroomDec()
 
-        self.add_sub_plot( nart, "SIDE_STORY", PlotState(rank=self.random_rank_in_chapter()).based_on( self ) )
+        #self.add_sub_plot( nart, "SIDE_STORY", PlotState(rank=self.random_rank_in_chapter()).based_on( self ) )
 
         self.shop = services.Inn()
 
@@ -225,7 +225,7 @@ class GenericLibrary( Plot ):
         int_mainroom.contents.append( maps.DESK )
         int_mainroom.contents.append( maps.TABLE )
         self.shop = self.register_element( "SHOPSERVICE", services.Shop( services.MAGIC_STORE, rank=self.rank+5, allow_misc=False, allow_magic=True, num_items=25 ) )
-        self.add_sub_plot( nart, "SIDE_STORY", PlotState(rank=self.random_rank_in_chapter()).based_on( self ) )
+        #self.add_sub_plot( nart, "SIDE_STORY", PlotState(rank=self.random_rank_in_chapter()).based_on( self ) )
         return True
 
     def SHOPKEEPER_offers( self, explo ):

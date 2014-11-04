@@ -19,7 +19,7 @@ import worlds
 
 class TheCrypt( Plot ):
     """There's a haunted crypt outside of town."""
-    LABEL = "CITY_STORY"
+    LABEL = "zCITY_STORY"
     UNIQUE = True
     active = True
     scope = True

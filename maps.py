@@ -555,6 +555,12 @@ class Scene( object ):
         else:
             return repr( self )
 
+    def dump_info( self, tabs = "" ):
+        print "{0}{1} (lvl{2})".format( tabs, self.name, getattr( self, "rank", 0 ) )
+        for c in self.contents:
+            if isinstance( c, Scene ):
+                c.dump_info( tabs + " " )
+
 OVERLAY_ITEM = 0
 OVERLAY_CURSOR = 1
 OVERLAY_ATTACK = 2

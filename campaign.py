@@ -224,6 +224,11 @@ class Campaign( object ):
         if hasattr( s, "world_map_pos" ):
             return s.world_map_pos.parent_world
 
+    def dump_info( self ):
+        # Print info on all scenes in this world.
+        for c in self.contents:
+            c.dump_info()
+
 
 def browse_pcs( screen ):
     # Look at the previously created characters.

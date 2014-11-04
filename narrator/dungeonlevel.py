@@ -51,3 +51,19 @@ class SewerLevel( BasicCave ):
 
         return True
 
+class BasicCryptLevel( BasicCave ):
+    LABEL = "DUNGEON_LEVEL"
+    TAGS = set( (context.HAB_TUNNELS,context.GEN_UNDEAD) )
+    def custom_init( self, nart ):
+        myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
+            sprites={maps.SPRITE_WALL: "terrain_wall_bone.png", maps.SPRITE_GROUND: "terrain_ground_under.png", maps.SPRITE_FLOOR: "terrain_floor_tile.png"},
+            biome=context.HAB_TUNNELS, setting=self.setting,
+            desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.GEN_UNDEAD) )
+        mymapgen = randmaps.SubtleMonkeyTunnelScene( myscene )
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+
+        for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
+            self.add_sub_plot( nart, "ENCOUNTER" )
+
+        return True
+

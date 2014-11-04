@@ -1,6 +1,7 @@
 import context
 import container
 import random
+import maps
 
 W_VILLAGE = 0
 W_CITY = 1
@@ -56,6 +57,13 @@ class World( object ):
         wme.coords = self.get_random_coords()
         destination.world_map_pos = wme
         return wme
+
+    def dump_info( self, tabs = "" ):
+        print tabs + "World"
+        for c in self.contents:
+            if isinstance( c, maps.Scene ):
+                c.dump_info( tabs + " " )
+
 
 
 if __name__=='__main__':

@@ -70,6 +70,7 @@ def start_campaign( init, screen ):
     pygwrap.please_stand_by( screen, "Building world..." )
     nart = narrator.Narrative( init )
     if nart.story:
+        nart.camp.dump_info()
         nart.build()
         camp = nart.camp
         pcs = campaign.load_party( screen )
@@ -81,6 +82,22 @@ def start_campaign( init, screen ):
 
 def default_start_campaign( screen ):
     start_campaign( narrator.plots.PlotState(rank=1), screen )
+
+def bardic_start_campaign( screen ):
+    init = narrator.plots.PlotState(rank=1)
+    pygwrap.please_stand_by( screen, "Building world..." )
+    nart = narrator.Narrative( init, adv_type="STUB_BARDIC" )
+    if nart.story:
+        nart.camp.dump_info()
+        nart.build()
+        camp = nart.camp
+        pcs = campaign.load_party( screen )
+        if pcs:
+            camp.name = pygwrap.input_string(screen, redrawer=PosterRedraw(screen), prompt="Enter campaign name" )
+            camp.add_party( pcs )
+            camp.place_party()
+            camp.play( screen )
+
 
 def load_campaign( screen ):
     rpm = rpgmenu.Menu( screen,screen.get_width()//2-250,screen.get_height()//2-50,500,100,predraw=PosterRedraw(screen) )
@@ -119,6 +136,7 @@ if __name__=='__main__':
     rpm.add_item( "Create Character", chargen.make_and_save_character )
     rpm.add_item( "Load Campaign", load_campaign )
     rpm.add_item( "Start Campaign", default_start_campaign )
+    rpm.add_item( "Start Bardic Campaign", bardic_start_campaign )
     rpm.add_item( "Browse Characters", campaign.browse_pcs )
     rpm.add_item( "Quit Game", None )
 
