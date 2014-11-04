@@ -24,7 +24,7 @@ class BardicStub( Plot ):
     # Creates a simple, plot-free dungeon adventure.
 
     def custom_init( self, nart ):
-        """Create the world + chapter + city, then load INTRO_2"""
+        """Create the world + starting scene, then load INTRO_2"""
         w = worlds.World()
         nart.camp.contents.append( w )
         self.register_element( "WORLD", w )

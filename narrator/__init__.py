@@ -9,14 +9,14 @@ import worlds
 
 class Narrative( object ):
     """The builder class which constructs a campaign."""
-    def __init__( self, pstate, end_rank=5 ):
+    def __init__( self, pstate, end_rank=5, adv_type="ADVSTUB" ):
         self.camp = campaign.Campaign()
         self.generators = list()
         self.errors = list()
         self.uniques = set()
         self.end_rank = end_rank
         # Add the seed plot.
-        self.story = self.generate_sub_plot( pstate, "ADVSTUB" )
+        self.story = self.generate_sub_plot( pstate, adv_type )
 
     def generate_sub_plot( self, pstate, label ):
         """Locate a plot which matches the request, init it, and return it."""
@@ -66,6 +66,7 @@ def harvest( mod ):
             PLOT_LIST[ o.LABEL ].append( o )
 
 import advstub
+import bardicbits
 import citybits
 import citystories
 import complication
@@ -83,6 +84,7 @@ import rewards
 import sidestories
 import socialbits
 harvest( advstub )
+harvest( bardicbits )
 harvest( citybits )
 harvest( citystories )
 harvest( complication )

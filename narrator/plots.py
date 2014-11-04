@@ -124,9 +124,9 @@ class Plot( object ):
             self.subplots[ident] = sp
         return sp
 
-    def add_first_locale_sub_plot( self, nart ):
+    def add_first_locale_sub_plot( self, nart, locale_type="CITY_SCENE" ):
         # Utility function for a frequently used special case.
-        sp = self.add_sub_plot( nart, "CITY_SCENE" )
+        sp = self.add_sub_plot( nart, locale_type )
         if sp:
             nart.camp.scene = sp.elements.get( "LOCALE" )
             self.register_element( "LOCALE", sp.elements.get( "LOCALE" ) )
