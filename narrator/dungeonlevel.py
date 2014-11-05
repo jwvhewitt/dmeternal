@@ -37,7 +37,7 @@ class BasicCave( Plot ):
 
 class WaterCave( BasicCave ):
     # First of the elemental caves.
-    LABEL = "zDUNGEON_LEVEL"
+    LABEL = "DUNGEON_LEVEL"
     TAGS = set( (context.HAB_CAVE,context.DES_WATER) )
     def custom_init( self, nart ):
         myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
@@ -47,6 +47,24 @@ class WaterCave( BasicCave ):
         mymapgen = randmaps.OpenCaveScene( myscene )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
 
+        for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
+            self.add_sub_plot( nart, "ENCOUNTER" )
+
+        return True
+
+class WaterBridgeCave( BasicCave ):
+    # First of the elemental caves.
+    LABEL = "DUNGEON_LEVEL"
+    TAGS = set( (context.HAB_CAVE,context.DES_WATER) )
+    def custom_init( self, nart ):
+        myscene = maps.Scene( 120, 120, 
+            sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_under.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
+            biome=context.HAB_CAVE, setting=self.setting,
+            desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_WATER) )
+        mymapgen = randmaps.DividedIslandScene( myscene )
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+
+        self.add_sub_plot( nart, "DIVIDED_ISLAND_COMPLICATION" )
         for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
 

@@ -240,31 +240,30 @@ class DividedIslandScene( RandomScene ):
         # Go through the remaining rooms, sorting each into either z1 or z2
         z1_turn = True
         for r in self.contents[:]:
-            if r is bridge:
-                r.area = pygame.Rect( 0, 0, r.width, r.height )
-                r.area.center = self.area.center
-            elif r is before_bridge:
-                self.contents.remove( r )
-                z1.contents.append( r )
-            elif r is after_bridge:
-                self.contents.remove( r )
-                z2.contents.append( r )
-            elif context.ENTRANCE in r.tags:
-                self.contents.remove( r )
-                z1.contents.append( r )
-            elif context.GOAL in r.tags:
-                self.contents.remove( r )
-                z2.contents.append( r )
-            elif z1_turn:
-                self.contents.remove( r )
-                z1.contents.append( r )
-                z1_turn = False
-            else:
-                self.contents.remove( r )
-                z2.contents.append( r )
-                z1_turn = True
-
-
+            if isinstance( r, Room ):
+                if r is bridge:
+                    r.area = pygame.Rect( 0, 0, r.width, r.height )
+                    r.area.center = self.area.center
+                elif r is before_bridge:
+                    self.contents.remove( r )
+                    z1.contents.append( r )
+                elif r is after_bridge:
+                    self.contents.remove( r )
+                    z2.contents.append( r )
+                elif context.ENTRANCE in r.tags:
+                    self.contents.remove( r )
+                    z1.contents.append( r )
+                elif context.GOAL in r.tags:
+                    self.contents.remove( r )
+                    z2.contents.append( r )
+                elif z1_turn:
+                    self.contents.remove( r )
+                    z1.contents.append( r )
+                    z1_turn = False
+                else:
+                    self.contents.remove( r )
+                    z2.contents.append( r )
+                    z1_turn = True
 
         self.contents += (z1,z2)
 
