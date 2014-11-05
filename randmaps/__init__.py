@@ -79,6 +79,9 @@ class CaveScene( RandomScene ):
     GAPFILL = gapfiller.MonsterFiller()
     MUTATE = mutator.CellMutator(noise_throttle=100)
 
+class OpenCaveScene( CaveScene ):
+    PREPARE = prep.HeightfieldPrep( loground=0.15, higround=0.5 )
+
 class ForestScene( RandomScene ):
     GAPFILL = gapfiller.MonsterFiller()
     WALL_FILTER = converter.ForestConverter( treeline = 0.95 )

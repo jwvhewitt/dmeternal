@@ -561,6 +561,26 @@ class Scene( object ):
             if isinstance( c, Scene ):
                 c.dump_info( tabs + " " )
 
+    ANGDIR = ( (-1,-1), (0,-1), (1,-1), (1,0), (1,1), (0,1), (-1,1), (-1,0) )
+    def wall_wont_block( self, x, y ):
+        """Return True if a wall placed here won't block movement."""
+        if self.map[x][y].blocks_walking():
+            # This is a wall now. Changing it from a wall to a wall really won't
+            # change anything, as should be self-evident.
+            return True
+        else:
+            # Adding a wall will block a passage if there are two or more spaces
+		    # in the eight surrounding tiles which are separated by walls.
+            was_a_space = not self.map[x-1][y].blocks_walking()
+            n = 0
+            for a in self.ANGDIR:
+                is_a_space = not self.map[x+a[0]][y+a[1]].blocks_walking()
+                if is_a_space != was_a_space:
+                    # We've gone from wall to space or vice versa.
+                    was_a_space = is_a_space
+                    n += 1
+            return n <= 2
+
 OVERLAY_ITEM = 0
 OVERLAY_CURSOR = 1
 OVERLAY_ATTACK = 2

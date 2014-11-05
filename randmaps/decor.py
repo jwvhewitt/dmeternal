@@ -113,3 +113,27 @@ class MonsterDec( object ):
                     # This is an empty space. Add some carnage.
                     gb.map[x][y].decor = random.choice(self.FLOOR_DECOR)
 
+class RockyDec( object ):
+    """Add some rocks to the floor."""
+    FLOOR_DECOR = ( maps.ROCKS, maps.ROCKS, maps.ROCKS, maps.TREES )
+    def __init__( self, fill_factor = 42 ):
+        self.fill_factor = fill_factor
+    CARDIR = ( (1,0), (-1,0), (0,1), (0,-1) )
+    def decor_nearby( self, gb, x, y ):
+        """Return True if a decor is in one of four adjacent tiles."""
+        decor_found = False
+        for dx,dy in self.CARDIR:
+            if gb.get_decor( x + dx, y + dy ):
+                decor_found = True
+                break
+        return decor_found
+    def __call__( self, gb, area ):
+        for t in range( area.w * area.h // self.fill_factor ):
+            x = random.choice( range( area.x , area.x + area.width ) )
+            y = random.choice( range( area.y , area.y + area.height ) )
+            if gb.on_the_map(x,y) and not gb.map[x][y].blocks_walking() and not gb.map[x][y].wall and not gb.map[x][y].decor and gb.wall_wont_block(x,y) and not self.decor_nearby(gb,x,y):
+                # This is a good space. Add some decor.
+                gb.map[x][y].decor = random.choice(self.FLOOR_DECOR)
+
+
+

@@ -14,7 +14,7 @@ import random
 
 class BasicCave( Plot ):
     # This is the basic dungeon outline on which other classes will be based.
-    LABEL = "DUNGEON_LEVEL"
+    LABEL = "zDUNGEON_LEVEL"
     TAGS = set( (context.HAB_CAVE,) )
     MIN_RANK = 0
     @classmethod
@@ -35,6 +35,87 @@ class BasicCave( Plot ):
 
         return True
 
+class WaterCave( BasicCave ):
+    # First of the elemental caves.
+    LABEL = "zDUNGEON_LEVEL"
+    TAGS = set( (context.HAB_CAVE,context.DES_WATER) )
+    def custom_init( self, nart ):
+        myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
+            sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_under.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
+            biome=context.HAB_CAVE, setting=self.setting,
+            desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_WATER) )
+        mymapgen = randmaps.OpenCaveScene( myscene )
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+
+        for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
+            self.add_sub_plot( nart, "ENCOUNTER" )
+
+        return True
+
+class FireCave( BasicCave ):
+    LABEL = "zDUNGEON_LEVEL"
+    TAGS = set( (context.HAB_CAVE,context.DES_FIRE) )
+    def custom_init( self, nart ):
+        myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
+            sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_cthonic.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
+            biome=context.HAB_CAVE, setting=self.setting,
+            desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_FIRE) )
+        mymapgen = randmaps.OpenCaveScene( myscene )
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+
+        for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
+            self.add_sub_plot( nart, "ENCOUNTER" )
+
+        return True
+
+class AirCave( BasicCave ):
+    LABEL = "zDUNGEON_LEVEL"
+    TAGS = set( (context.HAB_CAVE,context.DES_AIR) )
+    def custom_init( self, nart ):
+        myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
+            sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_canyon.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
+            biome=context.HAB_CAVE, setting=self.setting,
+            desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_AIR) )
+        mymapgen = randmaps.OpenCaveScene( myscene )
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+
+        for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
+            self.add_sub_plot( nart, "ENCOUNTER" )
+
+        return True
+
+class EarthCave( BasicCave ):
+    LABEL = "zDUNGEON_LEVEL"
+    TAGS = set( (context.HAB_CAVE,context.DES_EARTH) )
+    def custom_init( self, nart ):
+        myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
+            sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_under.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
+            biome=context.HAB_CAVE, setting=self.setting,
+            desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_FIRE) )
+        mymapgen = randmaps.CaveScene( myscene, decorate = randmaps.decor.RockyDec() )
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+
+        for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
+            self.add_sub_plot( nart, "ENCOUNTER" )
+
+        return True
+
+class GoblinMines( BasicCave ):
+    LABEL = "zDUNGEON_LEVEL"
+    TAGS = set( (context.HAB_CAVE,context.GEN_GOBLIN) )
+    def custom_init( self, nart ):
+        myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
+            sprites={maps.SPRITE_WALL: "terrain_wall_mine.png", maps.SPRITE_GROUND: "terrain_ground_canyon.png", maps.SPRITE_FLOOR: "terrain_floor_stone.png"},
+            biome=context.HAB_CAVE, setting=self.setting,
+            desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.GEN_GOBLIN) )
+        mymapgen = randmaps.CaveScene( myscene )
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+
+        for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
+            self.add_sub_plot( nart, "ENCOUNTER" )
+
+        return True
+
 
 class SewerLevel( BasicCave ):
     LABEL = "DUNGEON_LEVEL"
@@ -45,22 +126,6 @@ class SewerLevel( BasicCave ):
             biome=context.HAB_TUNNELS, setting=self.setting,
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_WATER) )
         mymapgen = randmaps.OpenTunnelScene( myscene )
-        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
-
-        for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
-            self.add_sub_plot( nart, "ENCOUNTER" )
-
-        return True
-
-class GoblinMines( BasicCave ):
-    LABEL = "DUNGEON_LEVEL"
-    TAGS = set( (context.HAB_CAVE,context.GEN_GOBLIN) )
-    def custom_init( self, nart ):
-        myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
-            sprites={maps.SPRITE_WALL: "terrain_wall_rocks.png", maps.SPRITE_GROUND: "terrain_ground_canyon.png", maps.SPRITE_FLOOR: "terrain_floor_stone.png"},
-            biome=context.HAB_CAVE, setting=self.setting,
-            desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.GEN_GOBLIN) )
-        mymapgen = randmaps.CaveScene( myscene )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
 
         for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
