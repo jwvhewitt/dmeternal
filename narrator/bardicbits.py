@@ -32,7 +32,7 @@ class BardicCaves( Plot ):
         # Generate the levels
         self.levels = self.get_dungeon_levels( nart, self.DUNGEON_PATTERN, self.chapter.start_rank, self.chapter.end_rank )
         # Decide on a good name.
-        self.dname = random.choice( self.NAME_PATTERNS ).format( namegen.random_style_name() )
+        self.dname = self.gen_name()
 
         # Connect all the levels, and name them.
         self.add_sub_plot( nart, "BARDIC_CONNECTION",
@@ -42,14 +42,22 @@ class BardicCaves( Plot ):
         self.register_element( "LAST_DUNGEON", self.levels[-1] )
 
         return True
+    def gen_name( self ):
+        return random.choice( self.NAME_PATTERNS ).format( namegen.random_style_name() )
 
 class BardicCrypt( BardicCaves ):
     LABEL = "BARDIC_DUNGEON"
     NAME_PATTERNS = ( "Crypt of {0}", "Tomb of {0}", "{0} Boneyard", "{0} Catacombs" )
     DUNGEON_PATTERN = (context.HAB_TUNNELS,context.GEN_UNDEAD)
     UNIQUE = True
-    scope = True
-    active = True
+
+class BardicGoblins( BardicCaves ):
+    LABEL = "BARDIC_DUNGEON"
+    NAME_PATTERNS = ( "Relmz of {0}", "{0}'s Place", "{0} Fortress", "{0}'s Maw" )
+    DUNGEON_PATTERN = (context.GEN_GOBLIN,)
+    UNIQUE = True
+    def gen_name( self ):
+        return random.choice( self.NAME_PATTERNS ).format( namegen.ORC.gen_word() )
 
 
 # BARDIC_CONNECTION
@@ -72,6 +80,11 @@ class BC_DirectConnection( Plot ):
 
 class BC_DwarvenCity( Plot ):
     LABEL = "BARDIC_CONNECTION"
+    UNIQUE = True
+    scope = True
+    active = True
+    NAME_PATTERNS = ( "{0} Deep", "{0} Halls" )
+    _ready = True
     @classmethod
     def matches( self, pstate ):
         """Requires LAST_DUNGEON to exist and to go down"""
@@ -81,7 +94,7 @@ class BC_DwarvenCity( Plot ):
         """Install the dungeon."""
         # Create the intermediary level.
         interior = maps.Scene( 65,65, sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_under.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png" },
-            biome=context.HAB_TUNNELS, setting=self.setting, desctags=(context.MAP_DUNGEON,context.MTY_HUMANOID) )
+            biome=context.HAB_TUNNELS, setting=self.setting, desctags=(context.MAP_DUNGEON,context.MAP_GODOWN) )
         igen = randmaps.SubtleMonkeyTunnelScene( interior )
         self.register_scene( nart, interior, igen, ident="_LAIR" )
         self.add_sub_plot( nart, "CONNECT", PlotState( elements={"PREV":self.elements["LAST_DUNGEON"],"NEXT":interior} ).based_on( self ) )
@@ -95,6 +108,7 @@ class BC_DwarvenCity( Plot ):
         team = teams.Team(default_reaction=-999, rank=self.rank, strength=50, habitat=interior.get_encounter_request(), respawn=False )
         int_goalroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=interior )
         int_goalroom.contents.append( team )
+        int_goalroom.contents.append( boss )
         boss.team = team
         stairs_1 = waypoints.SpiralStairsDown()
         int_goalroom.contents.append( stairs_1 )
@@ -103,6 +117,7 @@ class BC_DwarvenCity( Plot ):
         myscene = maps.Scene( 65, 65, 
             sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_under.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
             biome=context.HAB_BUILDING, setting=self.setting,
+            name=random.choice( self.NAME_PATTERNS ).format( namegen.DWARF.gen_word() ),
             desctags=(context.MAP_DUNGEON,context.DES_CIVILIZED,context.MAP_GODOWN) )
         mymapgen = randmaps.CaveScene( myscene )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
@@ -113,8 +128,8 @@ class BC_DwarvenCity( Plot ):
         castle.contents.append( myteam )
         stairs_2 = waypoints.SpiralStairsUp()
         myroom.contents.append( stairs_2 )
-        myroom.contents.append( monsters.generate_npc(team=myteam) )
-        myroom.contents.append( monsters.generate_npc(team=myteam) )
+        myroom.contents.append( monsters.generate_npc(species=characters.Dwarf, team=myteam) )
+        myroom.contents.append( monsters.generate_npc(species=characters.Dwarf, team=myteam) )
 
         # Connect the stairs.
         self.move_element( myscene, interior )
@@ -133,6 +148,13 @@ class BC_DwarvenCity( Plot ):
         # Install the dungeon in the city.
         self.install_dungeon( nart, self.elements[ "LEVELS" ], self.elements[ "LOCALE" ], self.elements["DNAME"] )
         return True
+    def t_START( self, explo ):
+        # Print message, activate chapter upon entering city the first time.
+        if explo.scene is self.elements["LOCALE"] and self._ready:
+            explo.alert( "You step into a bustling dwarven city." )
+            self.chapter.activate()
+            self._ready = False
+
 
 
 # BARDIC_CONCLUSION

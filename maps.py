@@ -374,8 +374,8 @@ DEFAULT_SPRITES = { SPRITE_GROUND: "terrain_ground_forest.png", \
 
 class Scene( object ):
     DELTA8 = ( (-1,-1), (0,-1), (1,-1), (-1,0), (1,0), (-1,1), (0,1), (1,1) )
-    def __init__(self,width=128,height=128,sprites=None,biome=None,setting=None,desctags=()):
-        self.name = ""
+    def __init__(self,width=128,height=128,sprites=None,biome=None,setting=None,desctags=(),name=""):
+        self.name = name
         self.width = width
         self.height = height
         self.contents = container.ContainerList(owner=self)

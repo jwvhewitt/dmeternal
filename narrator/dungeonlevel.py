@@ -35,6 +35,7 @@ class BasicCave( Plot ):
 
         return True
 
+
 class SewerLevel( BasicCave ):
     LABEL = "DUNGEON_LEVEL"
     TAGS = set( (context.HAB_TUNNELS,context.DES_WATER) )
@@ -50,6 +51,23 @@ class SewerLevel( BasicCave ):
             self.add_sub_plot( nart, "ENCOUNTER" )
 
         return True
+
+class GoblinMines( BasicCave ):
+    LABEL = "DUNGEON_LEVEL"
+    TAGS = set( (context.HAB_CAVE,context.GEN_GOBLIN) )
+    def custom_init( self, nart ):
+        myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
+            sprites={maps.SPRITE_WALL: "terrain_wall_rocks.png", maps.SPRITE_GROUND: "terrain_ground_canyon.png", maps.SPRITE_FLOOR: "terrain_floor_stone.png"},
+            biome=context.HAB_CAVE, setting=self.setting,
+            desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.GEN_GOBLIN) )
+        mymapgen = randmaps.CaveScene( myscene )
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+
+        for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
+            self.add_sub_plot( nart, "ENCOUNTER" )
+
+        return True
+
 
 class BasicCryptLevel( BasicCave ):
     LABEL = "DUNGEON_LEVEL"
