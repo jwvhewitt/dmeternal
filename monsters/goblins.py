@@ -10,6 +10,7 @@ import animobs
 import targetarea
 import aibrain
 import random
+import enchantments
 
 #  *******************
 #  ***   GOBLINS   ***
@@ -87,6 +88,34 @@ class GoblinShaman( base.Monster ):
         self.levels.append( base.Spellcaster( 3, self ) )
         if random.randint(1,10) == 1:
             self.contents.append( items.scrolls.Rank1Scroll() )
+
+class GoblinPyromaniac( base.Monster ):
+    name = "Goblin Pyromaniac"
+    statline = { stats.STRENGTH: 11, stats.TOUGHNESS: 8, stats.REFLEXES: 14, \
+        stats.INTELLIGENCE: 8, stats.PIETY: 8, stats.CHARISMA: 6,
+        stats.RESIST_FIRE: 300 }
+    SPRITENAME = "monster_goblins.png"
+    FRAME = 45
+    TEMPLATES = ()
+    MOVE_POINTS = 12
+    VOICE = dialogue.voice.ORCISH
+    GP_VALUE = 30
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.DES_FIRE,
+     context.MTY_HUMANOID, context.GEN_GOBLIN )
+    ENC_LEVEL = 4
+    ATTACK = items.Attack( (1,6,0), element = stats.RESIST_CRUSHING )
+    TECHNIQUES = ( invocations.Invocation( "Fire Bomb",
+        effects.OpposedRoll( att_skill=stats.PHYSICAL_ATTACK, att_stat=stats.REFLEXES, def_stat=stats.REFLEXES, att_modifier=-25, on_success = (
+            effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion ),
+            effects.Enchant( enchantments.BurnLowEn )
+        ,), on_failure = (
+            effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion )
+        ,) ),
+        com_tar=targetarea.Blast(radius=1,reach=6), shot_anim=animobs.Fireball, ai_tar=invocations.vs_enemy ), )
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 3, self ) )
+
 
 class GoblinWarrior( base.Monster ):
     name = "Goblin Warrior"

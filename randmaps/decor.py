@@ -135,5 +135,7 @@ class RockyDec( object ):
                 # This is a good space. Add some decor.
                 gb.map[x][y].decor = random.choice(self.FLOOR_DECOR)
 
+class GoblinHomeDec( RockyDec ):
+    FLOOR_DECOR = ( maps.PUDDLE, maps.BONE, maps.KEG, maps.PILED_GOODS )
 
 

@@ -27,7 +27,6 @@ class BasicCave( Plot ):
             biome=context.HAB_CAVE, setting=self.setting,
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN) )
         mymapgen = randmaps.CaveScene( myscene )
-#        mymapgen = randmaps.WalledForestScene( myscene )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
 
         for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
@@ -37,7 +36,7 @@ class BasicCave( Plot ):
 
 class WaterCave( BasicCave ):
     # First of the elemental caves.
-    LABEL = "DUNGEON_LEVEL"
+    LABEL = "zDUNGEON_LEVEL"
     TAGS = set( (context.HAB_CAVE,context.DES_WATER) )
     def custom_init( self, nart ):
         myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
@@ -53,9 +52,10 @@ class WaterCave( BasicCave ):
         return True
 
 class WaterBridgeCave( BasicCave ):
-    # First of the elemental caves.
-    LABEL = "DUNGEON_LEVEL"
+    LABEL = "zDUNGEON_LEVEL"
     TAGS = set( (context.HAB_CAVE,context.DES_WATER) )
+    UNIQUE = True
+    MIN_RANK = 2
     def custom_init( self, nart ):
         myscene = maps.Scene( 120, 120, 
             sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_under.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
@@ -65,7 +65,7 @@ class WaterBridgeCave( BasicCave ):
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
 
         self.add_sub_plot( nart, "DIVIDED_ISLAND_COMPLICATION" )
-        for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
+        for t in range( random.randint(7,12) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
 
         return True
@@ -85,6 +85,26 @@ class FireCave( BasicCave ):
             self.add_sub_plot( nart, "ENCOUNTER" )
 
         return True
+
+class FireBridgeCave( BasicCave ):
+    LABEL = "DUNGEON_LEVEL"
+    TAGS = set( (context.HAB_CAVE,context.DES_FIRE) )
+    #UNIQUE = True
+    MIN_RANK = 2
+    def custom_init( self, nart ):
+        myscene = maps.Scene( 120, 120, 
+            sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_cthonic.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
+            biome=context.HAB_CAVE, setting=self.setting,
+            desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_FIRE) )
+        mymapgen = randmaps.DividedIslandScene( myscene )
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+
+        self.add_sub_plot( nart, "DIVIDED_ISLAND_COMPLICATION" )
+        for t in range( random.randint(7,12) ):
+            self.add_sub_plot( nart, "ENCOUNTER" )
+
+        return True
+
 
 class AirCave( BasicCave ):
     LABEL = "zDUNGEON_LEVEL"
@@ -109,7 +129,7 @@ class EarthCave( BasicCave ):
         myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
             sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_under.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
             biome=context.HAB_CAVE, setting=self.setting,
-            desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_FIRE) )
+            desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_EARTH) )
         mymapgen = randmaps.CaveScene( myscene, decorate = randmaps.decor.RockyDec() )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
 
@@ -118,15 +138,34 @@ class EarthCave( BasicCave ):
 
         return True
 
+class EarthMushroomCave( BasicCave ):
+    LABEL = "zDUNGEON_LEVEL"
+    TAGS = set( (context.HAB_CAVE,context.DES_EARTH) )
+    UNIQUE = True
+    MIN_RANK = 2
+    def custom_init( self, nart ):
+        myscene = maps.Scene( min( 90 + self.rank * 3, 129 ), min( 90 + self.rank * 3, 129 ), 
+            sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_under.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
+            biome=context.HAB_CAVE, setting=self.setting,
+            desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_EARTH,context.MTY_PLANT) )
+        mymapgen = randmaps.WalledForestScene( myscene, decorate = randmaps.decor.RockyDec() )
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+
+        for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
+            self.add_sub_plot( nart, "ENCOUNTER" )
+
+        return True
+
+
 class GoblinMines( BasicCave ):
     LABEL = "zDUNGEON_LEVEL"
     TAGS = set( (context.HAB_CAVE,context.GEN_GOBLIN) )
     def custom_init( self, nart ):
         myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
-            sprites={maps.SPRITE_WALL: "terrain_wall_mine.png", maps.SPRITE_GROUND: "terrain_ground_canyon.png", maps.SPRITE_FLOOR: "terrain_floor_stone.png"},
+            sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_under.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
             biome=context.HAB_CAVE, setting=self.setting,
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.GEN_GOBLIN) )
-        mymapgen = randmaps.CaveScene( myscene )
+        mymapgen = randmaps.CaveScene( myscene, decorate = randmaps.decor.GoblinHomeDec(fill_factor=200) )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
 
         for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
