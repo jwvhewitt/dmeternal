@@ -67,6 +67,7 @@ class Plot( object ):
     """The building block of the adventure."""
     LABEL = ""
     UNIQUE = False
+    COMMON = False
     propp = 0
     setting = False
     chapter = None

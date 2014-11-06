@@ -93,6 +93,12 @@ class DIC_YouShallNotPass( Plot ):
         boss = monsters.generate_boss( btype, self.rank+2 )
         boss.team = team
 
+        # Give the boss a magic weapon.
+        weapon = items.choose_item( random.choice( items.WEAPON_TYPES ), self.rank )
+        items.make_item_magic( weapon, self.rank + 2 )
+        weapon.identified = True
+        boss.contents.append( weapon )
+
         bridge_room.contents.append( team )
         bridge_room.contents.append( boss )
 

@@ -18,6 +18,17 @@ class Narrative( object ):
         # Add the seed plot.
         self.story = self.generate_sub_plot( pstate, adv_type )
 
+    def random_choice_by_weight( self, candidates ):
+        wcan = list()
+        for sp in candidates:
+            if sp.UNIQUE:
+                wcan.append( sp )
+            elif sp.COMMON:
+                wcan += (sp,sp,sp,sp,sp,sp)
+            else:
+                wcan += (sp,sp,sp)
+        return random.choice( wcan )
+
     def generate_sub_plot( self, pstate, label ):
         """Locate a plot which matches the request, init it, and return it."""
         # Create a list of potential plots.
@@ -29,7 +40,7 @@ class Narrative( object ):
         if candidates:
             cp = None
             while candidates and not cp:
-                cpc = random.choice( candidates )
+                cpc = self.random_choice_by_weight( candidates )
                 candidates.remove( cpc )
                 try:
                     cp = cpc(self,pstate)

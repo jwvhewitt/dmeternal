@@ -14,8 +14,9 @@ import random
 
 class BasicCave( Plot ):
     # This is the basic dungeon outline on which other classes will be based.
-    LABEL = "zDUNGEON_LEVEL"
+    LABEL = "DUNGEON_LEVEL"
     TAGS = set( (context.HAB_CAVE,) )
+    COMMON = True
     MIN_RANK = 0
     @classmethod
     def matches( self, pstate ):
@@ -36,7 +37,7 @@ class BasicCave( Plot ):
 
 class WaterCave( BasicCave ):
     # First of the elemental caves.
-    LABEL = "zDUNGEON_LEVEL"
+    LABEL = "DUNGEON_LEVEL"
     TAGS = set( (context.HAB_CAVE,context.DES_WATER) )
     def custom_init( self, nart ):
         myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
@@ -52,7 +53,7 @@ class WaterCave( BasicCave ):
         return True
 
 class WaterBridgeCave( BasicCave ):
-    LABEL = "zDUNGEON_LEVEL"
+    LABEL = "DUNGEON_LEVEL"
     TAGS = set( (context.HAB_CAVE,context.DES_WATER) )
     UNIQUE = True
     MIN_RANK = 2
@@ -71,7 +72,7 @@ class WaterBridgeCave( BasicCave ):
         return True
 
 class FireCave( BasicCave ):
-    LABEL = "zDUNGEON_LEVEL"
+    LABEL = "DUNGEON_LEVEL"
     TAGS = set( (context.HAB_CAVE,context.DES_FIRE) )
     def custom_init( self, nart ):
         myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
@@ -89,7 +90,7 @@ class FireCave( BasicCave ):
 class FireBridgeCave( BasicCave ):
     LABEL = "DUNGEON_LEVEL"
     TAGS = set( (context.HAB_CAVE,context.DES_FIRE) )
-    #UNIQUE = True
+    UNIQUE = True
     MIN_RANK = 2
     def custom_init( self, nart ):
         myscene = maps.Scene( 120, 120, 
@@ -107,7 +108,7 @@ class FireBridgeCave( BasicCave ):
 
 
 class AirCave( BasicCave ):
-    LABEL = "zDUNGEON_LEVEL"
+    LABEL = "DUNGEON_LEVEL"
     TAGS = set( (context.HAB_CAVE,context.DES_AIR) )
     def custom_init( self, nart ):
         myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
@@ -123,7 +124,7 @@ class AirCave( BasicCave ):
         return True
 
 class EarthCave( BasicCave ):
-    LABEL = "zDUNGEON_LEVEL"
+    LABEL = "DUNGEON_LEVEL"
     TAGS = set( (context.HAB_CAVE,context.DES_EARTH) )
     def custom_init( self, nart ):
         myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
@@ -139,7 +140,7 @@ class EarthCave( BasicCave ):
         return True
 
 class EarthMushroomCave( BasicCave ):
-    LABEL = "zDUNGEON_LEVEL"
+    LABEL = "DUNGEON_LEVEL"
     TAGS = set( (context.HAB_CAVE,context.DES_EARTH) )
     UNIQUE = True
     MIN_RANK = 2
@@ -158,7 +159,7 @@ class EarthMushroomCave( BasicCave ):
 
 
 class GoblinMines( BasicCave ):
-    LABEL = "zDUNGEON_LEVEL"
+    LABEL = "DUNGEON_LEVEL"
     TAGS = set( (context.HAB_CAVE,context.GEN_GOBLIN) )
     def custom_init( self, nart ):
         myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
