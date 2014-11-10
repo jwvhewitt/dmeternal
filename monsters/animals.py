@@ -802,12 +802,12 @@ class Unicorn( base.Monster ):
     ENC_LEVEL = 13
     ATTACK = items.Attack( (3,6,0), element = stats.RESIST_PIERCING )
     TECHNIQUES = ( invocations.MPInvocation( "Radiance",
-        effects.HealthRestore( dice=(5,8,0) ),
+        effects.HealthRestore( dice=(5,8,20) ),
         mp_cost=7, com_tar=targetarea.SingleTarget(reach=10), ai_tar=invocations.vs_wounded_ally,
         exp_tar=targetarea.SinglePartyMember(), shot_anim=animobs.YellowVortex ),
     )
     def init_monster( self ):
-        self.levels.append( base.Terror( 8, self ) )
+        self.levels.append( base.Defender( 8, self ) )
         self.levels.append( base.Beast( 4, self ) )
 
 

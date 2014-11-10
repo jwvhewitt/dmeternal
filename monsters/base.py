@@ -44,7 +44,7 @@ class Humanoid( characters.Level ):
     name = 'Humanoid'
     desc = ''
     statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 4, stats.NATURAL_DEFENSE: 4,
-        stats.MAGIC_ATTACK: 4, stats.MAGIC_DEFENSE: 4, stats.AWARENESS: 3} )
+        stats.MAGIC_ATTACK: 4, stats.MAGIC_DEFENSE: 3, stats.AWARENESS: 3} )
     HP_DIE = 8
     MP_DIE = 8
     XP_VALUE = 100
