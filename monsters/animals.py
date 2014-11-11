@@ -552,11 +552,43 @@ class LightningBug( base.Monster ):
         effects.HealthDamage( (2,6,0), stat_bonus=stats.TOUGHNESS, element=stats.RESIST_LIGHTNING, anim=animobs.Spark )
       ,), on_failure = (
         effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_LIGHTNING, anim=animobs.Spark )
-      ,) ), com_tar=targetarea.Line(reach=6), ai_tar=invocations.vs_enemy, mp_cost=3
+      ,) ), com_tar=targetarea.Line(reach=6), ai_tar=invocations.vs_enemy, mp_cost=5
     ), )
 
     def init_monster( self ):
         self.levels.append( base.Beast( 4, self ) )
+
+class Ankheg( base.Monster ):
+    # OGL monster http://www.d20srd.org/srd/monsters/ankheg.htm
+    name = "Ankheg"
+    statline = { stats.STRENGTH: 21, stats.TOUGHNESS: 17, stats.REFLEXES: 10, \
+        stats.INTELLIGENCE: 1, stats.PIETY: 13, stats.CHARISMA: 6,
+        stats.STEALTH: 30 }
+    SPRITENAME = "monster_bugs.png"
+    FRAME = 40
+    TEMPLATES = (stats.BUG,)
+    MOVE_POINTS = 10
+    VOICE = None
+    GP_VALUE = 0
+    HABITAT = ( context.HAB_CAVE, context.HAB_TUNNELS, context.SET_EVERY,
+     context.DES_EARTH,
+     context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
+    ENC_LEVEL = 5
+
+    ATTACK = items.Attack( (2,6,3), element = stats.RESIST_SLASHING,
+     extra_effect=effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_ACID, anim=animobs.GreenExplosion ))
+
+    TECHNIQUES = ( invocations.MPInvocation( "Acid Breath",
+      effects.OpposedRoll( att_skill=stats.PHYSICAL_ATTACK, att_stat=stats.REFLEXES, def_stat=stats.REFLEXES, on_success = (
+        effects.HealthDamage( (4,4,0), stat_bonus=None, element=stats.RESIST_ACID, anim=animobs.GreenExplosion )
+      ,), on_failure = (
+        effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_ACID, anim=animobs.GreenExplosion )
+      ,) ), com_tar=targetarea.Line(reach=5), ai_tar=invocations.vs_enemy, mp_cost=10
+    ), )
+
+    def init_monster( self ):
+        self.levels.append( base.Defender( 2, self ) )
+        self.levels.append( base.Beast( 2, self ) )
 
 
 #  *******************************
