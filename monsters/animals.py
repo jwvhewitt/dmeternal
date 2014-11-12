@@ -597,8 +597,8 @@ class Ankheg( base.Monster ):
 
 class Lion( base.Monster ):
     name = "Lion"
-    statline = { stats.STRENGTH: 15, stats.TOUGHNESS: 10, stats.REFLEXES: 16, \
-        stats.INTELLIGENCE: 3, stats.PIETY: 10, stats.CHARISMA: 9 }
+    statline = { stats.STRENGTH: 21, stats.TOUGHNESS: 15, stats.REFLEXES: 17, \
+        stats.INTELLIGENCE: 3, stats.PIETY: 12, stats.CHARISMA: 9 }
     SPRITENAME = "monster_animals.png"
     FRAME = 17
     TEMPLATES = ()
@@ -614,6 +614,28 @@ class Lion( base.Monster ):
 
     def init_monster( self ):
         self.levels.append( base.Beast( 6, self ) )
+
+class WildBoar( base.Monster ):
+    name = "Wild Boar"
+    statline = { stats.STRENGTH: 27, stats.TOUGHNESS: 17, stats.REFLEXES: 10, \
+        stats.INTELLIGENCE: 2, stats.PIETY: 13, stats.CHARISMA: 8 }
+    SPRITENAME = "monster_animals.png"
+    FRAME = 40
+    TEMPLATES = ()
+    MOVE_POINTS = 10
+    VOICE = None
+    GP_VALUE = 0
+    HABITAT = ( context.HAB_FOREST, context.SET_EVERY,
+     context.DES_EARTH,
+     context.MTY_BEAST, context.MTY_CREATURE,
+     context.GEN_NATURE )
+    ENC_LEVEL = 6
+
+    ATTACK = items.Attack( (1,8,0), element = stats.RESIST_PIERCING )
+
+    def init_monster( self ):
+        self.levels.append( base.Beast( 6, self ) )
+
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  7   ***
@@ -711,7 +733,7 @@ class Crocodile( base.Monster ):
 
 class GreatStag( base.Monster ):
     name = "Great Stag"
-    statline = { stats.STRENGTH: 15, stats.TOUGHNESS: 14, stats.REFLEXES: 17, \
+    statline = { stats.STRENGTH: 19, stats.TOUGHNESS: 14, stats.REFLEXES: 21, \
         stats.INTELLIGENCE: 3, stats.PIETY: 19, stats.CHARISMA: 16 }
     SPRITENAME = "monster_animals.png"
     FRAME = 20
@@ -731,7 +753,7 @@ class GreatStag( base.Monster ):
 
 class PolarBear( base.Monster ):
     name = "Polar Bear"
-    statline = { stats.STRENGTH: 20, stats.TOUGHNESS: 18, stats.REFLEXES: 12, \
+    statline = { stats.STRENGTH: 27, stats.TOUGHNESS: 19, stats.REFLEXES: 13, \
         stats.INTELLIGENCE: 1, stats.PIETY: 10, stats.CHARISMA: 6,
         stats.RESIST_FIRE: -50, stats.RESIST_COLD: 50 }
     SPRITENAME = "monster_animals.png"
@@ -759,7 +781,7 @@ class PolarBear( base.Monster ):
 
 class Elephant( base.Monster ):
     name = "Elephant"
-    statline = { stats.STRENGTH: 25, stats.TOUGHNESS: 25, stats.REFLEXES: 12, \
+    statline = { stats.STRENGTH: 30, stats.TOUGHNESS: 25, stats.REFLEXES: 12, \
         stats.INTELLIGENCE: 1, stats.PIETY: 12, stats.CHARISMA: 6 }
     SPRITENAME = "monster_animals.png"
     FRAME = 32
@@ -791,8 +813,8 @@ class Elephant( base.Monster ):
 
 class CaveBear( base.Monster ):
     name = "Cave Bear"
-    statline = { stats.STRENGTH: 20, stats.TOUGHNESS: 20, stats.REFLEXES: 12, \
-        stats.INTELLIGENCE: 1, stats.PIETY: 12, stats.CHARISMA: 6, \
+    statline = { stats.STRENGTH: 31, stats.TOUGHNESS: 20, stats.REFLEXES: 12, \
+        stats.INTELLIGENCE: 1, stats.PIETY: 12, stats.CHARISMA: 10, \
         stats.RESIST_SLASHING: 25, stats.RESIST_PIERCING: 25, stats.RESIST_CRUSHING: 25 }
     SPRITENAME = "monster_animals.png"
     FRAME = 28
