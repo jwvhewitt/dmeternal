@@ -298,10 +298,10 @@ class Ninja( Level ):
 
 PC_CLASSES = (Warrior,Thief,Bard,Priest,Mage,Druid,Knight,Ranger,Necromancer,Samurai,Monk,Ninja)
 
-# Player Character Species
-class Human( object ):
-    name = "Human"
-    desc = "I will assume that you know what a human is. They have no particular strengths or weaknesses."
+# Basic Species Type
+
+class SentientSpecies( object ):
+    name = "Sentient"
     sprite_name = "avatar_base.png"
     NUM_COLORS = 3
     FIRST_IMAGE = 0
@@ -340,7 +340,12 @@ class Human( object ):
         return ", ".join( smod )
 
 
-class Dwarf( Human ):
+# Player Character Species
+class Human( SentientSpecies ):
+    name = "Human"
+    desc = "I will assume that you know what a human is. They have no particular strengths or weaknesses."
+
+class Dwarf( SentientSpecies ):
     name = "Dwarf"
     desc = "They are tough, but lack reflexes"
     statline = { stats.TOUGHNESS: 2, stats.REFLEXES: -2, stats.DISARM_TRAPS: 5, stats.STEALTH: -5 }
@@ -350,7 +355,7 @@ class Dwarf( Human ):
         stats.FEMALE: (1,2,3,5,8,9, 14,15,17,18,19,20,21,22,23,25,26,28,29,31,32,33,34,35,36,37,38,39,40,41,42,43,45,46,47,48,49), \
         stats.NEUTER: (0,1,2,3,4,5,6,7,8,9, 10,11,12,13, 14,15,16,17,18,19, 20,21,22,23,24,25,26,27,28,29, 30,31,32,33,34,35,36,37,38,39, 40,41,42,43,44,45,46,47,48,49, 51,52,53 ) }
 
-class Elf( Human ):
+class Elf( SentientSpecies ):
     name = "Elf"
     desc = "They are graceful and intelligent, but somewhat frail."
     statline = { stats.STRENGTH: -1, stats.TOUGHNESS: -1, stats.REFLEXES: 1, \
@@ -362,14 +367,14 @@ class Elf( Human ):
         stats.FEMALE: (1,2,3,5,8,9, 10,11,12,13, 14,17,18,19,20,21,22,23,25,26,28,29,31,32,33,34,35,36,37,38,39,40,41,42,43,45,46), \
         stats.NEUTER: (0,1,2,3,4,5,6,7,8,9, 10,11,12,13, 14,16,17,18,19, 20,21,22,23,24,25,26,28,29, 30,31,32,33,34,35,36,37,38,39, 40,41,42,43,44,45,46, 51,52,53 ) }
 
-class Gnome( Human ):
+class Gnome( SentientSpecies ):
     name = "Gnome"
     desc = "They are very pious but lack physical strength."
     statline = { stats.STRENGTH: -2, stats.PIETY: 2, stats.STEALTH: 5 }
     starting_equipment = ( items.hats.GnomeHat, items.axes.Pickaxe )
     VOICE = dialogue.voice.GNOMIC
 
-class Orc( Human ):
+class Orc( SentientSpecies ):
     name = "Orc"
     desc = "They are very strong, but lack intelligence."
     statline = { stats.STRENGTH: 2, stats.INTELLIGENCE: -2 }
@@ -380,21 +385,21 @@ class Orc( Human ):
         stats.FEMALE: (1,2,3,5,8,9, 14,15,17,18,19,20,21,22,23,25,26,28,29,31,32,33,34,35,36,37,38,39,40,41,42,43,45,46,47), \
         stats.NEUTER: (0,1,2,3,4,5,6,7,8,9, 10,11,12,13, 14,15,16,17,18,19, 20,21,22,23,24,25,26,27,28,29, 30,31,32,33,34,35,36,37,38,39, 40,41,42,43,44,45,46,47,48,49, 51,52,53 ) }
 
-class Hurthling( Human ):
+class Hurthling( SentientSpecies ):
     name = "Hurthling"
     desc = "Hurthlings are small humanoids who live in burrows. They have good reflexes and luck, but aren't very strong or tough."
     statline = { stats.STRENGTH: -3, stats.TOUGHNESS: -2, stats.REFLEXES: 4, \
         stats.STEALTH: 10 }
     VOICE = dialogue.voice.HURTHISH
 
-class Fuzzy( Human ):
+class Fuzzy( SentientSpecies ):
     name = "Fuzzy"
     desc = "Fuzzies are humanoids with animal features. They are known for their exceptional luck."
     statline = { stats.INTELLIGENCE: -1, stats.PIETY: -1, stats.CHARISMA: 2 }
     FIRST_IMAGE = 18
     VOICE = dialogue.voice.KITTEH
 
-class Reptal( Human ):
+class Reptal( SentientSpecies ):
     name = "Reptal"
     desc = "Reptals are an ancient race of lizard people. They are extremely strong and tough, but quite limited in all other respects."
     statline = { stats.STRENGTH: 4, stats.TOUGHNESS: 3, stats.REFLEXES: -2, \
@@ -406,7 +411,7 @@ class Reptal( Human ):
     VOICE = dialogue.voice.DRACONIAN
     TEMPLATES = (stats.REPTILE,)
 
-class Centaur( Human ):
+class Centaur( SentientSpecies ):
     name = "Centaur"
     desc = "Centaurs resemble humans above the waist and horses below the neck. They can move fast in combat but cannot wear shoes."
     statline = { stats.STRENGTH: 1, stats.PIETY: -1, stats.STEALTH: -10 }

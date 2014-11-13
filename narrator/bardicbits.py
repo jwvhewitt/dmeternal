@@ -11,6 +11,7 @@ import teams
 import characters
 import namegen
 import random
+import cutscene
 
 # BARDIC_DUNGEON
 #  This subplot will generate a dungeon of a given type. All these subplots
@@ -77,6 +78,24 @@ class BC_DirectConnection( Plot ):
         """Install the dungeon."""
         self.install_dungeon( nart, self.elements[ "LEVELS" ], self.elements[ "LOCALE" ], self.elements["DNAME"] )
         return True
+
+    ### TESTING CUTSCENES HERE- FOR TESTING ONLY
+    do_cutscene = False
+    scope = True
+    active = True
+    def t_START( self, explo ):
+        # Print message, activate chapter upon entering city the first time.
+        if self.do_cutscene:
+            explo.alert( "Cutscene goes here." )
+            cs1=cutscene.Say( "This place stinks of death...", species=(characters.Human,characters.Elf,characters.Fuzzy,characters.Hurthling), children= [
+                cutscene.Say( "You say that like it's a bad thing.", job=(characters.Necromancer,) ),
+                cutscene.Say( "Yes, it reminds me of my mother's cooking.", species=(characters.Orc,) ),
+                cutscene.Say( "The sooner we get this job finished, the sooner we can get out of here.", job=(characters.Warrior,) ),
+            ])
+
+            cutscene.roll_cutscene( explo, [cs1,] )
+            #self.do_cutscene = False
+
 
 class BC_DwarvenCity( Plot ):
     LABEL = "BARDIC_CONNECTION"

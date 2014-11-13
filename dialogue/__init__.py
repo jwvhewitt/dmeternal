@@ -383,6 +383,18 @@ def personalize_text( in_text, speaker_voice, gramdb ):
     out_text = preprocess_out_text( out_text )
     return " ".join( out_text )
 
+def personalize_text_for_character( explo, speaker, msg ):
+    # Generates the speaker voice and the grammar database, then calls
+    # the above function.
+    mygram = grammar.base_grammar( speaker, None, explo )
+    for p in explo.camp.active_plots():
+        pgram = p.get_dialogue_grammar( speaker, explo )
+        if pgram:
+            grammar.absorb( mygram, pgram )
+    speaker_voice = speaker.get_voice()
+    return personalize_text( msg , speaker_voice, mygram )
+
+
 O1 = Offer( "This is my shop. There is not much here yet." , context = context.ContextTag([context.SHOP,context.WEAPON]) )
 O2 = Offer( "All of these conversations start out exactly the same. It is the message mutator in the dialogue package that makes them different." , context = context.ContextTag([context.INFO,context.HINT]) )
 
