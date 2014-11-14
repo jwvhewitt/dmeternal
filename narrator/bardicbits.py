@@ -86,7 +86,7 @@ class BC_DirectConnection( Plot ):
     def t_START( self, explo ):
         # Print message, activate chapter upon entering city the first time.
         if self.do_cutscene:
-            explo.alert( "Cutscene goes here." )
+            explo.alert( "You enter a ." )
             cs1=cutscene.Say( "This place stinks of death...", species=(characters.Human,characters.Elf,characters.Fuzzy,characters.Hurthling), children= [
                 cutscene.Say( "You say that like it's a bad thing.", job=(characters.Necromancer,) ),
                 cutscene.Say( "Yes, it reminds me of my mother's cooking.", species=(characters.Orc,) ),

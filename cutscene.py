@@ -66,7 +66,7 @@ def roll_cutscene( explo, cslist, cast=list() ):
         beats = candidate.build( explo, cast )
         if beats:
             for b in beats:
-                explo.alert( "{0}: {1}".format( *b ) )
+                explo.monologue( "{0}: {1}".format( *b ), b[0] )
             break
 
 

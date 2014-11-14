@@ -501,6 +501,26 @@ class Explorer( object ):
                 self.screen.blit( mytext, mydest )
                 pygame.display.flip()
 
+    def monologue( self, txt, speaker=None, balloon=animobs.SpeakHello ):
+        if not speaker:
+            self.alert( txt )
+        else:
+            mytext = pygwrap.render_text( pygwrap.SMALLFONT, txt, 400 )
+            mydest = mytext.get_rect( center = (self.screen.get_width() // 2, self.screen.get_height()//4) )
+            self.view.focus( self.screen, *speaker.pos )
+            self.view.anims[speaker.pos].append( balloon(delay=0) )
+
+            while True:
+                ev = pygame.event.wait()
+                if ( ev.type == pygame.MOUSEBUTTONUP) or ( ev.type == pygame.QUIT ) or (ev.type == pygame.KEYDOWN):
+                    break
+                elif ev.type == pygwrap.TIMEREVENT:
+                    self.view( self.screen )
+                    pygwrap.default_border.render( self.screen, mydest )
+                    self.screen.blit( mytext, mydest )
+                    pygame.display.flip()
+            self.view.anims.clear()
+
     def bump_tile( self, pos ):
         target = self.scene.get_bumpable_at_spot( pos )
         if target:
