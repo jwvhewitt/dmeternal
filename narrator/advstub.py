@@ -44,6 +44,7 @@ class SpoonyStub( Plot ):
         # Step Two- Moving forward through the plot, connect the plot points.
 
 
+        # Step Three- Add resources and whatnot.
         for job in characters.PC_CLASSES:
             self.add_sub_plot( nart, "RESOURCE_JOBTRAINER", PlotState( elements={"JOB":job} ) )
 

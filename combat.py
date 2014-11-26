@@ -481,6 +481,9 @@ class Combat( object ):
                 xp += m.xp_value()
                 if hasattr( m, "GP_VALUE" ) and m.GP_VALUE > 1:
                     gold += random.randint( 1, m.GP_VALUE )
+                # Killing faction members worsens faction score.
+                if m.team.fac:
+                    m.team.fac.reaction += -2
         xp = int( xp * self.camp.xp_scale ) // self.camp.num_pcs()
         if xp or gold:
             if xp and gold:

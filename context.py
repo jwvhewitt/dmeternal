@@ -77,6 +77,23 @@ PROPP_PUNISHMENT = 30
 PROPP_WEDDING = 31
 
 
+#  *************************
+#  ***   SPOONY  STATE   ***
+#  *************************
+#
+# The spoony plot generator uses three values: the identity of the antagonist
+# (which should be a faction), the goal of the antagonist (which determines
+# the next chapter climax), and the motivation of the antagonist (which
+# helps to determine dialogue and subplot choices).
+#
+
+SP_GOAL_SUMMON_DARKGOD = 0
+SP_GOAL_STEAL_ARTIFACT = 1
+
+SP_MOT_DESTROY_THE_WORLD = 0
+SP_MOT_CONQUER_THE_WORLD = 1
+
+
 
 # *****************************
 # ***   RANDOM  MAP  TAGS   ***

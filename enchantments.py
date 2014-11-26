@@ -58,6 +58,7 @@ class BlessedWepEn( Enchantment ):
     ATTACK_ON_HIT = effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_SOLAR, anim=animobs.YellowExplosion )
 
 class BlessingEn( Enchantment ):
+    NAME = "Blessed"
     def __init__( self ):
         super(BlessingEn, self).__init__(statline=stats.StatMod({stats.PHYSICAL_ATTACK:5,stats.MAGIC_ATTACK:5,stats.KUNG_FU:5}),dispel=(COMBAT,MAGIC))
 

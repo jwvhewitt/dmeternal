@@ -94,6 +94,7 @@ import resources
 import rewards
 import sidestories
 import socialbits
+import spoonybits
 harvest( advstub )
 harvest( bardicbits )
 harvest( citybits )
@@ -112,5 +113,6 @@ harvest( resources )
 harvest( rewards )
 harvest( sidestories )
 harvest( socialbits )
+harvest( spoonybits )
 
 

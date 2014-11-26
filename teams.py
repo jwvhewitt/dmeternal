@@ -3,8 +3,16 @@ import stats
 import characters
 import context
 
+class Faction( object ):
+    def __init__( self, name="Da Fakshun", tags=None, reaction=0 ):
+        self.name = name
+        if not tags:
+            tags = list()
+        self.tags = tags
+        self.reaction = reaction
+
 class Team( object ):
-    def __init__( self, default_reaction = 0, home=None, rank=1, strength=100, habitat=None, respawn=True ):
+    def __init__( self, default_reaction = 0, home=None, rank=1, strength=100, habitat=None, respawn=True, fac=None ):
         self.default_reaction = default_reaction
         self.charm_roll = None
         self.home = home
@@ -12,14 +20,18 @@ class Team( object ):
         self.strength = strength
         self.habitat = habitat
         self.respawn = respawn
+        self.fac = fac
 
     def check_reaction( self, camp ):
         if self.charm_roll:
-            return self.charm_roll + self.default_reaction
+            it = self.charm_roll + self.default_reaction
         else:
             pc = camp.party_spokesperson()
             self.charm_roll = random.randint( 1, 50 ) - random.randint( 1, 50 ) + pc.get_stat_bonus( stats.CHARISMA )
-            return self.charm_roll + self.default_reaction
+            it = self.charm_roll + self.default_reaction
+        if self.fac:
+            it += self.fac.reaction
+        return it
 
     def build_encounter( self, gb ):
         min_rank = min( int( self.rank * 0.7 ), self.rank - 2 )
