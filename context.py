@@ -87,6 +87,7 @@ PROPP_WEDDING = 31
 # helps to determine dialogue and subplot choices).
 #
 
+SP_GOAL_CLIMAX = -1
 SP_GOAL_SUMMON_DARKGOD = 0
 SP_GOAL_STEAL_ARTIFACT = 1
 
