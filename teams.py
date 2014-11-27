@@ -4,11 +4,10 @@ import characters
 import context
 
 class Faction( object ):
-    def __init__( self, name="Da Fakshun", tags=None, reaction=0 ):
+    def __init__( self, name="Da Fakshun", primary=context.HAB_EVERY, secondary=None, reaction=0 ):
         self.name = name
-        if not tags:
-            tags = list()
-        self.tags = tags
+        self.primary = primary
+        self.secondary = secondary
         self.reaction = reaction
 
 class Team( object ):

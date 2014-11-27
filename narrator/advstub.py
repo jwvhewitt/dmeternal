@@ -23,6 +23,39 @@ class SpoonyStub( Plot ):
     LABEL = "STUB_SPOONY"
     # Creates a supposedly plot-rich dungeon adventure.
 
+    # A random list of primary contexts for the antagonist faction...
+    ANTAGONIST_PRIMARY = ( context.GEN_GIANT, context.GEN_GOBLIN, context.GEN_UNDEAD, context.GEN_DRAGON,
+        context.MTY_MAGE )
+    ANTAGONIST_SECONDARY = {
+        context.GEN_GIANT: ( context.MTY_HUMANOID, context.MTY_FIGHTER ),
+        context.GEN_GOBLIN: ( context.MTY_HUMANOID, context.MTY_FIGHTER, context.MTY_THIEF, context.DES_FIRE, context.DES_LUNAR ),
+        context.GEN_UNDEAD: ( context.DES_LUNAR, context.DES_EARTH, context.MTY_MAGE ),
+        context.GEN_DRAGON: ( context.DES_FIRE, context.DES_WATER, context.DES_EARTH, context.DES_AIR ),
+        context.MTY_MAGE: ( context.DES_LUNAR, context.DES_FIRE, context.GEN_CHAOS ),
+    }
+    ANTAGONIST_ORG = {
+        context.GEN_GIANT: ( "Clan","Tribe" ),
+        context.GEN_GOBLIN: ( "Goblins","Orcs" ),
+        context.GEN_UNDEAD: ( "Spirits","Dead" ),
+        context.GEN_DRAGON: ( "Dragons","Wings" ),
+        context.MTY_FIGHTER: ( "Legion", "Army" ),
+        context.MTY_MAGE: ( "Adepts","Order" ),
+        context.MTY_THIEF: ( "Brigands", "Pirates", "Guild" ),
+    }
+    ANTAGONIST_ADJECTIVE = {
+        context.GEN_UNDEAD: ( "Silent","Restless" ),
+        context.MTY_FIGHTER: ( "Mighty", "Iron" ),
+
+    }
+    def CreateSpoonyAntagonist( self ):
+        """Create a faction for use as an antagonist in this adventure."""
+        fac = teams.Faction()
+        fac.reaction = -50
+
+        # Determine the primary context for the faction.
+        fac.primary = random.choice( self.ANTAGONIST_PRIMARY )
+        fac.secondary = random.choice( self.ANTAGONIST_SECONDARY[ fac.primary ] )
+
     def custom_init( self, nart ):
         """Create the world + base camp."""
         w = worlds.World()
