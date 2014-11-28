@@ -110,7 +110,7 @@ class NovicePriest( base.Monster ):
     TREASURE = ( items.scrolls.Rank1Scroll, items.scrolls.Rank2Scroll )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 3, self ) )
-        if random.randint(1,10) == 1:
+        if random.randint(1,5) == 1:
             self.contents.append( random.choice( self.TREASURE )() )
 
 class NoviceMage( base.Monster ):
@@ -134,7 +134,7 @@ class NoviceMage( base.Monster ):
     TREASURE = ( items.scrolls.Rank1Scroll, items.scrolls.Rank2Scroll )
     def init_monster( self ):
         self.levels.append( base.Spellcaster( 3, self ) )
-        if random.randint(1,10) == 1:
+        if random.randint(1,5) == 1:
             self.contents.append( random.choice( self.TREASURE )() )
 
 class Highwayman( base.Monster ):
@@ -184,7 +184,7 @@ class NoviceDruid( base.Monster ):
     def init_monster( self ):
         self.levels.append( base.Humanoid( 2, self ) )
         self.levels.append( base.Spellcaster( 2, self ) )
-        if random.randint(1,10) == 1:
+        if random.randint(1,5) == 1:
             self.contents.append( random.choice( self.TREASURE )() )
 
 class Bushwhacker( base.Monster ):
@@ -232,7 +232,7 @@ class Necromancer( base.Monster ):
     TREASURE = ( items.scrolls.Rank2Scroll, items.scrolls.Rank3Scroll )
     def init_monster( self ):
         self.levels.append( base.Spellcaster( 5, self ) )
-        if random.randint(1,5) == 1:
+        if random.randint(1,3) == 1:
             self.contents.append( random.choice( self.TREASURE )() )
 
 class Warrior( base.Monster ):
@@ -281,7 +281,7 @@ class Priest( base.Monster ):
     TREASURE = ( items.scrolls.Rank2Scroll, items.scrolls.Rank3Scroll )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 6, self ) )
-        if random.randint(1,5) == 1:
+        if random.randint(1,3) == 1:
             self.contents.append( random.choice( self.TREASURE )() )
 
 class Mercenary( base.Monster ):
@@ -359,7 +359,7 @@ class Conjuoror( base.Monster ):
     TREASURE = ( items.scrolls.Rank3Scroll, items.scrolls.Rank4Scroll )
     def init_monster( self ):
         self.levels.append( base.Spellcaster( 7, self ) )
-        if random.randint(1,5) == 1:
+        if random.randint(1,3) == 1:
             self.contents.append( random.choice( self.TREASURE )() )
 
 
@@ -439,7 +439,7 @@ class Healer( base.Monster ):
     def init_monster( self ):
         self.levels.append( base.Spellcaster( 6, self ) )
         self.levels.append( base.Defender( 4, self ) )
-        if random.randint(1,3) == 1:
+        if random.randint(1,2) == 1:
             self.contents.append( random.choice( self.TREASURE )() )
 
 #  ********************************

@@ -10,6 +10,8 @@ import targetarea
 import invocations
 import animals
 import enchantments
+import items
+import random
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  1   ***
@@ -24,6 +26,26 @@ import enchantments
 #  ***   ENCOUNTER  LEVEL  3   ***
 #  *******************************
 
+class PewterGolem( base.Monster ):
+    name = "Pewter Golem"
+    statline = { stats.STRENGTH: 17, stats.TOUGHNESS: 13, stats.REFLEXES: 8, \
+        stats.INTELLIGENCE: 1, stats.PIETY: 11, stats.CHARISMA: 13 }
+    SPRITENAME = "monster_constructs.png"
+    FRAME = 10
+    TEMPLATES = (stats.CONSTRUCT,)
+    MOVE_POINTS = 8
+    VOICE = None
+    GP_VALUE = 30
+    HABITAT = ( context.HAB_BUILDING, context.SET_EVERY,
+     context.MTY_CONSTRUCT, )
+    ENC_LEVEL = 3
+
+    ATTACK = items.Attack( (1,6,0), element = stats.RESIST_CRUSHING )
+
+    def init_monster( self ):
+        self.levels.append( base.Defender( 3, self ) )
+
+
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  4   ***
 #  *******************************
@@ -31,6 +53,31 @@ import enchantments
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  5   ***
 #  *******************************
+
+class ClockworkSoldier( base.Monster ):
+    name = "Clockwork Soldier"
+    statline = { stats.STRENGTH: 18, stats.TOUGHNESS: 18, stats.REFLEXES: 12, \
+        stats.INTELLIGENCE: 1, stats.PIETY: 12, stats.CHARISMA: 8 }
+    SPRITENAME = "monster_constructs.png"
+    FRAME = 11
+    TEMPLATES = (stats.CONSTRUCT,)
+    MOVE_POINTS = 10
+    VOICE = None
+    GP_VALUE = 0
+    HABITAT = ( context.HAB_EVERY, context.HAB_TUNNELS, context.SET_EVERY,
+     context.MAP_DUNGEON,
+     context.MTY_CONSTRUCT, context.MTY_FIGHTER )
+    ENC_LEVEL = 2
+
+    ATTACK = items.Attack( (1,10,0), element = stats.RESIST_SLASHING )
+
+    def init_monster( self ):
+        self.levels.append( base.Defender( 5, self ) )
+        if random.randint(1,3) == 1:
+            it = items.generate_special_item( item_type=items.SWORD, item_rank=random.randint( self.ENC_LEVEL-2, self.ENC_LEVEL+1 ) )
+            if it:
+                self.contents.append( it )
+
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  6   ***

@@ -476,6 +476,15 @@ MYSTERIOUS_TYPES = (GEM,)
 # These types are typically for resale only, so don't decrease gp of horde as much.
 CASHSALE_TYPES = (GEM,)
 
+def generate_special_item( item_rank, item_type=None ):
+    """Generate an item of a particular type, magic if appropriate."""
+    it = choose_item( max_rank=item_rank, item_type=item_type )
+    if it and item_rank > it.min_rank():
+        make_item_magic( it, item_rank )
+        it.identified = False
+    return it
+
+
 def generate_hoard( drop_rank, drop_strength ):
     """Returns a tuple containing gold, list of items."""
     # drop_rank is the rank of the level.

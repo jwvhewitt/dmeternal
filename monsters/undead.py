@@ -212,7 +212,7 @@ class PlagueZombie( base.Monster ):
     TEMPLATES = (stats.UNDEAD,)
     MOVE_POINTS = 6
     VOICE = None
-    GP_VALUE = 25
+    GP_VALUE = 75
     HABITAT = ( context.HAB_EVERY, context.HAB_TUNNELS,
      context.SET_EVERY, context.SET_RENFAN,
      context.MTY_UNDEAD, 
