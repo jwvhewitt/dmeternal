@@ -80,6 +80,16 @@ class Terror( characters.Level ):
     MP_DIE = 10
     XP_VALUE = 200
 
+class Leader( characters.Level ):
+    name = 'Leader'
+    desc = ''
+    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 5, stats.NATURAL_DEFENSE: 4,
+        stats.MAGIC_ATTACK: 4, stats.MAGIC_DEFENSE: 5, stats.AWARENESS: 4} )
+    HP_DIE = 8
+    MP_DIE = 8
+    XP_VALUE = 175
+
+
 class Defender( characters.Level ):
     name = 'Defender'
     desc = ''

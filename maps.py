@@ -374,7 +374,7 @@ DEFAULT_SPRITES = { SPRITE_GROUND: "terrain_ground_forest.png", \
 
 class Scene( object ):
     DELTA8 = ( (-1,-1), (0,-1), (1,-1), (-1,0), (1,0), (-1,1), (0,1), (1,1) )
-    def __init__(self,width=128,height=128,sprites=None,biome=None,setting=None,desctags=(),name=""):
+    def __init__(self,width=128,height=128,sprites=None,biome=None,setting=None,fac=None,desctags=(),name=""):
         self.name = name
         self.width = width
         self.height = height
@@ -385,6 +385,7 @@ class Scene( object ):
         self.biome=biome
         self.setting=setting
         self.desctags = desctags
+        self.fac = fac
         self.scripts = list()
         self.parent_scene = None
         self.in_sight = set()

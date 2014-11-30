@@ -456,7 +456,7 @@ class IceFox( base.Monster ):
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.MAP_WILDERNESS,
      context.DES_ICE,
-     context.MTY_BEAST, context.MTY_CREATURE,
+     context.MTY_BEAST, context.MTY_CREATURE, context.MTY_BOSS,
      context.GEN_NATURE )
     ENC_LEVEL = 4
 
@@ -486,7 +486,7 @@ class FireWeasel( base.Monster ):
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.MAP_WILDERNESS,
      context.DES_FIRE,
-     context.MTY_BEAST, context.MTY_CREATURE,
+     context.MTY_BEAST, context.MTY_CREATURE, context.MTY_BOSS,
      context.GEN_NATURE )
     ENC_LEVEL = 4
 
@@ -571,7 +571,7 @@ class Ankheg( base.Monster ):
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.HAB_CAVE, context.HAB_TUNNELS, context.SET_EVERY,
-     context.DES_EARTH,
+     context.DES_EARTH, context.MTY_BOSS,
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
     ENC_LEVEL = 5
 
@@ -636,6 +636,29 @@ class WildBoar( base.Monster ):
     def init_monster( self ):
         self.levels.append( base.Beast( 6, self ) )
 
+class TombScorpion( base.Monster ):
+    name = "Tomb Scorpion"
+    statline = { stats.STRENGTH: 16, stats.TOUGHNESS: 12, stats.REFLEXES: 16, \
+        stats.INTELLIGENCE: 1, stats.PIETY: 10, stats.CHARISMA: 1 }
+    SPRITENAME = "monster_bugs.png"
+    FRAME = 18
+    TEMPLATES = (stats.BUG,)
+    MOVE_POINTS = 10
+    VOICE = None
+    GP_VALUE = 0
+    HABITAT = ( context.HAB_CAVE, context.SET_EVERY,
+     context.DES_SOLAR, context.DES_LUNAR,
+     context.MTY_BEAST, context.MTY_CREATURE )
+    ENC_LEVEL = 6
+    ATTACK = items.Attack( (1,10,0), element = stats.RESIST_PIERCING,
+     extra_effect=effects.OpposedRoll( att_stat=None, def_stat=stats.TOUGHNESS, on_success = (
+            effects.HealthDamage( (1,4,0), stat_bonus=None, element=stats.RESIST_POISON, anim=animobs.PoisonCloud ),
+            effects.Enchant( enchantments.PoisonClassic )
+        ,) )
+    )
+    def init_monster( self ):
+        self.levels.append( base.Beast( 6, self ) )
+
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  7   ***
@@ -643,7 +666,7 @@ class WildBoar( base.Monster ):
 
 class GrizzlyBear( base.Monster ):
     name = "Grizzly Bear"
-    statline = { stats.STRENGTH: 18, stats.TOUGHNESS: 18, stats.REFLEXES: 10, \
+    statline = { stats.STRENGTH: 25, stats.TOUGHNESS: 18, stats.REFLEXES: 10, \
         stats.INTELLIGENCE: 3, stats.PIETY: 8, stats.CHARISMA: 6 }
     SPRITENAME = "monster_animals.png"
     FRAME = 15
@@ -663,7 +686,7 @@ class GrizzlyBear( base.Monster ):
 
 class GiantEagle( base.Monster ):
     name = "Giant Eagle"
-    statline = { stats.STRENGTH: 12, stats.TOUGHNESS: 12, stats.REFLEXES: 18, \
+    statline = { stats.STRENGTH: 17, stats.TOUGHNESS: 15, stats.REFLEXES: 20, \
         stats.INTELLIGENCE: 12, stats.PIETY: 14, stats.CHARISMA: 13 }
     SPRITENAME = "monster_animals.png"
     FRAME = 21
@@ -680,7 +703,43 @@ class GiantEagle( base.Monster ):
     ATTACK = items.Attack( (1,10,0), element = stats.RESIST_PIERCING )
 
     def init_monster( self ):
+        self.levels.append( base.Beast( 8, self ) )
+
+class Scarab( base.Monster ):
+    name = "Scarab"
+    statline = { stats.STRENGTH: 13, stats.TOUGHNESS: 16, stats.REFLEXES: 14, \
+        stats.INTELLIGENCE: 1, stats.PIETY: 12, stats.CHARISMA: 1,
+        stats.RESIST_SOLAR: 50 }
+    SPRITENAME = "monster_bugs.png"
+    FRAME = 5
+    TEMPLATES = (stats.BUG,)
+    MOVE_POINTS = 8
+    VOICE = None
+    GP_VALUE = 0
+    HABITAT = ( context.HAB_TUNNELS, context.SET_EVERY,
+     context.DES_SOLAR,
+     context.MTY_BEAST, context.MTY_CREATURE )
+    ENC_LEVEL = 7
+    TECHNIQUES = ( invocations.MPInvocation( "Draining Breath",
+        effects.TargetIsEnemy( on_true = (
+            effects.OpposedRoll( att_skill=stats.PHYSICAL_ATTACK, att_stat=stats.REFLEXES, def_stat=stats.REFLEXES, on_success = (
+                effects.HealthDamage( (1,8,0), stat_bonus=stats.TOUGHNESS, element=stats.RESIST_FIRE, anim=animobs.PurpleExplosion )
+            ,), on_failure = (
+                effects.HealthDamage( (1,4,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.PurpleExplosion )
+        ,)),), on_false= (
+            effects.NoEffect( anim=animobs.PurpleExplosion )
+        ,)), com_tar=targetarea.Cone(reach=4), ai_tar=invocations.vs_enemy, mp_cost=3
+      ), )
+    ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING,
+     extra_effect=effects.OpposedRoll( att_stat=None, def_stat=stats.TOUGHNESS, on_success = (
+            effects.HealthDamage( (2,6,0), stat_bonus=None, element=stats.RESIST_POISON, anim=animobs.PoisonCloud ),
+            effects.Enchant( enchantments.PoisonClassic )
+        ,) )
+    )
+
+    def init_monster( self ):
         self.levels.append( base.Beast( 7, self ) )
+
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  8   ***
@@ -688,7 +747,7 @@ class GiantEagle( base.Monster ):
 
 class DireYak( base.Monster ):
     name = "Dire Yak"
-    statline = { stats.STRENGTH: 18, stats.TOUGHNESS: 14, stats.REFLEXES: 10, \
+    statline = { stats.STRENGTH: 23, stats.TOUGHNESS: 14, stats.REFLEXES: 10, \
         stats.INTELLIGENCE: 2, stats.PIETY: 12, stats.CHARISMA: 1 }
     SPRITENAME = "monster_animals.png"
     FRAME = 10
@@ -710,7 +769,7 @@ class DireYak( base.Monster ):
 
 class Crocodile( base.Monster ):
     name = "Crocodile"
-    statline = { stats.STRENGTH: 16, stats.TOUGHNESS: 18, stats.REFLEXES: 10, \
+    statline = { stats.STRENGTH: 25, stats.TOUGHNESS: 18, stats.REFLEXES: 10, \
         stats.INTELLIGENCE: 1, stats.PIETY: 10, stats.CHARISMA: 1 }
     SPRITENAME = "monster_animals.png"
     FRAME = 24
@@ -725,7 +784,40 @@ class Crocodile( base.Monster ):
     ATTACK = items.Attack( (1,12,0), element = stats.RESIST_PIERCING )
 
     def init_monster( self ):
-        self.levels.append( base.Beast( 9, self ) )
+        self.levels.append( base.Beast( 8, self ) )
+
+class FireScorpion( base.Monster ):
+    name = "Fire Scorpion"
+    statline = { stats.STRENGTH: 19, stats.TOUGHNESS: 13, stats.REFLEXES: 18, \
+        stats.INTELLIGENCE: 1, stats.PIETY: 12, stats.CHARISMA: 1 }
+    SPRITENAME = "monster_bugs.png"
+    FRAME = 16
+    TEMPLATES = (stats.BUG,stats.FIRE)
+    MOVE_POINTS = 10
+    VOICE = None
+    GP_VALUE = 0
+    HABITAT = ( context.HAB_CAVE, context.SET_EVERY,
+     context.DES_FIRE,
+     context.MTY_BEAST, context.MTY_BOSS,
+     context.MTY_CREATURE, context.GEN_NATURE )
+    ENC_LEVEL = 8
+    TECHNIQUES = ( invocations.MPInvocation( "Flamethrower",
+        effects.OpposedRoll( on_success = (
+            effects.HealthDamage( (2,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.Ignite ),
+            effects.Enchant( enchantments.BurnLowEn )
+        ,), on_failure = (
+            effects.HealthDamage( (2,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.Ignite )
+        ,) ), com_tar=targetarea.Line(reach=6), ai_tar=invocations.vs_enemy, mp_cost=12
+      ), )
+    ATTACK = items.Attack( (2,8,0), element = stats.RESIST_PIERCING,
+     extra_effect=effects.OpposedRoll( att_stat=None, def_stat=stats.TOUGHNESS, on_success = (
+            effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_POISON, anim=animobs.PoisonCloud ),
+            effects.Enchant( enchantments.PoisonClassic )
+        ,) )
+    )
+    def init_monster( self ):
+        self.levels.append( base.Beast( 8, self ) )
+
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  9   ***
@@ -824,14 +916,14 @@ class CaveBear( base.Monster ):
     GP_VALUE = 0
     HABITAT = ( context.HAB_CAVE, context.SET_EVERY,
      context.DES_EARTH,
-     context.MTY_BEAST, context.MTY_CREATURE,
+     context.MTY_BEAST, context.MTY_CREATURE, context.MTY_BOSS,
      context.GEN_NATURE )
     ENC_LEVEL = 12
 
     ATTACK = items.Attack( (3,6,0), element = stats.RESIST_SLASHING )
 
     def init_monster( self ):
-        self.levels.append( base.Beast( 14, self ) )
+        self.levels.append( base.Defender( 14, self ) )
 
 
 #  ********************************
@@ -851,7 +943,7 @@ class Unicorn( base.Monster ):
     GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.SET_EVERY,
      context.DES_SOLAR,
-     context.MTY_BEAST, context.MTY_CREATURE, context.MTY_LEADER,
+     context.MTY_BEAST, context.MTY_CREATURE, context.MTY_LEADER, context.MTY_BOSS,
      context.GEN_NATURE )
     ENC_LEVEL = 13
     ATTACK = items.Attack( (3,6,0), element = stats.RESIST_PIERCING )
@@ -913,7 +1005,7 @@ class Mammoth( base.Monster ):
     GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.SET_EVERY,
      context.DES_ICE,
-     context.MTY_BEAST, context.MTY_CREATURE,
+     context.MTY_BEAST, context.MTY_CREATURE, context.MTY_BOSS,
      context.GEN_NATURE )
     ENC_LEVEL = 15
     COMPANIONS = ( Elephant, DireYak )
@@ -948,7 +1040,7 @@ class DragonTurtle( base.Monster ):
     GP_VALUE = 0
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.DES_WATER,
-     context.MTY_BEAST, context.MTY_CREATURE,
+     context.MTY_BEAST, context.MTY_CREATURE, context.MTY_BOSS,
      context.GEN_NATURE )
     ENC_LEVEL = 18
     ATTACK = items.Attack( (4,6,0), element = stats.RESIST_CRUSHING )

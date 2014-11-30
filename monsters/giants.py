@@ -110,13 +110,20 @@ class BarbarianChief( base.Monster ):
     HABITAT = ( context.HAB_EVERY,
      context.SET_EVERY,
      context.MAP_WILDERNESS,
-     context.MTY_HUMANOID, context.MTY_LEADER, context.GEN_GIANT )
+     context.MTY_HUMANOID, context.MTY_LEADER, context.MTY_BOSS, context.GEN_GIANT )
     ENC_LEVEL = 7
+    TECHNIQUES = ( invocations.Invocation( "Arrow",
+      effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, att_modifier=5, on_success = (
+        effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_PIERCING, anim=animobs.RedBoom )
+      ,), on_failure = (
+        effects.NoEffect( anim=animobs.SmallBoom )
+      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.vs_enemy
+    ), )
     COMPANIONS = ( Barbarian,BarbarianScout,Berserker )
     LONER = True
     ATTACK = items.Attack( (2,6,0), element = stats.RESIST_SLASHING )
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 7, self ) )
+        self.levels.append( base.Leader( 7, self ) )
 
 
 class Ogre( base.Monster ):
@@ -192,13 +199,20 @@ class OgreLeader( base.Monster ):
     GP_VALUE = 80
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST,
      context.SET_EVERY, context.SET_RENFAN,
-     context.MTY_HUMANOID, context.MTY_PRIEST, context.GEN_GIANT )
+     context.MTY_HUMANOID, context.MTY_BOSS, context.MTY_LEADER, context.GEN_GIANT )
     ENC_LEVEL = 8
     LONER = True
+    TECHNIQUES = ( invocations.Invocation( "Rock",
+      effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, on_success = (
+        effects.HealthDamage( (1,10,2), stat_bonus=None, element=stats.RESIST_CRUSHING, anim=animobs.RedBoom )
+      ,), on_failure = (
+        effects.NoEffect( anim=animobs.SmallBoom )
+      ,) ), com_tar=targetarea.SingleTarget(reach=6), shot_anim=animobs.SlingStone, ai_tar=invocations.vs_enemy
+    ), )
     COMPANIONS = ( Ogre, OgreChamp, OgreShaman )
     ATTACK = items.Attack( (4,4,0), element = stats.RESIST_CRUSHING )
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 8, self ) )
+        self.levels.append( base.Leader( 8, self ) )
 
 class Ettin( base.Monster ):
     name = "Ettin"
@@ -213,11 +227,12 @@ class Ettin( base.Monster ):
     HABITAT = ( context.HAB_EVERY,
      context.SET_EVERY,
      context.MAP_WILDERNESS,
-     context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GIANT, context.GEN_CHAOS )
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.MTY_BOSS,
+     context.GEN_GIANT, context.GEN_CHAOS )
     ENC_LEVEL = 9
     ATTACK = items.Attack( (2,6,0), element = stats.RESIST_CRUSHING )
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 9, self ) )
+        self.levels.append( base.Humanoid( 11, self ) )
 
 class OgreMage( base.Monster ):
     name = "Ogre Mage"
@@ -230,7 +245,7 @@ class OgreMage( base.Monster ):
     GP_VALUE = 120
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST,
      context.SET_EVERY, context.SET_RENFAN,
-     context.MTY_HUMANOID, context.MTY_MAGE, context.GEN_GIANT )
+     context.MTY_HUMANOID, context.MTY_MAGE, context.MTY_BOSS, context.GEN_GIANT )
     ENC_LEVEL = 10
     LONER = True
     COMPANIONS = ( Ogre, OgreChamp, OgreShaman, OgreLeader, Ettin )

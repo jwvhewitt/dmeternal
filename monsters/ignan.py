@@ -55,7 +55,7 @@ class Salamander( base.Monster ):
     MOVE_POINTS = 6
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.DES_FIRE,
-     context.MTY_HUMANOID, context.MTY_FIGHTER )
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.MTY_BOSS )
     ENC_LEVEL = 8
 
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_PIERCING, reach=2, extra_effect =
@@ -90,7 +90,7 @@ class SalamanderLeader( base.Monster ):
     MOVE_POINTS = 6
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.DES_FIRE,
-     context.MTY_HUMANOID, context.MTY_LEADER )
+     context.MTY_HUMANOID, context.MTY_LEADER, context.MTY_BOSS )
     ENC_LEVEL = 11
     LONER = True
     COMPANIONS = (Salamander,)
@@ -102,7 +102,7 @@ class SalamanderLeader( base.Monster ):
     TECHNIQUES = ( spells.firespells.PYROTECHNICS, spells.airspells.DISPEL_MAGIC )
 
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 11, self ) )
+        self.levels.append( base.Leader( 11, self ) )
 
 
 #  ********************************

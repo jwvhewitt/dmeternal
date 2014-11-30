@@ -25,7 +25,7 @@ class BasicCave( Plot ):
     def custom_init( self, nart ):
         myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
             sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_under.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
-            biome=context.HAB_CAVE, setting=self.setting,
+            biome=context.HAB_CAVE, setting=self.setting, fac=self.elements.get("ANTAGONIST"),
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN) )
         mymapgen = randmaps.CaveScene( myscene )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
@@ -42,7 +42,7 @@ class WaterCave( BasicCave ):
     def custom_init( self, nart ):
         myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
             sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_under.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
-            biome=context.HAB_CAVE, setting=self.setting,
+            biome=context.HAB_CAVE, setting=self.setting, fac=self.elements.get("ANTAGONIST"),
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_WATER) )
         mymapgen = randmaps.OpenCaveScene( myscene )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
@@ -60,7 +60,7 @@ class WaterBridgeCave( BasicCave ):
     def custom_init( self, nart ):
         myscene = maps.Scene( 120, 120, 
             sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_under.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
-            biome=context.HAB_CAVE, setting=self.setting,
+            biome=context.HAB_CAVE, setting=self.setting, fac=self.elements.get("ANTAGONIST"),
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_WATER) )
         mymapgen = randmaps.DividedIslandScene( myscene )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
@@ -77,7 +77,7 @@ class FireCave( BasicCave ):
     def custom_init( self, nart ):
         myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
             sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_cthonic.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
-            biome=context.HAB_CAVE, setting=self.setting,
+            biome=context.HAB_CAVE, setting=self.setting, fac=self.elements.get("ANTAGONIST"),
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_FIRE) )
         mymapgen = randmaps.OpenCaveScene( myscene )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
@@ -95,7 +95,7 @@ class FireBridgeCave( BasicCave ):
     def custom_init( self, nart ):
         myscene = maps.Scene( 120, 120, 
             sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_cthonic.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
-            biome=context.HAB_CAVE, setting=self.setting,
+            biome=context.HAB_CAVE, setting=self.setting, fac=self.elements.get("ANTAGONIST"),
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_FIRE) )
         mymapgen = randmaps.DividedIslandScene( myscene )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
@@ -113,7 +113,7 @@ class AirCave( BasicCave ):
     def custom_init( self, nart ):
         myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
             sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_canyon.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
-            biome=context.HAB_CAVE, setting=self.setting,
+            biome=context.HAB_CAVE, setting=self.setting, fac=self.elements.get("ANTAGONIST"),
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_AIR) )
         mymapgen = randmaps.OpenCaveScene( myscene )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
@@ -129,7 +129,7 @@ class EarthCave( BasicCave ):
     def custom_init( self, nart ):
         myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
             sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_under.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
-            biome=context.HAB_CAVE, setting=self.setting,
+            biome=context.HAB_CAVE, setting=self.setting, fac=self.elements.get("ANTAGONIST"),
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_EARTH) )
         mymapgen = randmaps.CaveScene( myscene, decorate = randmaps.decor.RockyDec() )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
@@ -147,7 +147,7 @@ class EarthMushroomCave( BasicCave ):
     def custom_init( self, nart ):
         myscene = maps.Scene( min( 90 + self.rank * 3, 129 ), min( 90 + self.rank * 3, 129 ), 
             sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_under.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
-            biome=context.HAB_CAVE, setting=self.setting,
+            biome=context.HAB_CAVE, setting=self.setting, fac=self.elements.get("ANTAGONIST"),
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_EARTH,context.MTY_PLANT) )
         mymapgen = randmaps.WalledForestScene( myscene, decorate = randmaps.decor.RockyDec() )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
@@ -164,7 +164,7 @@ class GoblinMines( BasicCave ):
     def custom_init( self, nart ):
         myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
             sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_under.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
-            biome=context.HAB_CAVE, setting=self.setting,
+            biome=context.HAB_CAVE, setting=self.setting, fac=self.elements.get("ANTAGONIST"),
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.GEN_GOBLIN) )
         mymapgen = randmaps.CaveScene( myscene, decorate = randmaps.decor.GoblinHomeDec(fill_factor=200) )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
@@ -181,7 +181,7 @@ class SewerLevel( BasicCave ):
     def custom_init( self, nart ):
         myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
             sprites={maps.SPRITE_WALL: "terrain_wall_darkstone.png", maps.SPRITE_GROUND: "terrain_ground_under.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
-            biome=context.HAB_TUNNELS, setting=self.setting,
+            biome=context.HAB_TUNNELS, setting=self.setting, fac=self.elements.get("ANTAGONIST"),
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_WATER) )
         mymapgen = randmaps.OpenTunnelScene( myscene )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
@@ -198,7 +198,7 @@ class BasicCryptLevel( BasicCave ):
     def custom_init( self, nart ):
         myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
             sprites={maps.SPRITE_WALL: "terrain_wall_bone.png", maps.SPRITE_GROUND: "terrain_ground_under.png", maps.SPRITE_FLOOR: "terrain_floor_tile.png"},
-            biome=context.HAB_TUNNELS, setting=self.setting,
+            biome=context.HAB_TUNNELS, setting=self.setting, fac=self.elements.get("ANTAGONIST"),
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.GEN_UNDEAD) )
         mymapgen = randmaps.SubtleMonkeyTunnelScene( myscene )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )

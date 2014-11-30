@@ -196,6 +196,7 @@ class GoblinRanger( base.Monster ):
     GP_VALUE = 35
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
      context.MAP_WILDERNESS,
+     context.DES_EARTH,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN )
     ENC_LEVEL = 6
     COMBAT_AI = aibrain.BasicTechnicalAI()
@@ -227,7 +228,8 @@ class GoblinLeader( base.Monster ):
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.HAB_TUNNELS,
      context.SET_EVERY,
      context.MAP_WILDERNESS,
-     context.MTY_HUMANOID, context.MTY_LEADER, context.GEN_GOBLIN )
+     context.MTY_HUMANOID, context.MTY_LEADER,
+     context.GEN_GOBLIN )
     ENC_LEVEL = 7
     LONER = True
     COMPANIONS = (GoblinChampion,GoblinRanger)
@@ -235,7 +237,7 @@ class GoblinLeader( base.Monster ):
     ATTACK = items.Attack( (1,10,0), element = stats.RESIST_SLASHING )
 
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 7, self ) )
+        self.levels.append( base.Leader( 7, self ) )
 
 class GoblinMage( base.Monster ):
     name = "Goblin Mage"
@@ -367,7 +369,7 @@ class GoblinKing( base.Monster ):
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.HAB_TUNNELS,
      context.SET_EVERY,
      context.MAP_DUNGEON,
-     context.MTY_HUMANOID, context.MTY_FIGHTER, context.MTY_LEADER,
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.MTY_LEADER, context.MTY_BOSS,
      context.GEN_GOBLIN )
     ENC_LEVEL = 13
     COMBAT_AI = aibrain.GoblinKingAI()
@@ -397,8 +399,7 @@ class GoblinKing( base.Monster ):
      )
 
     def init_monster( self ):
-        self.levels.append( base.Terror( 5, self ) )
-        self.levels.append( base.Humanoid( 8, self ) )
+        self.levels.append( base.Leader( 13, self ) )
 
 
 #  **********************
@@ -539,7 +540,8 @@ class HobgoblinWarlord( base.Monster ):
     GP_VALUE = 80
     HABITAT = ( context.HAB_EVERY, context.HAB_CAVE, context.SET_EVERY,
      context.DES_LUNAR, context.MTY_LEADER,
-     context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN )
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN,
+     context.MTY_BOSS )
     ENC_LEVEL = 8
     LONER = True
     COMPANIONS = (HobgoblinPriest,HobgoblinMage)
@@ -547,8 +549,7 @@ class HobgoblinWarlord( base.Monster ):
     ATTACK = items.Attack( (2,8,1), element = stats.RESIST_SLASHING )
 
     def init_monster( self ):
-        self.levels.append( base.Terror( 4, self ) )
-        self.levels.append( base.Humanoid( 4, self ) )
+        self.levels.append( base.Leader( 8, self ) )
 
 
 #  ****************

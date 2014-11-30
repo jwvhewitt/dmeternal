@@ -130,10 +130,15 @@ class GenericArmory( Plot ):
         for t in range( random.randint(2,4) ):
             mychest = waypoints.MediumChest()
             mychest.stock(self.rank)
-            weapon = items.choose_item( random.choice( items.WEAPON_TYPES ), self.rank )
-            items.make_item_magic( weapon, self.rank + 2 )
-            weapon.identified = False
-            mychest.contents.append( weapon )
+            weapon = None
+            bonus = 0
+            while ( bonus < 6 ) and not weapon:
+                weapon = items.choose_item( random.choice( items.WEAPON_TYPES ), self.rank + bonus )
+                bonus += 1
+            if weapon:
+                items.make_item_magic( weapon, self.rank + 2 + bonus )
+                weapon.identified = False
+                mychest.contents.append( weapon )
             room.contents.append( mychest )
         self.register_element( "_ROOM", room, dident="LOCALE" )
         return True

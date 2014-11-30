@@ -67,7 +67,7 @@ class ClockworkSoldier( base.Monster ):
     HABITAT = ( context.HAB_EVERY, context.HAB_TUNNELS, context.SET_EVERY,
      context.MAP_DUNGEON,
      context.MTY_CONSTRUCT, context.MTY_FIGHTER )
-    ENC_LEVEL = 2
+    ENC_LEVEL = 5
 
     ATTACK = items.Attack( (1,10,0), element = stats.RESIST_SLASHING )
 

@@ -99,7 +99,7 @@ class NovicePriest( base.Monster ):
     MOVE_POINTS = 10
     GP_VALUE = 15
     HABITAT = ( context.HAB_EVERY, context.HAB_BUILDING, context.SET_EVERY,
-     context.DES_CIVILIZED, context.DES_SOLAR,
+     context.DES_CIVILIZED, context.DES_SOLAR, context.DES_AIR,
      context.MTY_HUMANOID, context.MTY_PRIEST )
     ENC_LEVEL = 3
     COMBAT_AI = aibrain.BasicTechnicalAI()
@@ -123,7 +123,7 @@ class NoviceMage( base.Monster ):
     MOVE_POINTS = 10
     GP_VALUE = 15
     HABITAT = ( context.HAB_EVERY, context.HAB_BUILDING, context.SET_EVERY,
-     context.DES_CIVILIZED, context.DES_LUNAR,
+     context.DES_CIVILIZED, context.DES_LUNAR, context.DES_FIRE,
      context.MTY_HUMANOID, context.MTY_MAGE )
     ENC_LEVEL = 3
     COMBAT_AI = aibrain.BasicTechnicalAI()
@@ -365,7 +365,7 @@ class Conjuoror( base.Monster ):
 
 class Executioner( base.Monster ):
     name = "Executioner"
-    statline = { stats.STRENGTH: 15, stats.TOUGHNESS: 13, stats.REFLEXES: 12,
+    statline = { stats.STRENGTH: 15, stats.TOUGHNESS: 16, stats.REFLEXES: 12,
         stats.INTELLIGENCE: 10, stats.PIETY: 12, stats.CHARISMA: 10,
         stats.CRITICAL_HIT: 20 }
     SPRITENAME = "monster_people.png"
@@ -374,7 +374,8 @@ class Executioner( base.Monster ):
     MOVE_POINTS = 8
     GP_VALUE = 60
     HABITAT = ( context.HAB_EVERY, context.SET_RENFAN,
-     context.MTY_HUMANOID, context.MTY_FIGHTER )
+     context.MTY_HUMANOID, context.MTY_BOSS,
+     context.MTY_FIGHTER )
     ENC_LEVEL = 7
     COMPANIONS = (Bushwhacker,)
     ATTACK = items.Attack( (1,10,0), element = stats.RESIST_SLASHING )
@@ -414,7 +415,7 @@ class Healer( base.Monster ):
     MOVE_POINTS = 10
     GP_VALUE = 50
     HABITAT = ( context.HAB_EVERY, context.HAB_BUILDING, context.SET_EVERY,
-     context.DES_CIVILIZED, context.DES_SOLAR, context.DES_WATER, context.MTY_LEADER,
+     context.DES_CIVILIZED, context.DES_SOLAR, context.DES_WATER, context.MTY_BOSS,
      context.MTY_HUMANOID, context.MTY_PRIEST )
     ENC_LEVEL = 10
     COMBAT_AI = aibrain.BasicTechnicalAI()

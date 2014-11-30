@@ -187,8 +187,9 @@ class StraightBardicBalrog( Plot ):
     scope = True
     def custom_init( self, nart ):
         """Create the final dungeon, boss encounter, and resolution."""
-        btype = monsters.choose_monster_type(self.rank+1,self.rank+4,{(context.MTY_HUMANOID,context.MTY_LEADER):True,context.MTY_LEADER:context.MAYBE})
+        btype = monsters.choose_monster_type(self.rank+1,self.rank+4,{context.MTY_BOSS:True,context.MTY_LEADER:context.MAYBE})
         boss = monsters.generate_boss( btype, self.rank+4 )
+        #print( "{0} the {1}".format( boss, boss.monster_name ) )
 
         interior = maps.Scene( 65,65, sprites={maps.SPRITE_WALL: "terrain_wall_darkbrick.png", 
             maps.SPRITE_FLOOR: "terrain_floor_dungeon.png", },

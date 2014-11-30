@@ -176,7 +176,6 @@ class Combat( object ):
         if not redraw:
             redraw = explo.view
         explo.view.overlays.clear()
-#        if self.scene.on_the_map( *pos ) and not self.scene.map[pos[0]][pos[1]].blocks_walking():
         if self.scene.on_the_map( *pos ):
             hmap = hotmaps.PointMap( self.scene, pos, avoid_models=True )
 
@@ -477,7 +476,7 @@ class Combat( object ):
         xp = 0
         gold = 0
         for m in self.active:
-            if m.is_hostile( self.camp ) and not m.is_alright():
+            if m.is_hostile( self.camp ) and not m.is_alright() and not (hasattr(m,"combat_only") and m.combat_only):
                 xp += m.xp_value()
                 if hasattr( m, "GP_VALUE" ) and m.GP_VALUE > 1:
                     gold += random.randint( 1, m.GP_VALUE )
@@ -533,6 +532,9 @@ class Combat( object ):
                 m.condition.tidy( enchantments.COMBAT )
             if hasattr( m, "combat_only" ) and m.combat_only:
                 self.scene.contents.remove( m )
+            elif hasattr( m, "mitose" ) and hasattr( m, "hp_damage" ):
+                # Slimes regenerate after battle, to prevent split/flee exploit.
+                m.hp_damage = 0
 
 # I do not intend to create one more boring derivative fantasy RPG. I intend to create all of the boring derivative fantasy RPGs.
 

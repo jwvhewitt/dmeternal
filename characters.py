@@ -870,6 +870,8 @@ class Character( stats.PhysicalThing ):
     def xp_value( self ):
         # Sum of the xp values of all held levels.
         it = sum( l.XP_VALUE * l.rank for l in self.levels )
+        if hasattr( self, "mitose" ):
+            it = int( it * 1.25 )
         if hasattr( self, "ENC_LEVEL" ) and self.ENC_LEVEL > self.rank():
             it += ( self.ENC_LEVEL - self.rank() ) * 75
         return it

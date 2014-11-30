@@ -132,7 +132,7 @@ DES_EARTH, DES_AIR, DES_WATER, DES_FIRE, DES_SOLAR, DES_LUNAR, \
 #  MTY_CONSTRUCT of levels 7-8 can be summoned by Animation spell
 MTY_BEAST, MTY_HUMANOID, MTY_FIGHTER, MTY_THIEF, MTY_PRIEST, MTY_MAGE, \
     MTY_UNDEAD, MTY_CREATURE, MTY_LEADER, MTY_CONSTRUCT, MTY_DEMON, MTY_CELESTIAL, \
-    MTY_PLANT = range(1300,1313)
+    MTY_PLANT, MTY_BOSS = range(1300,1314)
 
 # Genus Tags. Note that these don't necessarily correspond to templates- a
 #  necromancer monster may be grouped with the undead, despite not being undead

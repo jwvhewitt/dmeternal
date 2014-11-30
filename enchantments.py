@@ -79,6 +79,14 @@ class CurseEn( Enchantment ):
     def __init__( self ):
         super(CurseEn, self).__init__(statline=stats.StatMod({stats.PHYSICAL_ATTACK:-5,stats.MAGIC_ATTACK:-5}),dispel=(COMBAT,MAGIC,CURSE))
 
+class DiseaseEn( Enchantment ):
+    NAME = "Diseased"
+    def __init__( self ):
+        super(DiseaseEn, self).__init__(statline=stats.StatMod({stats.STRENGTH:-5,
+        stats.TOUGHNESS:-5,stats.REFLEXES:-5,stats.INTELLIGENCE:-5,stats.PIETY:-5,
+        stats.CHARISMA:-5}),dispel=(CURSE,))
+
+
 class FireSignEn( Enchantment ):
     NAME = "Fire Sign"
     def __init__( self ):
@@ -123,6 +131,14 @@ class IronSkinEn( Enchantment ):
     def __init__( self ):
         super(IronSkinEn, self).__init__(statline=stats.StatMod({stats.RESIST_SLASHING:75,stats.RESIST_CRUSHING:75,stats.RESIST_PIERCING:75
             ,stats.PHYSICAL_DEFENSE:10,stats.NATURAL_DEFENSE:10,stats.MAGIC_DEFENSE:10}),dispel=(COMBAT,MAGIC))
+
+class PermaRegeneration( Enchantment ):
+    # Basically like normal regeneration, but may not be dispelled.
+    def __init__( self ):
+        super(PermaRegeneration, self).__init__(dispel=())
+    FX = effects.TargetIsDamaged( on_true= (
+        effects.HealthRestore( dice=(1,4,0) )
+    ,))
 
 class PoisonClassic( Enchantment ):
     NAME = "Poisoned"

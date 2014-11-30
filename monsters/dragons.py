@@ -160,7 +160,7 @@ class CaveDragon( base.Monster ):
     VOICE = dialogue.voice.DRACONIAN
     GP_VALUE = 400
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.HAB_CAVE,
-     context.MAP_DUNGEON, context.MTY_LEADER,
+     context.MAP_DUNGEON, context.MTY_BOSS, context.MTY_LEADER,
      context.DES_EARTH, context.GEN_DRAGON )
     ENC_LEVEL = 8
     LONER = True
@@ -189,7 +189,7 @@ class SwampDragon( base.Monster ):
     VOICE = dialogue.voice.DRACONIAN
     GP_VALUE = 400
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
-      context.MTY_LEADER,
+      context.MTY_BOSS, context.MTY_LEADER,
      context.DES_EARTH, context.DES_WATER, context.GEN_DRAGON )
     ENC_LEVEL = 8
     LONER = True
@@ -222,7 +222,7 @@ class SkyDragon( base.Monster ):
     VOICE = dialogue.voice.DRACONIAN
     GP_VALUE = 450
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
-     context.MTY_LEADER,
+     context.MAP_WILDERNESS, context.MTY_BOSS,
      context.DES_AIR, context.GEN_DRAGON )
     ENC_LEVEL = 9
     LONER = True

@@ -353,6 +353,7 @@ class Explorer( object ):
             target.hp_damage = target.max_hp() - ( hppool + 1 ) // 2
             numon.hp_damage = numon.max_hp() - ( hppool + 1 ) // 2
             numon.mp_damage = min( target.mp_damage, numon.max_mp() - 1 )
+            numon.combat_only = True
             numon.place( self.scene, nupos )
 
     def invoke_effect( self, effect, originator, area_of_effect, opening_anim = None, delay_point=None ):
@@ -806,9 +807,13 @@ class Explorer( object ):
         """If appropriate, move models back to their home zone and restock monsters."""
         if self.scene.last_updated < self.camp.day:
             for m in self.scene.contents:
-                if isinstance( m, characters.Character ) and m.team and m.team.home and not m.team.home.collidepoint( m.pos ):
-                    # This monster is lost. Send it back home.
-                    m.pos = self.scene.find_entry_point_in_rect( m.team.home )
+                if isinstance( m, characters.Character ):
+                    # Regenerate any damage suffered since last time.
+                    m.hp_damage = 0
+                    m.mp_damage = 0
+                    if m.team and m.team.home and not m.team.home.collidepoint( m.pos ):
+                        # This monster is lost. Send it back home.
+                        m.pos = self.scene.find_entry_point_in_rect( m.team.home )
 
             # Check the monster zones. Restock random monsters.
             for mz in self.scene.monster_zones:
