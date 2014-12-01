@@ -232,6 +232,12 @@ class Menu( pygame.Rect ):
                 self.selected_item = n
         self.reposition()
 
+    def set_item_by_position( self , n ):
+        if n < len( self.items ):
+            self.selected_item = n
+        self.reposition()
+
+
 class PopUpMenu( Menu ):
     """Creates a small menu at the current mouse position."""
     WIDTH = 200

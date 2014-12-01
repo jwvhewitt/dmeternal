@@ -16,7 +16,7 @@ class Rank1Scroll( Stackable ):
         self.spell = random.choice( candidates )
 
     def cost( self, include_enhancement=True ):
-        it = self.spell.mp_cost() * 10 * ( self.spell.rank**2 ) * self.quantity
+        it = self.spell.mp_cost() * 25 * self.spell.rank * self.quantity
         it = int( it * self.itemtype.cost_adjust )
         if self.enhancement and include_enhancement:
             it += ( self.enhancement.cost() * self.quantity ) // 25

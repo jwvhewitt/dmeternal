@@ -81,6 +81,8 @@ class Shop( object ):
                 itype = random.choice( self.ware_types )
             it = self.generate_item( itype, rank )
             if it:
+                if it.itemtype is items.POTION and hasattr( it, "quantity" ):
+                    it.shop_quantity = 4 + random.randint( 1,6)
                 self.wares.append( it )
             elif not it and not itype:
                 break
@@ -104,13 +106,18 @@ class Shop( object ):
         mymenu.quick_keys[ pygame.K_RIGHT ] = 1
         return mymenu
 
+    LIMITED_QUANTITY_ITEMS = (items.SCROLL,items.POTION,items.GEM)
+
     def buy_items( self, explo ):
         keep_going = True
         myredraw = charsheet.CharacterViewRedrawer( csheet=self.charsheets[self.pc], screen=explo.screen, predraw=explo.view, caption="Buy Items" )
+        last_selected = 0
 
         while keep_going:
             mymenu = self.make_wares_menu( explo, myredraw )
+            mymenu.set_item_by_position( last_selected )
             it = mymenu.query()
+            last_selected = mymenu.selected_item
             if it is -1:
                 n = ( explo.camp.party.index(self.pc) + len( explo.camp.party ) - 1 ) % len( explo.camp.party )
                 self.pc = explo.camp.party[n]
@@ -131,6 +138,14 @@ class Shop( object ):
                         self.wares.remove( it )
                     else:
                         it2 = copy.copy( it )
+                        if it.itemtype in self.LIMITED_QUANTITY_ITEMS:
+                            if hasattr( it, "shop_quantity" ):
+                                it.shop_quantity += -1
+                                if it.shop_quantity < 1:
+                                    self.wares.remove( it )
+                            else:
+                                self.wares.remove( it )
+
                     self.pc.contents.append( it2 )
                     explo.camp.gold -= it.cost()
                     myredraw.caption = "You have bought {0}.".format(it2)

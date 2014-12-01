@@ -816,10 +816,14 @@ class Explorer( object ):
                         m.pos = self.scene.find_entry_point_in_rect( m.team.home )
 
             # Check the monster zones. Restock random monsters.
+            party_rank = self.camp.party_rank()
+            restock_chance = 50
+            if party_rank > self.scene.rank:
+                restock_chance = max( 10, ( restock_chance * 2 ) // ( 2 + party_rank - self.scene.rank ) )
             for mz in self.scene.monster_zones:
-                if self.scene.monster_zone_is_empty( mz ) and random.randint(1,2) != 2:
+                if self.scene.monster_zone_is_empty( mz ) and random.randint(1,100) <= restock_chance:
                     NewTeam = teams.Team( default_reaction=-100, home=mz,
-                      rank=max( self.scene.rank, ( self.scene.rank + self.camp.party_rank() ) // 2 ),
+                      rank=max( self.scene.rank, ( self.scene.rank + party_rank ) // 2 ),
                       strength=100, habitat=self.scene.get_encounter_request() )
                     mlist = NewTeam.build_encounter(self.scene)
                     poslist = self.scene.find_free_points_in_rect( mz )

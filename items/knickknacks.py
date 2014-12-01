@@ -14,7 +14,7 @@ class GemOfHolograms( Consumable ):
     true_desc = "This gem may be used to summon an illusory monster to aid you in combat."
     itemtype = GEM
     mass_per_q = 3
-    cost_per_q = 200
+    cost_per_q = 600
     tech = invocations.Invocation( "Create Illusion",
         effects.CallMonster( {(context.HAB_EVERY,context.SET_EVERY): True}, 5, anim=animobs.BlueSparkle ),
         com_tar=targetarea.SingleTarget(reach=5), exp_tar=None )
