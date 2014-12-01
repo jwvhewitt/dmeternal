@@ -30,10 +30,12 @@ class BardicCaves( Plot ):
     active = True
     def custom_init( self, nart ):
         """Load dungeon levels, and connect this dungeon to the adventure."""
+        # Decide on a good name. Do this first in case we want to generate an antagonist
+        # or boss monster to include in the dungeon.
+        self.elements[ "ANTAGONIST" ] = False
+        self.dname = self.gen_name()
         # Generate the levels
         self.levels = self.get_dungeon_levels( nart, self.DUNGEON_PATTERN, self.chapter.start_rank, self.chapter.end_rank )
-        # Decide on a good name.
-        self.dname = self.gen_name()
 
         # Connect all the levels, and name them.
         self.add_sub_plot( nart, "BARDIC_CONNECTION",
@@ -52,13 +54,29 @@ class BardicCrypt( BardicCaves ):
     DUNGEON_PATTERN = (context.HAB_TUNNELS,context.GEN_UNDEAD)
     UNIQUE = True
 
-class BardicGoblins( BardicCaves ):
+class AntagonisticCaves( BardicCaves ):
     LABEL = "BARDIC_DUNGEON"
-    NAME_PATTERNS = ( "Relmz of {0}", "{0}'s Place", "{0} Fortress", "{0}'s Maw" )
-    DUNGEON_PATTERN = (context.GEN_GOBLIN,)
+    NAME_PATTERNS = ( "Caves of the {0}", "{0}'s Lair" )
+    DUNGEON_PATTERN = (context.HAB_CAVE,)
     UNIQUE = True
     def gen_name( self ):
-        return random.choice( self.NAME_PATTERNS ).format( namegen.ORC.gen_word() )
+        Antagonist = teams.AntagonistFaction()
+        self.register_element( "ANTAGONIST", Antagonist )
+        print( Antagonist )
+
+        return random.choice( self.NAME_PATTERNS ).format( Antagonist )
+
+class AntagonisticTunnels( BardicCaves ):
+    LABEL = "BARDIC_DUNGEON"
+    NAME_PATTERNS = ( "{0}'s Hideout", "{0}'s Lair" )
+    DUNGEON_PATTERN = (context.HAB_CAVE,)
+    UNIQUE = True
+    def gen_name( self ):
+        Antagonist = teams.AntagonistFaction()
+        self.register_element( "ANTAGONIST", Antagonist )
+        print( Antagonist )
+
+        return random.choice( self.NAME_PATTERNS ).format( Antagonist )
 
 
 # BARDIC_CONNECTION

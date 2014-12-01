@@ -202,7 +202,8 @@ class SmallChest( Waypoint ):
         else:
             self.get_the_stuff( explo )
     def get_the_stuff( self, explo ):
-        self.scene.map[self.pos[0]][self.pos[1]].decor = self.ALT_DECOR
+        if self.ALT_DECOR:
+            self.scene.map[self.pos[0]][self.pos[1]].decor = self.ALT_DECOR
         if self.gold:
             explo.alert( "You find {0} gold pieces.".format( self.gold ) )
             explo.camp.gold += self.gold
@@ -224,6 +225,14 @@ class LargeChest( SmallChest ):
     TILE = maps.Tile( None, None, maps.LARGE_CHEST )
     ALT_DECOR = maps.LARGE_CHEST_OPEN
     HOARD_AMOUNT = 200
+
+class Cart( SmallChest ):
+    TILE = maps.Tile( None, None, maps.CART )
+    ALT_DECOR = None
+    HOARD_AMOUNT = 100
+    def stock( self, hoard_rank=3 ):
+        self.gold,hoard = items.generate_hoard(hoard_rank,self.HOARD_AMOUNT)
+        self.contents += hoard
 
 class Well( Waypoint ):
     TILE = maps.Tile( None, None, maps.WELL )

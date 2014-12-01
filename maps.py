@@ -313,6 +313,7 @@ SECRET_ENTRANCE = SingTerrain( "SECRET_ENTRANCE", spritesheet = SPRITE_DECOR, fr
 FLOOR_BLOOD = VariableTerrain( "FLOOR_BLOOD", spritesheet = SPRITE_DECOR, block_walk=False, frames = (85,86,87,88,89) )
 TREE_STUMP = VariableTerrain( "TREE_STUMP", spritesheet = SPRITE_DECOR, block_walk=True, frames = (90,91) )
 SIGNPOST = SingTerrain( "SIGNPOST", spritesheet = SPRITE_DECOR, block_walk=True, frame = 92 )
+CAULDRON = SingTerrain( "CAULDRON", spritesheet = SPRITE_DECOR, block_walk=True, frame = 93 )
 
 BED_HEAD = BedHeadTerrain( "BED_HEAD", block_walk=True, frame=2 )
 BED_FOOT = BedFootTerrain( "BED_FOOT", block_walk=True, frame=4, partner=BED_HEAD )
@@ -422,6 +423,8 @@ class Scene( object ):
             req[self.setting] = context.MAYBE
         for t in self.desctags:
             req[t] = context.MAYBE
+        if self.fac:
+            self.fac.alter_monster_request( req, force_membership=False )
         return req
 
     def choose_monster( self, min_rank, max_rank, habitat=None ):

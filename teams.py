@@ -10,12 +10,18 @@ class Faction( object ):
         self.primary = primary
         self.secondary = secondary
         self.reaction = reaction
-    def alter_monster_request( self, req ):
+    def alter_monster_request( self, req, force_membership=True ):
         """Add this faction's traits to the monster request."""
-        if self.primary and self.primary not in req.keys():
-            req[ self.primary ] = True
+        if self.primary:
+            if force_membership:
+                req[ self.primary ] = True
+            elif self.primary not in req.keys():
+                req[ self.primary ] = context.MAYBE
         if self.secondary and self.secondary not in req.keys():
             req[ self.secondary ] = context.MAYBE
+    def __str__( self ):
+        return self.name
+
 
 class AntagonistFaction( Faction ):
     # A random list of primary contexts for the antagonist faction...
@@ -24,10 +30,14 @@ class AntagonistFaction( Faction ):
     ANTAGONIST_SECONDARY = {
         context.GEN_GIANT: ( context.DES_EARTH, context.MTY_FIGHTER ),
         context.GEN_GOBLIN: ( context.MTY_FIGHTER, context.MTY_THIEF, context.DES_FIRE, context.DES_LUNAR ),
-        context.GEN_UNDEAD: ( context.DES_LUNAR, context.DES_EARTH, context.MTY_MAGE ),
+        context.GEN_UNDEAD: ( context.DES_LUNAR, context.DES_EARTH, context.DES_AIR ),
         context.GEN_DRAGON: ( context.DES_FIRE, context.DES_WATER, context.DES_EARTH, context.DES_AIR ),
         context.MTY_MAGE: ( context.DES_LUNAR, context.DES_FIRE, context.GEN_CHAOS ),
     }
+    RANDOM_SECONDARY = (
+        context.DES_EARTH, context.DES_FIRE, context.DES_AIR, context.DES_WATER,
+        context.DES_SOLAR, context.DES_LUNAR, context.MTY_FIGHTER, context.MTY_MAGE
+    )
     ANTAGONIST_ORG = {
         context.GEN_CHAOS: [ "Cabal","Host","Cult","Warband" ],
         context.GEN_DRAGON: [ "Dragons","Wings" ],
@@ -77,10 +87,13 @@ class AntagonistFaction( Faction ):
         "{adjective} {icon} {org}",
         "{adjective} {org} of the {icon}",
     )
-    def __init__( self ):
+    def __init__( self, primary=None ):
         super(AntagonistFaction, self).__init__(reaction=-50)
-        self.primary = random.choice( self.ANTAGONIST_PRIMARY )
-        self.secondary = random.choice( self.ANTAGONIST_SECONDARY[ self.primary ] )
+        self.primary = primary or random.choice( self.ANTAGONIST_PRIMARY )
+        if self.primary in self.ANTAGONIST_SECONDARY.keys():
+            self.secondary = random.choice( self.ANTAGONIST_SECONDARY[ self.primary ] )
+        else:
+            self.secondary = random.choice( self.RANDOM_SECONDARY )
         orgs = ["League",] + self.ANTAGONIST_ORG.get( self.primary, [] ) * 5 + self.ANTAGONIST_ORG.get( self.secondary, [] ) * 2
         adjectives = ["Evil",] + self.ANTAGONIST_ADJECTIVE.get( self.primary, [] ) * 2 + self.ANTAGONIST_ADJECTIVE.get( self.secondary, [] ) * 2
         icons = ["Doom",] + self.ANTAGONIST_ICON.get( self.primary, [] ) * 3 + self.ANTAGONIST_ICON.get( self.secondary, [] ) * 2

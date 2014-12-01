@@ -29,11 +29,24 @@ class BasicCave( Plot ):
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN) )
         mymapgen = randmaps.CaveScene( myscene )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+        self.add_custom_decor( myscene, mymapgen )
 
         for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
 
         return True
+    CUSTOM_DECOR_TYPES = {
+        context.GEN_GOBLIN: (randmaps.decor.GoblinHomeDec,{"fill_factor": 200}),
+    }
+    def add_custom_decor( self, myscene, mymapgen ):
+        if myscene.fac and not mymapgen.DECORATE:
+            if myscene.fac.primary in self.CUSTOM_DECOR_TYPES.keys():
+                a,b = self.CUSTOM_DECOR_TYPES[ myscene.fac.primary ]
+                mymapgen.DECORATE = a(**b)
+            elif myscene.fac.secondary in self.CUSTOM_DECOR_TYPES.keys():
+                a,b = self.CUSTOM_DECOR_TYPES[ myscene.fac.secondary ]
+                mymapgen.DECORATE = a(**b)
+
 
 class WaterCave( BasicCave ):
     # First of the elemental caves.
@@ -46,6 +59,7 @@ class WaterCave( BasicCave ):
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_WATER) )
         mymapgen = randmaps.OpenCaveScene( myscene )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+        self.add_custom_decor( myscene, mymapgen )
 
         for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
@@ -64,6 +78,7 @@ class WaterBridgeCave( BasicCave ):
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_WATER) )
         mymapgen = randmaps.DividedIslandScene( myscene )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+        self.add_custom_decor( myscene, mymapgen )
 
         self.add_sub_plot( nart, "DIVIDED_ISLAND_COMPLICATION" )
         for t in range( random.randint(7,12) ):
@@ -81,6 +96,7 @@ class FireCave( BasicCave ):
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_FIRE) )
         mymapgen = randmaps.OpenCaveScene( myscene )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+        self.add_custom_decor( myscene, mymapgen )
 
         for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
@@ -99,6 +115,7 @@ class FireBridgeCave( BasicCave ):
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_FIRE) )
         mymapgen = randmaps.DividedIslandScene( myscene )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+        self.add_custom_decor( myscene, mymapgen )
 
         self.add_sub_plot( nart, "DIVIDED_ISLAND_COMPLICATION" )
         for t in range( random.randint(7,12) ):
@@ -117,6 +134,7 @@ class AirCave( BasicCave ):
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_AIR) )
         mymapgen = randmaps.OpenCaveScene( myscene )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+        self.add_custom_decor( myscene, mymapgen )
 
         for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
@@ -133,6 +151,7 @@ class EarthCave( BasicCave ):
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_EARTH) )
         mymapgen = randmaps.CaveScene( myscene, decorate = randmaps.decor.RockyDec() )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+        self.add_custom_decor( myscene, mymapgen )
 
         for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
@@ -151,23 +170,7 @@ class EarthMushroomCave( BasicCave ):
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_EARTH,context.MTY_PLANT) )
         mymapgen = randmaps.WalledForestScene( myscene, decorate = randmaps.decor.RockyDec() )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
-
-        for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
-            self.add_sub_plot( nart, "ENCOUNTER" )
-
-        return True
-
-
-class GoblinMines( BasicCave ):
-    LABEL = "DUNGEON_LEVEL"
-    TAGS = set( (context.HAB_CAVE,context.GEN_GOBLIN) )
-    def custom_init( self, nart ):
-        myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
-            sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_under.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
-            biome=context.HAB_CAVE, setting=self.setting, fac=self.elements.get("ANTAGONIST"),
-            desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.GEN_GOBLIN) )
-        mymapgen = randmaps.CaveScene( myscene, decorate = randmaps.decor.GoblinHomeDec(fill_factor=200) )
-        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+        self.add_custom_decor( myscene, mymapgen )
 
         for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
@@ -185,6 +188,7 @@ class SewerLevel( BasicCave ):
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_WATER) )
         mymapgen = randmaps.OpenTunnelScene( myscene )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+        self.add_custom_decor( myscene, mymapgen )
 
         for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
@@ -202,6 +206,7 @@ class BasicCryptLevel( BasicCave ):
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.GEN_UNDEAD) )
         mymapgen = randmaps.SubtleMonkeyTunnelScene( myscene )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+        self.add_custom_decor( myscene, mymapgen )
 
         for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
