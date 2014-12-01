@@ -27,7 +27,8 @@ class CharacterSheet( pygame.Rect ):
 
     MISC_STATS = ( stats.AWARENESS, stats.COUNTER_ATTACK, stats.CRITICAL_HIT, \
         stats.DISARM_TRAPS, \
-        stats.HOLY_SIGN, stats.KUNG_FU, stats.NATURAL_DEFENSE, stats.STEALTH, \
+        stats.HOLY_SIGN, stats.KUNG_FU, stats.LOOTING, stats.NATURAL_DEFENSE,
+        stats.STEALTH, \
         stats.RESIST_SLASHING, stats.RESIST_PIERCING, stats.RESIST_CRUSHING, \
         stats.RESIST_ACID, stats.RESIST_COLD, stats.RESIST_FIRE, stats.RESIST_LIGHTNING, \
         stats.RESIST_POISON, stats.RESIST_WATER, stats.RESIST_WIND, \

@@ -25,7 +25,8 @@ class Level( object ):
     starting_equipment = ()
     name = "???"
     spell_circles = ()
-    LEVELS_PER_GEM = 0
+    LEVELS_PER_GEM = 1
+    GEMS_PER_AWARD = 1
     legal_equipment = ()
     XP_VALUE = 75
     MIN_RANK = 0
@@ -40,6 +41,21 @@ class Level( object ):
     def get_stat( self, stat ):
         """Typical stat bonus is base bonus x rank"""
         return self.statline.get( stat , 0 ) * self.rank
+    def pick_gems( self, n=1 ):
+        """Award this character some spell gems."""
+        awards = list()
+        for t in range( n ):
+            candidates = []
+            for color in self.spell_circles:
+                if color not in awards:
+                    if self.spell_gems[color] < 5:
+                        candidates += [color,] * ( 6 - self.spell_gems[color] ) ** 2
+                    else:
+                        candidates.append( color )
+            gem = random.choice( candidates )
+            self.spell_gems[ gem ] += 1
+            awards.append( gem )
+
     def advance( self, ranks=1, pc=None ):
         """Advance this level by the requested number of ranks."""
         for r in range( ranks ):
@@ -56,15 +72,9 @@ class Level( object ):
             else:
                 self.hp += max( random.randint( 1, self.HP_DIE ) , random.randint( 1, self.HP_DIE ) )
                 self.mp += max( random.randint( 1, self.MP_DIE ) , random.randint( 1, self.MP_DIE ) )
-                if ( self.LEVELS_PER_GEM > 0 ) and ( self.rank % self.LEVELS_PER_GEM == 0 ) and self.spell_circles:
+                if self.spell_circles and ( self.LEVELS_PER_GEM > 0 ) and ( self.rank % self.LEVELS_PER_GEM == 0 ):
                     # When adding a random spell gem, favor the colors with low ranks.
-                    candidates = []
-                    for color in self.spell_circles:
-                        if self.spell_gems[color] < 5:
-                            candidates += [color,] * ( 6 - self.spell_gems[color] ) ** 2
-                        else:
-                            candidates.append( color )
-                    self.spell_gems[ random.choice( candidates ) ] += 1
+                    self.pick_gems( self.GEMS_PER_AWARD )
         if pc:
             # If we've been passed a character, record the most recent level.
             pc.mr_level = self
@@ -114,7 +124,7 @@ class Thief( Level ):
     desc = 'Highly skilled at stealth and disarming traps.'
     requirements = { stats.REFLEXES: 11 }
     statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 4, stats.MAGIC_ATTACK: 3, stats.MAGIC_DEFENSE: 5, \
-        stats.DISARM_TRAPS: 6, stats.STEALTH: 5, stats.AWARENESS: 4 } )
+        stats.DISARM_TRAPS: 6, stats.STEALTH: 5, stats.AWARENESS: 4, stats.LOOTING: 5 } )
     spell_circles = ()
     HP_DIE = 6
     MP_DIE = 4
@@ -154,6 +164,7 @@ class Priest( Level ):
     HP_DIE = 6
     MP_DIE = 10
     LEVELS_PER_GEM = 1
+    GEMS_PER_AWARD = 2
     legal_equipment = ( items.MACE, items.STAFF, \
         items.SHIELD, items.SLING, \
         items.BULLET, items.CLOTHES, items.LIGHT_ARMOR, items.HAT, \
@@ -171,6 +182,7 @@ class Mage( Level ):
     HP_DIE = 4
     MP_DIE = 12
     LEVELS_PER_GEM = 1
+    GEMS_PER_AWARD = 2
     legal_equipment = ( items.DAGGER, items.STAFF, items.SLING, \
         items.BULLET, items.CLOTHES, items.HAT, \
         items.GLOVE, items.SANDALS, items.SHOES, \
@@ -187,6 +199,7 @@ class Druid( Level ):
     HP_DIE = 6
     MP_DIE = 12
     LEVELS_PER_GEM = 1
+    GEMS_PER_AWARD = 2
     legal_equipment = ( items.DAGGER, items.STAFF, \
         items.BOW, items.POLEARM, items.ARROW, items.SLING, \
         items.BULLET, items.CLOTHES, items.HAT, \
@@ -203,7 +216,7 @@ class Knight( Level ):
     spell_circles = ( spells.SOLAR, )
     HP_DIE = 10
     MP_DIE = 4
-    LEVELS_PER_GEM = 4
+    LEVELS_PER_GEM = 3
     legal_equipment = ( items.SWORD, items.MACE, \
         items.SHIELD, \
         items.CLOTHES, items.LIGHT_ARMOR, items.HEAVY_ARMOR, items.HAT, \
@@ -238,6 +251,7 @@ class Necromancer( Level ):
     HP_DIE = 4
     MP_DIE = 14
     LEVELS_PER_GEM = 1
+    GEMS_PER_AWARD = 2
     legal_equipment = ( items.DAGGER, items.STAFF, items.SLING, \
         items.BULLET, items.CLOTHES, items.HAT, \
         items.GLOVE, items.SANDALS, items.SHOES, \

@@ -492,9 +492,18 @@ class Combat( object ):
             else:
                 explo.alert( "You earn {0} gold pieces.".format( gold ) )
 
+            # Dole the XP.
             for pc in self.camp.party:
                 if pc.is_alright():
                     pc.xp += xp
+                # Check for expert looters in the party right now, too.
+                droll = random.randint(1,100)
+                if gold and droll < pc.get_stat( stats.LOOTING ):
+                    extra_gp = pc.get_stat( stats.LOOTING ) - droll + random.randint(1,6) * self.scene.rank
+                    explo.alert( "{} found an extra {} gold pieces.".format( pc, extra_gp ) )
+                    self.camp.gold += extra_gp
+
+            # Stock the gold.
             self.camp.gold += gold
 
     def go( self, explo ):

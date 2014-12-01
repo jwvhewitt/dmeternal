@@ -77,6 +77,8 @@ CRITICAL_HIT = SingStat( "CRITICAL_HIT", "Critical Hit", cost_mod = 85 )
 AWARENESS = SingStat( "AWARENESS", "Awareness", default_bonus = INTELLIGENCE, cost_mod = 15 )
 COUNTER_ATTACK = SingStat( "COUNTER_ATTACK", "Counter Attack", cost_mod = 50 )
 
+LOOTING = SingStat( "LOOTING", "Looting", cost_mod = 25 )
+
 PRIMARY_STATS = ( STRENGTH, TOUGHNESS, REFLEXES, INTELLIGENCE, PIETY, CHARISMA )
 
 
