@@ -498,7 +498,7 @@ class Combat( object ):
                     pc.xp += xp
                 # Check for expert looters in the party right now, too.
                 droll = random.randint(1,100)
-                if gold and droll < pc.get_stat( stats.LOOTING ):
+                if ( gold > 0 ) and ( droll < pc.get_stat( stats.LOOTING ) ):
                     extra_gp = pc.get_stat( stats.LOOTING ) - droll + random.randint(1,6) * self.scene.rank
                     explo.alert( "{} found an extra {} gold pieces.".format( pc, extra_gp ) )
                     self.camp.gold += extra_gp
