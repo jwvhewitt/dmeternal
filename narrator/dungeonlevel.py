@@ -21,7 +21,25 @@ class BasicCave( Plot ):
     @classmethod
     def matches( self, pstate ):
         """Requires the dungeon type to have all the needed tags."""
-        return self.TAGS.issuperset( pstate.elements.get( "DUNGEON_TYPE" ) ) and pstate.rank >= self.MIN_RANK
+        return self.TAGS.issuperset( pstate.elements.get( "DUNGEON_TYPE" ) ) and pstate.rank >= self.MIN_RANK and not self.antagonist_conflicts( pstate )
+    @classmethod
+    def antagonist_conflicts( self, pstate ):
+        """Check to make sure that the antagonist doesn't conflict with this dungeon type."""
+        # A conflict is caused by:
+        # - an existing antagonist
+        # - with an opposing element
+        efac = pstate.elements.get( "ANTAGONIST" )
+        if efac:
+            ptag,stag = self.CONFLICTING_TAGS.get(efac.primary),self.CONFLICTING_TAGS.get(efac.secondary)
+            if ptag and ptag in self.TAGS:
+                return True
+            elif stag and stag in self.TAGS:
+                return True
+    CONFLICTING_TAGS = {
+        context.DES_FIRE: context.DES_WATER, context.DES_WATER: context.DES_FIRE,
+        context.DES_AIR: context.DES_EARTH, context.DES_EARTH: context.DES_AIR,
+        context.DES_LUNAR: context.DES_SOLAR, context.DES_SOLAR: context.DES_LUNAR
+    }
     def custom_init( self, nart ):
         myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
             sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_under.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
