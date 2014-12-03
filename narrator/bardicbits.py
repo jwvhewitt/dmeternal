@@ -62,7 +62,6 @@ class AntagonisticCaves( BardicCaves ):
     def gen_name( self ):
         Antagonist = teams.AntagonistFaction()
         self.register_element( "ANTAGONIST", Antagonist )
-        print( Antagonist )
 
         return random.choice( self.NAME_PATTERNS ).format( Antagonist )
 
@@ -74,7 +73,6 @@ class AntagonisticTunnels( BardicCaves ):
     def gen_name( self ):
         Antagonist = teams.AntagonistFaction()
         self.register_element( "ANTAGONIST", Antagonist )
-        print( Antagonist )
 
         return random.choice( self.NAME_PATTERNS ).format( Antagonist )
 

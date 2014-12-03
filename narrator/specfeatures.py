@@ -152,7 +152,6 @@ class FountainOfHealing( Plot ):
         scene = self.elements.get("LOCALE")
         mygen = nart.get_map_generator( scene )
         room = mygen.DEFAULT_ROOM()
-
         myfountain = waypoints.HealingFountain( plot_locked = True )
         self.register_element( "_ROOM", room, dident="LOCALE" )
         self.register_element( "FOUNTAIN", myfountain, dident="_ROOM" )
@@ -209,20 +208,17 @@ class NeutralTraders( Plot ):
         scene = self.elements.get("LOCALE")
         mygen = nart.get_map_generator( scene )
         room = mygen.DEFAULT_ROOM()
-        myhabitat=scene.get_encounter_request()
-        myhabitat[ context.MTY_HUMANOID ] = context.PRESENT
+        myhabitat={ context.MTY_HUMANOID: context.PRESENT }
         myteam = teams.Team(default_reaction=0, rank=self.rank, 
           strength=random.randint(90,120), habitat=myhabitat )
         room.contents.append( myteam )
         self.register_element( "_ROOM", room, dident="LOCALE" )
-        btype = monsters.choose_monster_type(self.rank-2,self.rank+1,myhabitat)
-        boss = monsters.generate_boss( btype, self.rank+2 )
+        myhabitat[ context.MTY_LEADER ] = context.MAYBE
+        btype = monsters.choose_monster_type(self.rank-1,self.rank+2,myhabitat)
+        boss = monsters.generate_boss( btype, self.rank-1 )
         boss.team = myteam
         self.shop = self.register_element( "SHOPSERVICE", services.Shop( rank=self.rank+3, allow_magic=True ) )
         self.first_time = True
-
-        room.contents.append( waypoints.HealingFountain() )
-
         self.register_element( "BOSS", boss, "_ROOM" )
         return True
     def SpeakFirstTime( self, explo ):
@@ -256,5 +252,94 @@ class RedHerringsChest( Plot ):
         self.register_element( "_ROOM", room, dident="LOCALE" )
         return True
 
+class RivalParty( Plot ):
+    LABEL = "SPECIAL_FEATURE"
+    active = True
+    scope = "LOCALE"
+    @classmethod
+    def matches( self, pstate ):
+        """Requires the LOCALE to exist."""
+        return pstate.elements.get("LOCALE")
+    FIGHTERS = ( characters.Warrior, characters.Samurai, characters.Knight, characters.Monk )
+    THIEVES = ( characters.Thief, characters.Ninja, characters.Bard, characters.Ranger )
+    PRIESTS = ( characters.Priest, characters.Druid, None )
+    MAGES = ( characters.Mage, characters.Necromancer, None )
+    def custom_init( self, nart ):
+        # Add a group of humanoids, neutral reaction score.
+        scene = self.elements.get("LOCALE")
+        mygen = nart.get_map_generator( scene )
+        room = mygen.DEFAULT_ROOM()
+        myteam = teams.Team( default_reaction=0, strength=0 )
+        room.contents.append( myteam )
+        self.register_element( "_ROOM", room, dident="LOCALE" )
+
+        p1 = monsters.generate_npc(team=myteam,job=random.choice( self.FIGHTERS ),upgrade=True,rank=self.rank)
+        room.contents.append( p1 )
+        p2 = monsters.generate_npc(team=myteam,job=random.choice( self.THIEVES ),upgrade=True,rank=self.rank)
+        room.contents.append( p2 )
+        p3 = monsters.generate_npc(team=myteam,job=random.choice( self.PRIESTS ),upgrade=True,rank=self.rank)
+        room.contents.append( p3 )
+        p4 = monsters.generate_npc(team=myteam,job=random.choice( self.MAGES ),upgrade=True,rank=self.rank)
+        room.contents.append( p4 )
+
+        self.shop = self.register_element( "SHOPSERVICE", services.Shop( rank=self.rank+3, allow_magic=True ) )
+        self.first_time = True
+        room.contents.append( waypoints.HealingFountain() )
+        return True
+
+
+class WildernessInn( Plot ):
+    LABEL = "SPECIAL_FEATURE"
+    active = True
+    scope = "BUILDING_INT"
+    NAME_PATTERNS = ( "{0}'s Inn", "The {1} and {2}" )
+    @classmethod
+    def matches( self, pstate ):
+        """Requires the LOCALE to exist and be wilderness."""
+        return ( pstate.elements.get("LOCALE")
+                and context.MAP_WILDERNESS in pstate.elements["LOCALE"].desctags )
+    def custom_init( self, nart ):
+        exterior = randmaps.rooms.BuildingRoom( tags=(context.CIVILIZED,) )
+        exterior.special_c[ "window" ] = maps.SMALL_WINDOW
+        exterior.special_c[ "sign1" ] = maps.DRINK_SIGN
+        self.register_element( "_EXTERIOR", exterior, dident="LOCALE" )
+        interior = maps.Scene( 50,50, sprites={maps.SPRITE_FLOOR: "terrain_floor_wood.png" },
+            biome=context.HAB_BUILDING, setting=self.setting, desctags=(context.DES_CIVILIZED,) )
+        igen = randmaps.BuildingScene( interior )
+        gate_1 = waypoints.GateDoor()
+        gate_2 = waypoints.GateDoor()
+        gate_1.destination = interior
+        gate_1.otherside = gate_2
+        gate_2.destination = self.elements.get( "LOCALE" )
+        gate_2.otherside = gate_1
+        self.register_scene( nart, interior, igen, ident="BUILDING_INT", dident="LOCALE" )
+        exterior.special_c[ "door" ] = gate_1
+        int_mainroom = randmaps.rooms.SharpRoom( random.randint(12,20), random.randint(12,20),
+         tags=(context.CIVILIZED,context.ROOM_PUBLIC), anchor=randmaps.anchors.south, parent=interior )
+        int_mainroom.contents.append( gate_2 )
+        int_mainroom.contents.append( waypoints.Bookshelf() )
+        int_mainroom.contents.append( maps.FIREPLACE )
+        gate_2.anchor = randmaps.anchors.south
+        int_mainroom.DECORATE = randmaps.decor.TavernDec(win=maps.SMALL_WINDOW)
+        npc = monsters.generate_npc(job=monsters.base.Innkeeper)
+        npc.tags.append( context.CHAR_INNKEEPER )
+        interior.name = random.choice( self.NAME_PATTERNS ).format( npc, random.choice(monsters.MONSTER_LIST).name, random.choice(monsters.MONSTER_LIST).name )
+        gate_1.mini_map_label = "Traveler's Inn"
+        int_mainroom.contents.append( npc )
+        self.register_element( "SHOPKEEPER", npc )
+        int_mainroom.contents.append( maps.TABLE )
+        int_mainroom.contents.append( maps.TABLE )
+        int_mainroom.contents.append( maps.TABLE )
+        int_bedroom = randmaps.rooms.SharpRoom( tags=(context.CIVILIZED,), parent=interior )
+        int_bedroom.contents.append( maps.LIGHT_STAND )
+        int_bedroom.DECORATE = randmaps.decor.BedroomDec()
+        self.shop = services.Inn()
+        return True
+    def SHOPKEEPER_offers( self, explo ):
+        # Return list of shopkeeper offers.
+        ol = list()
+        ol.append( dialogue.Offer( "[SERVICE_INN]" ,
+         context = context.ContextTag([context.SERVICE,context.INN]), effect=self.shop ) )
+        return ol
 
 

@@ -708,7 +708,7 @@ class Character( stats.PhysicalThing ):
         return self.name
 
     def desc( self ):
-        if self.gender is stats.NEUTER:
+        if self.gender == stats.NEUTER:
             return "L"+str( self.rank())+" "+str(self.species)+" "+str(self.mr_level)
         else:
             return "L"+str( self.rank())+" "+stats.GENDER[self.gender]+" "+str(self.species)+" "+str(self.mr_level)

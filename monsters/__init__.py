@@ -6,6 +6,7 @@ import chargen
 import namegen
 import context
 import stats
+import items
 from dialogue import voice
 
 import animals
@@ -61,7 +62,69 @@ def gen_monster_name( npc ):
             break
     return ng.gen_word()
 
-def generate_npc( species=None, job=None, gender=None, rank=None, team=None ):
+
+def maybe_replace_item( npc, new_item ):
+    # If the new item is better than the current item, take it.
+    if new_item:
+        new_item.identified = True
+        current_item = npc.contents.get_equip( new_item.slot )
+        if new_item.is_better( current_item ) and npc.can_equip( new_item ):
+            if current_item:
+                npc.contents.remove( current_item )
+            npc.contents.append( new_item )
+            npc.contents.equip( new_item )
+
+
+def upgrade_equipment( npc, rank ):
+    # Upgrade the armor.
+    if items.HEAVY_ARMOR in npc.mr_level.legal_equipment:
+        itype = items.HEAVY_ARMOR
+    elif items.LIGHT_ARMOR in npc.mr_level.legal_equipment:
+        itype = items.LIGHT_ARMOR
+    else:
+        itype = items.CLOTHES
+    for t in range(3):
+        maybe_replace_item( npc, items.generate_special_item( rank, itype ) )
+
+    # Upgrade the weapon.
+    old_item = npc.contents.get_equip( items.HAND1 )
+    if rank > 5 and isinstance( npc.mr_level, characters.Monk ) and old_item:
+        # At this level, monks will do better bare handed.
+        npc.contents.remove( old_item )
+    else:
+        for t in range(3):
+            maybe_replace_item( npc, items.generate_special_item( rank, old_item.itemtype ) )
+        if items.WAND in npc.mr_level.legal_equipment:
+            maybe_replace_item( npc, items.generate_special_item( rank, items.WAND ) )
+
+    # Maybe give a shield.
+    if items.SHIELD in npc.mr_level.legal_equipment:
+        old_item = npc.contents.get_equip( items.HAND1 )
+        if old_item and not old_item.attackdata.double_handed:
+            maybe_replace_item( npc, items.generate_special_item( rank, items.SHIELD ) )
+
+    # Maybe give headwear.
+    if items.HELM in npc.mr_level.legal_equipment:
+        maybe_replace_item( npc, items.generate_special_item( rank, items.HELM ) )
+    elif items.HAT in npc.mr_level.legal_equipment:
+        maybe_replace_item( npc, items.generate_special_item( rank, items.HAT ) )
+
+    # Maybe give gloves.
+    if items.GAUNTLET in npc.mr_level.legal_equipment:
+        maybe_replace_item( npc, items.generate_special_item( rank, items.GAUNTLET ) )
+    elif items.GLOVE in npc.mr_level.legal_equipment:
+        maybe_replace_item( npc, items.generate_special_item( rank, items.GLOVE ) )
+
+    if items.CLOAK in npc.mr_level.legal_equipment:
+        maybe_replace_item( npc, items.generate_special_item( rank, items.CLOAK ) )
+
+    # Maybe upgrade boots.
+    for t in range(2):
+        maybe_replace_item( npc, items.generate_special_item( rank, random.choice((items.BOOTS, items.SHOES, items.SANDALS))))
+
+
+
+def generate_npc( species=None, job=None, gender=None, rank=None, team=None, upgrade=False ):
     if not species:
         species = random.choice( characters.PC_SPECIES )
     if not gender:
@@ -90,6 +153,9 @@ def generate_npc( species=None, job=None, gender=None, rank=None, team=None ):
 
     npc.name = gen_monster_name(npc)
     npc.choose_random_spells()
+
+    if upgrade:
+        upgrade_equipment( npc, rank )            
 
     return npc
 

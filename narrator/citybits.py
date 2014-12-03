@@ -154,7 +154,7 @@ class GenericInn( Plot ):
         gate_2.anchor = randmaps.anchors.south
         int_mainroom.DECORATE = randmaps.decor.TavernDec(win=maps.SMALL_WINDOW)
 
-        npc = monsters.generate_npc()
+        npc = monsters.generate_npc(job=monsters.base.Innkeeper)
         npc.tags.append( context.CHAR_INNKEEPER )
         interior.name = random.choice( self.NAME_PATTERNS ).format( npc, random.choice(monsters.MONSTER_LIST).name, random.choice(monsters.MONSTER_LIST).name )
         gate_1.mini_map_label = "Inn"

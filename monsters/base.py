@@ -37,6 +37,21 @@ class Merchant( characters.Level ):
         items.BOOTS, items.CLOAK, items.WAND )
     starting_equipment = (items.clothes.MerchantGarb,items.daggers.Dirk)
 
+class Innkeeper( characters.Level ):
+    name = 'Innkeeper'
+    desc = ''
+    requirements = { stats.PIETY: 7, stats.CHARISMA: 7 }
+    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 4, stats.NATURAL_DEFENSE: 4,
+        stats.MAGIC_ATTACK: 3, stats.MAGIC_DEFENSE: 4, stats.AWARENESS: 4} )
+    HP_DIE = 8
+    MP_DIE = 4
+    XP_VALUE = 100
+    legal_equipment = ( items.SWORD, items.AXE, items.MACE, items.DAGGER, items.STAFF, \
+        items.BOW, items.ARROW, items.SLING, \
+        items.BULLET, items.CLOTHES, items.HAT, \
+        items.GLOVE, items.SANDALS, items.SHOES, \
+        items.BOOTS, items.CLOAK, items.WAND )
+    starting_equipment = (items.clothes.NormalClothes,items.daggers.Dirk)
 
 # MONSTER CLASSES
 
@@ -130,7 +145,7 @@ class Monster( characters.Character ):
         return image.Image( self.SPRITENAME, frame_width = 54, frame_height = 54 )
 
     def desc( self ):
-        return "L"+str( self.rank())+" "+stats.GENDER[self.gender]+" "+str(self.mr_level)
+        return "L"+str( self.rank())+" "+str(self.mr_level)
 
     def get_move( self ):
         return self.MOVE_POINTS
