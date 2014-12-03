@@ -172,6 +172,29 @@ def choose_level( screen, predraw, pc ):
 
     return level
 
+STARTER_HATS = ( None,
+    items.hats.MageHat, items.hats.NecromancerHat, items.hats.NinjaMask, items.hats.Headband, items.hats.Bandana,
+    items.hats.JauntyHat, items.hats.WoodsmansHat, items.hats.GnomeHat, items.hats.WizardHat, items.hats.WhiteHat,
+    items.hats.WhiteTurban, items.hats.RedTurban, items.hats.PurpleTurban, items.hats.OrangeTurban, items.hats.BlueTurban,
+    items.hats.RedCowl, items.hats.OrangeCowl, items.hats.GreenCowl, items.hats.GreyCowl, items.hats.BlueCowl,
+    items.hats.GreyHat, items.hats.Coxcomb, items.hats.Coxcomb2, items.hats.TricorneHat
+    )
+
+def alter_hat( pc ):
+    hat = pc.contents.get_equip( items.HEAD )
+    if hat and hat.__class__ in STARTER_HATS:
+        pos = STARTER_HATS.index( hat.__class__ )
+    else:
+        pos = 0
+    pos = ( pos + 1 ) % len( STARTER_HATS )
+    if hat:
+        pc.contents.remove( hat )
+    if pos:
+        hat = STARTER_HATS[pos]()
+        pc.contents.append( hat )
+        pc.contents.equip( hat )
+
+
 def choose_appearance( screen, redraw, pc ):
     """Alter the appearance of the character."""
     done = False
@@ -184,6 +207,8 @@ def choose_appearance( screen, redraw, pc ):
         rpm.add_item( "Change hair" , 2 )
         if ( pc.gender != stats.FEMALE ) or isinstance( pc.species, characters.Dwarf ):
             rpm.add_item( "Change beard" , 3 )
+
+    rpm.add_item( "Change hat" , 4 )
 
     rpm.add_item( "Finished" , False )
 
@@ -200,6 +225,9 @@ def choose_appearance( screen, redraw, pc ):
             redraw.charsheet.regenerate_avatar()
         elif l == 3:
             pc.alter_beard()
+            redraw.charsheet.regenerate_avatar()
+        elif l == 4:
+            alter_hat( pc )
             redraw.charsheet.regenerate_avatar()
 
 

@@ -13,6 +13,7 @@ import container
 import rpgmenu
 import pygame
 import pygwrap
+import effects
 
 class PuzzleMenu( rpgmenu.Menu ):
     WIDTH = 350
@@ -90,6 +91,21 @@ class Bookshelf( Waypoint ):
     ATTACH_TO_WALL = True
     desc = "You stand before a bookshelf."
     mini_map_label = "Bookshelf"
+
+class Fountain( Waypoint ):
+    TILE = maps.Tile( None, None, maps.FOUNTAIN )
+    desc = "You stand before a fountain."
+    mini_map_label = "Fountain"
+
+class HealingFountain( Fountain ):
+    HEAL_FX = effects.HealthRestore( dice=(1,6,9999), stat_bonus=None )
+    def unlocked_use( self, explo ):
+        # Perform this waypoint's special action.
+        targets = list()
+        for pc in explo.camp.party:
+            if pc.is_alright():
+                targets.append( pc.pos )
+        explo.invoke_effect( self.HEAL_FX, None, targets )
 
 class GateDoor( Waypoint ):
     TILE = maps.Tile( None, maps.CLOSED_DOOR, None )

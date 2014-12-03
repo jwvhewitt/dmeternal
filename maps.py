@@ -252,7 +252,7 @@ LOGROUND = GroundTerrain( "LOGROUND", frame = 28, edge = WATER )
 HIGROUND = GroundTerrain( "HIGROUND", edge = LOGROUND )
 BASIC_FLOOR = VariableTerrain( "BASIC_FLOOR", frames=(0,1,2,3,4,5) )
 HIHILL = SingTerrain( "HIHILL", frame = 22, block_walk = True )
-LOHILL = SingTerrain( "LOHILL", frame = 50                          , block_walk = True )
+LOHILL = SingTerrain( "LOHILL", frame = 50, block_walk = True )
 
 # WALL TYPES
 BASIC_WALL = WallTerrain( "BASIC_WALL" )

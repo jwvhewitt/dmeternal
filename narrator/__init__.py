@@ -94,6 +94,8 @@ import resources
 import rewards
 import sidestories
 import socialbits
+import specencounters
+import specfeatures
 import spoonybits
 harvest( advstub )
 harvest( bardicbits )
@@ -113,6 +115,8 @@ harvest( resources )
 harvest( rewards )
 harvest( sidestories )
 harvest( socialbits )
+harvest( specencounters )
+harvest( specfeatures )
 harvest( spoonybits )
 
 

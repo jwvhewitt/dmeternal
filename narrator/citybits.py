@@ -42,6 +42,7 @@ class CityOnEdgeOfCiv( Plot ):
         castle.contents.append( myteam )
         myent = waypoints.Well()
         myroom.contents.append( myent )
+        myroom.contents.append( waypoints.HealingFountain() )
         myroom.contents.append( monsters.generate_npc(team=myteam) )
         myroom.contents.append( monsters.generate_npc(team=myteam) )
 

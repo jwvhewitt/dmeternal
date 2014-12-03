@@ -51,8 +51,10 @@ class BasicCave( Plot ):
 
         for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
+        self.add_sub_plot( nart, "SPECIAL_FEATURE" )
 
         return True
+
     CUSTOM_DECOR_TYPES = {
         context.GEN_GOBLIN: (randmaps.decor.GoblinHomeDec,{"fill_factor": 200}),
     }
@@ -81,6 +83,7 @@ class WaterCave( BasicCave ):
 
         for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
+        self.add_sub_plot( nart, "SPECIAL_FEATURE" )
 
         return True
 
@@ -118,6 +121,7 @@ class FireCave( BasicCave ):
 
         for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
+        self.add_sub_plot( nart, "SPECIAL_FEATURE" )
 
         return True
 
@@ -156,6 +160,7 @@ class AirCave( BasicCave ):
 
         for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
+        self.add_sub_plot( nart, "SPECIAL_FEATURE" )
 
         return True
 
@@ -173,6 +178,7 @@ class EarthCave( BasicCave ):
 
         for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
+        self.add_sub_plot( nart, "SPECIAL_FEATURE" )
 
         return True
 
@@ -210,6 +216,7 @@ class SewerLevel( BasicCave ):
 
         for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
+        self.add_sub_plot( nart, "SPECIAL_FEATURE" )
 
         return True
 
@@ -228,6 +235,7 @@ class BasicCryptLevel( BasicCave ):
 
         for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
+        self.add_sub_plot( nart, "SPECIAL_FEATURE" )
 
         return True
 
