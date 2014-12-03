@@ -42,7 +42,6 @@ class CityOnEdgeOfCiv( Plot ):
         castle.contents.append( myteam )
         myent = waypoints.Well()
         myroom.contents.append( myent )
-        myroom.contents.append( waypoints.HealingFountain() )
         myroom.contents.append( monsters.generate_npc(team=myteam) )
         myroom.contents.append( monsters.generate_npc(team=myteam) )
 
@@ -57,6 +56,7 @@ class CityOnEdgeOfCiv( Plot ):
         self.add_sub_plot( nart, "CITY_EXTRASHOP" )
         for t in range( random.randint(1,4) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
+        self.add_sub_plot( nart, "SPECIAL_FEATURE" )
 
         self.add_sub_plot( nart, "CITY_STORY", PlotState(rank=self.random_rank_in_chapter()).based_on( self ) )
 

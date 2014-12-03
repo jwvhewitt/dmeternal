@@ -196,6 +196,47 @@ class FountainOfDoubt( Plot ):
         fountain.plot_locked = False
         self.active = False
 
+class NeutralTraders( Plot ):
+    LABEL = "SPECIAL_FEATURE"
+    active = True
+    scope = "LOCALE"
+    @classmethod
+    def matches( self, pstate ):
+        """Requires the LOCALE to exist."""
+        return pstate.elements.get("LOCALE")
+    def custom_init( self, nart ):
+        # Add a group of humanoids, neutral reaction score.
+        scene = self.elements.get("LOCALE")
+        mygen = nart.get_map_generator( scene )
+        room = mygen.DEFAULT_ROOM()
+        myhabitat=scene.get_encounter_request()
+        myhabitat[ context.MTY_HUMANOID ] = context.PRESENT
+        myteam = teams.Team(default_reaction=0, rank=self.rank, 
+          strength=random.randint(90,120), habitat=myhabitat )
+        room.contents.append( myteam )
+        self.register_element( "_ROOM", room, dident="LOCALE" )
+        btype = monsters.choose_monster_type(self.rank-2,self.rank+1,myhabitat)
+        boss = monsters.generate_boss( btype, self.rank+2 )
+        boss.team = myteam
+        self.shop = self.register_element( "SHOPSERVICE", services.Shop( rank=self.rank+3, allow_magic=True ) )
+        self.first_time = True
+
+        room.contents.append( waypoints.HealingFountain() )
+
+        self.register_element( "BOSS", boss, "_ROOM" )
+        return True
+    def SpeakFirstTime( self, explo ):
+        self.first_time = False
+    def BOSS_offers( self, explo ):
+        # Return list of shopkeeper offers.
+        ol = list()
+        ol.append( dialogue.Offer( "[SHOP_GENERAL]" ,
+         context = context.ContextTag([context.SHOP,context.GENERALSTORE]), effect=self.shop ) )
+        if self.first_time:
+            ol.append( dialogue.Offer( "I am a wandering trader, interested in both buying and selling. This is a dangerous place. You could use a good [weapon].",
+             context = context.ContextTag([context.HELLO,context.SHOP,context.GENERALSTORE]), effect=self.SpeakFirstTime ) )
+        return ol
+
 class RedHerringsChest( Plot ):
     # Just an unguarded chest in the dungeon... to make the players worry.
     LABEL = "SPECIAL_FEATURE"

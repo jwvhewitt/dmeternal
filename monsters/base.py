@@ -72,7 +72,7 @@ class Beast( characters.Level ):
     FULL_HP_AT_FIRST = False
 
 class Terror( characters.Level ):
-    name = 'Terror'
+    name = 'Monster'
     desc = ''
     statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 5, stats.NATURAL_DEFENSE: 4,
         stats.MAGIC_ATTACK: 5, stats.MAGIC_DEFENSE: 4, stats.AWARENESS: 4} )

@@ -708,7 +708,10 @@ class Character( stats.PhysicalThing ):
         return self.name
 
     def desc( self ):
-        return "L"+str( self.rank())+" "+stats.GENDER[self.gender]+" "+str(self.species)+" "+str(self.mr_level)
+        if self.gender is stats.NEUTER:
+            return "L"+str( self.rank())+" "+str(self.species)+" "+str(self.mr_level)
+        else:
+            return "L"+str( self.rank())+" "+stats.GENDER[self.gender]+" "+str(self.species)+" "+str(self.mr_level)
 
     def get_voice( self ):
         myvoice = set()
@@ -973,5 +976,6 @@ if __name__ == '__main__':
 
     print "\n***Level Stats***"
     for c in PC_CLASSES:
+
         print c.name + ': ' + str( c.statline.cost() )
 

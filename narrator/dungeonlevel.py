@@ -112,7 +112,8 @@ class FireCave( BasicCave ):
     TAGS = set( (context.HAB_CAVE,context.DES_FIRE) )
     def custom_init( self, nart ):
         myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
-            sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_cthonic.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
+            sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_cthonic.png",
+             maps.SPRITE_FLOOR: "terrain_floor_gravel.png",maps.SPRITE_CHEST: "terrain_chest_metal.png"},
             biome=context.HAB_CAVE, setting=self.setting, fac=self.elements.get("ANTAGONIST"),
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_FIRE) )
         mymapgen = randmaps.OpenCaveScene( myscene )
@@ -132,7 +133,8 @@ class FireBridgeCave( BasicCave ):
     MIN_RANK = 2
     def custom_init( self, nart ):
         myscene = maps.Scene( 120, 120, 
-            sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_cthonic.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
+            sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_cthonic.png",
+             maps.SPRITE_FLOOR: "terrain_floor_gravel.png",maps.SPRITE_CHEST: "terrain_chest_metal.png"},
             biome=context.HAB_CAVE, setting=self.setting, fac=self.elements.get("ANTAGONIST"),
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_FIRE) )
         mymapgen = randmaps.DividedIslandScene( myscene )
@@ -226,7 +228,8 @@ class BasicCryptLevel( BasicCave ):
     TAGS = set( (context.HAB_TUNNELS,context.GEN_UNDEAD) )
     def custom_init( self, nart ):
         myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
-            sprites={maps.SPRITE_WALL: "terrain_wall_bone.png", maps.SPRITE_GROUND: "terrain_ground_under.png", maps.SPRITE_FLOOR: "terrain_floor_tile.png"},
+            sprites={maps.SPRITE_WALL: "terrain_wall_bone.png", maps.SPRITE_GROUND: "terrain_ground_under.png",
+             maps.SPRITE_FLOOR: "terrain_floor_tile.png", maps.SPRITE_CHEST: "terrain_chest_metal.png" },
             biome=context.HAB_TUNNELS, setting=self.setting, fac=self.elements.get("ANTAGONIST"),
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.GEN_UNDEAD) )
         mymapgen = randmaps.SubtleMonkeyTunnelScene( myscene )
