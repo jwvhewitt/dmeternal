@@ -1,4 +1,4 @@
-from plots import Plot,PlotError
+from plots import Plot,PlotError,PlotState
 import context
 import items
 import maps
@@ -217,7 +217,7 @@ class NeutralTraders( Plot ):
         btype = monsters.choose_monster_type(self.rank-1,self.rank+2,myhabitat)
         boss = monsters.generate_boss( btype, self.rank-1 )
         boss.team = myteam
-        self.shop = self.register_element( "SHOPSERVICE", services.Shop( rank=self.rank+3, allow_magic=True ) )
+        self.shop = self.register_element( "SHOPSERVICE", services.Shop( rank=self.rank+3, allow_magic=True, num_items=15 ) )
         self.first_time = True
         self.register_element( "BOSS", boss, "_ROOM" )
         return True
@@ -254,37 +254,29 @@ class RedHerringsChest( Plot ):
 
 class RivalParty( Plot ):
     LABEL = "SPECIAL_FEATURE"
-    active = True
-    scope = "LOCALE"
     @classmethod
     def matches( self, pstate ):
         """Requires the LOCALE to exist."""
         return pstate.elements.get("LOCALE")
-    FIGHTERS = ( characters.Warrior, characters.Samurai, characters.Knight, characters.Monk )
-    THIEVES = ( characters.Thief, characters.Ninja, characters.Bard, characters.Ranger )
+    FIGHTERS = ( characters.Warrior, characters.Samurai, characters.Knight, characters.Monk, None )
+    THIEVES = ( characters.Thief, characters.Ninja, characters.Bard, characters.Ranger, None )
     PRIESTS = ( characters.Priest, characters.Druid, None )
     MAGES = ( characters.Mage, characters.Necromancer, None )
+    LANDMARKS = ( waypoints.HealingFountain, )
     def custom_init( self, nart ):
         # Add a group of humanoids, neutral reaction score.
         scene = self.elements.get("LOCALE")
         mygen = nart.get_map_generator( scene )
         room = mygen.DEFAULT_ROOM()
-        myteam = teams.Team( default_reaction=0, strength=0 )
+        myteam = teams.Team( default_reaction=10, strength=0 )
         room.contents.append( myteam )
         self.register_element( "_ROOM", room, dident="LOCALE" )
-
-        p1 = monsters.generate_npc(team=myteam,job=random.choice( self.FIGHTERS ),upgrade=True,rank=self.rank)
-        room.contents.append( p1 )
-        p2 = monsters.generate_npc(team=myteam,job=random.choice( self.THIEVES ),upgrade=True,rank=self.rank)
-        room.contents.append( p2 )
-        p3 = monsters.generate_npc(team=myteam,job=random.choice( self.PRIESTS ),upgrade=True,rank=self.rank)
-        room.contents.append( p3 )
-        p4 = monsters.generate_npc(team=myteam,job=random.choice( self.MAGES ),upgrade=True,rank=self.rank)
-        room.contents.append( p4 )
-
-        self.shop = self.register_element( "SHOPSERVICE", services.Shop( rank=self.rank+3, allow_magic=True ) )
-        self.first_time = True
-        room.contents.append( waypoints.HealingFountain() )
+        p1 = self.register_element( "NPC1", monsters.generate_npc(team=myteam,job=random.choice( self.FIGHTERS ),upgrade=True,rank=self.rank), dident="_ROOM")
+        p2 = self.register_element( "NPC2", monsters.generate_npc(team=myteam,job=random.choice( self.THIEVES ),upgrade=True,rank=self.rank), dident="_ROOM")
+        p3 = self.register_element( "NPC3", monsters.generate_npc(team=myteam,job=random.choice( self.PRIESTS ),upgrade=True,rank=self.rank), dident="_ROOM")
+        p4 = self.register_element( "NPC4", monsters.generate_npc(team=myteam,job=random.choice( self.MAGES ),upgrade=True,rank=self.rank), dident="_ROOM")
+        self.add_sub_plot( nart, "RESOURCE_NPCCONVO", PlotState( elements={"NPC":random.choice((p1,p2,p3,p4))} ).based_on( self ) )
+        room.contents.append( random.choice( self.LANDMARKS )() )
         return True
 
 

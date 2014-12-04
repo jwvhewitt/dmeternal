@@ -28,7 +28,7 @@ class Level( object ):
     LEVELS_PER_GEM = 1
     GEMS_PER_AWARD = 1
     legal_equipment = ()
-    XP_VALUE = 75
+    XP_VALUE = 125
     MIN_RANK = 0
     FULL_HP_AT_FIRST = True
     def __init__( self, rank=0, pc=None ):

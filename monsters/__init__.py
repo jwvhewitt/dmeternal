@@ -65,7 +65,8 @@ def gen_monster_name( npc ):
 
 def maybe_replace_item( npc, new_item ):
     # If the new item is better than the current item, take it.
-    if new_item:
+    # Filter out cosmetic items to prevent tons of useless gloves, hats.
+    if new_item and new_item.cost() > 10:
         new_item.identified = True
         current_item = npc.contents.get_equip( new_item.slot )
         if new_item.is_better( current_item ) and npc.can_equip( new_item ):
@@ -153,6 +154,7 @@ def generate_npc( species=None, job=None, gender=None, rank=None, team=None, upg
 
     npc.name = gen_monster_name(npc)
     npc.choose_random_spells()
+    npc.GP_VALUE = 10 * rank
 
     if upgrade:
         upgrade_equipment( npc, rank )            

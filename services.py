@@ -13,6 +13,9 @@ GENERAL_STORE = ( items.SWORD, items.AXE, items.MACE, items.DAGGER, items.STAFF,
     items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES, items.BOOTS,
     items.CLOAK, items.FARMTOOL )
 
+MINIMAL_STORE = ( items.SCROLL, items.POTION, items.CLOTHES, items.LIGHT_ARMOR,
+    items.HEAVY_ARMOR, items.ARROW, items.BULLET )
+
 ARMOR_STORE = ( items.SHIELD, items.CLOTHES, items.LIGHT_ARMOR, items.HEAVY_ARMOR,
     items.HAT, items.HELM, items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES,
     items.BOOTS, items.CLOAK )

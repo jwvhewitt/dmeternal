@@ -122,7 +122,7 @@ class Team( object ):
             it = self.charm_roll + self.default_reaction
         else:
             pc = camp.party_spokesperson()
-            self.charm_roll = random.randint( 1, 50 ) - random.randint( 1, 50 ) + pc.get_stat_bonus( stats.CHARISMA )
+            self.charm_roll = random.randint( 1, 50 ) - random.randint( 1, 50 ) + pc.get_stat_bonus( stats.CHARISMA ) * 2
             it = self.charm_roll + self.default_reaction
         if self.fac:
             it += self.fac.reaction

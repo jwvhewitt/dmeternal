@@ -13,6 +13,154 @@ import namegen
 import random
 import stats
 
+###   ***************************
+###   ***  RESOURCE_NPCCONVO  ***
+###   ***************************
+###
+### We have an NPC who doesn't do much, currently. Give the NPC something to do.
+###
+
+class RNC_GeneralMerchant( Plot ):
+    LABEL = "RESOURCE_NPCCONVO"
+    active = True
+    scope = True
+    @classmethod
+    def matches( self, pstate ):
+        """Requires the NPC to exist."""
+        return pstate.elements.get("NPC")
+    def custom_init( self, nart ):
+        # Add a shop.
+        self.shop = self.register_element( "SHOPSERVICE", services.Shop( ware_types=services.MINIMAL_STORE, rank=self.rank+3,
+         allow_misc=True, allow_magic=True, num_items=15 ) )
+        self.first_time = True
+        return True
+    def SpeakFirstTime( self, explo ):
+        self.first_time = False
+    def NPC_offers( self, explo ):
+        # Return list of shopkeeper offers.
+        ol = list()
+        ol.append( dialogue.Offer( "[SHOP_GENERAL]" ,
+         context = context.ContextTag([context.SHOP,context.GENERALSTORE]), effect=self.shop ) )
+        if self.first_time:
+            ol.append( dialogue.Offer( "If you need any adventuring supplies, I do a bit of trading.",
+             context = context.ContextTag([context.HELLO,context.SHOP,context.GENERALSTORE]), effect=self.SpeakFirstTime ) )
+        return ol
+
+
+class RNC_WeaponMerchant( Plot ):
+    LABEL = "RESOURCE_NPCCONVO"
+    active = True
+    scope = True
+    ALLOWED_JOBS = (characters.Warrior,characters.Samurai,
+        characters.Thief,characters.Bard,characters.Ranger,monsters.base.Peasant,
+        monsters.base.Merchant,monsters.base.Innkeeper)
+    @classmethod
+    def matches( self, pstate ):
+        """Requires the NPC to exist and have a particular job."""
+        return ( pstate.elements.get("LOCALE") and pstate.elements.get("NPC")
+            and isinstance( pstate.elements["NPC"].mr_level, self.ALLOWED_JOBS ) )
+    def custom_init( self, nart ):
+        # Add a shop.
+        self.shop = self.register_element( "SHOPSERVICE", services.Shop( ware_types=services.WEAPON_STORE, rank=self.rank+3,
+         allow_misc=False, allow_magic=True, num_items=10 ) )
+        self.first_time = True
+        return True
+    def SpeakFirstTime( self, explo ):
+        self.first_time = False
+    def NPC_offers( self, explo ):
+        # Return list of shopkeeper offers.
+        ol = list()
+        ol.append( dialogue.Offer( "[SHOP_WEAPON]" ,
+         context = context.ContextTag([context.SHOP,context.WEAPON]), effect=self.shop ) )
+        if self.first_time:
+            ol.append( dialogue.Offer( "In addition to adventuring, I also buy and sell weapons. I can get you a [adjective] [weapon].",
+             context = context.ContextTag([context.HELLO,context.SHOP,context.WEAPON]), effect=self.SpeakFirstTime ) )
+        return ol
+
+class RNC_ArmorMerchant( Plot ):
+    LABEL = "RESOURCE_NPCCONVO"
+    active = True
+    scope = True
+    ALLOWED_JOBS = (characters.Warrior,characters.Knight,monsters.base.Peasant,
+        characters.Thief,characters.Bard,characters.Ranger,characters.Priest,
+        monsters.base.Merchant,monsters.base.Innkeeper)
+    @classmethod
+    def matches( self, pstate ):
+        """Requires the NPC to exist and have a particular job."""
+        return ( pstate.elements.get("LOCALE") and pstate.elements.get("NPC")
+            and isinstance( pstate.elements["NPC"].mr_level, self.ALLOWED_JOBS ) )
+    def custom_init( self, nart ):
+        # Add a shop.
+        self.shop = self.register_element( "SHOPSERVICE", services.Shop( ware_types=services.ARMOR_STORE, rank=self.rank+3,
+         allow_misc=False, allow_magic=True, num_items=10 ) )
+        self.first_time = True
+        return True
+    def SpeakFirstTime( self, explo ):
+        self.first_time = False
+    def NPC_offers( self, explo ):
+        # Return list of shopkeeper offers.
+        ol = list()
+        ol.append( dialogue.Offer( "[SHOP_ARMOR]" ,
+         context = context.ContextTag([context.SHOP,context.ARMOR]), effect=self.shop ) )
+        if self.first_time:
+            ol.append( dialogue.Offer( "During my travels I have collected a lot of armor. If you like, I can show it to you.",
+             context = context.ContextTag([context.HELLO,context.SHOP,context.ARMOR]), effect=self.SpeakFirstTime ) )
+        return ol
+
+class RNC_MagicMerchant( Plot ):
+    LABEL = "RESOURCE_NPCCONVO"
+    active = True
+    scope = True
+    ALLOWED_JOBS = (characters.Mage,characters.Priest,characters.Necromancer,characters.Druid,
+        characters.Bard,characters.Ranger,monsters.base.Peasant,
+        monsters.base.Merchant,monsters.base.Innkeeper)
+    @classmethod
+    def matches( self, pstate ):
+        """Requires the NPC to exist and have a particular job."""
+        return ( pstate.elements.get("LOCALE") and pstate.elements.get("NPC")
+            and isinstance( pstate.elements["NPC"].mr_level, self.ALLOWED_JOBS ) )
+    def custom_init( self, nart ):
+        # Add a shop.
+        self.shop = self.register_element( "SHOPSERVICE", services.Shop( ware_types=services.MAGIC_STORE, rank=self.rank+3,
+         allow_misc=False, allow_magic=True, num_items=10 ) )
+        self.first_time = True
+        return True
+    def NPC_offers( self, explo ):
+        # Return list of shopkeeper offers.
+        ol = list()
+        ol.append( dialogue.Offer( "[SHOP_MAGIC]" ,
+         context = context.ContextTag([context.SHOP,context.MAGICGOODS]), effect=self.shop ) )
+        if self.first_time:
+            ol.append( dialogue.Offer( "I have some magical supplies for sale, if you need any potions or scrolls.",
+             context = context.ContextTag([context.HELLO,context.SHOP,context.MAGICGOODS]) ) )
+            self.first_time = False
+        return ol
+
+class RNC_TempleService( Plot ):
+    LABEL = "RESOURCE_NPCCONVO"
+    active = True
+    scope = True
+    ALLOWED_JOBS = (characters.Knight,characters.Priest,characters.Monk,
+        characters.Druid)
+    @classmethod
+    def matches( self, pstate ):
+        """Requires the NPC to exist and have a particular job."""
+        return ( pstate.elements.get("LOCALE") and pstate.elements.get("NPC")
+            and isinstance( pstate.elements["NPC"].mr_level, self.ALLOWED_JOBS ) )
+    def custom_init( self, nart ):
+        # Add a shop.
+        self.shop = self.register_element( "SHOPSERVICE", services.Temple() )
+        return True
+    def NPC_offers( self, explo ):
+        # Return list of shopkeeper offers.
+        ol = list()
+        ol.append( dialogue.Offer( "[SERVICE_TEMPLE]" ,
+         context = context.ContextTag([context.SERVICE,context.HEALING]), effect=self.shop ) )
+        ol.append( dialogue.Offer( "[HELLO] If you are in need of healing, I may be able to help.",
+         context = context.ContextTag([context.HELLO,context.SERVICE,context.HEALING]) ) )
+        return ol
+
+
 ###   *****************************
 ###   ***  RESOURCE_JOBTRAINER  ***
 ###   *****************************
@@ -33,7 +181,8 @@ class RJT_Default( Plot ):
         if not self.seek_element( nart, "_PREMADE", self.seek_npc, must_find=False ):
             room = self.seek_element( nart, "_ROOM", self.seek_room )
             npc = monsters.generate_npc( job=self.elements[ "JOB" ] )
-            self.register_element( "_NPC", npc, dident="_ROOM" )
+            self.register_element( "NPC", npc, dident="_ROOM" )
+            self.add_sub_plot( nart, "RESOURCE_NPCCONVO" )
         return True
 
 class RJT_DungeonShop( Plot ):
