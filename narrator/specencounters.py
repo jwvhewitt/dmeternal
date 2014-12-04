@@ -22,6 +22,27 @@ import animobs
 # unusual encounter that you don't want showing up all over the place.
 #
 
+class LudicrousTreasureEncounter( Plot ):
+    LABEL = "SPECIAL_ENCOUNTER"
+    @classmethod
+    def zmatches( self, pstate ):
+        """Requires the SCENE to exist."""
+        return ( pstate.elements.get("LOCALE")
+                and context.MAP_DUNGEON in pstate.elements["LOCALE"].desctags )
+    def custom_init( self, nart ):
+        scene = self.elements.get("LOCALE")
+        mygen = nart.get_map_generator( scene )
+        room = mygen.DEFAULT_ROOM()
+        room.contents.append( teams.Team(default_reaction=-999, rank=self.rank+1, 
+          strength=175, habitat=scene.get_encounter_request(), fac=scene.fac ) )
+        for t in range( random.randint( 2, 3 ) ):
+            mychest = random.choice(( waypoints.SmallChest, waypoints.MediumChest, waypoints.LargeChest ))()
+            mychest.stock( self.rank )
+            room.contents.append( mychest )
+        room.contents.append( waypoints.Fountain() )
+        self.register_element( "_ROOM", room, dident="LOCALE" )
+        return True
+
 class DragonLair( Plot ):
     LABEL = "zSPECIAL_ENCOUNTER"
     UNIQUE = True
@@ -33,19 +54,24 @@ class DragonLair( Plot ):
         scene = self.elements.get("LOCALE")
         mygen = nart.get_map_generator( scene )
         room = mygen.DEFAULT_ROOM()
+        room.DECORATE = randmaps.decor.CarnageDec()
+        # The lair entrance may be guarded.
+        if random.randint(1,2) != 1:
+            myhabitat=scene.get_encounter_request()
+            myhabitat[ context.GEN_DRAGON ] = context.MAYBE
+            room.contents.append( teams.Team(default_reaction=-999, rank=self.rank, 
+               strength=100, habitat=myhabitat, fac=scene.fac ) )
 
         self.register_element( "_EXTERIOR", room, dident="LOCALE" )
 
         interior = maps.Scene( 50,50, sprites={maps.SPRITE_WALL: "terrain_wall_mine.png", 
             maps.SPRITE_GROUND: "terrain_ground_under.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png",
             maps.SPRITE_CHEST: "terrain_chest_metal.png", maps.SPRITE_INTERIOR: "terrain_int_temple.png" },
-            biome=context.HAB_CAVE, setting=self.setting, desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.GEN_DRAGON) )
+            biome=context.HAB_CAVE, setting=self.setting, desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.GEN_DRAGON,context.MTY_BEAST) )
         igen = randmaps.CaveScene( interior )
 
-        interior.name = "{0} Manor".format( namegen.ELDRITCH.gen_word() )
-
         gate_1 = waypoints.Pit()
-        gate_2 = waypoints.SpiralStairsUp()
+        gate_2 = waypoints.StairsUp()
         gate_1.destination = interior
         gate_1.otherside = gate_2
         gate_2.destination = scene
@@ -53,25 +79,51 @@ class DragonLair( Plot ):
 
         self.register_scene( nart, interior, igen, ident="BUILDING_INT", dident="LOCALE" )
 
-        int_mainroom = randmaps.rooms.SharpRoom( tags=(context.ENTRANCE,), anchor=randmaps.anchors.south, parent=interior )
-        int_mainroom.contents.append( gate_2 )
-        int_mainroom.contents.append( maps.SKULL_ALTAR )
-        gate_2.anchor = randmaps.anchors.south
+        room.contents.append( gate_1 )
 
-        # Add the goal room, move the target there.
-        int_goalroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=interior )
-        target = self.elements[ "TARGET" ]
-        if isinstance( target, items.Item ):
-            dest = waypoints.SmallChest()
-            dest.stock( self.rank )
-            int_goalroom.contents.append( dest )
+        int_mainroom = igen.DEFAULT_ROOM( tags=(context.ENTRANCE,), anchor=randmaps.anchors.west, parent=interior )
+        int_mainroom.contents.append( gate_2 )
+        gate_2.anchor = randmaps.anchors.west
+
+        # Add some encounters, maybe.
+        if random.randint(1,3) != 2:
+            for t in range( random.randint(1,2) ):
+                self.add_sub_plot( nart, "ENCOUNTER", PlotState( elements={"LOCALE":interior} ).based_on( self ) )
+
+        # Add the goal room, stick the boss monster there.
+        int_goalroom = igen.DEFAULT_ROOM( tags=(context.GOAL,), parent=interior )
+        int_goalroom.DECORATE = randmaps.decor.CarnageDec(fill_factor=5)
+
+        # Create the dragon.
+        myteam = self.register_element( "TEAM", teams.Team( default_reaction=-999, strength=0 ) )
+        btype = monsters.choose_monster_type(self.rank+2,self.rank+3,
+            {(context.MTY_DRAGON,context.MTY_BEAST):context.PRESENT,context.MTY_BOSS:context.PRESENT,
+            context.GEN_DRAGON:context.MAYBE,context.MTY_DRAGON:context.MAYBE})
+        if btype:
+            boss = monsters.generate_boss( btype, self.rank+4, team=myteam )
+            interior.name = "{0}'s Lair".format( boss )
+            int_goalroom.contents.append( boss )
+
+            # Create the chests.
+            chests = list()
+            for t in range( random.randint( 2, 4 ) ):
+                mychest = random.choice(( waypoints.SmallChest, waypoints.MediumChest, waypoints.LargeChest ))()
+                mychest.stock( self.rank )
+                int_goalroom.contents.append( mychest )
+                chests.append( mychest )
+            # And the special treasure.
+            for t in range( 3 ):
+                myitem = items.generate_special_item( self.rank + 4 )
+                if myitem:
+                    random.choice( chests ).contents.append( myitem )
+            return True
         else:
-            dest = int_goalroom
-        self.move_element( ele=target,dest=dest )
+            # No dragon, no encounter.
+            return False
 
 
 class EnemyParty( Plot ):
-    LABEL = "SPECIAL_ENCOUNTER"
+    LABEL = "zSPECIAL_ENCOUNTER"
     active = True
     scope = "LOCALE"
     @classmethod

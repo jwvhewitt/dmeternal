@@ -177,8 +177,8 @@ def choose_monster_type( min_rank, max_rank, habitat=() ):
     elif backup_list:
         return random.choice( backup_list )
 
-def generate_boss( basemon, target_rank ):
-    boss = basemon()
+def generate_boss( basemon, target_rank, team=None ):
+    boss = basemon(team=team)
     if boss.ENC_LEVEL < target_rank:
         boss.levels.append( base.Terror( target_rank-boss.ENC_LEVEL, boss ))
     name = gen_monster_name( boss )

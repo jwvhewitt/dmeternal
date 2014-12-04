@@ -142,7 +142,7 @@ class OpenGateDoor( Waypoint ):
             explo.alert( "This door doesn't seem to go anywhere." )
 
 class Pit( Waypoint ):
-    TILE = maps.Tile( None, None, maps.Pit )
+    TILE = maps.Tile( None, None, maps.PIT )
     ATTACH_TO_WALL = False
     destination = None
     otherside = None

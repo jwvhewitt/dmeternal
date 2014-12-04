@@ -42,7 +42,7 @@ class YoungCaveDragon( base.Monster ):
     VOICE = dialogue.voice.DRACONIAN
     GP_VALUE = 200
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.HAB_CAVE,
-     context.MAP_DUNGEON,
+     context.MAP_DUNGEON, context.MTY_DRAGON, context.MTY_BOSS,
      context.DES_EARTH, context.GEN_DRAGON )
     ENC_LEVEL = 4
     ATTACK = items.Attack( (3,4,0), element = stats.RESIST_SLASHING )
@@ -65,7 +65,8 @@ class YoungSwampDragon( base.Monster ):
     MOVE_POINTS = 8
     VOICE = dialogue.voice.DRACONIAN
     GP_VALUE = 200
-    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.MTY_DRAGON,
+     context.MTY_BOSS,
      context.DES_EARTH, context.DES_WATER, context.GEN_DRAGON )
     ENC_LEVEL = 4
     ATTACK = items.Attack( (2,4,0), element = stats.RESIST_SLASHING )
@@ -95,8 +96,8 @@ class YoungSkyDragon( base.Monster ):
     MOVE_POINTS = 8
     VOICE = dialogue.voice.DRACONIAN
     GP_VALUE = 250
-    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
-     context.DES_AIR, context.GEN_DRAGON )
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.MTY_DRAGON,
+     context.DES_AIR, context.GEN_DRAGON, context.MTY_BOSS )
     ENC_LEVEL = 5
     ATTACK = items.Attack( (1,10,0), element = stats.RESIST_SLASHING )
     TECHNIQUES = ( invocations.MPInvocation( "Lightning Breath",
@@ -125,8 +126,8 @@ class YoungForestDragon( base.Monster ):
     VOICE = dialogue.voice.DRACONIAN
     GP_VALUE = 300
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
-     context.HAB_FOREST, context.MAP_WILDERNESS,
-     context.GEN_NATURE, context.GEN_DRAGON )
+     context.HAB_FOREST, context.MAP_WILDERNESS, context.MTY_DRAGON,
+     context.GEN_NATURE, context.GEN_DRAGON, context.MTY_BOSS )
     ENC_LEVEL = 6
     ATTACK = items.Attack( (1,12,0), element = stats.RESIST_SLASHING )
     TECHNIQUES = ( invocations.MPInvocation( "Poison Breath",
@@ -160,7 +161,7 @@ class CaveDragon( base.Monster ):
     VOICE = dialogue.voice.DRACONIAN
     GP_VALUE = 400
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.HAB_CAVE,
-     context.MAP_DUNGEON, context.MTY_BOSS, context.MTY_LEADER,
+     context.MAP_DUNGEON, context.MTY_BOSS, context.MTY_LEADER, context.MTY_DRAGON,
      context.DES_EARTH, context.GEN_DRAGON )
     ENC_LEVEL = 8
     LONER = True
@@ -189,7 +190,7 @@ class SwampDragon( base.Monster ):
     VOICE = dialogue.voice.DRACONIAN
     GP_VALUE = 400
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
-      context.MTY_BOSS, context.MTY_LEADER,
+      context.MTY_BOSS, context.MTY_LEADER, context.MTY_DRAGON,
      context.DES_EARTH, context.DES_WATER, context.GEN_DRAGON )
     ENC_LEVEL = 8
     LONER = True
@@ -222,7 +223,7 @@ class SkyDragon( base.Monster ):
     VOICE = dialogue.voice.DRACONIAN
     GP_VALUE = 450
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
-     context.MAP_WILDERNESS, context.MTY_BOSS,
+     context.MAP_WILDERNESS, context.MTY_BOSS, context.MTY_DRAGON,
      context.DES_AIR, context.GEN_DRAGON )
     ENC_LEVEL = 9
     LONER = True
@@ -263,7 +264,7 @@ class OldCaveDragon( base.Monster ):
     VOICE = dialogue.voice.DRACONIAN
     GP_VALUE = 600
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.HAB_CAVE,
-     context.MAP_DUNGEON, context.MTY_LEADER,
+     context.MAP_DUNGEON, context.MTY_LEADER, context.MTY_DRAGON, context.MTY_BOSS,
      context.DES_EARTH, context.GEN_DRAGON )
     ENC_LEVEL = 12
     LONER = True
@@ -292,7 +293,7 @@ class OldSwampDragon( base.Monster ):
     VOICE = dialogue.voice.DRACONIAN
     GP_VALUE = 600
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
-      context.MTY_LEADER,
+      context.MTY_LEADER, context.MTY_DRAGON, context.MTY_BOSS,
      context.DES_EARTH, context.DES_WATER, context.GEN_DRAGON )
     ENC_LEVEL = 12
     LONER = True
@@ -337,7 +338,7 @@ class AncientCaveDragon( base.Monster ):
     VOICE = dialogue.voice.DRACONIAN
     GP_VALUE = 800
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.HAB_CAVE,
-     context.MAP_DUNGEON, context.MTY_LEADER,
+     context.MAP_DUNGEON, context.MTY_LEADER, context.MTY_DRAGON, context.MTY_BOSS,
      context.DES_EARTH, context.GEN_DRAGON )
     ENC_LEVEL = 16
     LONER = True
@@ -366,7 +367,7 @@ class AncientSwampDragon( base.Monster ):
     VOICE = dialogue.voice.DRACONIAN
     GP_VALUE = 800
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
-      context.MTY_LEADER,
+      context.MTY_LEADER, context.MTY_DRAGON, context.MTY_BOSS,
      context.DES_EARTH, context.DES_WATER, context.GEN_DRAGON )
     ENC_LEVEL = 16
     LONER = True

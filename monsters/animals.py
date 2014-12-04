@@ -70,7 +70,7 @@ class DireNewt( base.Monster ):
     GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.HAB_CAVE,
      context.SET_RENFAN, context.DES_WATER, 
-     context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
+     context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE, context.GEN_DRAGON )
     ENC_LEVEL = 1
 
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_PIERCING )
@@ -401,7 +401,7 @@ class GiantLizard( base.Monster ):
     GP_VALUE = 0
     HABITAT = ( context.HAB_CAVE, context.SET_EVERY,
      context.MTY_BEAST, context.MTY_CREATURE,
-     context.GEN_NATURE )
+     context.GEN_NATURE, context.GEN_DRAGON )
     ENC_LEVEL = 4
 
     ATTACK = items.Attack( (1,10,0), element = stats.RESIST_PIERCING )
@@ -445,8 +445,8 @@ class FireBat( base.Monster ):
 
 class IceFox( base.Monster ):
     name = "Ice Fox"
-    statline = { stats.STRENGTH: 9, stats.TOUGHNESS: 11, stats.REFLEXES: 13, \
-        stats.INTELLIGENCE: 3, stats.PIETY: 9, stats.CHARISMA: 15 }
+    statline = { stats.STRENGTH: 12, stats.TOUGHNESS: 13, stats.REFLEXES: 13, \
+        stats.INTELLIGENCE: 3, stats.PIETY: 12, stats.CHARISMA: 15 }
     SPRITENAME = "monster_animals.png"
     FRAME = 27
     TEMPLATES = (stats.ICE,)
@@ -460,7 +460,12 @@ class IceFox( base.Monster ):
      context.GEN_NATURE )
     ENC_LEVEL = 4
 
-    ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING )
+    ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING, extra_effect =
+         effects.OpposedRoll( att_stat=None, att_modifier=5, on_success = (
+            effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_COLD, anim=animobs.SnowCloud ),
+            effects.Paralyze( max_duration = 6 )
+        ,) )
+    )
 
     TECHNIQUES = ( invocations.MPInvocation( "Frost Breath",
         effects.OpposedRoll( att_skill=stats.PHYSICAL_ATTACK, att_stat=stats.REFLEXES, def_stat=stats.REFLEXES, on_success = (
@@ -475,7 +480,7 @@ class IceFox( base.Monster ):
 
 class FireWeasel( base.Monster ):
     name = "Fire Weasel"
-    statline = { stats.STRENGTH: 9, stats.TOUGHNESS: 9, stats.REFLEXES: 15, \
+    statline = { stats.STRENGTH: 12, stats.TOUGHNESS: 12, stats.REFLEXES: 15, \
         stats.INTELLIGENCE: 3, stats.PIETY: 14, stats.CHARISMA: 9 }
     SPRITENAME = "monster_animals.png"
     FRAME = 29
@@ -490,7 +495,12 @@ class FireWeasel( base.Monster ):
      context.GEN_NATURE )
     ENC_LEVEL = 4
 
-    ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING )
+    ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING, extra_effect =
+         effects.OpposedRoll( att_stat=None, att_modifier=5, on_success = (
+            effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.RedCloud ),
+            effects.Enchant( enchantments.BurnLowEn )
+        ,) )
+    )
 
     TECHNIQUES = ( invocations.MPInvocation( "Fire Breath",
         effects.OpposedRoll( att_skill=stats.PHYSICAL_ATTACK, att_stat=stats.REFLEXES, def_stat=stats.REFLEXES, on_success = (
@@ -778,7 +788,8 @@ class Crocodile( base.Monster ):
     VOICE = None
     GP_VALUE = 0
     HABITAT = ( context.HAB_TUNNELS, context.SET_EVERY,
-     context.DES_WATER, context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
+     context.DES_WATER, context.MTY_BEAST, context.MTY_CREATURE,
+     context.GEN_NATURE, context.GEN_DRAGON )
     ENC_LEVEL = 8
 
     ATTACK = items.Attack( (1,12,0), element = stats.RESIST_PIERCING )
@@ -1041,7 +1052,7 @@ class DragonTurtle( base.Monster ):
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.DES_WATER,
      context.MTY_BEAST, context.MTY_CREATURE, context.MTY_BOSS,
-     context.GEN_NATURE )
+     context.GEN_NATURE, context.GEN_DRAGON )
     ENC_LEVEL = 18
     ATTACK = items.Attack( (4,6,0), element = stats.RESIST_CRUSHING )
     TECHNIQUES = ( invocations.MPInvocation( "Steam Breath",

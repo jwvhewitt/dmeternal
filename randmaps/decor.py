@@ -138,4 +138,7 @@ class RockyDec( object ):
 class GoblinHomeDec( RockyDec ):
     FLOOR_DECOR = ( maps.PUDDLE, maps.BONE, maps.KEG, maps.PILED_GOODS )
 
+class CarnageDec( RockyDec ):
+    FLOOR_DECOR = (maps.SKULL, maps.BONE, maps.SKELETON, maps.FLOOR_BLOOD, maps.FLOOR_BLOOD)
+
 

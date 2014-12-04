@@ -25,7 +25,7 @@ class SmallTreasureEncounter( Plot ):
         mygen = nart.get_map_generator( scene )
         room = mygen.DEFAULT_ROOM()
         room.contents.append( teams.Team(default_reaction=-999, rank=self.rank, 
-          strength=75, habitat=scene.get_encounter_request(), fac=scene.fac ) )
+          strength=100, habitat=scene.get_encounter_request(), fac=scene.fac ) )
         mychest = waypoints.SmallChest()
         mychest.stock(self.rank)
         room.contents.append( mychest )
@@ -44,7 +44,7 @@ class MediumTreasureEncounter( Plot ):
         mygen = nart.get_map_generator( scene )
         room = mygen.DEFAULT_ROOM()
         room.contents.append( teams.Team(default_reaction=-999, rank=self.rank, 
-          strength=100, habitat=scene.get_encounter_request(), fac=scene.fac ) )
+          strength=125, habitat=scene.get_encounter_request(), fac=scene.fac ) )
         mychest = waypoints.MediumChest()
         mychest.stock(self.rank)
         room.contents.append( mychest )
@@ -63,7 +63,7 @@ class LargeTreasureEncounter( Plot ):
         mygen = nart.get_map_generator( scene )
         room = mygen.DEFAULT_ROOM()
         room.contents.append( teams.Team(default_reaction=-999, rank=self.rank, 
-          strength=150, habitat=scene.get_encounter_request(), fac=scene.fac ) )
+          strength=160, habitat=scene.get_encounter_request(), fac=scene.fac ) )
         mychest = waypoints.LargeChest()
         mychest.stock(self.rank)
         room.contents.append( mychest )
