@@ -254,6 +254,8 @@ class RedHerringsChest( Plot ):
 
 class RivalParty( Plot ):
     LABEL = "SPECIAL_FEATURE"
+    active = True
+    scope = "LOCALE"
     @classmethod
     def matches( self, pstate ):
         """Requires the LOCALE to exist."""
@@ -262,13 +264,13 @@ class RivalParty( Plot ):
     THIEVES = ( characters.Thief, characters.Ninja, characters.Bard, characters.Ranger, None )
     PRIESTS = ( characters.Priest, characters.Druid, None )
     MAGES = ( characters.Mage, characters.Necromancer, None )
-    LANDMARKS = ( waypoints.HealingFountain, )
+    LANDMARKS = ( waypoints.Fountain,waypoints.PowerCrystal,waypoints.Campsite )
     def custom_init( self, nart ):
         # Add a group of humanoids, neutral reaction score.
         scene = self.elements.get("LOCALE")
         mygen = nart.get_map_generator( scene )
         room = mygen.DEFAULT_ROOM()
-        myteam = teams.Team( default_reaction=10, strength=0 )
+        myteam = self.register_element( "TEAM", teams.Team( default_reaction=0, strength=0 ) )
         room.contents.append( myteam )
         self.register_element( "_ROOM", room, dident="LOCALE" )
         p1 = self.register_element( "NPC1", monsters.generate_npc(team=myteam,job=random.choice( self.FIGHTERS ),upgrade=True,rank=self.rank), dident="_ROOM")
@@ -278,6 +280,18 @@ class RivalParty( Plot ):
         self.add_sub_plot( nart, "RESOURCE_NPCCONVO", PlotState( elements={"NPC":random.choice((p1,p2,p3,p4))} ).based_on( self ) )
         room.contents.append( random.choice( self.LANDMARKS )() )
         return True
+    def do_truce( self, explo ):
+        self.elements["TEAM"].charm_roll = 999
+    def get_generic_offers( self, npc, explo ):
+        ol = list()
+        if npc.team is self.elements["TEAM"]:
+            ol.append( dialogue.Offer( msg = "That is a relief. This place is quite dangerous, you know.",
+             context = context.ContextTag( [context.TRUCE] ), effect=self.do_truce)
+            )
+            ol.append( dialogue.Offer( msg = "[ATTACK]",
+             context = context.ContextTag( [context.ATTACK] ))
+            )
+        return ol
 
 
 class WildernessInn( Plot ):

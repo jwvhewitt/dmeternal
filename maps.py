@@ -314,6 +314,8 @@ FLOOR_BLOOD = VariableTerrain( "FLOOR_BLOOD", spritesheet = SPRITE_DECOR, block_
 TREE_STUMP = VariableTerrain( "TREE_STUMP", spritesheet = SPRITE_DECOR, block_walk=True, frames = (90,91) )
 SIGNPOST = SingTerrain( "SIGNPOST", spritesheet = SPRITE_DECOR, block_walk=True, frame = 92 )
 CAULDRON = SingTerrain( "CAULDRON", spritesheet = SPRITE_DECOR, block_walk=True, frame = 93 )
+CRYSTAL_ORB = SingTerrain( "CRYSTAL_ORB", spritesheet = SPRITE_DECOR, block_walk=True, frame = 94 )
+PIT = SingTerrain( "PIT", spritesheet = SPRITE_DECOR, block_walk=True, frame = 95 )
 
 BED_HEAD = BedHeadTerrain( "BED_HEAD", block_walk=True, frame=2 )
 BED_FOOT = BedFootTerrain( "BED_FOOT", block_walk=True, frame=4, partner=BED_HEAD )

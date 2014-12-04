@@ -79,7 +79,7 @@ PROBLEM_TO_PROBLEM = Reply( "Is there anything else wrong?",
             destination = Cue( ContextTag([context.PROBLEM])),
             context = ContextTag([context.PROBLEM]) )
 
-THREATEN_TO_ATTACK = Reply( "We will defeat you!",
+THREATEN_TO_ATTACK = Reply( "Prepare to die!",
             destination = Cue( ContextTag([context.ATTACK])),
             context = ContextTag([context.THREATEN]) )
 

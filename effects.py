@@ -259,6 +259,27 @@ class ManaDamage( NoEffect ):
             anims.append( animobs.Caption( str(dmg), pos, delay=delay, color=(250,0,250) ) )
         return self.children
 
+class ManaRestore( NoEffect ):
+    def __init__(self, dice=(1,6,0), stat_bonus=None, children=None, anim=animobs.YellowSparkle ):
+        self.dice = dice
+        self.stat_bonus = stat_bonus
+        if not children:
+            children = list()
+        self.children = children
+        self.anim = anim
+
+    def handle_effect( self, camp, originator, pos, anims, delay=0 ):
+        """Apply some mana damage to whoever is in the indicated tile."""
+        target = camp.scene.get_character_at_spot( pos )
+        if target:
+            dmg = sum( random.randint(1,self.dice[1]) for x in range( self.dice[0] ) ) + self.dice[2]
+            if self.stat_bonus and originator:
+                dmg = max( dmg + ( originator.get_stat( self.stat_bonus ) - 11 ) // 2 , 1 )
+            dmg = min( dmg, target.mp_damage )
+            target.mp_damage -= dmg
+            anims.append( animobs.Caption( str(dmg), pos, delay=delay, color=(0,150,250) ) )
+        return self.children
+
 class StatDamage( NoEffect ):
     def __init__(self, stat_to_damage=stats.STRENGTH, amount=1, children=None, anim=None ):
         self.amount = amount

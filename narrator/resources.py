@@ -31,7 +31,7 @@ class RNC_GeneralMerchant( Plot ):
     def custom_init( self, nart ):
         # Add a shop.
         self.shop = self.register_element( "SHOPSERVICE", services.Shop( ware_types=services.MINIMAL_STORE, rank=self.rank+3,
-         allow_misc=True, allow_magic=True, num_items=15 ) )
+         allow_misc=True, allow_magic=True, num_items=10 ) )
         self.first_time = True
         return True
     def SpeakFirstTime( self, explo ):

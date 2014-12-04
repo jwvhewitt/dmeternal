@@ -90,3 +90,10 @@ HELLO_INNKEEPER = Offer( msg = "[HELLO_SERVICE_INN]" ,
 
 THREATEN_BASIC = Offer( msg = "You think you can defeat us? We will defeat you!" , context = ContextTag( [context.THREATEN] ) )
 
+
+THREATEN_ATTACK_OR_TRUCE = Offer( msg = "Halt! Are you friend or foe?" , context = ContextTag( [context.THREATEN] ),
+        replies = [ Reply( "Foe!", destination = Cue( ContextTag([context.ATTACK]))),
+            Reply( "Friend!", destination = Cue( ContextTag([context.TRUCE])))
+        ] )
+
+

@@ -57,6 +57,7 @@ class CityOnEdgeOfCiv( Plot ):
         for t in range( random.randint(1,4) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
         self.add_sub_plot( nart, "SPECIAL_FEATURE" )
+        self.add_sub_plot( nart, "SPECIAL_ENCOUNTER" )
 
         self.add_sub_plot( nart, "CITY_STORY", PlotState(rank=self.random_rank_in_chapter()).based_on( self ) )
 

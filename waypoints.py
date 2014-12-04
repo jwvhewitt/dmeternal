@@ -92,6 +92,12 @@ class Bookshelf( Waypoint ):
     desc = "You stand before a bookshelf."
     mini_map_label = "Bookshelf"
 
+class Campsite( Waypoint ):
+    TILE = maps.Tile( None, None, maps.CAULDRON )
+    desc = "You stand before a fire."
+    mini_map_label = "Campsite"
+
+
 class Fountain( Waypoint ):
     TILE = maps.Tile( None, None, maps.FOUNTAIN )
     desc = "You stand before a fountain."
@@ -134,6 +140,33 @@ class OpenGateDoor( Waypoint ):
             explo.camp.entrance = self.otherside
         else:
             explo.alert( "This door doesn't seem to go anywhere." )
+
+class Pit( Waypoint ):
+    TILE = maps.Tile( None, None, maps.Pit )
+    ATTACH_TO_WALL = False
+    destination = None
+    otherside = None
+    desc = "You stand before a pit."
+    mini_map_label = "Pit"
+    def unlocked_use( self, explo ):
+        if self.destination and self.otherside:
+            explo.camp.destination = self.destination
+            explo.camp.entrance = self.otherside
+        else:
+            explo.alert( self.desc )
+
+class PowerCrystal( Waypoint ):
+    TILE = maps.Tile( None, None, maps.CRYSTAL_ORB )
+    desc = "You stand before a large crystal."
+    mini_map_label = "Power Crystal"
+    HEAL_FX = effects.ManaRestore( dice=(1,6,9999), stat_bonus=None )
+    def unlocked_use( self, explo ):
+        # Perform this waypoint's special action.
+        targets = list()
+        for pc in explo.camp.party:
+            if pc.is_alright():
+                targets.append( pc.pos )
+        explo.invoke_effect( self.HEAL_FX, None, targets )
 
 
 class SpiralStairsUp( Waypoint ):

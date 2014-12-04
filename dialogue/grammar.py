@@ -43,6 +43,8 @@ GRAM_DATABASE = {
         ],
     "[armor]": ["outfit","suit of armor","shield","helm","hat"
         ],
+    "[ATTACK]": [ "Die!", ""
+        ],
     "[BESTWISHES]": ["May fortune smile on you."
         ],
     "[GOODLUCK]": ["Good luck with that.","Good luck.",
