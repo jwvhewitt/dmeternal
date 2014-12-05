@@ -22,34 +22,48 @@ import animobs
 # unusual encounter that you don't want showing up all over the place.
 #
 
-class LudicrousTreasureEncounter( Plot ):
+class Beastmaster( Plot ):
+    # A faction beastmaster with an exotic creature or creatures.
     LABEL = "SPECIAL_ENCOUNTER"
+    UNIQUE = True
     @classmethod
-    def zmatches( self, pstate ):
-        """Requires the SCENE to exist."""
-        return ( pstate.elements.get("LOCALE")
-                and context.MAP_DUNGEON in pstate.elements["LOCALE"].desctags )
+    def matches( self, pstate ):
+        """Requires the LOCALE to exist and have a faction."""
+        return pstate.elements.get("LOCALE") and pstate.elements["LOCALE"].fac
     def custom_init( self, nart ):
         scene = self.elements.get("LOCALE")
         mygen = nart.get_map_generator( scene )
         room = mygen.DEFAULT_ROOM()
-        room.contents.append( teams.Team(default_reaction=-999, rank=self.rank+1, 
-          strength=175, habitat=scene.get_encounter_request(), fac=scene.fac ) )
-        for t in range( random.randint( 2, 3 ) ):
-            mychest = random.choice(( waypoints.SmallChest, waypoints.MediumChest, waypoints.LargeChest ))()
-            mychest.stock( self.rank )
-            room.contents.append( mychest )
-        room.contents.append( waypoints.Fountain() )
-        self.register_element( "_ROOM", room, dident="LOCALE" )
-        return True
+        myteam = teams.Team(default_reaction=-999, rank=self.rank+1, 
+          strength=125, habitat={context.MTY_BEAST: True}, hodgepodge=True )
+        room.contents.append( myteam )
+        myhabitat = scene.get_encounter_request()
+        myhabitat[ context.MTY_HUMANOID ] = True
+        myhabitat[(context.MTY_LEADER,context.MTY_FIGHTER)] = True
+        scene.fac.alter_monster_request( myhabitat )
+        btype = monsters.choose_monster_type(self.rank-3,self.rank+1,myhabitat)
+        if btype:
+            boss = monsters.generate_boss( btype, self.rank+1, team=myteam )
+            myitem = items.generate_special_item( self.rank )
+            if myitem:
+                boss.contents.append( myitem )
+            myspear = items.generate_special_item( self.rank + 4,item_type=items.POLEARM )
+            if myspear:
+                boss.contents.append( myspear )
+            self.register_element( "_ROOM", room, dident="LOCALE" )
+            self.register_element( "BOSS", boss, "_ROOM" )
+        return btype
+
 
 class DragonLair( Plot ):
-    LABEL = "zSPECIAL_ENCOUNTER"
+    LABEL = "SPECIAL_ENCOUNTER"
     UNIQUE = True
     @classmethod
     def matches( self, pstate ):
-        """Requires the LOCALE to exist."""
-        return pstate.elements.get("LOCALE")
+        """Requires the SCENE to exist and be wilderness or a cave."""
+        return ( pstate.elements.get("LOCALE")
+            and ( context.MAP_WILDERNESS in pstate.elements["LOCALE"].desctags
+            or context.HAB_CAVE == pstate.elements["LOCALE"].biome ) )
     def custom_init( self, nart ):
         scene = self.elements.get("LOCALE")
         mygen = nart.get_map_generator( scene )
@@ -113,7 +127,7 @@ class DragonLair( Plot ):
                 chests.append( mychest )
             # And the special treasure.
             for t in range( 3 ):
-                myitem = items.generate_special_item( self.rank + 4 )
+                myitem = items.generate_special_item( self.rank + random.randint(2,4) )
                 if myitem:
                     random.choice( chests ).contents.append( myitem )
             return True
@@ -123,7 +137,7 @@ class DragonLair( Plot ):
 
 
 class EnemyParty( Plot ):
-    LABEL = "zSPECIAL_ENCOUNTER"
+    LABEL = "SPECIAL_ENCOUNTER"
     active = True
     scope = "LOCALE"
     @classmethod
@@ -161,6 +175,53 @@ class EnemyParty( Plot ):
             )
         return ol
 
+class HumanoidBossEncounter( Plot ):
+    LABEL = "SPECIAL_ENCOUNTER"
+    @classmethod
+    def matches( self, pstate ):
+        """Requires the LOCALE to exist."""
+        return pstate.elements.get("LOCALE")
+    def custom_init( self, nart ):
+        scene = self.elements.get("LOCALE")
+        mygen = nart.get_map_generator( scene )
+        room = mygen.DEFAULT_ROOM()
+        myhabitat = scene.get_encounter_request()
+        myhabitat[ context.MTY_HUMANOID ] = True
+        myteam = teams.Team(default_reaction=-999, rank=self.rank, 
+          strength=125, habitat=myhabitat )
+        room.contents.append( myteam )
+        mh2 = myhabitat.copy()
+        mh2[(context.MTY_LEADER,context.MTY_BOSS,context.MTY_MAGE)] = True
+        btype = monsters.choose_monster_type(self.rank-2,self.rank+2,mh2)
+        if btype:
+            boss = monsters.generate_boss( btype, self.rank+3, team=myteam )
+            myitem = items.generate_special_item( self.rank + 4 )
+            if myitem:
+                boss.contents.append( myitem )
+            self.register_element( "_ROOM", room, dident="LOCALE" )
+            self.register_element( "BOSS", boss, "_ROOM" )
+        return btype
+
+
+class LudicrousTreasureEncounter( Plot ):
+    LABEL = "SPECIAL_ENCOUNTER"
+    @classmethod
+    def matches( self, pstate ):
+        """Requires the LOCALE to exist and be a dungeon."""
+        return ( pstate.elements.get("LOCALE")
+                and context.MAP_DUNGEON in pstate.elements["LOCALE"].desctags )
+    def custom_init( self, nart ):
+        scene = self.elements.get("LOCALE")
+        mygen = nart.get_map_generator( scene )
+        room = mygen.DEFAULT_ROOM( tags=(context.GOAL,) )
+        room.contents.append( teams.Team(default_reaction=-999, rank=self.rank+1, 
+          strength=175, habitat=scene.get_encounter_request(), fac=scene.fac ) )
+        for t in range( random.randint( 2, 3 ) ):
+            mychest = random.choice(( waypoints.SmallChest, waypoints.MediumChest, waypoints.LargeChest ))()
+            mychest.stock( self.rank )
+            room.contents.append( mychest )
+        self.register_element( "_ROOM", room, dident="LOCALE" )
+        return True
 
 
 

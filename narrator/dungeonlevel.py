@@ -52,6 +52,7 @@ class BasicCave( Plot ):
         for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
         self.add_sub_plot( nart, "SPECIAL_FEATURE" )
+        self.add_sub_plot( nart, "SPECIAL_ENCOUNTER" )
 
         return True
 
@@ -84,6 +85,7 @@ class WaterCave( BasicCave ):
         for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
         self.add_sub_plot( nart, "SPECIAL_FEATURE" )
+        self.add_sub_plot( nart, "SPECIAL_ENCOUNTER" )
 
         return True
 
@@ -104,6 +106,7 @@ class WaterBridgeCave( BasicCave ):
         self.add_sub_plot( nart, "DIVIDED_ISLAND_COMPLICATION" )
         for t in range( random.randint(7,12) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
+        self.add_sub_plot( nart, "SPECIAL_ENCOUNTER" )
 
         return True
 
@@ -123,6 +126,7 @@ class FireCave( BasicCave ):
         for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
         self.add_sub_plot( nart, "SPECIAL_FEATURE" )
+        self.add_sub_plot( nart, "SPECIAL_ENCOUNTER" )
 
         return True
 
@@ -144,6 +148,7 @@ class FireBridgeCave( BasicCave ):
         self.add_sub_plot( nart, "DIVIDED_ISLAND_COMPLICATION" )
         for t in range( random.randint(7,12) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
+        self.add_sub_plot( nart, "SPECIAL_ENCOUNTER" )
 
         return True
 
@@ -163,6 +168,7 @@ class AirCave( BasicCave ):
         for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
         self.add_sub_plot( nart, "SPECIAL_FEATURE" )
+        self.add_sub_plot( nart, "SPECIAL_ENCOUNTER" )
 
         return True
 
@@ -181,6 +187,7 @@ class EarthCave( BasicCave ):
         for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
         self.add_sub_plot( nart, "SPECIAL_FEATURE" )
+        self.add_sub_plot( nart, "SPECIAL_ENCOUNTER" )
 
         return True
 
@@ -200,6 +207,7 @@ class EarthMushroomCave( BasicCave ):
 
         for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
+        self.add_sub_plot( nart, "SPECIAL_ENCOUNTER" )
 
         return True
 
@@ -219,6 +227,7 @@ class SewerLevel( BasicCave ):
         for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
         self.add_sub_plot( nart, "SPECIAL_FEATURE" )
+        self.add_sub_plot( nart, "SPECIAL_ENCOUNTER" )
 
         return True
 
@@ -239,6 +248,7 @@ class BasicCryptLevel( BasicCave ):
         for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
         self.add_sub_plot( nart, "SPECIAL_FEATURE" )
+        self.add_sub_plot( nart, "SPECIAL_ENCOUNTER" )
 
         return True
 

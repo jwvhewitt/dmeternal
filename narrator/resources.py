@@ -140,8 +140,7 @@ class RNC_TempleService( Plot ):
     LABEL = "RESOURCE_NPCCONVO"
     active = True
     scope = True
-    ALLOWED_JOBS = (characters.Knight,characters.Priest,characters.Monk,
-        characters.Druid)
+    ALLOWED_JOBS = (characters.Knight,characters.Priest,characters.Druid)
     @classmethod
     def matches( self, pstate ):
         """Requires the NPC to exist and have a particular job."""
@@ -182,7 +181,9 @@ class RJT_Default( Plot ):
             room = self.seek_element( nart, "_ROOM", self.seek_room )
             npc = monsters.generate_npc( job=self.elements[ "JOB" ] )
             self.register_element( "NPC", npc, dident="_ROOM" )
-            self.add_sub_plot( nart, "RESOURCE_NPCCONVO" )
+            # Maybe give this NPC something extra to do.
+            if random.randint(1,3) == 2:
+                self.add_sub_plot( nart, "RESOURCE_NPCCONVO" )
         return True
 
 class RJT_DungeonShop( Plot ):

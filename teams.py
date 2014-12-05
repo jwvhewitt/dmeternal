@@ -107,7 +107,7 @@ class AntagonistFaction( Faction ):
         self.name = pattern.format( propername=propername, adjective=random.choice(adjectives), org=random.choice(orgs), icon=random.choice(icons) )
 
 class Team( object ):
-    def __init__( self, default_reaction = 0, home=None, rank=1, strength=100, habitat=None, respawn=True, fac=None ):
+    def __init__( self, default_reaction = 0, home=None, rank=1, strength=100, habitat=None, respawn=True, fac=None, hodgepodge=False ):
         self.default_reaction = default_reaction
         self.charm_roll = None
         self.home = home
@@ -116,6 +116,7 @@ class Team( object ):
         self.habitat = habitat
         self.respawn = respawn
         self.fac = fac
+        self.hodgepodge = hodgepodge
 
     def check_reaction( self, camp ):
         if self.charm_roll:
@@ -145,7 +146,9 @@ class Team( object ):
             m_pts = 200 / ( rel_level ** 2 // 12 + rel_level )
 
             # Determine what companions this monster might get.
-            if hasattr( mclass, "COMPANIONS" ):
+            if self.hodgepodge:
+                nextmon = gb.choose_monster( min_rank, max_rank, self.habitat )
+            elif hasattr( mclass, "COMPANIONS" ):
                 candidates = list()
                 for c in mclass.COMPANIONS:
                     if c.ENC_LEVEL >= min_rank and c.ENC_LEVEL <= max_rank:

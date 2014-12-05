@@ -277,7 +277,7 @@ class ManaRestore( NoEffect ):
                 dmg = max( dmg + ( originator.get_stat( self.stat_bonus ) - 11 ) // 2 , 1 )
             dmg = min( dmg, target.mp_damage )
             target.mp_damage -= dmg
-            anims.append( animobs.Caption( str(dmg), pos, delay=delay, color=(0,150,250) ) )
+            anims.append( animobs.Caption( str(dmg), pos, delay=delay, color=(100,200,250) ) )
         return self.children
 
 class StatDamage( NoEffect ):

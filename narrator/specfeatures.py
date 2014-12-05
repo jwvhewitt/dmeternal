@@ -151,7 +151,7 @@ class FountainOfHealing( Plot ):
     def custom_init( self, nart ):
         scene = self.elements.get("LOCALE")
         mygen = nart.get_map_generator( scene )
-        room = mygen.DEFAULT_ROOM()
+        room = mygen.DEFAULT_ROOM(tags=(context.GOAL,))
         myfountain = waypoints.HealingFountain( plot_locked = True )
         self.register_element( "_ROOM", room, dident="LOCALE" )
         self.register_element( "FOUNTAIN", myfountain, dident="_ROOM" )
@@ -215,8 +215,7 @@ class NeutralTraders( Plot ):
         self.register_element( "_ROOM", room, dident="LOCALE" )
         myhabitat[ context.MTY_LEADER ] = context.MAYBE
         btype = monsters.choose_monster_type(self.rank-1,self.rank+2,myhabitat)
-        boss = monsters.generate_boss( btype, self.rank-1 )
-        boss.team = myteam
+        boss = monsters.generate_boss( btype, self.rank-1, team=myteam )
         self.shop = self.register_element( "SHOPSERVICE", services.Shop( rank=self.rank+3, allow_magic=True, num_items=15 ) )
         self.first_time = True
         self.register_element( "BOSS", boss, "_ROOM" )
@@ -336,6 +335,11 @@ class WildernessInn( Plot ):
         int_mainroom.contents.append( maps.TABLE )
         int_mainroom.contents.append( maps.TABLE )
         int_mainroom.contents.append( maps.TABLE )
+        # Add at least one visitor.
+        npc = self.register_element( "NPC", monsters.generate_npc( rank=self.rank+2,upgrade=True ) )
+        self.add_sub_plot( nart, "RESOURCE_NPCCONVO" )
+        int_mainroom.contents.append( npc )
+
         int_bedroom = randmaps.rooms.SharpRoom( tags=(context.CIVILIZED,), parent=interior )
         int_bedroom.contents.append( maps.LIGHT_STAND )
         int_bedroom.DECORATE = randmaps.decor.BedroomDec()
