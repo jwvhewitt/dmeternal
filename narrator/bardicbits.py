@@ -56,25 +56,21 @@ class BardicCrypt( BardicCaves ):
 
 class AntagonisticCaves( BardicCaves ):
     LABEL = "BARDIC_DUNGEON"
-    NAME_PATTERNS = ( "Caves of the {0}", "{0}'s Lair" )
+    NAME_PATTERNS = ( "Caves","Caverns","Grotto","Chasm" )
     DUNGEON_PATTERN = (context.HAB_CAVE,)
     UNIQUE = True
     def gen_name( self ):
-        Antagonist = teams.AntagonistFaction()
-        self.register_element( "ANTAGONIST", Antagonist )
-
-        return random.choice( self.NAME_PATTERNS ).format( Antagonist )
+        Antagonist = self.register_element( "ANTAGONIST", teams.AntagonistFaction(dungeon_type=self.NAME_PATTERNS) )
+        return Antagonist.name
 
 class AntagonisticTunnels( BardicCaves ):
     LABEL = "BARDIC_DUNGEON"
-    NAME_PATTERNS = ( "{0}'s Hideout", "{0}'s Lair" )
+    NAME_PATTERNS = ( "Hideout", "Tunnels", "Catacombs" )
     DUNGEON_PATTERN = (context.HAB_CAVE,)
     UNIQUE = True
     def gen_name( self ):
-        Antagonist = teams.AntagonistFaction()
-        self.register_element( "ANTAGONIST", Antagonist )
-
-        return random.choice( self.NAME_PATTERNS ).format( Antagonist )
+        Antagonist = self.register_element( "ANTAGONIST", teams.AntagonistFaction(dungeon_type=self.NAME_PATTERNS) )
+        return Antagonist.name
 
 
 # BARDIC_CONNECTION

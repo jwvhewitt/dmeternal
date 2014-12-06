@@ -87,7 +87,16 @@ class AntagonistFaction( Faction ):
         "{adjective} {icon} {org}",
         "{adjective} {org} of the {icon}",
     )
-    def __init__( self, primary=None ):
+    DUNGEON_PATTERN = (
+        "{dungeon} of the {adjective} {org}",
+        "{adjective} {dungeon} of {propername}",
+        "{adjective} {org} {dungeon}",
+        "{dungeon} of the {adjective} {icon}",
+        "{adjective} {icon} {dungeon}",
+    )
+    def __init__( self, primary=None, dungeon_type=None ):
+        # Set dungeon_type to a list of dungeon descriptors to make this faction
+        #  name a passable dungeon name.
         super(AntagonistFaction, self).__init__(reaction=-50)
         self.primary = primary or random.choice( self.ANTAGONIST_PRIMARY )
         if self.primary in self.ANTAGONIST_SECONDARY.keys():
@@ -103,8 +112,13 @@ class AntagonistFaction( Faction ):
             propername = self.ANTAGONIST_VOICE[ self.secondary ].gen_word()
         else:
             propername = namegen.random_style_name()
-        pattern = random.choice( self.NAME_PATTERN )
-        self.name = pattern.format( propername=propername, adjective=random.choice(adjectives), org=random.choice(orgs), icon=random.choice(icons) )
+        if dungeon_type:
+            dtype = ["Dungeon",] + list( dungeon_type ) * 5
+            pattern = random.choice( self.DUNGEON_PATTERN )
+        else:
+            dtype = orgs
+            pattern = random.choice( self.NAME_PATTERN )
+        self.name = pattern.format( propername=propername, adjective=random.choice(adjectives), org=random.choice(orgs), icon=random.choice(icons), dungeon=random.choice(dtype) )
 
 class Team( object ):
     def __init__( self, default_reaction = 0, home=None, rank=1, strength=100, habitat=None, respawn=True, fac=None, hodgepodge=False ):
