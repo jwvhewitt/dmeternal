@@ -54,6 +54,16 @@ class BardicCrypt( BardicCaves ):
     DUNGEON_PATTERN = (context.HAB_TUNNELS,context.GEN_UNDEAD)
     UNIQUE = True
 
+class AntagonisticForest( BardicCaves ):
+    LABEL = "BARDIC_DUNGEON"
+    NAME_PATTERNS = ( "Forest","Woods","Wilds" )
+    DUNGEON_PATTERN = (context.HAB_FOREST,)
+    UNIQUE = True
+    def gen_name( self ):
+        Antagonist = self.register_element( "ANTAGONIST", teams.AntagonistFaction(dungeon_type=self.NAME_PATTERNS) )
+        return Antagonist.name
+
+
 class AntagonisticCaves( BardicCaves ):
     LABEL = "BARDIC_DUNGEON"
     NAME_PATTERNS = ( "Caves","Caverns","Grotto","Chasm" )
@@ -78,10 +88,18 @@ class AntagonisticTunnels( BardicCaves ):
 #  previous one. If no dungeons have yet been added, it will just connect to
 #  the city scene. Otherwise, it will likely add a boss encounter to the
 #  previous dungeon and a new set of resources (shops, etc) for the new level.
+#
+# DUTIES:
+#  - To activate the chapter
+#  - To connect the next dungeon to the previous
+#  - Provide access to needed resources: shops, temple, etc.
+
 
 class BC_DirectConnection( Plot ):
     """The first dungeon gets directly connected to the LOCALE scene."""
     LABEL = "BARDIC_CONNECTION"
+    scope = True
+    active = True
     @classmethod
     def matches( self, pstate ):
         """Requires LOCALE to exist, but no LAST_DUNGEON."""
@@ -89,13 +107,16 @@ class BC_DirectConnection( Plot ):
     def custom_init( self, nart ):
         """Install the dungeon."""
         self.install_dungeon( nart, self.elements[ "LEVELS" ], self.elements[ "LOCALE" ], self.elements["DNAME"] )
+        self._ready = True
         return True
 
     ### TESTING CUTSCENES HERE- FOR TESTING ONLY
     do_cutscene = False
-    scope = True
-    active = True
     def t_START( self, explo ):
+        if self._ready:
+            self.chapter.activate()
+            self._ready = False
+
         # Print message, activate chapter upon entering city the first time.
         if self.do_cutscene:
             explo.alert( "You enter a ." )
@@ -118,9 +139,10 @@ class BC_DwarvenCity( Plot ):
     _ready = True
     @classmethod
     def matches( self, pstate ):
-        """Requires LAST_DUNGEON to exist and to go down"""
+        """Requires LAST_DUNGEON to exist and to not go up, and the next dungeon to go down."""
         return ( pstate.elements.get( "LAST_DUNGEON" )
-         and context.MAP_GOUP not in pstate.elements["LAST_DUNGEON"].desctags )
+         and context.MAP_GOUP not in pstate.elements["LAST_DUNGEON"].desctags
+         and context.MAP_GODOWN in pstate.elements["LEVELS"][0].desctags )
     def custom_init( self, nart ):
         """Install the dungeon."""
         # Create the intermediary level.
@@ -128,12 +150,14 @@ class BC_DwarvenCity( Plot ):
             biome=context.HAB_TUNNELS, setting=self.setting, desctags=(context.MAP_DUNGEON,context.MAP_GODOWN) )
         igen = randmaps.SubtleMonkeyTunnelScene( interior )
         self.register_scene( nart, interior, igen, ident="_LAIR" )
-        self.add_sub_plot( nart, "CONNECT", PlotState( elements={"PREV":self.elements["LAST_DUNGEON"],"NEXT":interior} ).based_on( self ) )
 
         # Create the guardian.
         btype = monsters.choose_monster_type(self.rank,self.rank+2,{(context.DES_EARTH,context.MTY_FIGHTER,context.MTY_CONSTRUCT):True,context.DES_EARTH:context.MAYBE})
         boss = monsters.generate_boss( btype, self.rank+3 )
         interior.name = "{0}'s Lair".format( boss )
+
+        # Connect to previous level.
+        self.add_sub_plot( nart, "CONNECT", PlotState( elements={"PREV":self.elements["LAST_DUNGEON"],"NEXT":interior} ).based_on( self ) )
 
         # Create the goal room.
         team = teams.Team(default_reaction=-999, rank=self.rank, strength=50, habitat=interior.get_encounter_request(), respawn=False )
@@ -199,8 +223,8 @@ class StraightBardicBalrog( Plot ):
     scope = True
     def custom_init( self, nart ):
         """Create the final dungeon, boss encounter, and resolution."""
-        btype = monsters.choose_monster_type(self.rank+1,self.rank+4,{context.MTY_BOSS:True,context.MTY_LEADER:context.MAYBE})
-        boss = monsters.generate_boss( btype, self.rank+4 )
+        btype = monsters.choose_monster_type(self.rank+2,self.rank+4,{context.MTY_BOSS:True,context.MTY_LEADER:context.MAYBE})
+        boss = monsters.generate_boss( btype, self.rank+5 )
         #print( "{0} the {1}".format( boss, boss.monster_name ) )
 
         interior = maps.Scene( 65,65, sprites={maps.SPRITE_WALL: "terrain_wall_darkbrick.png", 

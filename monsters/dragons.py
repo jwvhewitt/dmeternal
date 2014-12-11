@@ -166,7 +166,7 @@ class CaveDragon( base.Monster ):
     ENC_LEVEL = 8
     LONER = True
     COMPANIONS = ( YoungCaveDragon, )
-    ATTACK = items.Attack( (2,6,0), element = stats.RESIST_SLASHING, extra_effect=
+    ATTACK = items.Attack( (1,12,0), element = stats.RESIST_SLASHING, extra_effect=
         effects.SavingThrow( roll_skill=stats.RESIST_POISON, roll_stat=stats.TOUGHNESS, roll_modifier=50, on_failure = (
             effects.Enchant( enchantments.PoisonClassic, anim=animobs.DeathSparkle )
         ,)) )

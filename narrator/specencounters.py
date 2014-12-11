@@ -22,6 +22,32 @@ import animobs
 # unusual encounter that you don't want showing up all over the place.
 #
 
+
+class AdventurerBossEncounter( Plot ):
+    LABEL = "SPECIAL_ENCOUNTER"
+    @classmethod
+    def matches( self, pstate ):
+        """Requires the LOCALE to exist."""
+        return pstate.elements.get("LOCALE")
+    def custom_init( self, nart ):
+        scene = self.elements.get("LOCALE")
+        mygen = nart.get_map_generator( scene )
+        room = mygen.DEFAULT_ROOM()
+        myhabitat = scene.get_encounter_request()
+        myhabitat[ context.MTY_HUMANOID ] = True
+        myteam = teams.Team(default_reaction=-999, rank=self.rank, 
+          strength=125, habitat=myhabitat )
+        room.contents.append( myteam )
+        mh2 = myhabitat.copy()
+        mh2[(context.MTY_LEADER,context.MTY_BOSS)] = True
+        boss = monsters.generate_npc(team=myteam,upgrade=True,rank=self.rank+1)
+        myitem = items.generate_special_item( self.rank + 3 )
+        if myitem:
+            boss.contents.append( myitem )
+        self.register_element( "_ROOM", room, dident="LOCALE" )
+        self.register_element( "BOSS", boss, "_ROOM" )
+        return True
+
 class Beastmaster( Plot ):
     # A faction beastmaster with an exotic creature or creatures.
     LABEL = "SPECIAL_ENCOUNTER"
@@ -135,11 +161,9 @@ class DragonLair( Plot ):
             # No dragon, no encounter.
             return False
 
-
 class EnemyParty( Plot ):
     LABEL = "SPECIAL_ENCOUNTER"
-    active = True
-    scope = "LOCALE"
+    UNIQUE = True
     @classmethod
     def matches( self, pstate ):
         """Requires the LOCALE to exist."""
@@ -149,11 +173,11 @@ class EnemyParty( Plot ):
     PRIESTS = ( characters.Priest, characters.Druid, None )
     MAGES = ( characters.Mage, characters.Necromancer, None )
     def custom_init( self, nart ):
-        # Add a group of humanoids, neutral reaction score.
+        # Add a group of humanoids, hostile reaction score.
         scene = self.elements.get("LOCALE")
         mygen = nart.get_map_generator( scene )
         room = mygen.DEFAULT_ROOM()
-        myteam = self.register_element( "TEAM", teams.Team( default_reaction=-30, strength=0 ) )
+        myteam = self.register_element( "TEAM", teams.Team( default_reaction=-50, strength=0 ) )
         room.contents.append( myteam )
         self.register_element( "_ROOM", room, dident="LOCALE" )
         p1 = self.register_element( "NPC1", monsters.generate_npc(team=myteam,job=random.choice( self.FIGHTERS ),upgrade=True,rank=self.rank), dident="_ROOM")
@@ -162,18 +186,6 @@ class EnemyParty( Plot ):
         p4 = self.register_element( "NPC4", monsters.generate_npc(team=myteam,job=random.choice( self.MAGES ),upgrade=True,rank=self.rank), dident="_ROOM")
         self.add_sub_plot( nart, "RESOURCE_NPCCONVO", PlotState( elements={"NPC":random.choice((p1,p2,p3,p4))} ).based_on( self ) )
         return True
-    def do_truce( self, explo ):
-        self.elements["TEAM"].charm_roll = 999
-    def get_generic_offers( self, npc, explo ):
-        ol = list()
-        if npc.team is self.elements["TEAM"]:
-            ol.append( dialogue.Offer( msg = "Well that's disappointing... I was hoping for a good fight.",
-             context = context.ContextTag( [context.TRUCE] ), effect=self.do_truce)
-            )
-            ol.append( dialogue.Offer( msg = "[ATTACK]",
-             context = context.ContextTag( [context.ATTACK] ))
-            )
-        return ol
 
 class HumanoidBossEncounter( Plot ):
     LABEL = "SPECIAL_ENCOUNTER"
@@ -191,7 +203,7 @@ class HumanoidBossEncounter( Plot ):
           strength=125, habitat=myhabitat )
         room.contents.append( myteam )
         mh2 = myhabitat.copy()
-        mh2[(context.MTY_LEADER,context.MTY_BOSS,context.MTY_MAGE)] = True
+        mh2[(context.MTY_LEADER,context.MTY_BOSS)] = True
         btype = monsters.choose_monster_type(self.rank-2,self.rank+2,mh2)
         if btype:
             boss = monsters.generate_boss( btype, self.rank+3, team=myteam )
@@ -223,6 +235,59 @@ class LudicrousTreasureEncounter( Plot ):
         self.register_element( "_ROOM", room, dident="LOCALE" )
         return True
 
+class SkeletonTreasure( Plot ):
+    # There's a chest. Taking it results in skeletons attacking.
+    LABEL = "SPECIAL_ENCOUNTER"
+    UNIQUE = True
+    active = True
+    scope = "LOCALE"
+    @classmethod
+    def matches( self, pstate ):
+        """Requires the LOCALE to exist and for GEN_UNDEAD to be in its habitat."""
+        return ( pstate.elements.get("LOCALE") and
+         pstate.elements["LOCALE"].get_encounter_request().get( context.GEN_UNDEAD ) )
+    def custom_init( self, nart ):
+        scene = self.elements.get("LOCALE")
+        mygen = nart.get_map_generator( scene )
+        room = mygen.DEFAULT_ROOM()
+        room.DECORATE = randmaps.decor.CarnageDec()
+        myteam = self.register_element( "TEAM", teams.Team(default_reaction=-999, rank=self.rank,
+          strength=0, habitat={context.GEN_UNDEAD: True, context.DES_EARTH: True} ) )
+        room.contents.append( myteam )
+        self.register_element( "_ROOM", room, dident="LOCALE" )
+        mychest = self.register_element( "CHEST", waypoints.LargeChest(plot_locked = True), dident="_ROOM" )
+        mychest.stock(self.rank)
+        for t in range( random.randint(1,3) ):
+            myitem = items.generate_special_item( self.rank + random.randint(2,4) )
+            if myitem:
+                mychest.contents.append( myitem )
+        self.trap_ready = False
+        return True
+    def CHEST_menu( self, thingmenu ):
+        thingmenu.desc = "As you approach the chest to open it, the defenders of this evil place rise from the ground to attack!"
+        self.elements["CHEST"].plot_locked = False
+        self.trap_ready = True
+        self.deploy_skeletons()
+    def deploy_skeletons( self ):
+        team = self.elements["TEAM"]
+        scene = self.elements["LOCALE"]
+        room = self.elements["_ROOM"]
+        team.strength = 100
+        mlist = team.build_encounter(scene)
+        poslist = scene.find_free_points_in_rect( room.area )
+        for m in mlist:
+            if poslist:
+                pos = random.choice( poslist )
+                m.place( scene, pos )
+                poslist.remove( pos )
+            else:
+                break
+    def t_COMBATOVER( self, explo ):
+        if self.trap_ready and not self.elements["TEAM"].members_in_play( explo.scene ):
+            explo.alert("Just as it looks like you're safe, a second wave of skeletons rises from the ground!")
+            self.trap_ready = False
+            self.active = False
+            self.deploy_skeletons()
 
 
 

@@ -13,8 +13,8 @@ import collections
 # Reaction score constants
 FRIENDLY_THRESHOLD = 25
 ENEMY_THRESHOLD = -25
-SAFELY_FRIENDLY = 100
-SAFELY_ENEMY = -100
+SAFELY_FRIENDLY = 500
+SAFELY_ENEMY = -500
 
 
 class Level( object ):

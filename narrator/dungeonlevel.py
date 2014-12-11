@@ -183,7 +183,7 @@ class EarthCave( BasicCave ):
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_EARTH) )
         mymapgen = randmaps.CaveScene( myscene, decorate = randmaps.decor.RockyDec() )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
-        self.add_custom_decor( myscene, mymapgen )
+        #self.add_custom_decor( myscene, mymapgen )
 
         for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
@@ -204,7 +204,7 @@ class EarthMushroomCave( BasicCave ):
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_EARTH,context.MTY_PLANT) )
         mymapgen = randmaps.WalledForestScene( myscene, decorate = randmaps.decor.RockyDec() )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
-        self.add_custom_decor( myscene, mymapgen )
+        #self.add_custom_decor( myscene, mymapgen )
 
         for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
@@ -252,4 +252,39 @@ class BasicCryptLevel( BasicCave ):
         self.add_sub_plot( nart, "SPECIAL_ENCOUNTER" )
 
         return True
+
+#
+# WILDERNESS TRAILS
+#
+# Instead of a regular dungeon, you may need to walk a wilderness trail. These
+# tend to be larger than regular dungeons, but more sparsely populated. Because
+# wilderness encounters don't generally come with a treasure chest, wilderness
+# trails should include a supplemental treasure encounter that provides 4-6
+# chests. This should be enough to bring the wilderness trail on par with an
+# indoor dungeon.
+#
+
+class BasicForestLevel( BasicCave ):
+    LABEL = "DUNGEON_LEVEL"
+    TAGS = set( (context.HAB_FOREST,) )
+    def custom_init( self, nart ):
+        myscene = maps.Scene( min( 95 + self.rank * 3, 129 ), min( 95 + self.rank * 3, 129 ), 
+            sprites={maps.SPRITE_WALL: "terrain_wall_woodfort.png", maps.SPRITE_GROUND: "terrain_ground_forest.png",
+             maps.SPRITE_FLOOR: "terrain_floor_gravel.png" },
+            biome=context.HAB_FOREST, setting=self.setting, fac=self.elements.get("ANTAGONIST"),
+            desctags=(context.MAP_WILDERNESS,) )
+        mymapgen = randmaps.ForestScene( myscene )
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+        #self.add_custom_decor( myscene, mymapgen )
+
+        for t in range( random.randint(2+min(self.rank//3,6),6+min(self.rank//2,6)) ):
+            self.add_sub_plot( nart, "ENCOUNTER" )
+        self.add_sub_plot( nart, "SPECIAL_FEATURE" )
+        self.add_sub_plot( nart, "SPECIAL_ENCOUNTER" )
+        self.add_sub_plot( nart, "SUPPLEMENTAL_TREASURE" )
+
+        return True
+
+
+
 

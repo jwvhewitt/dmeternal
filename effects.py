@@ -385,12 +385,13 @@ class CauseSilence( NoEffect ):
 
 class Enchant( NoEffect ):
     """Adds an enchantment to the target's condition list."""
-    def __init__(self, e_type, children=(), anim=None ):
+    def __init__(self, e_type, children=(), anim=None, alt_dispel=None ):
         self.e_type = e_type
         if not children:
             children = list()
         self.children = children
         self.anim = anim
+        self.alt_dispel = alt_dispel
 
     def handle_effect( self, camp, originator, pos, anims, delay=0 ):
         """Do whatever is required of effect; return list of child effects."""
@@ -398,7 +399,10 @@ class Enchant( NoEffect ):
         if target:
             # Only add this enchantment if it's not already present.
             if not any( isinstance( e, self.e_type ) for e in target.condition ):
-                target.condition.append( self.e_type() )
+                new_en = self.e_type()
+                if self.alt_dispel:
+                    new_en.dispel = self.alt_dispel
+                target.condition.append( new_en )
                 
         return self.children
 
@@ -510,6 +514,7 @@ ALIVE = {stats.UNDEAD: False, stats.DEMON: False, stats.ELEMENTAL: False, \
     stats.CONSTRUCT: False}
 CAN_DROWN = {stats.UNDEAD: False, stats.DEMON: False, stats.ELEMENTAL: False, \
     stats.PLANT: False, stats.CONSTRUCT: False, stats.WATER: False}
+PLANT = {stats.PLANT: True }
 UNDEAD = {stats.UNDEAD: True }
 UNHOLY = {(stats.UNDEAD,stats.DEMON): True }
 CONSTRUCT = {(stats.CONSTRUCT,stats.BONE): True }

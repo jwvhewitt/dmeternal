@@ -70,30 +70,6 @@ class LargeTreasureEncounter( Plot ):
         self.register_element( "_ROOM", room, dident="LOCALE" )
         return True
 
-class EnemyCamp( Plot ):
-    LABEL = "ENCOUNTER"
-    active = True
-    @classmethod
-    def matches( self, pstate ):
-        """Requires the SCENE to exist and be wilderness, plus ANTAGONIST faction must exist."""
-        return ( pstate.elements.get("LOCALE")
-                and context.MAP_WILDERNESS in pstate.elements["LOCALE"].desctags
-                and pstate.elements.get("ANTAGONIST") )
-    def custom_init( self, nart ):
-        # Add an encounter, monsters must be MTY_BEAST, favoring GEN_NATURE.
-        scene = self.elements.get("LOCALE")
-        mygen = nart.get_map_generator( scene )
-        room = mygen.DEFAULT_ROOM()
-        room.contents.append( teams.Team(default_reaction=-999, rank=self.rank, 
-          strength=random.randint(90,120), habitat=scene.get_encounter_request(),
-          fac=self.elements.get("ANTAGONIST") ) )
-        mychest = waypoints.Cart()
-        mychest.stock(self.rank)
-        room.contents.append( mychest )
-        room.contents.append( maps.CAULDRON )
-        self.register_element( "_ROOM", room, dident="LOCALE" )
-        return True
-
 class WildEncounter( Plot ):
     LABEL = "ENCOUNTER"
     active = True

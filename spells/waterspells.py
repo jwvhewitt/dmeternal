@@ -49,7 +49,7 @@ REGENERATION = Spell( "Regeneration",
     effects.Enchant( enchantments.RegeneratEn, anim=animobs.GreenSparkle, children=(
         effects.HealthRestore( dice=(1,6,0) )
     ,) ),
-    rank=3, gems={WATER:1}, com_tar=targetarea.SingleTarget(), exp_tar=targetarea.SinglePartyMember(),
+    rank=3, gems={WATER:2}, com_tar=targetarea.SingleTarget(), exp_tar=targetarea.SinglePartyMember(),
     ai_tar=invocations.vs_wounded_ally )
 
 # CIRCLE FOUR

@@ -86,7 +86,7 @@ class ForestScene( RandomScene ):
     GAPFILL = gapfiller.MonsterFiller()
     WALL_FILTER = converter.ForestConverter( treeline = 0.95 )
     MUTATE = mutator.CellMutator()
-    PREPARE = prep.HeightfieldPrep( loground=0.15, higround=0.85 )
+    PREPARE = prep.HeightfieldPrep( loground=0.05, higround=0.85 )
 
 class WalledForestScene( RandomScene ):
     # Like a cave, but replace certain True walls with trees.

@@ -60,6 +60,8 @@ class BardicStub( Plot ):
         nart.camp.contents.append( w )
         self.register_element( "WORLD", w )
         self.chapter = Chapter( end_rank=0, world=w )
+        if not self.setting:
+            self.setting = context.SET_RENFAN
         self.add_first_locale_sub_plot( nart )
 
         # Determine the dungeon sizes.

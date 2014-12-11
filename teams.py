@@ -148,13 +148,21 @@ class Team( object ):
         max_rank = self.rank + 2
         horde = list()
 
+        myhab = self.habitat.copy()
         if self.fac:
-            self.fac.alter_monster_request( self.habitat )
+            self.fac.alter_monster_request( myhab )
 
         # Determine how many points of monster to generate.
         pts = max( ( random.randint(150,250) * self.strength ) // 100, 1 )
 
-        mclass = gb.choose_monster( min_rank, max_rank, self.habitat )
+        # We really don't want generation to fail. If no faction members can
+        # be found, attempt to load without faction... or just anything.
+        mclass = gb.choose_monster( min_rank, max_rank, myhab )
+        if self.fac and not mclass:
+            mclass = gb.choose_monster( min_rank, max_rank, self.habitat )
+        if not mclass:
+            mclass = gb.choose_monster( min_rank, max_rank, {context.SET_EVERY: True} )
+
         while pts > 0 and mclass:
             rel_level = max_rank + 1 - mclass.ENC_LEVEL
             m_pts = 200 / ( rel_level ** 2 // 12 + rel_level )
@@ -214,6 +222,14 @@ class Team( object ):
             return True
         else:
             return ( self.charm_roll + self.default_reaction ) < characters.FRIENDLY_THRESHOLD
+
+    def members_in_play( self, gb ):
+        """Return list of team members on this map."""
+        my_members = list()
+        for m in gb.contents:
+            if isinstance( m , characters.Character ) and hasattr( m, "team" ) and m.team is self:
+                my_members.append( m )
+        return my_members
 
 if __name__=="__main__":
     names = list()

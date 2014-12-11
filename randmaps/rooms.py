@@ -4,6 +4,7 @@ import random
 import pygame
 import math
 import animobs
+import context
 
 #  *****************
 #  ***   ROOMS   ***
@@ -92,6 +93,11 @@ class Room( object ):
                 while ( count < 1000 ) and not r.area:
                     myrect.x = random.choice( range( self.area.x , self.area.x + self.area.width - r.width ) )
                     myrect.y = random.choice( range( self.area.y , self.area.y + self.area.height - r.height ) )
+                    if context.MAP_ON_EDGE in r.tags and count < 500:
+                        if random.randint(1,2) == 1:
+                            myrect.x = random.choice(( self.area.x, self.area.x + self.area.width - r.width ))
+                        else:
+                            myrect.y = random.choice(( self.area.y, self.area.y + self.area.height - r.height ))
                     if myrect.collidelist( closed_area ) == -1:
                         r.area = myrect
                         closed_area.append( myrect )

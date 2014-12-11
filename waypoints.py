@@ -40,12 +40,14 @@ class Waypoint( object ):
     ATTACH_TO_WALL = False
     name = "Waypoint"
     desc = ""
-    def __init__( self, scene=None, pos=(0,0), plot_locked=False ):
+    def __init__( self, scene=None, pos=(0,0), plot_locked=False, desc=None ):
         """Place this waypoint in a scene."""
         if scene:
             self.place( scene, pos )
         self.contents = container.ContainerList(owner=self)
         self.plot_locked = plot_locked
+        if desc:
+            self.desc = desc
 
     def place( self, scene, pos=None ):
         if hasattr( self, "container" ) and self.container:
@@ -148,6 +150,34 @@ class Pit( Waypoint ):
     otherside = None
     desc = "You stand before a pit."
     mini_map_label = "Pit"
+    def unlocked_use( self, explo ):
+        if self.destination and self.otherside:
+            explo.camp.destination = self.destination
+            explo.camp.entrance = self.otherside
+        else:
+            explo.alert( self.desc )
+
+class RoadSignBack( Waypoint ):
+    TILE = maps.Tile( None, None, maps.SIGN_BACK )
+    ATTACH_TO_WALL = False
+    destination = None
+    otherside = None
+    desc = "You stand before a road sign."
+    mini_map_label = "Way Back"
+    def unlocked_use( self, explo ):
+        if self.destination and self.otherside:
+            explo.camp.destination = self.destination
+            explo.camp.entrance = self.otherside
+        else:
+            explo.alert( self.desc )
+
+class RoadSignForward( Waypoint ):
+    TILE = maps.Tile( None, None, maps.SIGN_FORWARD )
+    ATTACH_TO_WALL = False
+    destination = None
+    otherside = None
+    desc = "You stand before a road sign."
+    mini_map_label = "Way Forward"
     def unlocked_use( self, explo ):
         if self.destination and self.otherside:
             explo.camp.destination = self.destination

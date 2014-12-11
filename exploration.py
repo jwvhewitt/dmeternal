@@ -807,7 +807,7 @@ class Explorer( object ):
         """If appropriate, move models back to their home zone and restock monsters."""
         if self.scene.last_updated < self.camp.day:
             for m in self.scene.contents:
-                if isinstance( m, characters.Character ):
+                if isinstance( m, characters.Character ) and m not in self.camp.party:
                     # Regenerate any damage suffered since last time.
                     m.hp_damage = 0
                     m.mp_damage = 0
@@ -822,7 +822,7 @@ class Explorer( object ):
                 restock_chance = max( 10, ( restock_chance * 2 ) // ( 2 + party_rank - self.scene.rank ) )
             for mz in self.scene.monster_zones:
                 if self.scene.monster_zone_is_empty( mz ) and random.randint(1,100) <= restock_chance:
-                    NewTeam = teams.Team( default_reaction=-100, home=mz,
+                    NewTeam = teams.Team( default_reaction=characters.SAFELY_ENEMY, home=mz,
                       rank=max( self.scene.rank, ( self.scene.rank + party_rank ) // 2 ),
                       strength=100, habitat=self.scene.get_encounter_request() )
                     mlist = NewTeam.build_encounter(self.scene)

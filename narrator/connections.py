@@ -178,6 +178,38 @@ class DefaultGoDown( Plot ):
         myzone2.contents.append( stairs_2 )
         return True
 
+class WildsToWilds( Plot ):
+    LABEL = "CONNECT"
+    @classmethod
+    def matches( self, pstate ):
+        """Requires PREV and NEXT to exist, to both be wilderness."""
+        return ( pstate.elements.get( "PREV" ) and pstate.elements.get( "NEXT" )
+         and context.MAP_WILDERNESS in pstate.elements["PREV"].desctags
+         and context.MAP_WILDERNESS in pstate.elements["NEXT"].desctags )
+
+    def custom_init( self, nart ):
+        prev = self.elements[ "PREV" ]
+        next = self.elements[ "NEXT" ]
+
+        self.move_element( next, prev )
+
+        myzone1 = self.register_element( "_P_ROOM",
+         nart.get_map_generator( prev ).DEFAULT_ROOM(tags=(context.GOAL,context.CIVILIZED,context.MAP_ON_EDGE)), "PREV" )
+        myzone2 = self.register_element( "_N_ROOM",
+         nart.get_map_generator( next ).DEFAULT_ROOM(tags=(context.ENTRANCE,context.CIVILIZED,context.MAP_ON_EDGE)), "NEXT" )
+
+        stairs_1 = waypoints.RoadSignForward()
+        stairs_2 = waypoints.RoadSignBack()
+
+        stairs_1.destination = next
+        stairs_1.otherside = stairs_2
+        stairs_2.destination = prev
+        stairs_2.otherside = stairs_1
+
+        myzone1.contents.append( stairs_1 )
+        myzone2.contents.append( stairs_2 )
+        return True
+
 
 ###   **************************
 ###   ***   SECRET_CONNECT   ***
