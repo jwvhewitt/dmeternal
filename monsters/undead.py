@@ -12,6 +12,7 @@ import animals
 import spells
 import random
 import enchantments
+import treasuretype
 
 #  *************************
 #  ***   UNDEAD  TYPES   ***
@@ -58,7 +59,6 @@ class SkeletalHound( base.Monster ):
     TEMPLATES = (stats.UNDEAD,stats.BONE)
     MOVE_POINTS = 12
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.DES_EARTH,
      context.MTY_UNDEAD, context.MTY_BEAST,
@@ -85,11 +85,11 @@ class Skeleton( base.Monster ):
     TEMPLATES = (stats.UNDEAD,stats.BONE)
     MOVE_POINTS = 10
     VOICE = None
-    GP_VALUE = 5
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.MTY_UNDEAD, 
      context.DES_EARTH, context.GEN_UNDEAD )
     ENC_LEVEL = 2
+    TREASURE = treasuretype.Low()
     COMPANIONS = (SkeletalHound,)
 
     COMBAT_AI = aibrain.SteadyAI()
@@ -108,17 +108,14 @@ class SkeletonWithDagger( base.Monster ):
     TEMPLATES = (stats.UNDEAD,stats.BONE)
     MOVE_POINTS = 10
     VOICE = None
-    GP_VALUE = 10
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.SET_RENFAN,
      context.MTY_UNDEAD, 
      context.DES_EARTH, context.GEN_UNDEAD )
     ENC_LEVEL = 2
+    TREASURE = treasuretype.Standard()
     COMPANIONS = (Skeleton,)
-
     COMBAT_AI = aibrain.SteadyAI()
-
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_SLASHING )
-
     def init_monster( self ):
         self.levels.append( base.Humanoid( 2, self ) )
 
@@ -135,16 +132,13 @@ class Zombie( base.Monster ):
     TEMPLATES = (stats.UNDEAD,stats.FLESHY)
     MOVE_POINTS = 6
     VOICE = None
-    GP_VALUE = 5
     HABITAT = ( context.HAB_EVERY, context.HAB_TUNNELS, context.SET_EVERY,
      context.MTY_UNDEAD, 
      context.DES_LUNAR, context.GEN_UNDEAD )
     ENC_LEVEL = 3
-
+    TREASURE = treasuretype.Low()
     COMBAT_AI = aibrain.BrainDeadAI()
-
     ATTACK = items.Attack( (1,10,0), element = stats.RESIST_CRUSHING )
-
     def init_monster( self ):
         self.levels.append( base.Humanoid( 3, self ) )
 
@@ -157,17 +151,14 @@ class SkeletonWithMorningstar( base.Monster ):
     TEMPLATES = (stats.UNDEAD,stats.BONE)
     MOVE_POINTS = 10
     VOICE = None
-    GP_VALUE = 15
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.SET_RENFAN,
      context.MTY_UNDEAD, 
      context.DES_EARTH, context.GEN_UNDEAD )
     ENC_LEVEL = 3
+    TREASURE = treasuretype.Low()
     COMPANIONS = (Skeleton,SkeletonWithDagger)
-
     COMBAT_AI = aibrain.SteadyAI()
-
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_CRUSHING )
-
     def init_monster( self ):
         self.levels.append( base.Humanoid( 3, self ) )
 
@@ -180,20 +171,17 @@ class SkeletalBat( base.Monster ):
     TEMPLATES = (stats.UNDEAD,stats.BONE)
     MOVE_POINTS = 12
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_CAVE, context.SET_EVERY,
      context.DES_AIR, context.DES_LUNAR,
      context.MTY_UNDEAD, context.MTY_BEAST,
      context.GEN_UNDEAD )
     ENC_LEVEL = 3
     COMBAT_AI = aibrain.BrainDeadAI()
-
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING, extra_effect=
         effects.SavingThrow( roll_skill=stats.RESIST_LUNAR, roll_stat=stats.TOUGHNESS, on_failure = (
             effects.StatDamage( stats.PIETY, anim=animobs.BloodSplat )
         ,))
     )
-
     def init_monster( self ):
         self.levels.append( base.Beast( 2, self ) )
 
@@ -207,17 +195,14 @@ class SkeletonGuard( base.Monster ):
     TEMPLATES = (stats.UNDEAD,stats.BONE)
     MOVE_POINTS = 8
     VOICE = None
-    GP_VALUE = 60
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.SET_RENFAN,
      context.MTY_UNDEAD, 
      context.DES_EARTH, context.DES_SOLAR, context.GEN_UNDEAD )
     ENC_LEVEL = 3
+    TREASURE = treasuretype.High()
     COMPANIONS = (SkeletonWithDagger,SkeletonWithMorningstar)
-
     COMBAT_AI = aibrain.SteadyAI()
-
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_PIERCING )
-
     def init_monster( self ):
         self.levels.append( base.Defender( 3, self ) )
 
@@ -235,21 +220,18 @@ class Ghoul( base.Monster ):
     TEMPLATES = (stats.UNDEAD,stats.FLESHY)
     MOVE_POINTS = 8
     VOICE = None
-    GP_VALUE = 50
     HABITAT = ( context.HAB_EVERY, context.HAB_TUNNELS, context.SET_EVERY,
      context.MTY_UNDEAD, 
      context.DES_LUNAR, context.GEN_UNDEAD )
     ENC_LEVEL = 4
+    TREASURE = treasuretype.Standard()
     COMPANIONS = (Zombie,animals.PlagueRat)
-
     COMBAT_AI = aibrain.GhoulAI()
-
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_CRUSHING, extra_effect =
          effects.OpposedRoll( att_modifier=-10, on_success = (
             effects.Paralyze( max_duration = 6 )
         ,) )
      )
-
     def init_monster( self ):
         self.levels.append( base.Humanoid( 3, self ) )
 
@@ -263,17 +245,14 @@ class SkeletonFighter( base.Monster ):
     TEMPLATES = (stats.UNDEAD,stats.BONE)
     MOVE_POINTS = 10
     VOICE = None
-    GP_VALUE = 40
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.SET_RENFAN,
      context.MTY_UNDEAD, context.MTY_HUMANOID, context.MTY_FIGHTER, 
      context.DES_EARTH, context.GEN_UNDEAD )
     ENC_LEVEL = 4
+    TREASURE = treasuretype.Standard()
     COMPANIONS = (SkeletonWithDagger,SkeletonWithMorningstar)
-
     COMBAT_AI = aibrain.SteadyAI()
-
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )
-
     def init_monster( self ):
         self.levels.append( base.Humanoid( 4, self ) )
 
@@ -287,17 +266,14 @@ class SkeletonThief( base.Monster ):
     TEMPLATES = (stats.UNDEAD,stats.BONE)
     MOVE_POINTS = 12
     VOICE = None
-    GP_VALUE = 45
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.SET_RENFAN,
      context.MTY_UNDEAD, context.MTY_HUMANOID, context.MTY_THIEF, 
      context.DES_EARTH, context.GEN_UNDEAD )
     ENC_LEVEL = 4
+    TREASURE = treasuretype.Standard()
     COMPANIONS = (SkeletonFighter,SkeletalBat)
-
     COMBAT_AI = aibrain.SteadyAI()
-
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING )
-
     def init_monster( self ):
         self.levels.append( base.Humanoid( 4, self ) )
 
@@ -315,21 +291,19 @@ class PlagueZombie( base.Monster ):
     TEMPLATES = (stats.UNDEAD,stats.FLESHY)
     MOVE_POINTS = 6
     VOICE = None
-    GP_VALUE = 75
     HABITAT = ( context.HAB_EVERY, context.HAB_TUNNELS,
      context.SET_EVERY, context.SET_RENFAN,
      context.MTY_UNDEAD, 
      context.DES_LUNAR, context.GEN_UNDEAD )
     ENC_LEVEL = 5
+    TREASURE = treasuretype.High()
     COMPANIONS = (Zombie,Ghoul)
     COMBAT_AI = aibrain.BrainDeadAI()
-
     ATTACK = items.Attack( (1,10,0), element = stats.RESIST_CRUSHING, extra_effect=
         effects.SavingThrow( roll_skill=stats.RESIST_LUNAR, roll_stat=stats.TOUGHNESS, on_failure = (
             effects.StatDamage( stats.TOUGHNESS, anim=animobs.GreenBoom )
         ,))
     )
-
     def init_monster( self ):
         self.levels.append( base.Humanoid( 6, self ) )
 
@@ -343,19 +317,16 @@ class Shade( base.Monster ):
     TEMPLATES = (stats.UNDEAD,stats.INCORPOREAL)
     MOVE_POINTS = 6
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.MAP_DUNGEON,
      context.MTY_UNDEAD, 
      context.DES_AIR, context.GEN_UNDEAD )
     ENC_LEVEL = 5
-
     ATTACK = items.Attack( (2,4,0), element = stats.RESIST_ATOMIC, extra_effect=
         effects.SavingThrow( roll_skill=stats.RESIST_LUNAR, roll_stat=stats.TOUGHNESS, on_failure = (
             effects.StatDamage( stats.STRENGTH, anim=animobs.GreenBoom )
         ,))
     )
-
     def init_monster( self ):
         self.levels.append( base.Humanoid( 5, self ) )
 
@@ -368,22 +339,18 @@ class SkeletonMage( base.Monster ):
     TEMPLATES = (stats.UNDEAD,stats.BONE)
     MOVE_POINTS = 10
     VOICE = None
-    GP_VALUE = 80
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.SET_RENFAN,
      context.MTY_UNDEAD, context.MTY_HUMANOID, context.MTY_MAGE, context.MTY_BOSS,
      context.DES_EARTH, context.GEN_UNDEAD )
     ENC_LEVEL = 5
+    TREASURE = treasuretype.HighItems( ( items.scrolls.Rank2Scroll, items.scrolls.Rank3Scroll ) )
     COMPANIONS = (SkeletonFighter,SkeletonGuard)
     LONER = True
-
     TECHNIQUES = ( spells.waterspells.FREEZE_FOE, spells.airspells.SILENCE,
         spells.lunarspells.SLEEP, spells.firespells.IGNITE,
         spells.firespells.EXPLOSION, spells.airspells.THUNDER_STRIKE )
-
     COMBAT_AI = aibrain.SteadySpellAI()
-
     ATTACK = items.Attack( (1,8,2), element = stats.RESIST_CRUSHING )
-
     def init_monster( self ):
         self.levels.append( base.Spellcaster( 4, self ) )
 
@@ -396,21 +363,18 @@ class Mummy( base.Monster ):
     TEMPLATES = (stats.UNDEAD,stats.MUMMY)
     MOVE_POINTS = 6
     VOICE = None
-    GP_VALUE = 75
     HABITAT = ( context.HAB_EVERY, context.HAB_TUNNELS, context.SET_EVERY,
      context.MTY_UNDEAD, 
      context.DES_SOLAR, context.GEN_UNDEAD )
     ENC_LEVEL = 5
-
+    TREASURE = treasuretype.High()
     COMBAT_AI = aibrain.BrainDeadAI()
-
     ATTACK = items.Attack( (1,10,0), element = stats.RESIST_CRUSHING, extra_effect =
          effects.OpposedRoll( att_modifier=-10, on_success = (
             effects.StatDamage( stats.TOUGHNESS, anim=animobs.GreenBoom ),
             effects.Enchant( enchantments.DiseaseEn, anim=None )
         ,) )
      )
-
     def init_monster( self ):
         self.levels.append( base.Humanoid( 5, self ) )
 
@@ -429,21 +393,18 @@ class Ghast( base.Monster ):
     TEMPLATES = (stats.UNDEAD,stats.FLESHY)
     MOVE_POINTS = 8
     VOICE = None
-    GP_VALUE = 90
     HABITAT = ( context.HAB_EVERY, context.HAB_TUNNELS, context.SET_EVERY,
      context.MTY_UNDEAD, 
      context.DES_LUNAR, context.GEN_UNDEAD )
     ENC_LEVEL = 6
+    TREASURE = treasuretype.High()
     COMPANIONS = (PlagueZombie,Ghoul)
-
     COMBAT_AI = aibrain.GhoulAI()
-
     ATTACK = items.Attack( (1,12,0), element = stats.RESIST_CRUSHING, extra_effect =
          effects.OpposedRoll( att_modifier=0, on_success = (
             effects.Paralyze( max_duration = 6 )
         ,) )
      )
-
     def init_monster( self ):
         self.levels.append( base.Humanoid( 6, self ) )
 
@@ -457,18 +418,15 @@ class SkeletonHunter( base.Monster ):
     TEMPLATES = (stats.UNDEAD,stats.BONE)
     MOVE_POINTS = 8
     VOICE = None
-    GP_VALUE = 120
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.SET_RENFAN,
      context.MTY_UNDEAD, context.MTY_HUMANOID, context.MTY_FIGHTER, context.MTY_BOSS, 
      context.DES_EARTH, context.GEN_UNDEAD )
     ENC_LEVEL = 6
+    TREASURE = treasuretype.High((items.BOW,items.ARROW,items.ARROW))
     LONER = True
     COMPANIONS = (Shade,Ghast,SkeletonMage,SkeletonFighter,SkeletonThief,SkeletalHound)
-
     COMBAT_AI = aibrain.SteadyAI()
-
     ATTACK = items.Attack( (2,6,0), element = stats.RESIST_CRUSHING )
-
     TECHNIQUES = ( invocations.Invocation( "Arrow",
       effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, on_success = (
         effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_PIERCING, anim=animobs.RedBoom ),
@@ -500,11 +458,11 @@ class MummyPriest( base.Monster ):
     TEMPLATES = (stats.UNDEAD,stats.MUMMY)
     MOVE_POINTS = 6
     VOICE = None
-    GP_VALUE = 120
     HABITAT = ( context.HAB_EVERY, context.HAB_TUNNELS, context.SET_EVERY,
      context.MTY_UNDEAD, context.MTY_HUMANOID, context.MTY_PRIEST, context.MTY_MAGE, context.MTY_BOSS,
      context.DES_SOLAR, context.GEN_UNDEAD )
     ENC_LEVEL = 7
+    TREASURE = treasuretype.High(( items.scrolls.Rank3Scroll, items.scrolls.Rank4Scroll ))
     COMPANIONS = (Mummy,animals.Scarab,animals.TombScorpion)
     COMBAT_AI = aibrain.SteadySpellAI()
     TECHNIQUES = ( spells.lunarspells.HELLBLAST, spells.priestspells.HEALING_LIGHT,
@@ -517,11 +475,8 @@ class MummyPriest( base.Monster ):
             effects.Enchant( enchantments.DiseaseEn, anim=None )
         ,) )
      )
-    TREASURE = ( items.scrolls.Rank3Scroll, items.scrolls.Rank4Scroll )
     def init_monster( self ):
         self.levels.append( base.Leader( 7, self ) )
-        if random.randint(1,3) == 1:
-            self.contents.append( random.choice( self.TREASURE )() )
         self.condition.append( enchantments.PermaRegeneration() )
 
 
@@ -532,6 +487,8 @@ class MummyPriest( base.Monster ):
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  9   ***
 #  *******************************
+
+# Mummy #3
 
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  10   ***
@@ -548,7 +505,6 @@ class Fossil( base.Monster ):
     TEMPLATES = (stats.UNDEAD,stats.BONE)
     MOVE_POINTS = 6
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_CAVE, context.SET_EVERY,
      context.DES_LUNAR, context.DES_EARTH,
      context.MTY_UNDEAD, context.MTY_BEAST, context.MTY_BOSS,
@@ -578,6 +534,8 @@ class Fossil( base.Monster ):
 #  ***   ENCOUNTER  LEVEL  11   ***
 #  ********************************
 
+# Mummy #4
+
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  12   ***
 #  ********************************
@@ -585,6 +543,8 @@ class Fossil( base.Monster ):
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  13   ***
 #  ********************************
+
+# Mummy #5
 
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  14   ***
@@ -594,6 +554,8 @@ class Fossil( base.Monster ):
 #  ***   ENCOUNTER  LEVEL  15   ***
 #  ********************************
 
+# Mummy #6
+
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  16   ***
 #  ********************************
@@ -601,6 +563,8 @@ class Fossil( base.Monster ):
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  17   ***
 #  ********************************
+
+# Mummy #7
 
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  18   ***

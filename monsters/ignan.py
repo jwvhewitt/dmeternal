@@ -11,6 +11,7 @@ import invocations
 import animals
 import enchantments
 import spells
+import treasuretype
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  1   ***
@@ -57,13 +58,11 @@ class Salamander( base.Monster ):
      context.DES_FIRE,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.MTY_BOSS )
     ENC_LEVEL = 8
-
+    TREASURE = treasuretype.Standard()
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_PIERCING, reach=2, extra_effect =
         effects.HealthDamage( (1,8,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE)
     )
-
     TECHNIQUES = ( spells.firespells.EXPLOSION, )
-
     def init_monster( self ):
         self.levels.append( base.Humanoid( 8, self ) )
 
@@ -92,15 +91,13 @@ class SalamanderLeader( base.Monster ):
      context.DES_FIRE,
      context.MTY_HUMANOID, context.MTY_LEADER, context.MTY_BOSS )
     ENC_LEVEL = 11
+    TREASURE = treasuretype.High()
     LONER = True
     COMPANIONS = (Salamander,)
-
     ATTACK = items.Attack( (2,8,0), element = stats.RESIST_SLASHING, extra_effect =
         effects.HealthDamage( (1,8,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE)
     )
-
     TECHNIQUES = ( spells.firespells.PYROTECHNICS, spells.airspells.DISPEL_MAGIC )
-
     def init_monster( self ):
         self.levels.append( base.Leader( 11, self ) )
 
@@ -121,14 +118,12 @@ class FireElemental( base.Monster ):
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.DES_FIRE, context.SUMMON_ELEMENTAL )
     ENC_LEVEL = 12
-
     ATTACK = items.Attack( (2,8,0), element = stats.RESIST_ATOMIC, extra_effect =
         effects.HealthDamage( (2,8,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.RedCloud,
             on_success=( effects.Enchant( enchantments.BurnLowEn ),
             )
         )
     )
-
     def init_monster( self ):
         self.levels.append( base.Beast( 12, self ) )
 

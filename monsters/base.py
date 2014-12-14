@@ -126,12 +126,15 @@ class Monster( characters.Character ):
     MOVE_POINTS = 10
     ENC_LEVEL = 1
     TECHNIQUES = ()
+    TREASURE = None
 
     def __init__( self, team = None ):
         statline = self.statline.copy()
         super(Monster, self).__init__( name=self.name, statline=statline )
         self.team = team
         self.techniques += self.TECHNIQUES
+        if self.TREASURE:
+            self.TREASURE( self )
         self.init_monster()
         for t in range( random.randint(1,4) ):
             self.statline[ random.choice( stats.PRIMARY_STATS ) ] += 1

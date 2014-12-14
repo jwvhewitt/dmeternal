@@ -12,6 +12,7 @@ import animals
 import enchantments
 import items
 import random
+import treasuretype
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  1   ***
@@ -35,13 +36,11 @@ class PewterGolem( base.Monster ):
     TEMPLATES = (stats.CONSTRUCT,)
     MOVE_POINTS = 8
     VOICE = None
-    GP_VALUE = 30
     HABITAT = ( context.HAB_BUILDING, context.SET_EVERY,
      context.MTY_CONSTRUCT, )
     ENC_LEVEL = 3
-
+    TREASURE = treasuretype.Standard()
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_CRUSHING )
-
     def init_monster( self ):
         self.levels.append( base.Defender( 3, self ) )
 
@@ -63,20 +62,15 @@ class ClockworkSoldier( base.Monster ):
     TEMPLATES = (stats.CONSTRUCT,)
     MOVE_POINTS = 10
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_EVERY, context.HAB_TUNNELS, context.SET_EVERY,
      context.MAP_DUNGEON,
      context.MTY_CONSTRUCT, context.MTY_FIGHTER )
     ENC_LEVEL = 5
-
+    # Clockwork soldiers don't have normal treasure, but may drop a nice sword.
+    TREASURE = treasuretype.Standard( (items.SWORD,), swag_chance=25, swag_quality=2, scale=0 )
     ATTACK = items.Attack( (1,10,0), element = stats.RESIST_SLASHING )
-
     def init_monster( self ):
         self.levels.append( base.Defender( 5, self ) )
-        if random.randint(1,3) == 1:
-            it = items.generate_special_item( item_type=items.SWORD, item_rank=random.randint( self.ENC_LEVEL-2, self.ENC_LEVEL+1 ) )
-            if it:
-                self.contents.append( it )
 
 
 #  *******************************
@@ -97,16 +91,13 @@ class LivingPotion( base.Monster ):
     TEMPLATES = (stats.CONSTRUCT,)
     MOVE_POINTS = 12
     VOICE = None
-    GP_VALUE = 70
     HABITAT = ( context.SET_EVERY,
      context.MTY_CONSTRUCT, 
      context.DES_WATER )
     ENC_LEVEL = 7
-
+    TREASURE = treasuretype.Standard( (items.POTION,) )
     COMBAT_AI = aibrain.SteadySpellAI()
-
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_CRUSHING )
-
     TECHNIQUES = ( invocations.MPInvocation( "Acid Blast",
       effects.OpposedRoll( att_modifier=10, def_stat=stats.REFLEXES, on_success = (
         effects.HealthDamage( (2,6,0), stat_bonus=None, element=stats.RESIST_ACID, anim=animobs.GreenCloud )
@@ -142,11 +133,8 @@ class AnimatedSword( base.Monster ):
      context.MTY_CONSTRUCT, 
      context.DES_AIR )
     ENC_LEVEL = 7
-
     COMBAT_AI = aibrain.SteadyAI()
-
     ATTACK = items.Attack( (1,12,0), element = stats.RESIST_SLASHING )
-
     def init_monster( self ):
         self.levels.append( base.Beast( 7, self ) )
 
@@ -164,11 +152,8 @@ class AnimatedFlail( base.Monster ):
      context.MTY_CONSTRUCT, 
      context.DES_EARTH )
     ENC_LEVEL = 7
-
     COMBAT_AI = aibrain.SteadyAI()
-
     ATTACK = items.Attack( (3,6,0), element = stats.RESIST_CRUSHING )
-
     def init_monster( self ):
         self.levels.append( base.Beast( 7, self ) )
 
@@ -182,16 +167,13 @@ class CreepingCoins( base.Monster ):
     TEMPLATES = (stats.CONSTRUCT,)
     MOVE_POINTS = 6
     VOICE = None
-    GP_VALUE = 150
     HABITAT = ( context.HAB_CAVE, context.SET_RENFAN,
      context.MTY_CONSTRUCT, 
      context.DES_ICE )
     ENC_LEVEL = 7
-
+    TREASURE = treasuretype.High()
     COMBAT_AI = aibrain.SteadyAI()
-
     ATTACK = items.Attack( (2,6,0), element = stats.RESIST_CRUSHING )
-
     TECHNIQUES = ( invocations.MPInvocation( "Cold Blast",
       effects.OpposedRoll( att_modifier=10, def_stat=stats.REFLEXES, on_success = (
         effects.HealthDamage( (1,10,0), stat_bonus=None, element=stats.RESIST_COLD, anim=animobs.SnowCloud )
@@ -199,7 +181,6 @@ class CreepingCoins( base.Monster ):
         effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_COLD, anim=animobs.SnowCloud )
       ,) ), com_tar=targetarea.Cone(reach=5), ai_tar=invocations.vs_enemy, mp_cost=1 ),
     )
-
     def init_monster( self ):
         self.levels.append( base.Defender( 6, self ) )
 
@@ -216,15 +197,12 @@ class AnimatedCandlestick( base.Monster ):
      context.MTY_CONSTRUCT, 
      context.DES_FIRE )
     ENC_LEVEL = 7
-
     COMBAT_AI = aibrain.SteadyAI()
-
     ATTACK = items.Attack( (2,6,0), element = stats.RESIST_PIERCING, extra_effect=
         effects.OpposedRoll( att_modifier=-10, on_success = (
             effects.Enchant( enchantments.BurnLowEn, anim=animobs.RedCloud )
         ,))
     )
-
     TECHNIQUES = ( invocations.MPInvocation( "Fireball",
       effects.OpposedRoll( def_stat=stats.REFLEXES, on_success = (
         effects.HealthDamage( (1,10,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.RedCloud ),
@@ -232,7 +210,6 @@ class AnimatedCandlestick( base.Monster ):
         effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.RedCloud ),
       ) ), com_tar=targetarea.SingleTarget(), ai_tar=invocations.vs_enemy, shot_anim=animobs.Fireball, mp_cost=5 ),
     )
-
     def init_monster( self ):
         self.levels.append( base.Beast( 6, self ) )
 
@@ -251,16 +228,13 @@ class LivingStatue( base.Monster ):
     TEMPLATES = (stats.CONSTRUCT,)
     MOVE_POINTS = 10
     VOICE = None
-    GP_VALUE = 5
     HABITAT = ( context.HAB_BUILDING, context.HAB_TUNNELS, context.SET_EVERY,
      context.MTY_CONSTRUCT, 
      context.DES_FIRE, context.DES_SOLAR )
     ENC_LEVEL = 8
-
+    TREASURE = treasuretype.Low()
     COMBAT_AI = aibrain.SteadyAI()
-
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_SLASHING )
-
     TECHNIQUES = ( invocations.MPInvocation( "Magma Blast",
       effects.OpposedRoll( att_modifier=10, def_stat=stats.REFLEXES, on_success = (
         effects.HealthDamage( (2,8,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion )
@@ -268,7 +242,6 @@ class LivingStatue( base.Monster ):
         effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion )
       ,) ), com_tar=targetarea.Line(), ai_tar=invocations.vs_enemy, mp_cost=1 ),
     )
-
     def init_monster( self ):
         self.levels.append( base.Defender( 7, self ) )
 
@@ -312,9 +285,7 @@ class FlamingSword( base.Monster ):
      context.DES_AIR, context.DES_FIRE,
      context.SUMMON_FLAMINGSWORD )
     ENC_LEVEL = 14
-
     COMBAT_AI = aibrain.SteadyAI()
-
     ATTACK = items.Attack( (3,8,0), element = stats.RESIST_SLASHING, extra_effect=
         effects.OpposedRoll( on_success = (
             effects.HealthDamage( (3,8,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.RedCloud ),

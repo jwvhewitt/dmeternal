@@ -11,6 +11,7 @@ import invocations
 import animals
 import enchantments
 import random
+import treasuretype
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  1   ***
@@ -63,14 +64,11 @@ class Xorn( base.Monster ):
      context.MTY_BOSS,
      context.DES_EARTH )
     ENC_LEVEL = 9
-
+    TREASURE = treasuretype.Standard( (items.GEM, ) )
     ATTACK = items.Attack( (3,4,0), element = stats.RESIST_SLASHING)
-    TREASURE = ( items.knickknacks.GemOfSeeing, items.knickknacks.GemOfHolograms )
 
     def init_monster( self ):
         self.levels.append( base.Defender( 9, self ) )
-        if random.randint(1,5) == 1:
-            self.contents.append( random.choice( self.TREASURE )() )
 
 
 #  ********************************

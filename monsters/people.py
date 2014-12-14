@@ -13,6 +13,7 @@ import random
 import animals
 import undead
 import enchantments
+import treasuretype
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  1   ***
@@ -28,14 +29,12 @@ class Hurthling( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 10
     VOICE = dialogue.voice.HURTHISH
-    GP_VALUE = 5
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
      context.MAP_WILDERNESS,
      context.MTY_HUMANOID, context.MTY_THIEF )
     ENC_LEVEL = 1
-
+    TREASURE = treasuretype.Low()
     ATTACK = items.Attack( (1,4,0), element = stats.RESIST_PIERCING )
-
     def init_monster( self ):
         self.levels.append( base.Humanoid( 1, self ) )
 
@@ -53,14 +52,13 @@ class NoviceWarrior( base.Monster ):
     FRAME = 0
     TEMPLATES = ()
     MOVE_POINTS = 10
-    GP_VALUE = 10
     HABITAT = ( context.HAB_EVERY, context.HAB_BUILDING, context.SET_EVERY,
      context.DES_CIVILIZED,
-     context.MTY_HUMANOID, context.MTY_FIGHTER )
+     context.MTY_HUMANOID, context.MTY_FIGHTER,
+     context.GEN_CHAOS )
     ENC_LEVEL = 2
-
+    TREASURE = treasuretype.Low()
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )
-
     def init_monster( self ):
         self.levels.append( base.Humanoid( 2, self ) )
 
@@ -73,11 +71,11 @@ class NoviceThief( base.Monster ):
     FRAME = 2
     TEMPLATES = ()
     MOVE_POINTS = 10
-    GP_VALUE = 25
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.DES_CIVILIZED,
      context.MTY_HUMANOID, context.MTY_THIEF )
     ENC_LEVEL = 2
+    TREASURE = treasuretype.Standard()
     COMPANIONS = (NoviceWarrior,)
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING )
     def init_monster( self ):
@@ -97,21 +95,18 @@ class NovicePriest( base.Monster ):
     FRAME = 0
     TEMPLATES = ()
     MOVE_POINTS = 10
-    GP_VALUE = 15
     HABITAT = ( context.HAB_EVERY, context.HAB_BUILDING, context.SET_EVERY,
      context.DES_CIVILIZED, context.DES_SOLAR, context.DES_AIR,
      context.MTY_HUMANOID, context.MTY_PRIEST )
     ENC_LEVEL = 3
+    TREASURE = treasuretype.Standard( ( items.scrolls.Rank1Scroll, items.scrolls.Rank2Scroll ) )
     COMBAT_AI = aibrain.BasicTechnicalAI()
     COMPANIONS = (NoviceWarrior,)
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_CRUSHING )
     TECHNIQUES = ( spells.waterspells.FREEZE_FOE, spells.airspells.SILENCE,
         spells.airspells.SHOUT, spells.solarspells.MINOR_CURE )
-    TREASURE = ( items.scrolls.Rank1Scroll, items.scrolls.Rank2Scroll )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 3, self ) )
-        if random.randint(1,5) == 1:
-            self.contents.append( random.choice( self.TREASURE )() )
 
 class NoviceMage( base.Monster ):
     name = "Novice Mage"
@@ -121,21 +116,18 @@ class NoviceMage( base.Monster ):
     FRAME = 21
     TEMPLATES = ()
     MOVE_POINTS = 10
-    GP_VALUE = 15
     HABITAT = ( context.HAB_EVERY, context.HAB_BUILDING, context.SET_EVERY,
      context.DES_CIVILIZED, context.DES_LUNAR, context.DES_FIRE,
      context.MTY_HUMANOID, context.MTY_MAGE )
     ENC_LEVEL = 3
+    TREASURE = treasuretype.Standard( ( items.scrolls.Rank1Scroll, items.scrolls.Rank2Scroll ) )
     COMBAT_AI = aibrain.BasicTechnicalAI()
     COMPANIONS = (NovicePriest,NoviceWarrior)
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_CRUSHING )
-    TECHNIQUES = ( spells.firespells.FIRE_BOLT, spells.magespells.LIGHTNING_BOLT,
+    TECHNIQUES = ( spells.firespells.FIRE_BOLT,
         spells.magespells.FIRE_ARC, spells.lunarspells.SLEEP )
-    TREASURE = ( items.scrolls.Rank1Scroll, items.scrolls.Rank2Scroll )
     def init_monster( self ):
         self.levels.append( base.Spellcaster( 3, self ) )
-        if random.randint(1,5) == 1:
-            self.contents.append( random.choice( self.TREASURE )() )
 
 class Highwayman( base.Monster ):
     name = "Highwayman"
@@ -145,12 +137,12 @@ class Highwayman( base.Monster ):
     FRAME = 4
     TEMPLATES = ()
     MOVE_POINTS = 10
-    GP_VALUE = 15
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.SET_RENFAN,
      context.MAP_WILDERNESS,
      context.DES_CIVILIZED,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.MTY_THIEF )
     ENC_LEVEL = 3
+    TREASURE = treasuretype.Standard()
     COMPANIONS = (NoviceThief,)
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )
     def init_monster( self ):
@@ -169,23 +161,20 @@ class NoviceDruid( base.Monster ):
     FRAME = 8
     TEMPLATES = ()
     MOVE_POINTS = 10
-    GP_VALUE = 20
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
      context.MAP_WILDERNESS,
      context.DES_SOLAR, context.DES_EARTH, context.DES_FIRE,
      context.MTY_HUMANOID, context.MTY_PRIEST, context.GEN_NATURE )
     ENC_LEVEL = 4
+    TREASURE = treasuretype.Standard( ( items.scrolls.Rank1Scroll, items.scrolls.Rank2Scroll ) )
     COMBAT_AI = aibrain.BasicTechnicalAI()
     COMPANIONS = (animals.Wolf,animals.BlackBear)
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_CRUSHING )
     TECHNIQUES = ( spells.solarspells.MINOR_CURE, spells.firespells.BLINDING_FLASH,
         spells.earthspells.ACID_BOLT )
-    TREASURE = ( items.scrolls.Rank1Scroll, items.scrolls.Rank2Scroll )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 2, self ) )
         self.levels.append( base.Spellcaster( 2, self ) )
-        if random.randint(1,5) == 1:
-            self.contents.append( random.choice( self.TREASURE )() )
 
 class Bushwhacker( base.Monster ):
     name = "Bushwhacker"
@@ -196,13 +185,13 @@ class Bushwhacker( base.Monster ):
     FRAME = 1
     TEMPLATES = ()
     MOVE_POINTS = 10
-    GP_VALUE = 20
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
-     context.MTY_HUMANOID, context.MTY_FIGHTER, context.MTY_LEADER )
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.MTY_THIEF, context.MTY_LEADER,
+     context.GEN_CHAOS )
     ENC_LEVEL = 4
+    TREASURE = treasuretype.Standard()
     COMPANIONS = (Highwayman,)
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )
-
     def init_monster( self ):
         self.levels.append( base.Humanoid( 4, self ) )
 
@@ -219,21 +208,18 @@ class Necromancer( base.Monster ):
     FRAME = 23
     TEMPLATES = ()
     MOVE_POINTS = 10
-    GP_VALUE = 25
     HABITAT = ( context.HAB_EVERY, context.HAB_BUILDING, context.SET_EVERY,
      context.DES_CIVILIZED, context.DES_LUNAR,
      context.MTY_HUMANOID, context.MTY_MAGE, context.GEN_UNDEAD )
     ENC_LEVEL = 5
+    TREASURE = treasuretype.HighItems( ( items.scrolls.Rank2Scroll, items.scrolls.Rank3Scroll ) )
     COMBAT_AI = aibrain.BasicTechnicalAI()
     COMPANIONS = (undead.Ghoul,undead.SkeletonWithMorningstar)
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_CRUSHING )
     TECHNIQUES = ( spells.lunarspells.SLEEP, spells.necrospells.ACID_CLOUD,
         spells.necrospells.TOUCH_OF_DEATH, spells.waterspells.WINTER_WIND )
-    TREASURE = ( items.scrolls.Rank2Scroll, items.scrolls.Rank3Scroll )
     def init_monster( self ):
         self.levels.append( base.Spellcaster( 5, self ) )
-        if random.randint(1,3) == 1:
-            self.contents.append( random.choice( self.TREASURE )() )
 
 class Warrior( base.Monster ):
     name = "Warrior"
@@ -244,13 +230,12 @@ class Warrior( base.Monster ):
     FRAME = 9
     TEMPLATES = ()
     MOVE_POINTS = 8
-    GP_VALUE = 25
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.DES_CIVILIZED,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.MTY_LEADER )
     ENC_LEVEL = 5
+    TREASURE = treasuretype.Standard()
     ATTACK = items.Attack( (1,10,0), element = stats.RESIST_SLASHING )
-
     def init_monster( self ):
         self.levels.append( base.Humanoid( 5, self ) )
 
@@ -267,22 +252,19 @@ class Priest( base.Monster ):
     FRAME = 2
     TEMPLATES = ()
     MOVE_POINTS = 10
-    GP_VALUE = 30
     HABITAT = ( context.HAB_EVERY, context.HAB_BUILDING, context.SET_EVERY,
      context.DES_CIVILIZED, context.DES_SOLAR, context.MTY_LEADER,
      context.MTY_HUMANOID, context.MTY_PRIEST )
     ENC_LEVEL = 6
+    TREASURE = treasuretype.HighItems( ( items.scrolls.Rank2Scroll, items.scrolls.Rank3Scroll, items.POTION ) )
     COMBAT_AI = aibrain.BasicTechnicalAI()
     COMPANIONS = (NoviceWarrior,NovicePriest,Warrior)
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_CRUSHING )
     TECHNIQUES = ( spells.waterspells.FREEZE_FOE, spells.airspells.SILENCE,
         spells.priestspells.HEALING_LIGHT, spells.solarspells.SUNRAY,
         spells.waterspells.REGENERATION, spells.airspells.THUNDER_STRIKE )
-    TREASURE = ( items.scrolls.Rank2Scroll, items.scrolls.Rank3Scroll )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 6, self ) )
-        if random.randint(1,3) == 1:
-            self.contents.append( random.choice( self.TREASURE )() )
 
 class Mercenary( base.Monster ):
     name = "Mercenary"
@@ -292,13 +274,12 @@ class Mercenary( base.Monster ):
     FRAME = 17
     TEMPLATES = ()
     MOVE_POINTS = 10
-    GP_VALUE = 35
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.MAP_DUNGEON,
      context.MTY_HUMANOID, context.MTY_FIGHTER )
     ENC_LEVEL = 6
+    TREASURE = treasuretype.Low( (items.POLEARM,items.LIGHT_ARMOR) )
     ATTACK = items.Attack( (2,6,0), element = stats.RESIST_SLASHING, reach=2 )
-
     def init_monster( self ):
         self.levels.append( base.Humanoid( 6, self ) )
 
@@ -311,11 +292,11 @@ class Ranger( base.Monster ):
     FRAME = 16
     TEMPLATES = ()
     MOVE_POINTS = 10
-    GP_VALUE = 35
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
      context.MAP_WILDERNESS,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_NATURE )
     ENC_LEVEL = 6
+    TREASURE = treasuretype.Standard( ( items.ARROW, items.BOW ) )
     COMPANIONS = (NoviceDruid,)
     COMBAT_AI = aibrain.BasicTechnicalAI()
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )
@@ -344,11 +325,11 @@ class Conjuoror( base.Monster ):
     FRAME = 10
     TEMPLATES = ()
     MOVE_POINTS = 10
-    GP_VALUE = 35
     HABITAT = ( context.HAB_EVERY, context.HAB_BUILDING, context.SET_EVERY,
      context.DES_CIVILIZED, context.DES_LUNAR,
      context.MTY_HUMANOID, context.MTY_MAGE )
     ENC_LEVEL = 7
+    TREASURE = treasuretype.HighItems( ( items.scrolls.Rank3Scroll, items.scrolls.Rank4Scroll ) )
     COMBAT_AI = aibrain.BasicTechnicalAI()
     COMPANIONS = (NovicePriest,NoviceWarrior,Warrior,Mercenary)
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_CRUSHING )
@@ -356,11 +337,8 @@ class Conjuoror( base.Monster ):
         spells.lunarspells.HELLBLAST, spells.firespells.EXPLOSION,
         spells.firespells.PYROTECHNICS
          )
-    TREASURE = ( items.scrolls.Rank3Scroll, items.scrolls.Rank4Scroll )
     def init_monster( self ):
         self.levels.append( base.Spellcaster( 7, self ) )
-        if random.randint(1,3) == 1:
-            self.contents.append( random.choice( self.TREASURE )() )
 
 
 class Executioner( base.Monster ):
@@ -372,14 +350,13 @@ class Executioner( base.Monster ):
     FRAME = 6
     TEMPLATES = ()
     MOVE_POINTS = 8
-    GP_VALUE = 60
     HABITAT = ( context.HAB_EVERY, context.SET_RENFAN,
      context.MTY_HUMANOID, context.MTY_BOSS,
      context.MTY_FIGHTER )
     ENC_LEVEL = 7
+    TREASURE = treasuretype.Standard((items.AXE,))
     COMPANIONS = (Bushwhacker,)
     ATTACK = items.Attack( (1,10,0), element = stats.RESIST_SLASHING )
-
     def init_monster( self ):
         self.levels.append( base.Humanoid( 6, self ) )
 
@@ -413,11 +390,11 @@ class Healer( base.Monster ):
     FRAME = 16
     TEMPLATES = ()
     MOVE_POINTS = 10
-    GP_VALUE = 50
     HABITAT = ( context.HAB_EVERY, context.HAB_BUILDING, context.SET_EVERY,
      context.DES_CIVILIZED, context.DES_SOLAR, context.DES_WATER, context.MTY_BOSS,
      context.MTY_HUMANOID, context.MTY_PRIEST )
     ENC_LEVEL = 10
+    TREASURE = treasuretype.HighItems( ( items.potions.PotionOfHealing, items.scrolls.Rank4Scroll, items.scrolls.Rank5Scroll ) )
     COMBAT_AI = aibrain.BasicTechnicalAI()
     COMPANIONS = (NoviceWarrior,NovicePriest,Warrior)
     ATTACK = items.Attack( (3,6,0), element = stats.RESIST_SOLAR,
@@ -436,12 +413,9 @@ class Healer( base.Monster ):
             )), shot_anim=animobs.BlueComet, com_tar=targetarea.Blast(radius=3),
             ai_tar=invocations.vs_enemy, mp_cost=12 )
         )
-    TREASURE = ( items.potions.PotionOfHealing, items.scrolls.Rank4Scroll, items.scrolls.Rank5Scroll )
     def init_monster( self ):
         self.levels.append( base.Spellcaster( 6, self ) )
         self.levels.append( base.Defender( 4, self ) )
-        if random.randint(1,2) == 1:
-            self.contents.append( random.choice( self.TREASURE )() )
 
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  11   ***

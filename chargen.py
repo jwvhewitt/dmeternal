@@ -88,7 +88,7 @@ class ChooseSpeciesRedrawer( object ):
         if self.menu:
             # Display the item info in the upper display rect.
             it = self.menu.items[ self.menu.selected_item ].value
-            if inspect.isclass( it ) and issubclass( it, characters.Human ):
+            if inspect.isclass( it ) and issubclass( it, characters.SentientSpecies ):
                 self.display_species_info( screen, it, self.menu.descbox )
 
 

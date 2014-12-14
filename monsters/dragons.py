@@ -11,6 +11,7 @@ import targetarea
 import aibrain
 import random
 import enchantments
+import treasuretype
 
 
 #  *******************************
@@ -40,11 +41,11 @@ class YoungCaveDragon( base.Monster ):
     TEMPLATES = (stats.DRAGON,)
     MOVE_POINTS = 8
     VOICE = dialogue.voice.DRACONIAN
-    GP_VALUE = 200
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.HAB_CAVE,
      context.MAP_DUNGEON, context.MTY_DRAGON, context.MTY_BOSS,
      context.DES_EARTH, context.GEN_DRAGON )
     ENC_LEVEL = 4
+    TREASURE = treasuretype.DragonHoard()
     ATTACK = items.Attack( (3,4,0), element = stats.RESIST_SLASHING )
     TECHNIQUES = ( invocations.MPInvocation( "Toxic Breath",
         effects.OpposedRoll( def_stat=stats.TOUGHNESS, anim=animobs.PoisonCloud, on_success = (
@@ -64,11 +65,11 @@ class YoungSwampDragon( base.Monster ):
     TEMPLATES = (stats.DRAGON,)
     MOVE_POINTS = 8
     VOICE = dialogue.voice.DRACONIAN
-    GP_VALUE = 200
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.MTY_DRAGON,
      context.MTY_BOSS,
      context.DES_EARTH, context.DES_WATER, context.GEN_DRAGON )
     ENC_LEVEL = 4
+    TREASURE = treasuretype.DragonHoard()
     ATTACK = items.Attack( (2,4,0), element = stats.RESIST_SLASHING )
     TECHNIQUES = ( invocations.MPInvocation( "Acid Breath",
       effects.OpposedRoll( att_stat=stats.REFLEXES, def_stat=stats.REFLEXES, on_success = (
@@ -95,10 +96,10 @@ class YoungSkyDragon( base.Monster ):
     TEMPLATES = (stats.DRAGON,)
     MOVE_POINTS = 8
     VOICE = dialogue.voice.DRACONIAN
-    GP_VALUE = 250
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.MTY_DRAGON,
      context.DES_AIR, context.GEN_DRAGON, context.MTY_BOSS )
     ENC_LEVEL = 5
+    TREASURE = treasuretype.DragonHoard()
     ATTACK = items.Attack( (1,10,0), element = stats.RESIST_SLASHING )
     TECHNIQUES = ( invocations.MPInvocation( "Lightning Breath",
       effects.OpposedRoll( att_stat=stats.REFLEXES, def_stat=stats.REFLEXES, on_success = (
@@ -124,11 +125,11 @@ class YoungForestDragon( base.Monster ):
     TEMPLATES = (stats.DRAGON,)
     MOVE_POINTS = 8
     VOICE = dialogue.voice.DRACONIAN
-    GP_VALUE = 300
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.HAB_FOREST, context.MAP_WILDERNESS, context.MTY_DRAGON,
      context.GEN_NATURE, context.GEN_DRAGON, context.MTY_BOSS )
     ENC_LEVEL = 6
+    TREASURE = treasuretype.DragonHoard()
     ATTACK = items.Attack( (1,12,0), element = stats.RESIST_SLASHING )
     TECHNIQUES = ( invocations.MPInvocation( "Poison Breath",
       effects.OpposedRoll( def_stat=stats.TOUGHNESS, on_success = (
@@ -159,11 +160,11 @@ class CaveDragon( base.Monster ):
     TEMPLATES = (stats.DRAGON,)
     MOVE_POINTS = 10
     VOICE = dialogue.voice.DRACONIAN
-    GP_VALUE = 400
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.HAB_CAVE,
      context.MAP_DUNGEON, context.MTY_BOSS, context.MTY_LEADER, context.MTY_DRAGON,
      context.DES_EARTH, context.GEN_DRAGON )
     ENC_LEVEL = 8
+    TREASURE = treasuretype.DragonHoard()
     LONER = True
     COMPANIONS = ( YoungCaveDragon, )
     ATTACK = items.Attack( (1,12,0), element = stats.RESIST_SLASHING, extra_effect=
@@ -188,11 +189,11 @@ class SwampDragon( base.Monster ):
     TEMPLATES = (stats.DRAGON,)
     MOVE_POINTS = 10
     VOICE = dialogue.voice.DRACONIAN
-    GP_VALUE = 400
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
       context.MTY_BOSS, context.MTY_LEADER, context.MTY_DRAGON,
      context.DES_EARTH, context.DES_WATER, context.GEN_DRAGON )
     ENC_LEVEL = 8
+    TREASURE = treasuretype.DragonHoard()
     LONER = True
     COMPANIONS = ( YoungSwampDragon, )
     ATTACK = items.Attack( (2,6,0), element = stats.RESIST_SLASHING )
@@ -221,11 +222,11 @@ class SkyDragon( base.Monster ):
     TEMPLATES = (stats.DRAGON,)
     MOVE_POINTS = 10
     VOICE = dialogue.voice.DRACONIAN
-    GP_VALUE = 450
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.MAP_WILDERNESS, context.MTY_BOSS, context.MTY_DRAGON,
      context.DES_AIR, context.GEN_DRAGON )
     ENC_LEVEL = 9
+    TREASURE = treasuretype.DragonHoard()
     LONER = True
     COMPANIONS = ( YoungSkyDragon, )
     ATTACK = items.Attack( (2,6,0), element = stats.RESIST_SLASHING )
@@ -262,11 +263,11 @@ class OldCaveDragon( base.Monster ):
     TEMPLATES = (stats.DRAGON,)
     MOVE_POINTS = 10
     VOICE = dialogue.voice.DRACONIAN
-    GP_VALUE = 600
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.HAB_CAVE,
      context.MAP_DUNGEON, context.MTY_LEADER, context.MTY_DRAGON, context.MTY_BOSS,
      context.DES_EARTH, context.GEN_DRAGON )
     ENC_LEVEL = 12
+    TREASURE = treasuretype.DragonHoard()
     LONER = True
     COMPANIONS = ( CaveDragon, )
     ATTACK = items.Attack( (4,8,0), element = stats.RESIST_SLASHING, extra_effect=
@@ -291,11 +292,11 @@ class OldSwampDragon( base.Monster ):
     TEMPLATES = (stats.DRAGON,)
     MOVE_POINTS = 10
     VOICE = dialogue.voice.DRACONIAN
-    GP_VALUE = 600
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
       context.MTY_LEADER, context.MTY_DRAGON, context.MTY_BOSS,
      context.DES_EARTH, context.DES_WATER, context.GEN_DRAGON )
     ENC_LEVEL = 12
+    TREASURE = treasuretype.DragonHoard()
     LONER = True
     COMPANIONS = ( SwampDragon, )
     ATTACK = items.Attack( (2,8,0), element = stats.RESIST_SLASHING )
@@ -336,11 +337,11 @@ class AncientCaveDragon( base.Monster ):
     TEMPLATES = (stats.DRAGON,)
     MOVE_POINTS = 10
     VOICE = dialogue.voice.DRACONIAN
-    GP_VALUE = 800
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.HAB_CAVE,
      context.MAP_DUNGEON, context.MTY_LEADER, context.MTY_DRAGON, context.MTY_BOSS,
      context.DES_EARTH, context.GEN_DRAGON )
     ENC_LEVEL = 16
+    TREASURE = treasuretype.DragonHoard()
     LONER = True
     COMPANIONS = ( OldCaveDragon, )
     ATTACK = items.Attack( (8,8,0), element = stats.RESIST_SLASHING, extra_effect=
@@ -365,11 +366,11 @@ class AncientSwampDragon( base.Monster ):
     TEMPLATES = (stats.DRAGON,)
     MOVE_POINTS = 10
     VOICE = dialogue.voice.DRACONIAN
-    GP_VALUE = 800
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
       context.MTY_LEADER, context.MTY_DRAGON, context.MTY_BOSS,
      context.DES_EARTH, context.DES_WATER, context.GEN_DRAGON )
     ENC_LEVEL = 16
+    TREASURE = treasuretype.DragonHoard()
     LONER = True
     COMPANIONS = ( OldSwampDragon, )
     ATTACK = items.Attack( (3,10,0), element = stats.RESIST_SLASHING )

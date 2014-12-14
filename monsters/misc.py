@@ -35,7 +35,6 @@ class EvilEye( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 6
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_CAVE, context.HAB_TUNNELS, context.SET_EVERY,
      context.DES_LUNAR,
      context.MTY_BEAST, context.GEN_CHAOS )
@@ -69,7 +68,6 @@ class Cockatrice( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 10
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.SET_RENFAN,
      context.DES_AIR, context.DES_EARTH,
      context.MTY_BEAST )
@@ -95,7 +93,6 @@ class CorpseEater( base.Monster ):
     TEMPLATES = (stats.BUG,)
     MOVE_POINTS = 8
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.MAP_DUNGEON,
      context.DES_LUNAR,
@@ -130,6 +127,8 @@ class CorpseEater( base.Monster ):
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  7   ***
 #  *******************************
+
+
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  8   ***

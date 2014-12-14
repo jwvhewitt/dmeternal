@@ -11,6 +11,7 @@ import targetarea
 import aibrain
 import random
 import enchantments
+import treasuretype
 
 #  *******************
 #  ***   GOBLINS   ***
@@ -25,14 +26,12 @@ class Goblin( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 12
     VOICE = dialogue.voice.ORCISH
-    GP_VALUE = 5
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
      context.MAP_WILDERNESS,
      context.MTY_HUMANOID, context.MTY_THIEF, context.GEN_GOBLIN )
     ENC_LEVEL = 1
-
+    TREASURE = treasuretype.Low()
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_CRUSHING )
-
     def init_monster( self ):
         self.levels.append( base.Humanoid( 1, self ) )
 
@@ -45,11 +44,11 @@ class GoblinArcher( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 12
     VOICE = dialogue.voice.ORCISH
-    GP_VALUE = 15
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY, context.SET_RENFAN,
      context.MAP_WILDERNESS,
      context.MTY_HUMANOID, context.GEN_GOBLIN )
     ENC_LEVEL = 2
+    TREASURE = treasuretype.High()
     COMBAT_AI = aibrain.BasicTechnicalAI()
     COMPANIONS = (Goblin,)
 
@@ -75,10 +74,10 @@ class GoblinShaman( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 12
     VOICE = dialogue.voice.ORCISH
-    GP_VALUE = 35
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
      context.MTY_HUMANOID, context.MTY_PRIEST, context.GEN_GOBLIN )
     ENC_LEVEL = 3
+    TREASURE = treasuretype.Standard((items.scrolls.Rank1Scroll,))
     COMPANIONS = (Goblin,GoblinArcher)
     COMBAT_AI = aibrain.BasicTechnicalAI()
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_CRUSHING )
@@ -86,8 +85,6 @@ class GoblinShaman( base.Monster ):
         spells.solarspells.MINOR_CURE )
     def init_monster( self ):
         self.levels.append( base.Spellcaster( 3, self ) )
-        if random.randint(1,10) == 1:
-            self.contents.append( items.scrolls.Rank1Scroll() )
 
 class GoblinPyromaniac( base.Monster ):
     name = "Goblin Pyromaniac"
@@ -99,11 +96,11 @@ class GoblinPyromaniac( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 12
     VOICE = dialogue.voice.ORCISH
-    GP_VALUE = 30
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.DES_FIRE,
      context.MTY_HUMANOID, context.GEN_GOBLIN )
     ENC_LEVEL = 4
+    TREASURE = treasuretype.Standard()
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_CRUSHING )
     TECHNIQUES = ( invocations.Invocation( "Fire Bomb",
         effects.OpposedRoll( att_skill=stats.PHYSICAL_ATTACK, att_stat=stats.REFLEXES, def_stat=stats.REFLEXES, att_modifier=-25, on_success = (
@@ -127,15 +124,13 @@ class GoblinWarrior( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 12
     VOICE = dialogue.voice.ORCISH
-    GP_VALUE = 20
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
      context.MAP_WILDERNESS,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN )
     ENC_LEVEL = 4
+    TREASURE = treasuretype.Standard()
     COMPANIONS = (Goblin,GoblinArcher)
-
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )
-
     def init_monster( self ):
         self.levels.append( base.Humanoid( 4, self ) )
 
@@ -148,16 +143,14 @@ class GoblinCook( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 12
     VOICE = dialogue.voice.ORCISH
-    GP_VALUE = 25
     HABITAT = ( context.HAB_CAVE, context.SET_EVERY,
      context.MAP_DUNGEON,
      context.MTY_HUMANOID, context.GEN_GOBLIN )
     ENC_LEVEL = 5
+    TREASURE = treasuretype.Standard()
     LONER = True
     COMPANIONS = (GoblinWarrior,)
-
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_PIERCING )
-
     def init_monster( self ):
         self.levels.append( base.Humanoid( 5, self ) )
 
@@ -171,15 +164,13 @@ class GoblinChampion( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 12
     VOICE = dialogue.voice.ORCISH
-    GP_VALUE = 25
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
      context.MAP_WILDERNESS,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN )
     ENC_LEVEL = 6
+    TREASURE = treasuretype.Standard()
     COMPANIONS = (GoblinWarrior,)
-
     ATTACK = items.Attack( (1,10,0), element = stats.RESIST_SLASHING )
-
     def init_monster( self ):
         self.levels.append( base.Humanoid( 6, self ) )
 
@@ -193,16 +184,14 @@ class GoblinRanger( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 12
     VOICE = dialogue.voice.ORCISH
-    GP_VALUE = 35
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
      context.MAP_WILDERNESS,
      context.DES_EARTH,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN )
     ENC_LEVEL = 6
+    TREASURE = treasuretype.Standard()
     COMBAT_AI = aibrain.BasicTechnicalAI()
-
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )
-
     TECHNIQUES = ( invocations.Invocation( "Arrow",
       effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, on_success = (
         effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_PIERCING, anim=animobs.RedBoom )
@@ -210,7 +199,6 @@ class GoblinRanger( base.Monster ):
         effects.NoEffect( anim=animobs.SmallBoom )
       ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.vs_enemy
     ), spells.earthspells.EARTHBIND )
-
     def init_monster( self ):
         self.levels.append( base.Humanoid( 5, self ) )
 
@@ -224,18 +212,16 @@ class GoblinLeader( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 10
     VOICE = dialogue.voice.ORCISH
-    GP_VALUE = 50
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.HAB_TUNNELS,
      context.SET_EVERY,
      context.MAP_WILDERNESS,
      context.MTY_HUMANOID, context.MTY_LEADER,
      context.GEN_GOBLIN )
     ENC_LEVEL = 7
+    TREASURE = treasuretype.Standard()
     LONER = True
     COMPANIONS = (GoblinChampion,GoblinRanger)
-
     ATTACK = items.Attack( (1,10,0), element = stats.RESIST_SLASHING )
-
     def init_monster( self ):
         self.levels.append( base.Leader( 7, self ) )
 
@@ -248,20 +234,15 @@ class GoblinMage( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 12
     VOICE = dialogue.voice.ORCISH
-    GP_VALUE = 80
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
      context.MTY_HUMANOID, context.MTY_MAGE, context.GEN_GOBLIN )
     ENC_LEVEL = 8
+    TREASURE = treasuretype.Standard((items.scrolls.Rank2Scroll,items.scrolls.Rank3Scroll))
     COMBAT_AI = aibrain.BasicTechnicalAI()
-
     ATTACK = items.Attack( (2,6,0), element = stats.RESIST_CRUSHING )
-
     TECHNIQUES = ( spells.airspells.THUNDER_STRIKE, spells.lunarspells.SLEEP )
-
     def init_monster( self ):
         self.levels.append( base.Spellcaster( 8, self ) )
-        if random.randint(1,5) == 1:
-            self.contents.append( items.scrolls.Rank3Scroll() )
 
 class GoblinElite( base.Monster ):
     name = "Goblin Elite"
@@ -273,15 +254,13 @@ class GoblinElite( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 10
     VOICE = dialogue.voice.ORCISH
-    GP_VALUE = 45
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.HAB_TUNNELS,
      context.SET_EVERY,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.MTY_LEADER,
      context.GEN_GOBLIN )
     ENC_LEVEL = 9
-
+    TREASURE = treasuretype.Standard()
     ATTACK = items.Attack( (2,8,0), element = stats.RESIST_CRUSHING )
-
     def init_monster( self ):
         self.levels.append( base.Humanoid( 9, self ) )
 
@@ -295,14 +274,12 @@ class GoblinSamurai( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 10
     VOICE = dialogue.voice.ORCISH
-    GP_VALUE = 50
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
      context.DES_FIRE,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN )
     ENC_LEVEL = 10
-
+    TREASURE = treasuretype.Low((items.SWORD,items.SHIELD,items.POTION))
     ATTACK = items.Attack( (2,8,0), element = stats.RESIST_SLASHING )
-
     TECHNIQUES = ( invocations.MPInvocation( "Fire Cone",
         effects.OpposedRoll( att_skill=stats.PHYSICAL_ATTACK, att_stat=stats.REFLEXES, def_stat=stats.REFLEXES, on_success = (
             effects.HealthDamage( (2,6,0), stat_bonus=stats.PIETY, element=stats.RESIST_FIRE, anim=animobs.RedCloud )
@@ -310,7 +287,6 @@ class GoblinSamurai( base.Monster ):
             effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.RedCloud )
         ,) ), com_tar=targetarea.Cone(reach=5), ai_tar=invocations.vs_enemy, mp_cost=6
       ), spells.firespells.EXPLOSION )
-
     def init_monster( self ):
         self.levels.append( base.Humanoid( 10, self ) )
 
@@ -324,13 +300,11 @@ class GoblinGuard( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 10
     VOICE = dialogue.voice.ORCISH
-    GP_VALUE = 50
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN )
     ENC_LEVEL = 11
-
+    TREASURE = treasuretype.Low()
     ATTACK = items.Attack( (2,8,0), element = stats.RESIST_SLASHING )
-
     def init_monster( self ):
         self.levels.append( base.Defender( 11, self ) )
 
@@ -344,14 +318,12 @@ class GoblinHero( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 8
     VOICE = dialogue.voice.ORCISH
-    GP_VALUE = 110
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN )
     ENC_LEVEL = 12
+    TREASURE = treasuretype.Standard()
     COMPANIONS = (GoblinElite,)
-
     ATTACK = items.Attack( (3,6,0), element = stats.RESIST_SLASHING )
-
     def init_monster( self ):
         self.levels.append( base.Humanoid( 12, self ) )
 
@@ -365,19 +337,17 @@ class GoblinKing( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 8
     VOICE = dialogue.voice.ORCISH
-    GP_VALUE = 195
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.HAB_TUNNELS,
      context.SET_EVERY,
      context.MAP_DUNGEON,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.MTY_LEADER, context.MTY_BOSS,
      context.GEN_GOBLIN )
     ENC_LEVEL = 13
+    TREASURE = treasuretype.High()
     COMBAT_AI = aibrain.GoblinKingAI()
     LONER = True
     COMPANIONS = (GoblinGuard,)
-
     ATTACK = items.Attack( (3,6,0), element = stats.RESIST_SLASHING )
-
     TECHNIQUES = ( invocations.MPInvocation( "Acid Beam",
       effects.OpposedRoll( att_modifier=10, def_stat=stats.REFLEXES, on_success = (
         effects.HealthDamage( (3,8,0), stat_bonus=stats.PIETY, element=stats.RESIST_ACID, anim=animobs.GreenExplosion )
@@ -397,7 +367,6 @@ class GoblinKing( base.Monster ):
         effects.NoEffect( anim=animobs.SmallBoom )
       ,) ), com_tar=targetarea.SingleTarget(), shot_anim=animobs.BlueComet, ai_tar=invocations.vs_enemy, mp_cost=1 ),
      )
-
     def init_monster( self ):
         self.levels.append( base.Leader( 13, self ) )
 
@@ -415,15 +384,13 @@ class Hobgoblin( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 10
     VOICE = dialogue.voice.ORCISH
-    GP_VALUE = 12
     HABITAT = ( context.HAB_EVERY, context.HAB_CAVE, context.SET_EVERY,
      context.DES_LUNAR,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN )
     ENC_LEVEL = 2
+    TREASURE = treasuretype.Standard()
     COMPANIONS = (Goblin,)
-
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )
-
     def init_monster( self ):
         self.levels.append( base.Humanoid( 2, self ) )
 
@@ -437,15 +404,13 @@ class HobgoblinFighter( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 10
     VOICE = dialogue.voice.ORCISH
-    GP_VALUE = 30
     HABITAT = ( context.HAB_EVERY, context.HAB_CAVE, context.SET_EVERY,
      context.DES_LUNAR,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN )
     ENC_LEVEL = 4
+    TREASURE = treasuretype.Standard()
     COMPANIONS = (Hobgoblin,)
-
     ATTACK = items.Attack( (1,10,0), element = stats.RESIST_SLASHING )
-
     def init_monster( self ):
         self.levels.append( base.Humanoid( 4, self ) )
 
@@ -459,15 +424,13 @@ class HobgoblinThief( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 10
     VOICE = dialogue.voice.ORCISH
-    GP_VALUE = 30
     HABITAT = ( context.HAB_EVERY, context.HAB_CAVE, context.SET_EVERY,
      context.DES_LUNAR,
      context.MTY_HUMANOID, context.MTY_THIEF, context.GEN_GOBLIN )
     ENC_LEVEL = 4
+    TREASURE = treasuretype.Standard()
     COMPANIONS = (Hobgoblin,)
-
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )
-
     def init_monster( self ):
         self.levels.append( base.Humanoid( 3, self ) )
 
@@ -480,23 +443,18 @@ class HobgoblinMage( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 10
     VOICE = dialogue.voice.ORCISH
-    GP_VALUE = 20
     HABITAT = ( context.HAB_EVERY, context.HAB_CAVE, context.SET_EVERY,
      context.DES_LUNAR,
      context.MTY_HUMANOID, context.MTY_MAGE, context.GEN_GOBLIN )
     ENC_LEVEL = 5
+    TREASURE = treasuretype.Low((items.scrolls.Rank1Scroll,items.scrolls.Rank2Scroll))
     LONER = True
     COMPANIONS = (HobgoblinFighter,)
-
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_CRUSHING )
-
     TECHNIQUES = ( spells.firespells.EXPLOSION, spells.lunarspells.SLEEP,
      spells.necrospells.ICE_BOLT )
-
     def init_monster( self ):
         self.levels.append( base.Spellcaster( 5, self ) )
-        if random.randint(1,5) == 1:
-            self.contents.append( items.scrolls.Rank2Scroll() )
 
 
 class HobgoblinPriest( base.Monster ):
@@ -508,23 +466,18 @@ class HobgoblinPriest( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 10
     VOICE = dialogue.voice.ORCISH
-    GP_VALUE = 30
     HABITAT = ( context.HAB_EVERY, context.HAB_CAVE, context.SET_EVERY,
      context.DES_LUNAR, context.MTY_LEADER,
      context.MTY_HUMANOID, context.MTY_PRIEST, context.GEN_GOBLIN )
     ENC_LEVEL = 6
+    TREASURE = treasuretype.Low((items.scrolls.Rank2Scroll,items.scrolls.Rank3Scroll))
     LONER = True
     COMPANIONS = (HobgoblinThief,)
-
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_CRUSHING )
-
     TECHNIQUES = ( spells.priestspells.HEALING_LIGHT, spells.waterspells.FREEZE_FOE,
         spells.airspells.THUNDER_STRIKE )
-
     def init_monster( self ):
         self.levels.append( base.Spellcaster( 6, self ) )
-        if random.randint(1,10) == 1:
-            self.contents.append( items.scrolls.Rank3Scroll() )
 
 class HobgoblinWarlord( base.Monster ):
     name = "Hobgoblin Warlord"
@@ -537,17 +490,15 @@ class HobgoblinWarlord( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 10
     VOICE = dialogue.voice.ORCISH
-    GP_VALUE = 80
     HABITAT = ( context.HAB_EVERY, context.HAB_CAVE, context.SET_EVERY,
      context.DES_LUNAR, context.MTY_LEADER,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN,
      context.MTY_BOSS )
     ENC_LEVEL = 8
+    TREASURE = treasuretype.Standard()
     LONER = True
     COMPANIONS = (HobgoblinPriest,HobgoblinMage)
-
     ATTACK = items.Attack( (2,8,1), element = stats.RESIST_SLASHING )
-
     def init_monster( self ):
         self.levels.append( base.Leader( 8, self ) )
 
@@ -558,23 +509,20 @@ class HobgoblinWarlord( base.Monster ):
 
 class Orc( base.Monster ):
     name = "Orc"
-    statline = { stats.STRENGTH: 16, stats.TOUGHNESS: 11, stats.REFLEXES: 11, \
+    statline = { stats.STRENGTH: 16, stats.TOUGHNESS: 11, stats.REFLEXES: 12, \
         stats.INTELLIGENCE: 7, stats.PIETY: 7, stats.CHARISMA: 7 }
-    SPRITENAME = "monster_goblins.png"
-    FRAME = 44
+    SPRITENAME = "monster_orcs.png"
+    FRAME = 0
     TEMPLATES = ()
     MOVE_POINTS = 10
     VOICE = dialogue.voice.ORCISH
-    GP_VALUE = 15
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
      context.MAP_DUNGEON,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN )
     ENC_LEVEL = 3
-
+    TREASURE = treasuretype.Low()
     COMPANIONS = (Goblin, Hobgoblin)
-
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_CRUSHING )
-
     def init_monster( self ):
         self.levels.append( base.Humanoid( 3, self ) )
 
@@ -583,21 +531,18 @@ class OrcWarrior( base.Monster ):
     statline = { stats.STRENGTH: 16, stats.TOUGHNESS: 11, stats.REFLEXES: 11, \
         stats.INTELLIGENCE: 7, stats.PIETY: 7, stats.CHARISMA: 7,
         stats.COUNTER_ATTACK: 20 }
-    SPRITENAME = "monster_goblins.png"
-    FRAME = 17
+    SPRITENAME = "monster_orcs.png"
+    FRAME = 3
     TEMPLATES = ()
     MOVE_POINTS = 8
     VOICE = dialogue.voice.ORCISH
-    GP_VALUE = 25
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
      context.MAP_DUNGEON,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN )
     ENC_LEVEL = 5
-
+    TREASURE = treasuretype.Standard()
     COMPANIONS = (Orc,HobgoblinFighter)
-
     ATTACK = items.Attack( (1,10,0), element = stats.RESIST_SLASHING )
-
     def init_monster( self ):
         self.levels.append( base.Humanoid( 5, self ) )
 
@@ -605,16 +550,16 @@ class OrcArcher( base.Monster ):
     name = "Orc Archer"
     statline = { stats.STRENGTH: 15, stats.TOUGHNESS: 11, stats.REFLEXES: 12, \
         stats.INTELLIGENCE: 7, stats.PIETY: 7, stats.CHARISMA: 7 }
-    SPRITENAME = "monster_goblins.png"
-    FRAME = 25
+    SPRITENAME = "monster_orcs.png"
+    FRAME = 1
     TEMPLATES = ()
     MOVE_POINTS = 10
     VOICE = dialogue.voice.ORCISH
-    GP_VALUE = 30
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
      context.MAP_DUNGEON,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN )
     ENC_LEVEL = 5
+    TREASURE = treasuretype.Standard((items.ARROW,items.BOW))
     COMBAT_AI = aibrain.BasicTechnicalAI()
     COMPANIONS = (Orc,OrcWarrior,GoblinArcher,GoblinWarrior,HobgoblinThief)
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_SLASHING )
@@ -632,16 +577,16 @@ class OrcThief( base.Monster ):
     name = "Orc Thief"
     statline = { stats.STRENGTH: 16, stats.TOUGHNESS: 11, stats.REFLEXES: 13, \
         stats.INTELLIGENCE: 7, stats.PIETY: 6, stats.CHARISMA: 7, stats.STEALTH: 25 }
-    SPRITENAME = "monster_goblins.png"
-    FRAME = 42
+    SPRITENAME = "monster_orcs.png"
+    FRAME = 2
     TEMPLATES = ()
     MOVE_POINTS = 10
     VOICE = dialogue.voice.ORCISH
-    GP_VALUE = 36
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
      context.MAP_DUNGEON,
      context.MTY_HUMANOID, context.MTY_THIEF, context.GEN_GOBLIN )
     ENC_LEVEL = 6
+    TREASURE = treasuretype.Standard((items.GEM,items.SCROLL,None))
     LONER = True
     COMPANIONS = (OrcWarrior,OrcArcher,HobgoblinThief)
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING )
@@ -653,16 +598,16 @@ class OrcChampion( base.Monster ):
     statline = { stats.STRENGTH: 18, stats.TOUGHNESS: 14, stats.REFLEXES: 13, \
         stats.INTELLIGENCE: 7, stats.PIETY: 7, stats.CHARISMA: 7, \
         stats.NATURAL_DEFENSE: 5, stats.COUNTER_ATTACK: 30 }
-    SPRITENAME = "monster_goblins.png"
-    FRAME = 21
+    SPRITENAME = "monster_orcs.png"
+    FRAME = 5
     TEMPLATES = ()
     MOVE_POINTS = 8
     VOICE = dialogue.voice.ORCISH
-    GP_VALUE = 40
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
      context.MAP_DUNGEON,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN )
     ENC_LEVEL = 8
+    TREASURE = treasuretype.Standard()
     COMPANIONS = (OrcWarrior,OrcArcher,GoblinChampion)
     ATTACK = items.Attack( (2,6,0), element = stats.RESIST_SLASHING )
     def init_monster( self ):

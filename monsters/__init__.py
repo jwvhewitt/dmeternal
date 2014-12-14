@@ -7,11 +7,13 @@ import namegen
 import context
 import stats
 import items
+import treasuretype
 from dialogue import voice
 
 import animals
 import aquan
 import auran
+import chaos
 import constructs
 import draconic
 import dragons
@@ -35,6 +37,7 @@ def harvest( mod ):
 harvest( animals )
 harvest( aquan )
 harvest( auran )
+harvest( chaos )
 harvest( constructs )
 harvest( draconic )
 harvest( dragons )
@@ -156,7 +159,7 @@ def generate_npc( species=None, job=None, gender=None, rank=None, team=None, upg
 
     npc.name = gen_monster_name(npc)
     npc.choose_random_spells()
-    npc.GP_VALUE = 10 * rank
+    npc.gold = treasuretype.gold_for_rank( rank )
 
     if upgrade:
         upgrade_equipment( npc, rank )            
@@ -187,11 +190,11 @@ def generate_boss( basemon, target_rank, team=None ):
     boss.monster_name, boss.name = boss.name, name
     for t in range( target_rank ):
         boss.statline[ random.choice( stats.PRIMARY_STATS ) ] += 1
-    if hasattr( boss, "GP_VALUE" ):
-        gp = boss.GP_VALUE
+    if hasattr( boss, "gold" ):
+        gp = boss.gold
     else:
         gp = 0
-    boss.GP_VALUE = gp + target_rank * 100
+    boss.gold = gp + treasuretype.gold_for_rank( target_rank , 10 )
     return boss
 
 

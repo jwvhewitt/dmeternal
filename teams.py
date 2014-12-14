@@ -26,8 +26,9 @@ class Faction( object ):
 class AntagonistFaction( Faction ):
     # A random list of primary contexts for the antagonist faction...
     ANTAGONIST_PRIMARY = ( context.GEN_GIANT, context.GEN_GOBLIN, context.GEN_UNDEAD, context.GEN_DRAGON,
-        context.MTY_MAGE )
+        context.GEN_CHAOS, context.MTY_MAGE )
     ANTAGONIST_SECONDARY = {
+        context.GEN_CHAOS: ( context.DES_EARTH, context.DES_AIR, context.DES_FIRE, context.DES_WATER, context.MTY_FIGHTER, context.MTY_MAGE ),
         context.GEN_GIANT: ( context.DES_EARTH, context.MTY_FIGHTER ),
         context.GEN_GOBLIN: ( context.MTY_FIGHTER, context.MTY_THIEF, context.DES_FIRE, context.DES_LUNAR ),
         context.GEN_UNDEAD: ( context.DES_LUNAR, context.DES_EARTH, context.DES_AIR ),
@@ -39,7 +40,7 @@ class AntagonistFaction( Faction ):
         context.DES_SOLAR, context.DES_LUNAR, context.MTY_FIGHTER, context.MTY_MAGE
     )
     ANTAGONIST_ORG = {
-        context.GEN_CHAOS: [ "Cabal","Host","Cult","Warband" ],
+        context.GEN_CHAOS: [ "Cabal","Citadel","Cult","Warband" ],
         context.GEN_DRAGON: [ "Dragons","Wings" ],
         context.GEN_GIANT: [ "Clan","Tribe","Marauders" ],
         context.GEN_GOBLIN: [ "Goblins","Orcs","Raiders","Ravagers","Boyz" ],
@@ -53,10 +54,10 @@ class AntagonistFaction( Faction ):
         context.DES_AIR: [ "Blue","Sky" ],
         context.DES_FIRE: [ "Burning","Red" ],
         context.DES_EARTH: [ "Stone","Deep" ],
-        context.DES_LUNAR: [ "Dark","Dreadful" ],
-        context.DES_SOLAR: [ "Bright","Silver" ],
+        context.DES_LUNAR: [ "Dark","Dreadful","Unholy" ],
+        context.DES_SOLAR: [ "Bright","Silver","Holy" ],
         context.DES_WATER: [ "Blue","Sea" ],
-        context.GEN_CHAOS: [ "Chaotic", "Anarchic", "Corrupted", "Warped" ],
+        context.GEN_CHAOS: [ "Chaotic", "Twisted", "Corrupted", "Warped" ],
         context.GEN_DRAGON: [ "Golden","Ancient","Proud" ],
         context.GEN_GIANT: [ "Savage","Brutal" ],
         context.GEN_GOBLIN: [ "Bloody","Hard","Green" ],

@@ -284,6 +284,8 @@ class Explorer( object ):
         self.view = maps.SceneView( camp.scene )
         self.time = 0
 
+        self.record_anim = False
+
         self.shop = services.Shop()
 
         # Update the view of all party members.
@@ -368,7 +370,8 @@ class Explorer( object ):
             if delay_point:
                 delay = self.scene.distance( p, delay_point ) * 2 + 1
             effect( self.camp, originator, p, anims, delay )
-        animobs.handle_anim_sequence( self.screen, self.view, all_anims )
+        animobs.handle_anim_sequence( self.screen, self.view, all_anims, self.record_anim )
+        self.record_anim = False
 
         # Remove dead models from the map, and handle probes and mitoses.
         for m in self.scene.contents[:]:
@@ -426,7 +429,9 @@ class Explorer( object ):
                     pygwrap.draw_text( self.screen, pygwrap.SMALLFONT, caption, self.SELECT_AREA_CAPTION_ZONE )
 
                 pygame.display.flip()
-
+            elif gdi.type == pygame.KEYDOWN and gdi.key == pygame.K_F1:
+                caption = "Record Anim"
+                self.record_anim = True
             elif gdi.type == pygame.QUIT:
                 self.no_quit = False
                 break
@@ -989,6 +994,8 @@ class Explorer( object ):
                         for x in range( self.scene.width ):
                             for y in range( self.scene.height ):
                                 self.scene.map[x][y].visible = True
+                    elif gdi.unicode == u"_":
+                        self.camp.known_spells = spells.SPELL_LIST[:]
 
                 elif gdi.type == pygame.QUIT:
                     self.camp.save(self.screen)

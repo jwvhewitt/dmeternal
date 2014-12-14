@@ -1,6 +1,7 @@
 import image
 import pygwrap
 import pygame
+import util
 
 def get_line( x1, y1, x2, y2):
     # Bresenham's line drawing algorithm, as obtained from RogueBasin.
@@ -544,7 +545,15 @@ class BigMeteor( Projectile ):
             if self.y_off >= 0:
                 self.needs_deletion = True
 
-def handle_anim_sequence( screen, view, anims ):
+def handle_anim_sequence( screen, view, anims, record_anim=False ):
+    tick = 0
+    if record_anim:
+        view.anims.clear()
+        view( screen, show_quick_stats=False )
+        pygame.display.flip()
+        pygame.image.save( screen, util.user_dir( "anim_{:0>3}.png".format(tick) ) )
+        tick += 1
+
     while anims:
         view.anims.clear()
         for a in anims[:]:
@@ -556,7 +565,11 @@ def handle_anim_sequence( screen, view, anims ):
                 a.update()
         view( screen, show_quick_stats=False )
         pygame.display.flip()
+        if record_anim:
+            pygame.image.save( screen, util.user_dir( "anim_{:0>3}.png".format(tick) ) )
+
         pygwrap.anim_delay()
+        tick += 1
     view.anims.clear()
 
 

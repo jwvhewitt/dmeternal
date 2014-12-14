@@ -8,6 +8,7 @@ import effects
 import animobs
 import targetarea
 import enchantments
+import treasuretype
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  1   ***
@@ -23,7 +24,6 @@ class GiantBat( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 16
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_CAVE, context.HAB_TUNNELS,
      context.SET_EVERY, context.SET_RENFAN,
      context.DES_LUNAR, context.DES_AIR,
@@ -45,7 +45,6 @@ class GiantRat( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 12
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_BUILDING, context.HAB_TUNNELS,
      context.SET_EVERY,
      context.DES_EARTH, context.DES_CIVILIZED,
@@ -67,7 +66,6 @@ class DireNewt( base.Monster ):
     TEMPLATES = (stats.REPTILE,)
     MOVE_POINTS = 6
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.HAB_CAVE,
      context.SET_RENFAN, context.DES_WATER, 
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE, context.GEN_DRAGON )
@@ -82,13 +80,12 @@ class Chicken( base.Monster ):
     name = "Chicken"
     statline = { stats.STRENGTH: 9, stats.TOUGHNESS: 8, stats.REFLEXES: 12, \
         stats.INTELLIGENCE: 1, stats.PIETY: 6, stats.CHARISMA: 4,
-        stats.PHYSICAL_ATTACK: 10 }
+        stats.PHYSICAL_ATTACK: 15 }
     SPRITENAME = "monster_animals.png"
     FRAME = 23
     TEMPLATES = ()
     MOVE_POINTS = 12
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_EVERY,
      context.DES_AIR,
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
@@ -113,7 +110,6 @@ class MadDog( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 10
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.DES_CIVILIZED,
      context.MAP_WILDERNESS,
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_CHAOS )
@@ -133,7 +129,6 @@ class CaveAnt( base.Monster ):
     TEMPLATES = (stats.BUG,)
     MOVE_POINTS = 10
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_CAVE, context.SET_EVERY, context.DES_EARTH, \
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
     ENC_LEVEL = 2
@@ -153,7 +148,6 @@ class WoodBeetle( base.Monster ):
     TEMPLATES = (stats.BUG,)
     MOVE_POINTS = 8
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.SET_EVERY,
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
     ENC_LEVEL = 2
@@ -170,9 +164,8 @@ class FireBeetle( base.Monster ):
     SPRITENAME = "monster_bugs.png"
     FRAME = 8
     TEMPLATES = (stats.BUG,stats.FIRE)
-    MOVE_POINTS = 10
+    MOVE_POINTS = 8
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.DES_FIRE,
      context.MAP_DUNGEON,
      context.MTY_BEAST, context.MTY_CREATURE )
@@ -193,7 +186,6 @@ class Jackal( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 12
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.SET_EVERY,
      context.MTY_BEAST, context.MTY_CREATURE, context.DES_LUNAR, context.GEN_NATURE )
     ENC_LEVEL = 2
@@ -217,7 +209,6 @@ class Wolf( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 10
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.SET_EVERY, context.SET_RENFAN,
      context.MAP_WILDERNESS,
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
@@ -237,14 +228,12 @@ class GiantFrog( base.Monster ):
     TEMPLATES = (stats.REPTILE,)
     MOVE_POINTS = 12
     VOICE = None
-    GP_VALUE = 0
+    TREASURE = treasuretype.Swallowed()
     HABITAT = ( context.HAB_CAVE, context.SET_EVERY, context.DES_WATER,
      context.MTY_BEAST, context.MTY_CREATURE,
      context.GEN_NATURE )
     ENC_LEVEL = 3
-
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_PIERCING )
-
     def init_monster( self ):
         self.levels.append( base.Beast( 3, self ) )
 
@@ -258,7 +247,6 @@ class SwampDragonfly( base.Monster ):
     TEMPLATES = (stats.BUG,)
     MOVE_POINTS = 14
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.SET_EVERY, context.DES_EARTH,
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_DRAGON )
     ENC_LEVEL = 3
@@ -285,7 +273,6 @@ class BoringBeetle( base.Monster ):
     TEMPLATES = (stats.BUG,)
     MOVE_POINTS = 8
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_CAVE, context.HAB_TUNNELS, context.SET_EVERY,
      context.DES_EARTH,
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
@@ -306,7 +293,6 @@ class WaterBeetle( base.Monster ):
     TEMPLATES = (stats.BUG,stats.WATER)
     MOVE_POINTS = 8
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_TUNNELS, context.SET_EVERY,
      context.DES_WATER,
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
@@ -327,7 +313,6 @@ class PlagueRat( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 12
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_CAVE, context.HAB_BUILDING, context.HAB_TUNNELS,
      context.SET_EVERY, context.SET_RENFAN,
      context.DES_LUNAR, context.DES_CIVILIZED,
@@ -353,13 +338,12 @@ class Cow( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 10
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_EVERY,
      context.DES_EARTH,
      context.MTY_BEAST, context.MTY_CREATURE )
     ENC_LEVEL = 3
 
-    ATTACK = items.Attack( (1,8,0), element = stats.RESIST_CRUSHING )
+    ATTACK = items.Attack( (2,5,0), element = stats.RESIST_CRUSHING )
 
     def init_monster( self ):
         self.levels.append( base.Beast( 3, self ) )
@@ -378,7 +362,6 @@ class BlackBear( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 10
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.SET_EVERY, context.SET_RENFAN,
      context.MAP_WILDERNESS,
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
@@ -398,7 +381,6 @@ class GiantLizard( base.Monster ):
     TEMPLATES = (stats.REPTILE,)
     MOVE_POINTS = 10
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_CAVE, context.SET_EVERY,
      context.MTY_BEAST, context.MTY_CREATURE,
      context.GEN_NATURE, context.GEN_DRAGON )
@@ -419,7 +401,6 @@ class FireBat( base.Monster ):
     TEMPLATES = (stats.FIRE,)
     MOVE_POINTS = 14
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_CAVE, context.SET_EVERY, context.DES_FIRE,
      context.DES_LUNAR, context.MTY_BEAST )
     ENC_LEVEL = 4
@@ -452,7 +433,6 @@ class IceFox( base.Monster ):
     TEMPLATES = (stats.ICE,)
     MOVE_POINTS = 10
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.MAP_WILDERNESS,
      context.DES_ICE,
@@ -487,7 +467,6 @@ class FireWeasel( base.Monster ):
     TEMPLATES = (stats.FIRE,)
     MOVE_POINTS = 10
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.MAP_WILDERNESS,
      context.DES_FIRE,
@@ -527,7 +506,6 @@ class DireWolf( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 10
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.SET_EVERY, context.SET_RENFAN,
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE, 
      context.GEN_GOBLIN )
@@ -549,7 +527,6 @@ class LightningBug( base.Monster ):
     TEMPLATES = (stats.BUG,)
     MOVE_POINTS = 14
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.HAB_CAVE, context.SET_EVERY,
      context.DES_AIR,
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
@@ -579,15 +556,13 @@ class Ankheg( base.Monster ):
     TEMPLATES = (stats.BUG,)
     MOVE_POINTS = 10
     VOICE = None
-    GP_VALUE = 0
+    TREASURE = treasuretype.Swallowed( swag_chance = 35 )
     HABITAT = ( context.HAB_CAVE, context.HAB_TUNNELS, context.SET_EVERY,
      context.DES_EARTH, context.MTY_BOSS,
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
     ENC_LEVEL = 5
-
     ATTACK = items.Attack( (2,6,3), element = stats.RESIST_SLASHING,
      extra_effect=effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_ACID, anim=animobs.GreenExplosion ))
-
     TECHNIQUES = ( invocations.MPInvocation( "Acid Breath",
       effects.OpposedRoll( att_skill=stats.PHYSICAL_ATTACK, att_stat=stats.REFLEXES, def_stat=stats.REFLEXES, on_success = (
         effects.HealthDamage( (4,4,0), stat_bonus=None, element=stats.RESIST_ACID, anim=animobs.GreenExplosion )
@@ -595,7 +570,6 @@ class Ankheg( base.Monster ):
         effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_ACID, anim=animobs.GreenExplosion )
       ,) ), com_tar=targetarea.Line(reach=5), ai_tar=invocations.vs_enemy, mp_cost=10
     ), )
-
     def init_monster( self ):
         self.levels.append( base.Defender( 2, self ) )
         self.levels.append( base.Beast( 2, self ) )
@@ -614,14 +588,11 @@ class Lion( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 12
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.SET_EVERY, context.DES_SOLAR,
      context.MAP_WILDERNESS,
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
     ENC_LEVEL = 6
-
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )
-
     def init_monster( self ):
         self.levels.append( base.Beast( 6, self ) )
 
@@ -634,15 +605,12 @@ class WildBoar( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 10
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.SET_EVERY,
      context.DES_EARTH,
      context.MTY_BEAST, context.MTY_CREATURE,
      context.GEN_NATURE )
     ENC_LEVEL = 6
-
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_PIERCING )
-
     def init_monster( self ):
         self.levels.append( base.Beast( 6, self ) )
 
@@ -655,7 +623,6 @@ class TombScorpion( base.Monster ):
     TEMPLATES = (stats.BUG,)
     MOVE_POINTS = 10
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_CAVE, context.SET_EVERY,
      context.DES_SOLAR, context.DES_LUNAR,
      context.MTY_BEAST, context.MTY_CREATURE )
@@ -683,14 +650,11 @@ class GrizzlyBear( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 10
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.SET_EVERY, context.SET_RENFAN,
      context.MAP_WILDERNESS,
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
     ENC_LEVEL = 7
-
     ATTACK = items.Attack( (2,6,0), element = stats.RESIST_SLASHING )
-
     def init_monster( self ):
         self.levels.append( base.Beast( 7, self ) )
 
@@ -703,15 +667,12 @@ class GiantEagle( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 16
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.SET_EVERY, context.SET_RENFAN,
      context.MAP_WILDERNESS,
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE,
      context.DES_AIR, context.DES_SOLAR )
     ENC_LEVEL = 7
-
     ATTACK = items.Attack( (1,10,0), element = stats.RESIST_PIERCING )
-
     def init_monster( self ):
         self.levels.append( base.Beast( 8, self ) )
 
@@ -725,7 +686,6 @@ class Scarab( base.Monster ):
     TEMPLATES = (stats.BUG,)
     MOVE_POINTS = 8
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_TUNNELS, context.SET_EVERY,
      context.DES_SOLAR,
      context.MTY_BEAST, context.MTY_CREATURE )
@@ -746,7 +706,6 @@ class Scarab( base.Monster ):
             effects.Enchant( enchantments.PoisonClassic )
         ,) )
     )
-
     def init_monster( self ):
         self.levels.append( base.Beast( 7, self ) )
 
@@ -764,16 +723,13 @@ class DireYak( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 10
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_CAVE, context.SET_EVERY,
      context.MAP_WILDERNESS,
      context.DES_ICE,
      context.MTY_BEAST, context.MTY_CREATURE,
      context.GEN_NATURE )
     ENC_LEVEL = 8
-
     ATTACK = items.Attack( (1,10,0), element = stats.RESIST_PIERCING )
-
     def init_monster( self ):
         self.levels.append( base.Beast( 9, self ) )
 
@@ -786,14 +742,12 @@ class Crocodile( base.Monster ):
     TEMPLATES = (stats.REPTILE,)
     MOVE_POINTS = 8
     VOICE = None
-    GP_VALUE = 0
+    TREASURE = treasuretype.Swallowed()
     HABITAT = ( context.HAB_TUNNELS, context.SET_EVERY,
      context.DES_WATER, context.MTY_BEAST, context.MTY_CREATURE,
      context.GEN_NATURE, context.GEN_DRAGON )
     ENC_LEVEL = 8
-
     ATTACK = items.Attack( (1,12,0), element = stats.RESIST_PIERCING )
-
     def init_monster( self ):
         self.levels.append( base.Beast( 8, self ) )
 
@@ -806,7 +760,6 @@ class FireScorpion( base.Monster ):
     TEMPLATES = (stats.BUG,stats.FIRE)
     MOVE_POINTS = 10
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_CAVE, context.SET_EVERY,
      context.DES_FIRE,
      context.MTY_BEAST, context.MTY_BOSS,
@@ -843,7 +796,6 @@ class GreatStag( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 14
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.SET_EVERY, context.SET_RENFAN,
      context.MAP_WILDERNESS,
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
@@ -864,16 +816,13 @@ class PolarBear( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 10
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.SET_EVERY, context.SET_RENFAN,
      context.DES_ICE,
      context.MAP_WILDERNESS,
      context.MTY_BEAST, context.MTY_CREATURE,
      context.GEN_NATURE )
     ENC_LEVEL = 9
-
     ATTACK = items.Attack( (2,6,0), element = stats.RESIST_SLASHING )
-
     def init_monster( self ):
         self.levels.append( base.Beast( 9, self ) )
 
@@ -891,15 +840,12 @@ class Elephant( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 8
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.SET_EVERY,
      context.DES_SOLAR,
      context.MTY_BEAST, context.MTY_CREATURE,
      context.GEN_NATURE )
     ENC_LEVEL = 10
-
     ATTACK = items.Attack( (3,6,0), element = stats.RESIST_CRUSHING )
-
     def init_monster( self ):
         self.levels.append( base.Beast( 10, self ) )
 
@@ -924,15 +870,12 @@ class CaveBear( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 10
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_CAVE, context.SET_EVERY,
      context.DES_EARTH,
      context.MTY_BEAST, context.MTY_CREATURE, context.MTY_BOSS,
      context.GEN_NATURE )
     ENC_LEVEL = 12
-
     ATTACK = items.Attack( (3,6,0), element = stats.RESIST_SLASHING )
-
     def init_monster( self ):
         self.levels.append( base.Defender( 14, self ) )
 
@@ -951,7 +894,6 @@ class Unicorn( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 12
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.SET_EVERY,
      context.DES_SOLAR,
      context.MTY_BEAST, context.MTY_CREATURE, context.MTY_LEADER, context.MTY_BOSS,
@@ -964,8 +906,7 @@ class Unicorn( base.Monster ):
         exp_tar=targetarea.SinglePartyMember(), shot_anim=animobs.YellowVortex ),
     )
     def init_monster( self ):
-        self.levels.append( base.Defender( 8, self ) )
-        self.levels.append( base.Beast( 4, self ) )
+        self.levels.append( base.Defender( 12, self ) )
 
 
 #  ********************************
@@ -981,7 +922,7 @@ class Roc( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 16
     VOICE = None
-    GP_VALUE = 0
+    TREASURE = treasuretype.Swallowed()
     HABITAT = ( context.HAB_FOREST, context.SET_EVERY,
      context.MAP_WILDERNESS,
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE,
@@ -1013,7 +954,6 @@ class Mammoth( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 8
     VOICE = None
-    GP_VALUE = 0
     HABITAT = ( context.HAB_FOREST, context.SET_EVERY,
      context.DES_ICE,
      context.MTY_BEAST, context.MTY_CREATURE, context.MTY_BOSS,
@@ -1021,7 +961,6 @@ class Mammoth( base.Monster ):
     ENC_LEVEL = 15
     COMPANIONS = ( Elephant, DireYak )
     ATTACK = items.Attack( (3,8,0), element = stats.RESIST_CRUSHING )
-
     def init_monster( self ):
         self.levels.append( base.Beast( 18, self ) )
 
@@ -1048,7 +987,7 @@ class DragonTurtle( base.Monster ):
     TEMPLATES = (stats.REPTILE,stats.DRAGON,stats.WATER)
     MOVE_POINTS = 6
     VOICE = None
-    GP_VALUE = 0
+    TREASURE = treasuretype.Swallowed()
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.DES_WATER,
      context.MTY_BEAST, context.MTY_CREATURE, context.MTY_BOSS,

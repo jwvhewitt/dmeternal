@@ -12,6 +12,7 @@ import aibrain
 import random
 import enchantments
 import animals
+import treasuretype
 
 # This file contains monsters that are not dragons proper, but which
 # belong to the GEN_DRAGON faction. Examples include lizardmen and other
@@ -39,14 +40,12 @@ class Reptal( base.Monster ):
     TEMPLATES = (stats.REPTILE,)
     MOVE_POINTS = 10
     VOICE = dialogue.voice.DRACONIAN
-    GP_VALUE = 30
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.DES_WATER,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_DRAGON )
     ENC_LEVEL = 3
-
+    TREASURE = treasuretype.Standard()
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_CRUSHING )
-
     def init_monster( self ):
         self.levels.append( base.Humanoid( 3, self ) )
 
@@ -64,14 +63,13 @@ class ReptalWarrior( base.Monster ):
     TEMPLATES = (stats.REPTILE,)
     MOVE_POINTS = 10
     VOICE = dialogue.voice.DRACONIAN
-    GP_VALUE = 40
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.DES_WATER,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_DRAGON )
     ENC_LEVEL = 4
-
+    TREASURE = treasuretype.Standard()
+    COMPANIONS = (Reptal,animals.GiantLizard,animals.GiantFrog)
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_PIERCING )
-
     def init_monster( self ):
         self.levels.append( base.Humanoid( 4, self ) )
 
@@ -84,11 +82,11 @@ class ReptalArcher( base.Monster ):
     TEMPLATES = (stats.REPTILE,)
     MOVE_POINTS = 10
     VOICE = dialogue.voice.DRACONIAN
-    GP_VALUE = 50
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.DES_WATER,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_DRAGON )
     ENC_LEVEL = 4
+    TREASURE = treasuretype.Standard((items.ARROW,))
     COMPANIONS = (ReptalWarrior,Reptal)
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_CRUSHING )
     TECHNIQUES = ( invocations.Invocation( "Arrow",
@@ -115,7 +113,6 @@ class ReptalDruid( base.Monster ):
     TEMPLATES = (stats.REPTILE,)
     MOVE_POINTS = 10
     VOICE = dialogue.voice.DRACONIAN
-    GP_VALUE = 50
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.DES_WATER,
      context.MTY_HUMANOID, context.MTY_MAGE, context.MTY_PRIEST,
@@ -125,13 +122,11 @@ class ReptalDruid( base.Monster ):
         spells.earthspells.ACID_BOLT, spells.firespells.EXPLOSION,
         spells.waterspells.REGENERATION )
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )
-    TREASURE = ( items.scrolls.Rank2Scroll, items.scrolls.Rank3Scroll, items.potions.PotionOfStrength )
+    TREASURE = treasuretype.HighItems(( items.scrolls.Rank2Scroll, items.scrolls.Rank3Scroll, items.potions.PotionOfStrength ))
     COMPANIONS = (ReptalWarrior,ReptalArcher)
     LONER = True
     def init_monster( self ):
         self.levels.append( base.Humanoid( 4, self ) )
-        if random.randint(1,3) == 1:
-            self.contents.append( random.choice( self.TREASURE )() )
 
 
 #  *******************************
