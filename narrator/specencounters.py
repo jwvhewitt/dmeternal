@@ -13,6 +13,8 @@ import randmaps
 import effects
 import stats
 import animobs
+import stats
+import animobs
 
 #  *****************************
 #  ***   SPECIAL_ENCOUNTER   ***
@@ -21,7 +23,6 @@ import animobs
 # A harder-than-normal encounter with better-than-normal treasure. Or just an
 # unusual encounter that you don't want showing up all over the place.
 #
-
 
 class AdventurerBossEncounter( Plot ):
     LABEL = "SPECIAL_ENCOUNTER"
@@ -161,13 +162,51 @@ class DragonLair( Plot ):
             # No dragon, no encounter.
             return False
 
+class DungeonLibrary( Plot ):
+    LABEL = "SPECIAL_ENCOUNTER"
+    UNIQUE = True
+    @classmethod
+    def matches( self, pstate ):
+        """Requires the LOCALE to exist and be a dungeon."""
+        return ( pstate.elements.get("LOCALE")
+                and context.MAP_DUNGEON in pstate.elements["LOCALE"].desctags )
+    JOBS = (characters.Mage,characters.Priest,characters.Druid,characters.Necromancer,
+        characters.Mage,characters.Necromancer)
+    def custom_init( self, nart ):
+        scene = self.elements.get("LOCALE")
+        room = randmaps.rooms.SharpRoom()
+        room.DECORATE = randmaps.decor.LibraryDec(win=None)
+        # Create a chest, and stock it with magical goodies.
+        mychest = waypoints.LargeChest()
+        mychest.stock(self.rank,item_types=(items.SCROLL,items.POTION))
+        room.contents.append( mychest )
+        room.contents.append( waypoints.Bookshelf() )
+        for t in range( random.randint(2,3) ):
+            myitem = items.generate_special_item( self.rank + 1, items.SCROLL )
+            if myitem:
+                myitem.identified = True
+                mychest.contents.append( myitem )
+        # Create a team for our spellcasters.
+        myhabitat = scene.get_encounter_request()
+        myhabitat[(context.MTY_MAGE,context.MTY_PRIEST)] = True
+        myteam = self.register_element( "TEAM", teams.Team(default_reaction=-999, rank=self.rank, 
+          strength=120, habitat=myhabitat, hodgepodge = True ) )
+        room.contents.append( myteam )
+        boss = monsters.generate_npc(team=myteam,upgrade=True,rank=self.rank+1,job=random.choice(self.JOBS))
+        myitem = items.generate_special_item( self.rank + 3 )
+        if myitem:
+            boss.contents.append( myitem )
+        room.contents.append( boss )
+        self.register_element( "_ROOM", room, dident="LOCALE" )
+        return True
+
 class EnemyParty( Plot ):
     LABEL = "SPECIAL_ENCOUNTER"
     UNIQUE = True
     @classmethod
     def matches( self, pstate ):
         """Requires the LOCALE to exist."""
-        return pstate.elements.get("LOCALE")
+        return pstate.elements.get("LOCALE") and pstate.rank > 2
     FIGHTERS = ( characters.Warrior, characters.Samurai, characters.Knight, characters.Monk, None )
     THIEVES = ( characters.Thief, characters.Ninja, characters.Bard, characters.Ranger, None )
     PRIESTS = ( characters.Priest, characters.Druid, None )
@@ -207,7 +246,7 @@ class HumanoidBossEncounter( Plot ):
         btype = monsters.choose_monster_type(self.rank-2,self.rank+2,mh2)
         if btype:
             boss = monsters.generate_boss( btype, self.rank+3, team=myteam )
-            myitem = items.generate_special_item( self.rank + 4 )
+            myitem = items.generate_special_item( self.rank + 5 )
             if myitem:
                 boss.contents.append( myitem )
             self.register_element( "_ROOM", room, dident="LOCALE" )
@@ -217,6 +256,7 @@ class HumanoidBossEncounter( Plot ):
 
 class LudicrousTreasureEncounter( Plot ):
     LABEL = "SPECIAL_ENCOUNTER"
+    UNIQUE = True
     @classmethod
     def matches( self, pstate ):
         """Requires the LOCALE to exist and be a dungeon."""

@@ -346,8 +346,7 @@ class SkeletonMage( base.Monster ):
     TREASURE = treasuretype.HighItems( ( items.scrolls.Rank2Scroll, items.scrolls.Rank3Scroll ) )
     COMPANIONS = (SkeletonFighter,SkeletonGuard)
     LONER = True
-    TECHNIQUES = ( spells.waterspells.FREEZE_FOE, spells.airspells.SILENCE,
-        spells.lunarspells.SLEEP, spells.firespells.IGNITE,
+    TECHNIQUES = ( spells.necrospells.ACID_CLOUD, spells.waterspells.WINTER_WIND,
         spells.firespells.EXPLOSION, spells.airspells.THUNDER_STRIKE )
     COMBAT_AI = aibrain.SteadySpellAI()
     ATTACK = items.Attack( (1,8,2), element = stats.RESIST_CRUSHING )
@@ -438,7 +437,7 @@ class SkeletonHunter( base.Monster ):
         ,) ) 
       ), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.vs_enemy
+      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.TargetEnemy()
     ), )
 
     def init_monster( self ):
@@ -524,7 +523,7 @@ class Fossil( base.Monster ):
          ,))
       ,), on_failure = (
         effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_LUNAR, anim=animobs.PurpleExplosion )
-      ,) ), com_tar=targetarea.Blast(radius=2), shot_anim=animobs.MysticBolt, ai_tar=invocations.vs_enemy, mp_cost=3
+      ,) ), com_tar=targetarea.Blast(radius=2), shot_anim=animobs.MysticBolt, ai_tar=invocations.TargetEnemy(), mp_cost=3
     ), )
 
     def init_monster( self ):

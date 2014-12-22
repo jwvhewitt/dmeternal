@@ -14,10 +14,11 @@ import invocations
 
 ARMOR_OF_FAITH = Spell( "Armor of Faith",
     "The caster is infused with divine energy, healing wounds and bestowing protection.",
-    effects.HealthRestore( dice=(2,6,0), anim=animobs.YellowSparkle, children = (
+    effects.HealthRestore( dice=(3,6,0), anim=animobs.YellowSparkle, children = (
         effects.Enchant( enchantments.BlessingEn, anim=None ),
         effects.Enchant( enchantments.AirArmor, anim=None )
-    ,) ), rank=1, gems={SOLAR:1,AIR:1}, com_tar=targetarea.SelfOnly(), mpfudge=-2 )
+    ,) ), rank=1, gems={SOLAR:1,AIR:1}, com_tar=targetarea.SelfOnly(), 
+    ai_tar=invocations.TargetWoundedAlly(), mpfudge=-2 )
 
 BLAST_UNDEAD = Spell( "Blast Undead",
     "This mystic bolt deals 1-6 damage to undead creatures.",
@@ -34,7 +35,8 @@ BLAST_UNDEAD = Spell( "Blast Undead",
 WEAPON_BLESSING = Spell( "Weapon Blessing",
     "One ally's weapon will be blessed to do an extra 1-8 points of damage.",
     effects.Enchant( enchantments.BlessedWepEn, anim=animobs.YellowSparkle ),
-    rank=2, gems={AIR:1,SOLAR:1}, com_tar=targetarea.SinglePartyMember() )
+    rank=2, gems={AIR:1,SOLAR:1}, com_tar=targetarea.SinglePartyMember(),
+    ai_tar=invocations.TargetAllyWithoutEnchantment(enchantments.BlessedWepEn) )
 
 DISPEL_EVIL = Spell( "Dispel Evil",
     "All unholy creatures within three tiles will be struck for 1-10 damage.",
@@ -44,13 +46,14 @@ DISPEL_EVIL = Spell( "Dispel Evil",
         ,), on_failure = (
             effects.HealthDamage( (1,4,0), stat_bonus=None, element=stats.RESIST_SOLAR, anim=animobs.YellowExplosion )
     ,) ) ,) ), rank=2, gems={SOLAR:1,WATER:1}, com_tar=targetarea.SelfCentered(radius=3,exclude_middle=True), mpfudge=-2,
-    ai_tar=invocations.vs_enemy )
+    ai_tar=invocations.TargetEnemy() )
 
 HEROISM = Spell( "Heroism",
     "All allies within 6 tiles get a +2 bonus to strength, toughness, reflexes, intelligence, piety, and charisma until the end of combat.",
     effects.TargetIsAlly( on_true = (
         effects.Enchant( enchantments.HeroismEn, anim=animobs.YellowSparkle )
-    ,) ), rank=2, gems={AIR:1,WATER:1}, com_tar=targetarea.SelfCentered(), mpfudge=1 )
+    ,) ), rank=2, gems={AIR:1,WATER:1}, com_tar=targetarea.SelfCentered(),
+    ai_tar=invocations.TargetAllyWithoutEnchantment(enchantments.HeroismEn), mpfudge=1 )
 
 
 # CIRCLE THREE
@@ -58,7 +61,7 @@ HEROISM = Spell( "Heroism",
 HEALING_LIGHT = Spell( "Healing Light",
     "Blessed radiance will heal one ally for 3-24 damage.",
     effects.HealthRestore( dice=(3,8,0) ),
-    rank=3, gems={AIR:1,SOLAR:2}, com_tar=targetarea.SingleTarget(reach=10), ai_tar=invocations.vs_wounded_ally,
+    rank=3, gems={AIR:1,SOLAR:2}, com_tar=targetarea.SingleTarget(reach=10), ai_tar=invocations.TargetWoundedAlly(),
     exp_tar=targetarea.SinglePartyMember(), shot_anim=animobs.YellowVortex )
 
 PROTECT_FROM_EVIL = Spell( "Protection from Evil",
@@ -66,7 +69,8 @@ PROTECT_FROM_EVIL = Spell( "Protection from Evil",
     effects.TargetIsAlly( on_true = (
         effects.Enchant( enchantments.ProtectFromEvilEn, anim=animobs.YellowSparkle ),
     )),
-    rank=3, gems={SOLAR:1,WATER:1}, com_tar=targetarea.SelfCentered() )
+    rank=3, gems={SOLAR:1,WATER:1}, com_tar=targetarea.SelfCentered(),
+    ai_tar=invocations.TargetAllyWithoutEnchantment(enchantments.ProtectFromEvilEn) )
 
 
 # CIRCLE FOUR
@@ -86,7 +90,7 @@ BLIZZARD = Spell( "Blizzard",
             on_death= (effects.HealthDamage( (1,5,0), stat_bonus=None, element=stats.RESIST_WIND, anim=animobs.Blizzard),),
      )
     ,) ), rank=4, gems={WATER:1,AIR:1}, com_tar=targetarea.Blast(radius=4, delay_from=1),
-    ai_tar=invocations.vs_enemy )
+    ai_tar=invocations.TargetEnemy() )
 
 DIVINE_HAMMER = Spell( "Divine Hammer",
     "This attack does 4d8 holy damage to a single target. Unholy creatures may be stunned.",
@@ -97,7 +101,7 @@ DIVINE_HAMMER = Spell( "Divine Hammer",
         ))
     ,), on_failure = (
         effects.HealthDamage( (2,8,2), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_SOLAR, anim=animobs.RedBoom )
-    ,) ), rank=4, gems={AIR:1,SOLAR:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.YellowVortex, ai_tar=invocations.vs_enemy )
+    ,) ), rank=4, gems={AIR:1,SOLAR:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.YellowVortex, ai_tar=invocations.TargetEnemy() )
 
 SANCTUARY = Spell( "Sanctuary",
     "Enemies within 4 tiles will be frozen in place for a short time.",
@@ -106,7 +110,7 @@ SANCTUARY = Spell( "Sanctuary",
             effects.Paralyze( max_duration = 3 ),
         ))
     ,) ), rank=4, gems={SOLAR:1,WATER:2}, com_tar=targetarea.SelfCentered(radius=4,exclude_middle=True),
-    ai_tar=invocations.vs_enemy )
+    ai_tar=invocations.TargetEnemy() )
 
 
 # CIRCLE FIVE
@@ -114,14 +118,15 @@ SANCTUARY = Spell( "Sanctuary",
 SMITE = Spell( "Smite",
     "A bolt of lightning will unerringly strike all targets in a 2 tile radius for 3d10 damage.",
     effects.HealthDamage( (3,10,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_LIGHTNING, anim=animobs.BlueZap ),
-    rank=5, gems={AIR:3,SOLAR:1}, com_tar=targetarea.Blast(radius=2), shot_anim=animobs.Lightning, ai_tar=invocations.vs_enemy )
+    rank=5, gems={AIR:3,SOLAR:1}, com_tar=targetarea.Blast(radius=2), shot_anim=animobs.Lightning, ai_tar=invocations.TargetEnemy() )
 
 SPELL_SHIELD = Spell( "Spell Shield",
     "All allies within 6 tiles get +25% aura until the end of combat.",
     effects.TargetIsAlly( on_true = (
         effects.Enchant( enchantments.SpellShieldEn, anim=animobs.YellowSparkle ),
     )),
-    rank=5, gems={SOLAR:1,WATER:1}, com_tar=targetarea.SelfCentered() )
+    rank=5, gems={SOLAR:1,WATER:1}, com_tar=targetarea.SelfCentered(),
+    ai_tar=invocations.TargetAllyWithoutEnchantment(enchantments.SpellShieldEn) )
 
 
 # CIRCLE SIX
@@ -135,7 +140,6 @@ JUSTICE = Spell( "Justice",
         ))
     ), on_false=(
         effects.TargetIsEnemy( on_true = (
-
             effects.HealthDamage( (3,12,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_SOLAR, anim=animobs.Pearl ),
         )),
     ) ), rank=6, gems={AIR:1,SOLAR:2}, com_tar=targetarea.SelfCentered(), mpfudge=3 )
@@ -143,7 +147,7 @@ JUSTICE = Spell( "Justice",
 DIVINE_AID = Spell( "Divine Aid",
     "A celestial being will answer your call to aid you in this combat.",
     effects.CallMonster( {context.MTY_CELESTIAL: True, context.DES_SOLAR: context.MAYBE, context.DES_SOLAR: context.MAYBE}, 12, anim=animobs.YellowSparkle ),
-    rank=6, gems={WATER:2,SOLAR:2}, com_tar=targetarea.SingleTarget(reach=2), mpfudge = 12 )
+    rank=6, gems={WATER:2,SOLAR:2}, com_tar=targetarea.SingleTarget(reach=2), ai_tar=invocations.TargetEmptySpot(), mpfudge = 12 )
 
 
 # CIRCLE SEVEN
@@ -155,6 +159,6 @@ DIVINE_AID = Spell( "Divine Aid",
 DIVINE_WRATH = Spell( "Divine Wrath",
     "A powerful celestial being will answer your call to aid you in this combat.",
     effects.CallMonster( {context.MTY_CELESTIAL: True, context.DES_SOLAR: context.MAYBE, context.DES_SOLAR: context.MAYBE}, 18, anim=animobs.YellowSparkle ),
-    rank=9, gems={WATER:3,SOLAR:3}, com_tar=targetarea.SingleTarget(reach=4), mpfudge = 20 )
+    rank=9, gems={WATER:3,SOLAR:3}, com_tar=targetarea.SingleTarget(reach=4), ai_tar=invocations.TargetEmptySpot(), mpfudge = 20 )
 
 

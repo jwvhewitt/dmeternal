@@ -12,6 +12,7 @@ import characters
 import namegen
 import random
 import cutscene
+import worlds
 
 # BARDIC_DUNGEON
 #  This subplot will generate a dungeon of a given type. All these subplots
@@ -209,6 +210,125 @@ class BC_DwarvenCity( Plot ):
             explo.alert( "You step into a bustling dwarven city." )
             self.chapter.activate()
             self._ready = False
+
+class BC_AdvanceAgent( Plot ):
+    # Fight an agent of next chapter's ANTAGONIST.
+    LABEL = "BARDIC_CONNECTION"
+    scope = True
+    active = True
+    _ready = True
+    @classmethod
+    def matches( self, pstate ):
+        """Requires LAST_DUNGEON and ANTAGONIST to exist"""
+        return ( pstate.elements.get( "LAST_DUNGEON" )
+         and pstate.elements.get( "ANTAGONIST" ) )
+    def custom_init( self, nart ):
+        """Install the dungeon."""
+        # Create the intermediary level.
+        interior = maps.Scene( 65,65, sprites={maps.SPRITE_WALL: "terrain_wall_darkbrick.png", maps.SPRITE_GROUND: "terrain_ground_under.png", maps.SPRITE_FLOOR: "terrain_floor_tile.png" },
+            fac=self.elements["ANTAGONIST"],
+            biome=context.HAB_TUNNELS, setting=self.setting, desctags=(context.MAP_DUNGEON,) )
+        igen = randmaps.SubtleMonkeyTunnelScene( interior )
+        self.register_scene( nart, interior, igen, ident="LOCALE" )
+
+        # Create the goal room.
+        team = teams.Team(default_reaction=-999, rank=self.rank, strength=50, habitat=interior.get_encounter_request(),
+         fac=self.elements["ANTAGONIST"], respawn=False )
+        int_goalroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=interior )
+        int_goalroom.contents.append( team )
+
+        # Create the guardian.
+        boss = self.register_element( "ENEMY", monsters.generate_npc(team=team,upgrade=True,rank=self.rank+3) )
+        self.enemy_defeated = False
+        interior.name = "{}'s Chamber".format( boss )
+        int_goalroom.contents.append( boss )
+
+        for t in range( random.randint(2,4) ):
+            self.add_sub_plot( nart, "ENCOUNTER" )
+
+        # Connect to previous level.
+        self.add_sub_plot( nart, "CONNECT", PlotState( elements={"PREV":self.elements["LAST_DUNGEON"],"NEXT":interior} ).based_on( self ) )
+
+        # Add a BARDIC_FRESHSTART to install the dungeon somewhere else.
+        sp = self.add_sub_plot( nart, "BARDIC_FRESHSTART" )
+        self.register_element( "DESTINATION", sp.elements.get( "LOCALE" ) )
+        return True
+
+    def ENEMY_DEATH( self, explo ):
+        self.enemy_defeated = True
+
+    def t_COMBATOVER( self, explo ):
+        if self.enemy_defeated:
+            # Activate the resolution, whatever that is.
+            explo.alert( "You discover that {} was carrying a map leading to {}. That should be your next destination.".format(self.elements["ENEMY"],self.elements["DESTINATION"]) )
+            explo.alert( "New world map location discovered." )
+            self.chapter.activate()
+            self.active = False
+
+
+#
+# BARDIC_FRESHSTART
+#  This subplot opens up a new world map scene in which to place the next dungeon.
+#  Because of this, it installs the dungeon... normally BARDIC_CONNECTION is
+#  supposed to do that, but it can pawn off the responsibility to this subplot.
+#
+#  The world map entrance should get activated when the chapter is activated.
+#  That scene should be stored as element LOCALE, in case the connection needs
+#  to do anything with it.
+#
+
+class BF_ForestVillage( Plot ):
+    """A new world map scene, set in a forest."""
+    LABEL = "BARDIC_FRESHSTART"
+    scope = True
+    active = True
+    @classmethod
+    def matches( self, pstate ):
+        """Requires LEVELS[0] to be forest or not MAP_WILDERNESS."""
+        dungeon = pstate.elements.get( "LEVELS" )
+        return dungeon and ( dungeon[0].biome is context.HAB_FOREST
+         or context.MAP_WILDERNESS not in dungeon[0].desctags )
+    def custom_init( self, nart ):
+        # Add the forest itself.
+        myscene = maps.Scene( min( 95 + self.rank * 3, 129 ), min( 95 + self.rank * 3, 129 ), 
+            sprites={maps.SPRITE_WALL: "terrain_wall_woodfort.png", maps.SPRITE_GROUND: "terrain_ground_forest.png",
+             maps.SPRITE_FLOOR: "terrain_floor_gravel.png" },
+            biome=context.HAB_FOREST, setting=self.setting, fac=None,
+            desctags=(context.MAP_WILDERNESS,) )
+        mymapgen = randmaps.ForestScene( myscene )
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+
+        # Add a village.
+        castle = self.register_element( "CITY", randmaps.rooms.VillageRoom( width=35,
+            height=35,tags=(context.CIVILIZED,context.ROOM_PUBLIC,context.MAP_ON_EDGE), parent=myscene ) )
+        myroom = randmaps.rooms.FuzzyRoom( tags=(context.ENTRANCE,), parent=castle )
+        myteam = teams.Team( strength=0, default_reaction=characters.SAFELY_FRIENDLY)
+        castle.contents.append( myteam )
+        myent = waypoints.Well()
+        myroom.contents.append( myent )
+        myroom.contents.append( monsters.generate_npc(species=characters.Elf, team=myteam) )
+        myroom.contents.append( monsters.generate_npc(species=characters.Elf, team=myteam) )
+        self.add_sub_plot( nart, "CITY_GENERALSTORE" )
+        self.add_sub_plot( nart, "CITY_LIBRARY" )
+        self.add_sub_plot( nart, "CITY_INN" )
+        self.add_sub_plot( nart, "CITY_EXTRASHOP" )
+
+        # Add world map entrance.
+        self._entrance = self.chapter.world.add_entrance( myscene, myscene.name, worlds.W_VILLAGE, myent, False )
+
+        for t in range( random.randint(2+min(self.rank//3,6),4+min(self.rank//2,6)) ):
+            self.add_sub_plot( nart, "ENCOUNTER" )
+        self.add_sub_plot( nart, "SPECIAL_FEATURE" )
+
+        # Install the dungeon here.
+        self.install_dungeon( nart, self.elements[ "LEVELS" ], myscene, self.elements["DNAME"] )
+        self._ready = True
+        return True
+    def t_START( self, explo ):
+        # When the chapter activates, show the world map entrance.
+        if self.chapter.active:
+            self._entrance.visible = True
+            self.active = False
 
 
 

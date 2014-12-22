@@ -485,7 +485,7 @@ def generate_special_item( item_rank, item_type=None ):
     return it
 
 
-def generate_hoard( drop_rank, drop_strength ):
+def generate_hoard( drop_rank, drop_strength, item_types=PREMIUM_TYPES ):
     """Returns a tuple containing gold, list of items."""
     # drop_rank is the rank of the level.
     # drop_strength is a percentile loot adjustment.
@@ -500,12 +500,12 @@ def generate_hoard( drop_rank, drop_strength ):
         if random.randint(1,20) == 17:
             # Generate an out-of-depth item.
             i_rank += random.randint(3,5)
-            it = choose_item( item_type = random.choice( PREMIUM_TYPES ), max_rank = i_rank )
+            it = choose_item( item_type = random.choice( item_types ), max_rank = i_rank )
             tries -= 1
             if it:
                 it.identified = False
         elif random.randint(1,3) != 1:
-            it = choose_item( item_type = random.choice( PREMIUM_TYPES ), max_rank = drop_rank )
+            it = choose_item( item_type = random.choice( item_types ), max_rank = drop_rank )
         else:
             it = choose_item( max_rank = drop_rank )
         if it:

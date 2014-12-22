@@ -213,9 +213,7 @@ class Wolf( base.Monster ):
      context.MAP_WILDERNESS,
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
     ENC_LEVEL = 3
-
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_PIERCING )
-
     def init_monster( self ):
         self.levels.append( base.Beast( 3, self ) )
 
@@ -258,7 +256,7 @@ class SwampDragonfly( base.Monster ):
         effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_ACID, anim=animobs.GreenExplosion )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(), shot_anim=animobs.GreenSpray, ai_tar=invocations.vs_enemy, mp_cost=3
+      ,) ), com_tar=targetarea.SingleTarget(), shot_anim=animobs.GreenSpray, ai_tar=invocations.TargetEnemy(), mp_cost=3
     ), )
 
     def init_monster( self ):
@@ -418,7 +416,7 @@ class FireBat( base.Monster ):
         effects.Enchant( enchantments.BurnLowEn )
       ,), on_failure = (
         effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion )
-      ,) ), com_tar=targetarea.SingleTarget(), shot_anim=animobs.Fireball, ai_tar=invocations.vs_enemy, mp_cost=3
+      ,) ), com_tar=targetarea.SingleTarget(), shot_anim=animobs.Fireball, ai_tar=invocations.TargetEnemy(), mp_cost=3
     ), )
 
     def init_monster( self ):
@@ -452,7 +450,7 @@ class IceFox( base.Monster ):
             effects.HealthDamage( (1,6,0), stat_bonus=stats.TOUGHNESS, element=stats.RESIST_COLD, anim=animobs.BlueCloud )
         ,), on_failure = (
             effects.HealthDamage( (1,3,0), stat_bonus=None, element=stats.RESIST_COLD, anim=animobs.BlueCloud )
-        ,) ), com_tar=targetarea.Cone(reach=4), ai_tar=invocations.vs_enemy, mp_cost=3
+        ,) ), com_tar=targetarea.Cone(reach=4), ai_tar=invocations.TargetEnemy(), mp_cost=3
       ), )
 
     def init_monster( self ):
@@ -486,7 +484,7 @@ class FireWeasel( base.Monster ):
             effects.HealthDamage( (1,6,0), stat_bonus=stats.TOUGHNESS, element=stats.RESIST_FIRE, anim=animobs.RedCloud )
         ,), on_failure = (
             effects.HealthDamage( (1,3,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.RedCloud )
-        ,) ), com_tar=targetarea.Cone(reach=4), ai_tar=invocations.vs_enemy, mp_cost=3
+        ,) ), com_tar=targetarea.Cone(reach=4), ai_tar=invocations.TargetEnemy(), mp_cost=3
       ), )
 
     def init_monster( self ):
@@ -539,7 +537,7 @@ class LightningBug( base.Monster ):
         effects.HealthDamage( (2,6,0), stat_bonus=stats.TOUGHNESS, element=stats.RESIST_LIGHTNING, anim=animobs.Spark )
       ,), on_failure = (
         effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_LIGHTNING, anim=animobs.Spark )
-      ,) ), com_tar=targetarea.Line(reach=6), ai_tar=invocations.vs_enemy, mp_cost=5
+      ,) ), com_tar=targetarea.Line(reach=6), ai_tar=invocations.TargetEnemy(), mp_cost=5
     ), )
 
     def init_monster( self ):
@@ -568,7 +566,7 @@ class Ankheg( base.Monster ):
         effects.HealthDamage( (4,4,0), stat_bonus=None, element=stats.RESIST_ACID, anim=animobs.GreenExplosion )
       ,), on_failure = (
         effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_ACID, anim=animobs.GreenExplosion )
-      ,) ), com_tar=targetarea.Line(reach=5), ai_tar=invocations.vs_enemy, mp_cost=10
+      ,) ), com_tar=targetarea.Line(reach=5), ai_tar=invocations.TargetEnemy(), mp_cost=10
     ), )
     def init_monster( self ):
         self.levels.append( base.Defender( 2, self ) )
@@ -698,7 +696,7 @@ class Scarab( base.Monster ):
                 effects.HealthDamage( (1,4,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.PurpleExplosion )
         ,)),), on_false= (
             effects.NoEffect( anim=animobs.PurpleExplosion )
-        ,)), com_tar=targetarea.Cone(reach=4), ai_tar=invocations.vs_enemy, mp_cost=3
+        ,)), com_tar=targetarea.Cone(reach=4), ai_tar=invocations.TargetEnemy(), mp_cost=3
       ), )
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING,
      extra_effect=effects.OpposedRoll( att_stat=None, def_stat=stats.TOUGHNESS, on_success = (
@@ -771,7 +769,7 @@ class FireScorpion( base.Monster ):
             effects.Enchant( enchantments.BurnLowEn )
         ,), on_failure = (
             effects.HealthDamage( (2,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.Ignite )
-        ,) ), com_tar=targetarea.Line(reach=6), ai_tar=invocations.vs_enemy, mp_cost=12
+        ,) ), com_tar=targetarea.Line(reach=6), ai_tar=invocations.TargetEnemy(), mp_cost=12
       ), )
     ATTACK = items.Attack( (2,8,0), element = stats.RESIST_PIERCING,
      extra_effect=effects.OpposedRoll( att_stat=None, def_stat=stats.TOUGHNESS, on_success = (
@@ -902,7 +900,7 @@ class Unicorn( base.Monster ):
     ATTACK = items.Attack( (3,6,0), element = stats.RESIST_PIERCING )
     TECHNIQUES = ( invocations.MPInvocation( "Radiance",
         effects.HealthRestore( dice=(5,8,20) ),
-        mp_cost=7, com_tar=targetarea.SingleTarget(reach=10), ai_tar=invocations.vs_wounded_ally,
+        mp_cost=7, com_tar=targetarea.SingleTarget(reach=10), ai_tar=invocations.TargetWoundedAlly(),
         exp_tar=targetarea.SinglePartyMember(), shot_anim=animobs.YellowVortex ),
     )
     def init_monster( self ):
@@ -934,7 +932,7 @@ class Roc( base.Monster ):
             effects.HealthDamage( (3,6,0), stat_bonus=stats.TOUGHNESS, element=stats.RESIST_WIND, anim=animobs.Spiral )
         ,), on_failure = (
             effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_WIND, anim=animobs.Spiral )
-        ,) ), com_tar=targetarea.Cone(reach=4), ai_tar=invocations.vs_enemy, mp_cost=10
+        ,) ), com_tar=targetarea.Cone(reach=4), ai_tar=invocations.TargetEnemy(), mp_cost=10
       ), )
     def init_monster( self ):
         self.levels.append( base.Beast( 14, self ) )
@@ -999,7 +997,7 @@ class DragonTurtle( base.Monster ):
             effects.HealthDamage( (10,10,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.Steam )
         ,), on_failure = (
             effects.HealthDamage( (2,20,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.Steam )
-        ,) ), com_tar=targetarea.Cone(reach=8), ai_tar=invocations.vs_enemy, mp_cost=15
+        ,) ), com_tar=targetarea.Cone(reach=8), ai_tar=invocations.TargetEnemy(), mp_cost=15
       ), )
     def init_monster( self ):
         self.levels.append( base.Beast( 18, self ) )

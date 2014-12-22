@@ -104,7 +104,7 @@ class NovicePriest( base.Monster ):
     COMPANIONS = (NoviceWarrior,)
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_CRUSHING )
     TECHNIQUES = ( spells.waterspells.FREEZE_FOE, spells.airspells.SILENCE,
-        spells.airspells.SHOUT, spells.solarspells.MINOR_CURE )
+        spells.solarspells.BLESSING, spells.solarspells.MINOR_CURE )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 3, self ) )
 
@@ -124,7 +124,7 @@ class NoviceMage( base.Monster ):
     COMBAT_AI = aibrain.BasicTechnicalAI()
     COMPANIONS = (NovicePriest,NoviceWarrior)
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_CRUSHING )
-    TECHNIQUES = ( spells.firespells.FIRE_BOLT,
+    TECHNIQUES = ( spells.firespells.FIRE_BOLT, spells.lunarspells.CURSE,
         spells.magespells.FIRE_ARC, spells.lunarspells.SLEEP )
     def init_monster( self ):
         self.levels.append( base.Spellcaster( 3, self ) )
@@ -170,8 +170,8 @@ class NoviceDruid( base.Monster ):
     COMBAT_AI = aibrain.BasicTechnicalAI()
     COMPANIONS = (animals.Wolf,animals.BlackBear)
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_CRUSHING )
-    TECHNIQUES = ( spells.solarspells.MINOR_CURE, spells.firespells.BLINDING_FLASH,
-        spells.earthspells.ACID_BOLT )
+    TECHNIQUES = ( spells.solarspells.MINOR_CURE, spells.earthspells.CALL_CRITTER,
+        spells.earthspells.ACID_BOLT, spells.earthspells.BEASTLY_MIGHT )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 2, self ) )
         self.levels.append( base.Spellcaster( 2, self ) )
@@ -216,8 +216,8 @@ class Necromancer( base.Monster ):
     COMBAT_AI = aibrain.BasicTechnicalAI()
     COMPANIONS = (undead.Ghoul,undead.SkeletonWithMorningstar)
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_CRUSHING )
-    TECHNIQUES = ( spells.lunarspells.SLEEP, spells.necrospells.ACID_CLOUD,
-        spells.necrospells.TOUCH_OF_DEATH, spells.waterspells.WINTER_WIND )
+    TECHNIQUES = ( spells.lunarspells.ENERVATE, spells.necrospells.ACID_CLOUD,
+        spells.necrospells.TOUCH_OF_DEATH, spells.necrospells.RAISE_CORPSE )
     def init_monster( self ):
         self.levels.append( base.Spellcaster( 5, self ) )
 
@@ -234,7 +234,7 @@ class Warrior( base.Monster ):
      context.DES_CIVILIZED,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.MTY_LEADER )
     ENC_LEVEL = 5
-    TREASURE = treasuretype.Standard()
+    TREASURE = treasuretype.Standard((items.SWORD,))
     ATTACK = items.Attack( (1,10,0), element = stats.RESIST_SLASHING )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 5, self ) )
@@ -260,9 +260,9 @@ class Priest( base.Monster ):
     COMBAT_AI = aibrain.BasicTechnicalAI()
     COMPANIONS = (NoviceWarrior,NovicePriest,Warrior)
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_CRUSHING )
-    TECHNIQUES = ( spells.waterspells.FREEZE_FOE, spells.airspells.SILENCE,
-        spells.priestspells.HEALING_LIGHT, spells.solarspells.SUNRAY,
-        spells.waterspells.REGENERATION, spells.airspells.THUNDER_STRIKE )
+    TECHNIQUES = ( spells.waterspells.FREEZE_FOE, spells.priestspells.HEALING_LIGHT,
+        spells.solarspells.SUNRAY, spells.airspells.SILENCE,
+        spells.priestspells.HEROISM, spells.priestspells.ARMOR_OF_FAITH )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 6, self ) )
 
@@ -305,7 +305,7 @@ class Ranger( base.Monster ):
         effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_PIERCING, anim=animobs.RedBoom )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.vs_enemy
+      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.TargetEnemy()
     ), spells.earthspells.EARTHBIND )
 
     def init_monster( self ):
@@ -326,7 +326,7 @@ class Conjuoror( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 10
     HABITAT = ( context.HAB_EVERY, context.HAB_BUILDING, context.SET_EVERY,
-     context.DES_CIVILIZED, context.DES_LUNAR,
+     context.DES_CIVILIZED, context.DES_LUNAR, context.DES_FIRE,
      context.MTY_HUMANOID, context.MTY_MAGE )
     ENC_LEVEL = 7
     TREASURE = treasuretype.HighItems( ( items.scrolls.Rank3Scroll, items.scrolls.Rank4Scroll ) )
@@ -361,13 +361,13 @@ class Executioner( base.Monster ):
         self.levels.append( base.Humanoid( 6, self ) )
 
 # Lieutenant - Sprite 11
+# Druid - Sprite 6
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  8   ***
 #  *******************************
 
 # Crusader - Get knightly sprite, PRIEST+WARRIOR, Sprite 21
-# Druid - Sprite 6
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  9   ***
@@ -411,7 +411,7 @@ class Healer( base.Monster ):
                     effects.HealthDamage( (3,12,0), stat_bonus=stats.CHARISMA, element=stats.RESIST_WATER, anim=animobs.Bubbles ),
                 )),
             )), shot_anim=animobs.BlueComet, com_tar=targetarea.Blast(radius=3),
-            ai_tar=invocations.vs_enemy, mp_cost=12 )
+            ai_tar=invocations.TargetEnemy(), mp_cost=12 )
         )
     def init_monster( self ):
         self.levels.append( base.Spellcaster( 6, self ) )

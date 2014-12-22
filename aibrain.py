@@ -27,17 +27,7 @@ class BasicAI( object ):
 
     def invoke_from_here( self, explo, comba, chara, redraw ):
         # self.tech must have already been set.
-        target = None
-        if self.tech.com_tar.AUTOMATIC:
-            target = chara.pos
-        else:
-            candidates = list()
-            legal_tiles = self.tech.com_tar.get_targets( explo.camp, chara.pos )
-            for m in explo.scene.contents:
-                if self.tech.ai_tar( explo.camp, chara, m ) > 0 and m.pos in legal_tiles and not m.hidden:
-                    candidates.append( m.pos )
-            if candidates:
-                target = random.choice( candidates )
+        target = self.tech.ai_tar.get_target( explo.camp, chara, self.tech )
         if target:
             if target and self.tech.shot_anim:
                 shot = self.tech.shot_anim( chara.pos, target )
@@ -53,7 +43,6 @@ class BasicAI( object ):
             explo.invoke_technique( self.tech, chara, self.tech.com_tar.get_area( explo.camp,chara.pos,target), opening_anim = shot, delay_point = delay_point )
             comba.end_turn( chara )
             return True
-
 
     def get_attack_map( self, explo, chara, reach ):
         """Return the attack positions and hotmap for this character."""
@@ -85,59 +74,48 @@ class BasicAI( object ):
         comba = explo.camp.fight
         redraw = redraw or explo.view
         did_action = False
-
         explo.view.overlays.clear()
-
         while comba.ap_spent[ chara ] < chara.get_move() and chara.is_alright():
             result = comba.step( explo, chara, hmap )
             if result or ( chara.pos in act_positions and comba.ap_spent[ chara ] >= chara.get_move() ):
                 if chara.is_alright():
                     did_action = action( explo, comba, chara, redraw )
                 break
-
             redraw( explo.screen )
             pygame.display.flip()
             pygwrap.anim_delay()
-
         return did_action
-
-    def get_tech_map( self, explo, chara, reach ):
+    def get_tech_map( self, explo, chara, attack_positions ):
         """Return the attack positions and hotmap for this character."""
         comba = explo.camp.fight
-        attack_positions = set()
         if self.AVOID_THREAT:
             expensive_points = comba.get_threatened_area( chara )
         else:
             expensive_points = set()
-
-        # Add the targets.
-        for m in explo.scene.contents:
-            if self.tech.ai_tar( explo.camp, chara, m ) > 0 and not m.hidden:
-                attack_positions.update( pfov.AttackReach( explo.scene, m.pos[0], m.pos[1], reach ).tiles )
-            elif isinstance( m, enchantments.Field ) and self.AVOID_FIELDS:
-                expensive_points.add( m.pos )
-
         # Remove models from goal squares to prevent weird behavior.
         for m in explo.scene.contents:
             if explo.scene.is_model(m) and m.pos in attack_positions and m is not chara:
                 attack_positions.remove( m.pos )
-
+            elif isinstance( m, enchantments.Field ) and self.AVOID_FIELDS:
+                expensive_points.add( m.pos )
         hmap = hotmaps.HotMap( explo.scene, attack_positions, avoid_models=True, expensive=expensive_points )
-
-        return (attack_positions,hmap)
-
+        return hmap
     def try_technique_use( self, explo, chara, redraw=None ):
-        techs = chara.get_invocations( True )
-        if techs:
-            tech = random.choice( techs )
-            if tech.ai_tar and tech.can_be_invoked( chara, True ):
-                self.tech = tech
-                if tech.com_tar.AUTOMATIC:
-                    return self.invoke_from_here(explo, explo.camp.fight, chara, redraw )
-                else:
-                    ap,hmap = self.get_tech_map( explo, chara, tech.com_tar.reach )
-                    return self.move_for_action( explo, chara, self.invoke_from_here, ap, hmap, redraw )
-
+        candidates = chara.get_invocations( True )
+        acted = False
+        if candidates:
+            random.shuffle( candidates )
+            for tech in candidates:
+                if tech.ai_tar and tech.can_be_invoked( chara, True ):
+                    attack_positions = tech.ai_tar.get_invocation_positions( explo.camp, chara, tech )
+                    if attack_positions:
+                        # We have potential targets. Create the movement map.
+                        hmap = self.get_tech_map( explo, chara, attack_positions )
+                        # Attempt to move into position.
+                        self.tech = tech
+                        acted = self.move_for_action( explo, chara, self.invoke_from_here, attack_positions, hmap, redraw )
+                        break
+        return acted
     def act( self, explo, chara, redraw=None ):
         if random.randint(1,100) <= self.TECHNIQUE_CHANCE:
             acted = self.try_technique_use( explo, chara, redraw )

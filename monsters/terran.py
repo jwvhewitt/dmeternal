@@ -106,7 +106,7 @@ class EarthElemental( base.Monster ):
                 effects.HealthDamage( (1,12,0), stat_bonus=None, element=stats.RESIST_CRUSHING, anim=animobs.RedBoom )
             ,) )
         ,) ), mp_cost=15, com_tar=targetarea.SelfCentered(radius=8,delay_from=-1,exclude_middle=True),
-        ai_tar=invocations.vs_enemy ),
+        ai_tar=invocations.TargetEnemy() ),
     )
 
     def init_monster( self ):

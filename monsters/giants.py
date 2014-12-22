@@ -51,7 +51,7 @@ class BarbarianScout( base.Monster ):
         effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_PIERCING, anim=animobs.RedBoom )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.vs_enemy
+      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.TargetEnemy()
     ), )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 2, self ) )
@@ -118,7 +118,7 @@ class BarbarianChief( base.Monster ):
         effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_PIERCING, anim=animobs.RedBoom )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.vs_enemy
+      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.TargetEnemy()
     ), )
     COMPANIONS = ( Barbarian,BarbarianScout,Berserker )
     LONER = True
@@ -206,7 +206,7 @@ class OgreLeader( base.Monster ):
         effects.HealthDamage( (1,10,2), stat_bonus=None, element=stats.RESIST_CRUSHING, anim=animobs.RedBoom )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=6), shot_anim=animobs.SlingStone, ai_tar=invocations.vs_enemy
+      ,) ), com_tar=targetarea.SingleTarget(reach=6), shot_anim=animobs.SlingStone, ai_tar=invocations.TargetEnemy()
     ), )
     COMPANIONS = ( Ogre, OgreChamp, OgreShaman )
     ATTACK = items.Attack( (4,4,0), element = stats.RESIST_CRUSHING )
@@ -278,7 +278,7 @@ class HillGiant( base.Monster ):
         effects.HealthDamage( (2,8,0), stat_bonus=None, element=stats.RESIST_CRUSHING, anim=animobs.RedBoom )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.SlingStone, ai_tar=invocations.vs_enemy
+      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.SlingStone, ai_tar=invocations.TargetEnemy()
     ), )
 
     def init_monster( self ):
@@ -306,7 +306,7 @@ class StoneGiant( base.Monster ):
         effects.HealthDamage( (2,8,0), stat_bonus=None, element=stats.RESIST_CRUSHING, anim=animobs.RedBoom )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=9), shot_anim=animobs.SlingStone, ai_tar=invocations.vs_enemy
+      ,) ), com_tar=targetarea.SingleTarget(reach=9), shot_anim=animobs.SlingStone, ai_tar=invocations.TargetEnemy()
     ), )
 
     def init_monster( self ):
@@ -332,7 +332,7 @@ class FrostGiant( base.Monster ):
         effects.HealthDamage( (2,10,0), stat_bonus=None, element=stats.RESIST_CRUSHING, anim=animobs.RedBoom )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=9), shot_anim=animobs.SlingStone, ai_tar=invocations.vs_enemy
+      ,) ), com_tar=targetarea.SingleTarget(reach=9), shot_anim=animobs.SlingStone, ai_tar=invocations.TargetEnemy()
     ), )
 
     def init_monster( self ):
@@ -358,7 +358,7 @@ class FireGiant( base.Monster ):
         effects.HealthDamage( (2,10,0), stat_bonus=None, element=stats.RESIST_CRUSHING, anim=animobs.RedBoom )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=10), shot_anim=animobs.SlingStone, ai_tar=invocations.vs_enemy
+      ,) ), com_tar=targetarea.SingleTarget(reach=10), shot_anim=animobs.SlingStone, ai_tar=invocations.TargetEnemy()
     ), )
 
     def init_monster( self ):

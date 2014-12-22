@@ -28,7 +28,7 @@ MAGIC_STORE = ( items.SCROLL, items.SCROLL, items.SCROLL, items.SCROLL, items.SC
     items.POTION, items.HOLYSYMBOL, items.WAND )
 
 class Shop( object ):
-    def __init__( self, ware_types = GENERAL_STORE, allow_misc=True, allow_magic=False, caption="Shop", magic_chance=20, rank=3, num_items=25 ):
+    def __init__( self, ware_types = GENERAL_STORE, allow_misc=True, allow_magic=False, caption="Shop", magic_chance=20, rank=3, num_items=25, turnover=1 ):
         self.wares = list()
         self.ware_types = ware_types
         self.allow_misc = allow_misc
@@ -37,6 +37,7 @@ class Shop( object ):
         self.caption = caption
         self.rank = rank
         self.num_items = num_items
+        self.turnover = turnover
         self.last_updated = -1
 
     def generate_item( self, itype, rank ):
@@ -56,7 +57,7 @@ class Shop( object ):
         # there's at least one item of every ware_type, and then fill up the
         # store to full capacity.
         days = explo.camp.day - self.last_updated
-        for n in range( random.randint(1,6) + days ):
+        for n in range( max( 3, ( random.randint(1,6) + days ) * self.turnover )):
             if self.wares:
                 it = random.choice( self.wares )
                 self.wares.remove( it )

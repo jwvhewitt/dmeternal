@@ -15,13 +15,14 @@ FIRE_BOLT = Spell( "Fire Bolt",
         effects.HealthDamage( (1,8,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion )
     ,), on_failure = (
         effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion )
-    ,) ), rank=1, gems={FIRE:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.FireBolt, ai_tar=invocations.vs_enemy,
+    ,) ), rank=1, gems={FIRE:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.FireBolt, ai_tar=invocations.TargetEnemy(),
     mpfudge=-1 )
 
 BURNING_WEAPON = Spell( "Burning Weapon",
     "Magical flames burst from an ally's weapon, causing an extra 1-6 points of damge per hit. This effect lasts until the end of combat.",
     effects.Enchant( enchantments.FireWepEn, anim=animobs.RedSparkle ),
-    rank=1, gems={FIRE:1}, com_tar=targetarea.SinglePartyMember() )
+    rank=1, gems={FIRE:1}, com_tar=targetarea.SinglePartyMember(),
+    ai_tar=invocations.TargetAllyWithoutEnchantment(enchantments.FireWepEn) )
 
 # CIRCLE 2
 
@@ -32,7 +33,7 @@ BLINDING_FLASH = Spell( "Blinding Flash",
         effects.OpposedRoll( att_modifier=-20, on_success = (
             effects.Paralyze( max_duration = 2 )
         ,) )
-    ) ), rank=2, gems={FIRE:2}, com_tar=targetarea.SelfCentered(radius=4), ai_tar=invocations.vs_enemy )
+    ) ), rank=2, gems={FIRE:2}, com_tar=targetarea.SelfCentered(radius=4), ai_tar=invocations.TargetEnemy() )
 
 IGNITE = Spell( "Ignite",
     "You touch one opponent, causing them to burst into flame. The target suffers 2d5 fire damage and may continue burning.",
@@ -41,7 +42,7 @@ IGNITE = Spell( "Ignite",
         effects.Enchant( enchantments.BurnLowEn )
     ,), on_failure = (
         effects.HealthDamage( (2,5,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.Ignite )
-    ,) ), rank=2, gems={FIRE:1}, com_tar=targetarea.SingleTarget(reach=1),ai_tar=invocations.vs_enemy, mpfudge=-1 )
+    ,) ), rank=2, gems={FIRE:1}, com_tar=targetarea.SingleTarget(reach=1),ai_tar=invocations.TargetEnemy(), mpfudge=-1 )
 
 # CIRCLE 3
 
@@ -51,7 +52,7 @@ EXPLOSION = Spell( "Explosion",
         effects.HealthDamage( (2,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.RedCloud )
     ,), on_failure = (
         effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.RedCloud )
-    ,) ), rank=3, gems={FIRE:2}, com_tar=targetarea.Blast(radius=3), shot_anim=animobs.Fireball, ai_tar=invocations.vs_enemy )
+    ,) ), rank=3, gems={FIRE:2}, com_tar=targetarea.Blast(radius=3), shot_anim=animobs.Fireball, ai_tar=invocations.TargetEnemy() )
 
 # CIRCLE 4
 
@@ -61,7 +62,7 @@ PYROTECHNICS = Spell( "Pyrotechnics",
         effects.HealthDamage( (4,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.Ignite )
     ,), on_failure = (
         effects.HealthDamage( (1,12,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.Ignite )
-    ,) ), rank=4, gems={FIRE:3}, com_tar=targetarea.Line(), ai_tar=invocations.vs_enemy )
+    ,) ), rank=4, gems={FIRE:3}, com_tar=targetarea.Line(), ai_tar=invocations.TargetEnemy() )
 
 
 
@@ -73,7 +74,7 @@ HEAT_WAVE = Spell( "Heat Wave",
         effects.HealthDamage( (6,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.DragonFire )
     ,), on_failure = (
         effects.HealthDamage( (3,6,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.DragonFire )
-    ,) ), rank=5, gems={FIRE:3}, com_tar=targetarea.Cone(), ai_tar=invocations.vs_enemy )
+    ,) ), rank=5, gems={FIRE:3}, com_tar=targetarea.Cone(), ai_tar=invocations.TargetEnemy() )
 
 
 # CIRCLE 6
@@ -81,7 +82,7 @@ HEAT_WAVE = Spell( "Heat Wave",
 CALL_FIRE_ELEMENTAL = Spell( "Call Fire Elemental",
     "This spell will call forth a living vortex of fire to serve you for the duration of combat.",
     effects.CallMonster( {context.DES_FIRE: True, context.SUMMON_ELEMENTAL: True }, 12, anim=animobs.RedSparkle ),
-    rank=6, gems={FIRE:3}, com_tar=targetarea.SingleTarget(reach=5), mpfudge = 12 )
+    rank=6, gems={FIRE:3}, com_tar=targetarea.SingleTarget(reach=5), ai_tar=invocations.TargetEmptySpot(), mpfudge = 12 )
 
 
 # CIRCLE SEVEN
@@ -92,7 +93,7 @@ DISINTEGRATION = Spell( "Disintegration",
         effects.HealthDamage( (10,10,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_ATOMIC, anim=animobs.Nuclear )
     ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
-    ,) ), rank=7, gems={FIRE:3}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.Fireball, ai_tar=invocations.vs_enemy )
+    ,) ), rank=7, gems={FIRE:3}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.Fireball, ai_tar=invocations.TargetEnemy() )
 
 
 # CIRCLE EIGHT
@@ -106,7 +107,7 @@ NUCLEAR = Spell( "Nuclear",
     ,), on_failure = (
         effects.HealthDamage( (10,6,0), stat_bonus=None, element=stats.RESIST_ATOMIC, anim=animobs.Nuclear )
     ,) ), rank=9, gems={FIRE:5}, com_tar=targetarea.Blast(radius=4), shot_anim=animobs.Fireball,
-    ai_tar=invocations.vs_enemy )
+    ai_tar=invocations.TargetEnemy() )
 
 
 

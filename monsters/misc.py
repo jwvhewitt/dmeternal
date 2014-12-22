@@ -50,7 +50,7 @@ class EvilEye( base.Monster ):
         effects.Paralyze( max_duration = 3 )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=4), shot_anim=animobs.PurpleVortex, ai_tar=invocations.vs_enemy, mp_cost=3
+      ,) ), com_tar=targetarea.SingleTarget(reach=4), shot_anim=animobs.PurpleVortex, ai_tar=invocations.TargetEnemy(), mp_cost=3
     ), )
     def init_monster( self ):
         self.levels.append( base.Beast( 3, self ) )
@@ -79,7 +79,7 @@ class Cockatrice( base.Monster ):
         effects.InstaKill( anim=animobs.CriticalHit )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=4), shot_anim=animobs.PurpleVortex, ai_tar=invocations.vs_enemy, mp_cost=4
+      ,) ), com_tar=targetarea.SingleTarget(reach=4), shot_anim=animobs.PurpleVortex, ai_tar=invocations.TargetEnemy(), mp_cost=4
     ), )
     def init_monster( self ):
         self.levels.append( base.Beast( 3, self ) )
@@ -111,7 +111,7 @@ class CorpseEater( base.Monster ):
             effects.NoEffect( anim=animobs.SmallBoom )
           ,) ),
           )
-      ), com_tar=targetarea.SelfCentered(radius=1,exclude_middle=True), ai_tar=invocations.vs_enemy, mp_cost=8 ), )
+      ), com_tar=targetarea.SelfCentered(radius=1,exclude_middle=True), ai_tar=invocations.TargetEnemy(), mp_cost=8 ), )
     def init_monster( self ):
         self.levels.append( base.Beast( 4, self ) )
 

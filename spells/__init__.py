@@ -11,6 +11,7 @@ import firespells
 import lunarspells
 import magespells
 import necrospells
+import otherspells
 import priestspells
 import solarspells
 import waterspells
@@ -30,6 +31,7 @@ harvest( firespells )
 harvest( lunarspells )
 harvest( magespells )
 harvest( necrospells )
+harvest( otherspells )
 harvest( priestspells )
 harvest( solarspells )
 harvest( waterspells )

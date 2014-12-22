@@ -80,14 +80,14 @@ class AirElemental( base.Monster ):
             effects.HealthDamage( (3,8,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_WIND, anim=animobs.Spiral )
         ,), on_failure = (
             effects.HealthDamage( (1,12,0), stat_bonus=None, element=stats.RESIST_WIND, anim=animobs.Spiral )
-        ,) ), mp_cost=10, com_tar=targetarea.Blast(radius=3), shot_anim=animobs.Whirlwind, ai_tar=invocations.vs_enemy ),
+        ,) ), mp_cost=10, com_tar=targetarea.Blast(radius=3), shot_anim=animobs.Whirlwind, ai_tar=invocations.TargetEnemy() ),
         invocations.MPInvocation( "Lightning Bolt",
         effects.OpposedRoll( def_stat=stats.REFLEXES, on_success = (
             effects.HealthDamage( (3,12,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_LIGHTNING, anim=animobs.BlueZap )
         ,), on_failure = (
             effects.HealthDamage( (2,10,0), stat_bonus=None, element=stats.RESIST_LIGHTNING, anim=animobs.BlueZap )
         ,) ), 
-        mp_cost=5, com_tar=targetarea.SingleTarget(), shot_anim=animobs.Lightning, ai_tar=invocations.vs_enemy )
+        mp_cost=5, com_tar=targetarea.SingleTarget(), shot_anim=animobs.Lightning, ai_tar=invocations.TargetEnemy() )
     )
     def init_monster( self ):
         self.levels.append( base.Beast( 12, self ) )

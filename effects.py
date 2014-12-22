@@ -255,6 +255,8 @@ class ManaDamage( NoEffect ):
             if self.stat_bonus and originator:
                 stat = ( originator.get_stat( self.stat_bonus ) - 11 ) // 2
                 dmg = max( dmg + stat , 1 )
+            # Mana damage cannot take the mana score below 0.
+            dmg = min( dmg, target.current_mp() )
             target.mp_damage += dmg
             anims.append( animobs.Caption( str(dmg), pos, delay=delay, color=(250,0,250) ) )
         return self.children

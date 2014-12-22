@@ -59,7 +59,7 @@ class GoblinArcher( base.Monster ):
         effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_PIERCING, anim=animobs.RedBoom )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.vs_enemy
+      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.TargetEnemy()
     ), )
 
     def init_monster( self ):
@@ -109,7 +109,7 @@ class GoblinPyromaniac( base.Monster ):
         ,), on_failure = (
             effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion )
         ,) ),
-        com_tar=targetarea.Blast(radius=1,reach=6), shot_anim=animobs.Fireball, ai_tar=invocations.vs_enemy ), )
+        com_tar=targetarea.Blast(radius=1,reach=6), shot_anim=animobs.Fireball, ai_tar=invocations.TargetEnemy() ), )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 3, self ) )
 
@@ -197,7 +197,7 @@ class GoblinRanger( base.Monster ):
         effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_PIERCING, anim=animobs.RedBoom )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.vs_enemy
+      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.TargetEnemy()
     ), spells.earthspells.EARTHBIND )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 5, self ) )
@@ -285,7 +285,7 @@ class GoblinSamurai( base.Monster ):
             effects.HealthDamage( (2,6,0), stat_bonus=stats.PIETY, element=stats.RESIST_FIRE, anim=animobs.RedCloud )
         ,), on_failure = (
             effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.RedCloud )
-        ,) ), com_tar=targetarea.Cone(reach=5), ai_tar=invocations.vs_enemy, mp_cost=6
+        ,) ), com_tar=targetarea.Cone(reach=5), ai_tar=invocations.TargetEnemy(), mp_cost=6
       ), spells.firespells.EXPLOSION )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 10, self ) )
@@ -353,19 +353,19 @@ class GoblinKing( base.Monster ):
         effects.HealthDamage( (3,8,0), stat_bonus=stats.PIETY, element=stats.RESIST_ACID, anim=animobs.GreenExplosion )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(), shot_anim=animobs.GreenComet, ai_tar=invocations.vs_enemy, mp_cost=1 ),
+      ,) ), com_tar=targetarea.SingleTarget(), shot_anim=animobs.GreenComet, ai_tar=invocations.TargetEnemy(), mp_cost=1 ),
      invocations.MPInvocation( "Fire Beam",
       effects.OpposedRoll( att_modifier=10, def_stat=stats.REFLEXES, on_success = (
         effects.HealthDamage( (3,8,0), stat_bonus=stats.PIETY, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(), shot_anim=animobs.Fireball, ai_tar=invocations.vs_enemy, mp_cost=1 ),
+      ,) ), com_tar=targetarea.SingleTarget(), shot_anim=animobs.Fireball, ai_tar=invocations.TargetEnemy(), mp_cost=1 ),
      invocations.MPInvocation( "Ice Beam",
       effects.OpposedRoll( att_modifier=10, def_stat=stats.REFLEXES, on_success = (
         effects.HealthDamage( (3,8,0), stat_bonus=stats.PIETY, element=stats.RESIST_COLD, anim=animobs.BlueExplosion )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(), shot_anim=animobs.BlueComet, ai_tar=invocations.vs_enemy, mp_cost=1 ),
+      ,) ), com_tar=targetarea.SingleTarget(), shot_anim=animobs.BlueComet, ai_tar=invocations.TargetEnemy(), mp_cost=1 ),
      )
     def init_monster( self ):
         self.levels.append( base.Leader( 13, self ) )
@@ -568,7 +568,7 @@ class OrcArcher( base.Monster ):
         effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_PIERCING, anim=animobs.RedBoom )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.vs_enemy
+      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.TargetEnemy()
     ), )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 4, self ) )

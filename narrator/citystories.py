@@ -90,7 +90,7 @@ class TheBlackMarket( Plot ):
         interior.name = random.choice( self.NAME_PATTERNS ).format( npc )
         int_mainroom.contents.append( npc )
         self.register_element( "BMKEEPER", npc )
-        self.shop = services.Shop( rank=self.rank+3, allow_magic=True )
+        self.shop = services.Shop( rank=self.rank+3, allow_magic=True, turnover=2 )
         self.add_sub_plot( nart, "SECRET_CONNECT", PlotState( elements={"PREV":locale,"NEXT":interior} ).based_on( self ) )
         self._still_looking = True
         return True

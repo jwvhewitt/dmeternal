@@ -12,12 +12,14 @@ CURSE = Spell( "Curse",
     "Decreases the physical attack score of enemies within 6 tiles by 5%. This effect lasts until the end of combat.",
     effects.TargetIsEnemy( on_true = (
         effects.Enchant( enchantments.CurseEn, anim=animobs.PurpleSparkle )
-    ,) ), rank=1, gems={LUNAR:1}, com_tar=targetarea.SelfCentered(), ai_tar=invocations.vs_enemy, mpfudge=-1 )
+    ,) ), rank=1, gems={LUNAR:1}, com_tar=targetarea.SelfCentered(), 
+    ai_tar=invocations.TargetEnemyWithoutEnchantment(enchantments.CurseEn), mpfudge=-1 )
 
 WIZARD_MISSILE = Spell( "Wizard Missile",
     "This mystic bolt always strikes its target for 1-6 damage.",
     effects.HealthDamage((1,6,0), stat_bonus=None, element=stats.RESIST_LUNAR, anim=animobs.PurpleExplosion ),
-    rank=1, gems={LUNAR:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.WizardMissile, ai_tar=invocations.vs_enemy, mpfudge=-2 )
+    rank=1, gems={LUNAR:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.WizardMissile,
+    ai_tar=invocations.TargetEnemy(), mpfudge=-2 )
 
 # CIRCLE TWO
 
@@ -27,7 +29,13 @@ SLEEP = Spell( "Sleep",
         effects.OpposedRoll( att_modifier=0, on_success = (
             effects.CauseSleep(),
         ))
-    ,) ), rank=2, gems={LUNAR:2}, com_tar=targetarea.Blast(radius=2), ai_tar=invocations.vs_enemy )
+    ,) ), rank=2, gems={LUNAR:2}, com_tar=targetarea.Blast(radius=2), ai_tar=invocations.TargetEnemy() )
+
+ENERVATE = Spell( "Enervate",
+    "A ray of negative energy strikes one opponent, draining 2-12 mana instantly.",
+    effects.ManaDamage((2,6,0), stat_bonus=stats.INTELLIGENCE, anim=animobs.PurpleExplosion ),
+    rank=2, gems={LUNAR:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.PurpleVortex, ai_tar=invocations.TargetEnemy(), mpfudge=-1 )
+
 
 # CIRCLE 3
 
@@ -35,15 +43,15 @@ SLEEP = Spell( "Sleep",
 # CIRCLE 4
 
 HELLBLAST = Spell( "Hellblast",
-    "Eldritch flames spew forth to damage targets for 3d6 dark damage. Those touched by the flames will be cursed for the remainder of combat.",
+    "Eldritch flames spew forth to damage targets for 3d6 dark damage. Those touched by the flames will have their energy drained.",
     effects.OpposedRoll( on_success = (
         effects.HealthDamage( (3,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_LUNAR, anim=animobs.PurpleExplosion ),
-        effects.Enchant( enchantments.CurseEn )
+        effects.ManaDamage((3,6,0), stat_bonus=stats.INTELLIGENCE ),
     ), on_failure = (
         effects.HealthDamage( (1,6,2), stat_bonus=None, element=stats.RESIST_LUNAR, anim=animobs.PurpleExplosion ),
-        effects.Enchant( enchantments.CurseEn )
+        effects.ManaDamage((1,8,0), stat_bonus=None ),
     ) ), rank=4, gems={LUNAR:2}, com_tar=targetarea.Cone(reach=8),
-    ai_tar=invocations.vs_enemy )
+    ai_tar=invocations.TargetEnemy() )
 
 
 # CIRCLE 5
@@ -54,7 +62,7 @@ DEEP_SLEEP = Spell( "Deep Sleep",
         effects.OpposedRoll( att_modifier=10, on_success = (
             effects.CauseSleep(),
         ))
-    ,) ), rank=5, gems={LUNAR:2}, com_tar=targetarea.Blast(radius=4), ai_tar=invocations.vs_enemy )
+    ,) ), rank=5, gems={LUNAR:2}, com_tar=targetarea.Blast(radius=4), ai_tar=invocations.TargetEnemy() )
 
 DEATH_RAY = Spell( "Death Ray",
     "This spells fires a bolt of negative energy which may kill a living target outright, or at least injure it severely.",
@@ -71,7 +79,7 @@ DEATH_RAY = Spell( "Death Ray",
                 effects.HealthDamage( (3,8,0), stat_bonus=None, element=stats.RESIST_LUNAR, anim=animobs.PurpleExplosion ), )
             ,),
         ),
-    ), rank=5, gems={LUNAR:4}, mpfudge=-3, com_tar=targetarea.SingleTarget(), shot_anim=animobs.PurpleVortex, ai_tar=invocations.vs_enemy )
+    ), rank=5, gems={LUNAR:4}, mpfudge=-3, com_tar=targetarea.SingleTarget(), shot_anim=animobs.PurpleVortex, ai_tar=invocations.TargetEnemy() )
 
 
 # CIRCLE 6
@@ -100,6 +108,6 @@ DEATH_SCREAM = Spell( "Death Scream",
                 ),
             ),
         ),)
-    ), rank=9, gems={LUNAR:6}, com_tar=targetarea.SelfCentered(radius=5, exclude_middle=True, delay_from=-1), ai_tar=invocations.vs_enemy )
+    ), rank=9, gems={LUNAR:6}, com_tar=targetarea.SelfCentered(radius=5, exclude_middle=True, delay_from=-1), ai_tar=invocations.TargetEnemy() )
 
 

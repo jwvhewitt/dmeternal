@@ -456,7 +456,7 @@ class ShieldOfBashing( Enhancer ):
             ))
         ,), on_failure = (
             effects.NoEffect( anim=animobs.SmallBoom )
-        ,) ), com_tar=targetarea.SingleTarget(reach=1),ai_tar=invocations.vs_enemy,mp_cost=3
+        ,) ), com_tar=targetarea.SingleTarget(reach=1),ai_tar=invocations.TargetEnemy(),mp_cost=3
       ), )
 
 class ShinyShield( Enhancer ):
@@ -605,7 +605,7 @@ class FireGlove( Enhancer ):
             effects.HealthDamage( (2,5,0), stat_bonus=stats.TOUGHNESS, element=stats.RESIST_FIRE, anim=animobs.RedCloud )
         ,), on_failure = (
             effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.RedCloud )
-        ,) ), com_tar=targetarea.Cone(reach=4), ai_tar=invocations.vs_enemy
+        ,) ), com_tar=targetarea.Cone(reach=4), ai_tar=invocations.TargetEnemy()
       ), )
 
 class StrengthGlove( Enhancer ):

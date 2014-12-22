@@ -103,16 +103,16 @@ class LivingPotion( base.Monster ):
         effects.HealthDamage( (2,6,0), stat_bonus=None, element=stats.RESIST_ACID, anim=animobs.GreenCloud )
       ,), on_failure = (
         effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_ACID, anim=animobs.GreenCloud )
-      ,) ), com_tar=targetarea.SingleTarget(), ai_tar=invocations.vs_enemy, shot_anim=animobs.GreenSpray, mp_cost=1 ),
+      ,) ), com_tar=targetarea.SingleTarget(), ai_tar=invocations.TargetEnemy(), shot_anim=animobs.GreenSpray, mp_cost=1 ),
     invocations.MPInvocation( "Poison Blast",
       effects.OpposedRoll( att_modifier=10, def_stat=stats.REFLEXES, on_success = (
         effects.HealthDamage( (2,6,0), stat_bonus=None, element=stats.RESIST_POISON, anim=animobs.PoisonCloud )
       ,), on_failure = (
         effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_POISON, anim=animobs.PoisonCloud )
-      ,) ), com_tar=targetarea.SingleTarget(), ai_tar=invocations.vs_enemy, shot_anim=animobs.GreenComet, mp_cost=1 ),
+      ,) ), com_tar=targetarea.SingleTarget(), ai_tar=invocations.TargetEnemy(), shot_anim=animobs.GreenComet, mp_cost=1 ),
     invocations.MPInvocation( "Healing Potion",
         effects.HealthRestore( dice=(3,8,0) ),
-        com_tar=targetarea.SingleTarget(reach=10), ai_tar=invocations.vs_wounded_ally,
+        com_tar=targetarea.SingleTarget(reach=10), ai_tar=invocations.TargetWoundedAlly(),
         exp_tar=targetarea.SinglePartyMember(), shot_anim=animobs.YellowVortex, mp_cost=1
        )
     )
@@ -179,7 +179,7 @@ class CreepingCoins( base.Monster ):
         effects.HealthDamage( (1,10,0), stat_bonus=None, element=stats.RESIST_COLD, anim=animobs.SnowCloud )
       ,), on_failure = (
         effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_COLD, anim=animobs.SnowCloud )
-      ,) ), com_tar=targetarea.Cone(reach=5), ai_tar=invocations.vs_enemy, mp_cost=1 ),
+      ,) ), com_tar=targetarea.Cone(reach=5), ai_tar=invocations.TargetEnemy(), mp_cost=1 ),
     )
     def init_monster( self ):
         self.levels.append( base.Defender( 6, self ) )
@@ -208,7 +208,7 @@ class AnimatedCandlestick( base.Monster ):
         effects.HealthDamage( (1,10,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.RedCloud ),
       ), on_failure = (
         effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.RedCloud ),
-      ) ), com_tar=targetarea.SingleTarget(), ai_tar=invocations.vs_enemy, shot_anim=animobs.Fireball, mp_cost=5 ),
+      ) ), com_tar=targetarea.SingleTarget(), ai_tar=invocations.TargetEnemy(), shot_anim=animobs.Fireball, mp_cost=5 ),
     )
     def init_monster( self ):
         self.levels.append( base.Beast( 6, self ) )
@@ -240,7 +240,7 @@ class LivingStatue( base.Monster ):
         effects.HealthDamage( (2,8,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion )
       ,), on_failure = (
         effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion )
-      ,) ), com_tar=targetarea.Line(), ai_tar=invocations.vs_enemy, mp_cost=1 ),
+      ,) ), com_tar=targetarea.Line(), ai_tar=invocations.TargetEnemy(), mp_cost=1 ),
     )
     def init_monster( self ):
         self.levels.append( base.Defender( 7, self ) )

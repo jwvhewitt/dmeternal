@@ -70,7 +70,8 @@ class Cultist( base.Monster ):
 class Hooligan( base.Monster ):
     name = "Hooligan"
     statline = { stats.STRENGTH: 12, stats.TOUGHNESS: 12, stats.REFLEXES: 12, \
-        stats.INTELLIGENCE: 6, stats.PIETY: 10, stats.CHARISMA: 5 }
+        stats.INTELLIGENCE: 6, stats.PIETY: 10, stats.CHARISMA: 5, \
+        stats.PHYSICAL_DEFENSE: -5 }
     SPRITENAME = "monster_chaos.png"
     FRAME = 14
     TEMPLATES = ()
@@ -80,6 +81,7 @@ class Hooligan( base.Monster ):
      context.DES_LUNAR,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_CHAOS )
     ENC_LEVEL = 2
+    COMPANIONS = (animals.MadDog,)
     ATTACK = items.Attack( (1,10,0), element = stats.RESIST_CRUSHING )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 2, self ) )
@@ -155,7 +157,7 @@ class Centaur( base.Monster ):
         effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_PIERCING, anim=animobs.RedBoom )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.vs_enemy
+      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.TargetEnemy()
     ), )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 2, self ) )
@@ -170,10 +172,56 @@ class Centaur( base.Monster ):
 
 # Earth, Water generally on evens
 
-# BEASTMAN (Lunar,Fighter)
-# CHAOS WARRIOR (Fighter)
+class Beastman( base.Monster ):
+    name = "Beastman"
+    statline = { stats.STRENGTH: 12, stats.TOUGHNESS: 14, stats.REFLEXES: 14, \
+        stats.INTELLIGENCE: 9, stats.PIETY: 6, stats.CHARISMA: 8 }
+    SPRITENAME = "monster_chaos.png"
+    FRAME = 3
+    TEMPLATES = ()
+    MOVE_POINTS = 12
+    TREASURE = treasuretype.Standard()
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.MAP_WILDERNESS,
+     context.DES_LUNAR,
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_CHAOS )
+    ENC_LEVEL = 4
+    COMPANIONS = (Hooligan,)
+    TECHNIQUES = ( invocations.MPInvocation( "Headbutt",
+        effects.PhysicalAttackRoll( att_stat=stats.STRENGTH, on_success = (
+            effects.HealthDamage( (1,10,0), stat_bonus=stats.STRENGTH, element=stats.RESIST_CRUSHING, stat_mod=2, anim=animobs.RedBoom ),
+            effects.OpposedRoll( att_skill=stats.PHYSICAL_ATTACK, def_stat=stats.TOUGHNESS, on_success = ( 
+                effects.Paralyze( max_duration = 3 ),
+            ))
+        ,), on_failure = (
+            effects.NoEffect( anim=animobs.SmallBoom )
+        ,) ), com_tar=targetarea.SingleTarget(reach=1),ai_tar=invocations.TargetEnemy(),mp_cost=5
+      ), )
+    ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 4, self ) )
+
+class ChaosMage( base.Monster ):
+    name = "Chaos Mage"
+    statline = { stats.STRENGTH: 10, stats.TOUGHNESS: 14, stats.REFLEXES: 12, \
+        stats.INTELLIGENCE: 14, stats.PIETY: 14, stats.CHARISMA: 12 }
+    SPRITENAME = "monster_chaos.png"
+    FRAME = 15
+    TEMPLATES = ()
+    MOVE_POINTS = 10
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.MTY_HUMANOID, context.MTY_MAGE, context.GEN_CHAOS )
+    ENC_LEVEL = 4
+    TREASURE = treasuretype.Standard( ( items.scrolls.Rank1Scroll, items.scrolls.Rank2Scroll ) )
+    COMBAT_AI = aibrain.BasicTechnicalAI()
+    COMPANIONS = (animals.MadDog,)
+    ATTACK = items.Attack( (1,4,0), element = stats.RESIST_PIERCING )
+    TECHNIQUES = ( spells.otherspells.CHAOS_BOLT, spells.lunarspells.WIZARD_MISSILE,
+        spells.solarspells.MODERATE_CURE )
+    def init_monster( self ):
+        self.levels.append( base.Spellcaster( 4, self ) )
+
 # CROSSBOWMAN (Earth,Fighter)
-# CHAOS MAGE (Mage)
 # (Water)
 
 #  *******************************
@@ -182,9 +230,57 @@ class Centaur( base.Monster ):
 
 # Fire, Air generally on odds
 
-# Blood Warrior (Fire,Fighter)
-# Death Dancer (Air,Fighter)
-# MUTANT (Lunar)
+class ChaosWarrior( base.Monster ):
+    name = "Chaos Warrior"
+    statline = { stats.STRENGTH: 14, stats.TOUGHNESS: 14, stats.REFLEXES: 12, \
+        stats.INTELLIGENCE: 12, stats.PIETY: 12, stats.CHARISMA: 12,
+        stats.NATURAL_DEFENSE: 15, stats.RESIST_POISON: 50 }
+    SPRITENAME = "monster_chaos.png"
+    FRAME = 13
+    TEMPLATES = ()
+    MOVE_POINTS = 8
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.MTY_LEADER,
+     context.GEN_CHAOS )
+    ENC_LEVEL = 5
+    COMPANIONS = (Beastman,Centaur,Heretic,animals.MadDog)
+    TREASURE = treasuretype.Standard( (items.AXE,items.HEAVY_ARMOR) )
+    ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 5, self ) )
+
+class MadMonk( base.Monster ):
+    name = "Mad Monk"
+    statline = { stats.STRENGTH: 12, stats.TOUGHNESS: 14, stats.REFLEXES: 16, \
+        stats.INTELLIGENCE: 12, stats.PIETY: 16, stats.CHARISMA: 10,
+        stats.NATURAL_DEFENSE: -10, stats.MAGIC_DEFENSE: 10 }
+    SPRITENAME = "monster_chaos.png"
+    FRAME = 7
+    TEMPLATES = ()
+    MOVE_POINTS = 10
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.MTY_PRIEST,
+     context.DES_FIRE,
+     context.GEN_CHAOS )
+    ENC_LEVEL = 5
+    TREASURE = treasuretype.Standard( (items.POTION,items.CLOTHES) )
+    TECHNIQUES = (invocations.MPInvocation( "Fire Soul",
+            effects.TargetIsAlly( on_true = (
+                effects.Enchant( enchantments.RegeneratEn, anim=animobs.RedCloud ),
+                effects.TargetIsDamaged( on_true= (
+                    effects.HealthRestore( dice=(2,6,0) ),
+                ))
+            ), on_false=(
+                effects.HealthDamage( (2,6,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.RedCloud ),
+            )), com_tar=targetarea.SelfCentered(radius=2,delay_from=-1),
+            ai_tar=invocations.TargetWoundedAlly(), mp_cost=25 ),
+        )
+    ATTACK = items.Attack( (1,8,0), element = stats.RESIST_CRUSHING,
+        extra_effect=effects.ManaDamage( (1,8,0), stat_bonus=None, anim=animobs.PurpleExplosion ) )
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 5, self ) )
+
+# Death Dancer (Air,Thief)
 
 class CentaurWarrior( base.Monster ):
     name = "Centaur Warrior"    
@@ -208,7 +304,7 @@ class CentaurWarrior( base.Monster ):
         effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_PIERCING, anim=animobs.RedBoom )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.vs_enemy
+      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.TargetEnemy()
     ), )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 5, self ) )
@@ -217,6 +313,29 @@ class CentaurWarrior( base.Monster ):
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  6   ***
 #  *******************************
+
+class Mutant( base.Monster ):
+    name = "Mutant"
+    statline = { stats.STRENGTH: 16, stats.TOUGHNESS: 22, stats.REFLEXES: 10, \
+        stats.INTELLIGENCE: 4, stats.PIETY: 12, stats.CHARISMA: 2,
+        stats.NATURAL_DEFENSE: -10, stats.PHYSICAL_ATTACK: 10 }
+    SPRITENAME = "monster_chaos.png"
+    FRAME = 8
+    TEMPLATES = ()
+    MOVE_POINTS = 8
+    TREASURE = treasuretype.Standard()
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.MAP_DUNGEON,
+     context.DES_LUNAR,
+     context.MTY_HUMANOID, context.MTY_BOSS,
+     context.GEN_CHAOS )
+    ENC_LEVEL = 6
+    LONER = True
+    COMPANIONS = (Beastman,MadMonk)
+    ATTACK = items.Attack( (2,6,0), element = stats.RESIST_CRUSHING )
+    def init_monster( self ):
+        self.levels.append( base.Terror( 6, self ) )
+
 
 # Chaos Knight
 # Bronze Knight (Earth)
@@ -242,7 +361,7 @@ class CentaurKnight( base.Monster ):
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.MAP_WILDERNESS,
      context.DES_SOLAR,
-     context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_CHAOS )
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.MTY_LEADER, context.GEN_CHAOS )
     ENC_LEVEL = 7
     TREASURE = treasuretype.Standard((items.ARROW,))
     COMBAT_AI = aibrain.BasicTechnicalAI()
@@ -253,7 +372,7 @@ class CentaurKnight( base.Monster ):
         effects.HealthDamage( (1,10,0), stat_bonus=stats.STRENGTH, element=stats.RESIST_PIERCING, anim=animobs.RedBoom )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=9), shot_anim=animobs.Arrow, ai_tar=invocations.vs_enemy
+      ,) ), com_tar=targetarea.SingleTarget(reach=9), shot_anim=animobs.Arrow, ai_tar=invocations.TargetEnemy()
     ), spells.solarspells.MAJOR_CURE, spells.solarspells.CURE_POISON )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 7, self ) )
@@ -267,7 +386,6 @@ class CentaurKnight( base.Monster ):
 # Chaos Sorceror
 # Plague Knight (Water)
 # Paragon (Earth)
-# Mad Monk
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  9   ***
@@ -305,7 +423,7 @@ class CentaurChampion( base.Monster ):
         effects.HealthDamage( (1,10,0), stat_bonus=stats.STRENGTH, element=stats.RESIST_PIERCING, anim=animobs.RedBoom )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=9), shot_anim=animobs.Arrow, ai_tar=invocations.vs_enemy
+      ,) ), com_tar=targetarea.SingleTarget(reach=9), shot_anim=animobs.Arrow, ai_tar=invocations.TargetEnemy()
     ), )
     def init_monster( self ):
         self.levels.append( base.Leader( 9, self ) )
@@ -361,7 +479,7 @@ class CentaurHero( base.Monster ):
         ,) )
       ,), on_failure = (
         effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_PIERCING, anim=animobs.RedBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=9), shot_anim=animobs.Arrow, ai_tar=invocations.vs_enemy
+      ,) ), com_tar=targetarea.SingleTarget(reach=9), shot_anim=animobs.Arrow, ai_tar=invocations.TargetEnemy()
     ), spells.solarspells.MAJOR_CURE, spells.solarspells.CURE_POISON )
     def init_monster( self ):
         self.levels.append( base.Leader( 11, self ) )

@@ -12,6 +12,23 @@ import teams
 import characters
 import random
 
+class TestEncounter( Plot ):
+    LABEL = "zzTEST_FEATURE"
+    def custom_init( self, nart ):
+        scene = self.elements.get("LOCALE")
+        mygen = nart.get_map_generator( scene )
+        room = mygen.DEFAULT_ROOM()
+        myteam = teams.Team(default_reaction=-999, rank=self.rank, 
+          strength=0, habitat=scene.get_encounter_request(), fac=scene.fac )
+        room.contents.append( myteam )
+        room.contents.append( monsters.chaos.MadMonk( myteam ) )
+        room.contents.append( waypoints.HealingFountain() )
+        mychest = waypoints.SmallChest()
+        mychest.stock(self.rank)
+        room.contents.append( mychest )
+        self.register_element( "_ROOM", room, dident="LOCALE" )
+        return True
+
 
 class SmallTreasureEncounter( Plot ):
     LABEL = "ENCOUNTER"
@@ -69,6 +86,25 @@ class LargeTreasureEncounter( Plot ):
         room.contents.append( mychest )
         self.register_element( "_ROOM", room, dident="LOCALE" )
         return True
+
+class WildAntagonists( Plot ):
+    LABEL = "ENCOUNTER"
+    @classmethod
+    def matches( self, pstate ):
+        """Requires the SCENE to exist."""
+        return ( pstate.elements.get("LOCALE")
+                and context.MAP_WILDERNESS in pstate.elements["LOCALE"].desctags )
+    def custom_init( self, nart ):
+        scene = self.elements.get("LOCALE")
+        mygen = nart.get_map_generator( scene )
+        room = mygen.DEFAULT_ROOM()
+        myhabitat=scene.get_encounter_request()
+        myhabitat[ context.MTY_HUMANOID ] = context.MAYBE
+        room.contents.append( teams.Team(default_reaction=-999, rank=self.rank, 
+          strength=100, habitat=scene.get_encounter_request(), fac=scene.fac ) )
+        self.register_element( "_ROOM", room, dident="LOCALE" )
+        return True
+
 
 class WildEncounter( Plot ):
     LABEL = "ENCOUNTER"

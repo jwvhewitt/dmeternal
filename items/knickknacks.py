@@ -17,7 +17,7 @@ class GemOfHolograms( Consumable ):
     cost_per_q = 600
     tech = invocations.Invocation( "Create Illusion",
         effects.CallMonster( {(context.HAB_EVERY,context.SET_EVERY): True}, 5, anim=animobs.BlueSparkle ),
-        com_tar=targetarea.SingleTarget(reach=5), exp_tar=None )
+        com_tar=targetarea.SingleTarget(reach=5), ai_tar=invocations.TargetEmptySpot(), exp_tar=None )
 
 
 class GemOfSeeing( Consumable ):

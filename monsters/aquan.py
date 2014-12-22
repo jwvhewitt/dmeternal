@@ -80,7 +80,7 @@ class WaterElemental( base.Monster ):
             effects.HealthDamage( (3,8,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_WATER, anim=animobs.Bubbles )
         ,), on_failure = (
             effects.HealthDamage( (1,12,0), stat_bonus=None, element=stats.RESIST_WATER, anim=animobs.Bubbles )
-        ,) ), mp_cost=10, com_tar=targetarea.Cone(), ai_tar=invocations.vs_enemy ),
+        ,) ), mp_cost=10, com_tar=targetarea.Cone(), ai_tar=invocations.TargetEnemy() ),
     )
     def init_monster( self ):
         self.levels.append( base.Beast( 12, self ) )

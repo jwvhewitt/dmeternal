@@ -289,8 +289,8 @@ class SmallChest( Waypoint ):
             self.gold = 0
         ix = exploration.InvExchange( explo.camp.party, self.contents, explo.view )
         ix( explo.screen )
-    def stock( self, hoard_rank=3 ):
-        self.gold,hoard = items.generate_hoard(hoard_rank,self.HOARD_AMOUNT)
+    def stock( self, hoard_rank=3, item_types=items.PREMIUM_TYPES ):
+        self.gold,hoard = items.generate_hoard(hoard_rank,self.HOARD_AMOUNT,item_types)
         self.contents += hoard
         if random.randint(1,500) < self.HOARD_AMOUNT:
             self.trap = traps.choose_trap( hoard_rank )
@@ -309,8 +309,8 @@ class Cart( SmallChest ):
     TILE = maps.Tile( None, None, maps.CART )
     ALT_DECOR = None
     HOARD_AMOUNT = 100
-    def stock( self, hoard_rank=3 ):
-        self.gold,hoard = items.generate_hoard(hoard_rank,self.HOARD_AMOUNT)
+    def stock( self, hoard_rank=3, item_types=items.PREMIUM_TYPES ):
+        self.gold,hoard = items.generate_hoard(hoard_rank,self.HOARD_AMOUNT,item_types)
         self.contents += hoard
 
 class Well( Waypoint ):
