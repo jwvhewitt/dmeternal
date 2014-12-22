@@ -492,7 +492,8 @@ class Explorer( object ):
             if hasattr( c, "condition" ) and c.condition:
                 self.invoke_enchantments( c )
 
-    def alert( self, txt ):
+    def alert( self, in_txt ):
+        txt = dialogue.personalize_text_for_narrator( self, in_txt )
         mydest = pygame.Rect( self.screen.get_width() // 2 - 200, self.screen.get_height()//2 - 100, 400, 200 )
         mytext = pygwrap.render_text( pygwrap.SMALLFONT, txt, 400 )
         mydest = mytext.get_rect( center = (self.screen.get_width() // 2, self.screen.get_height()//2) )

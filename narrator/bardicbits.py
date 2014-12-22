@@ -32,7 +32,8 @@ class BardicCaves( Plot ):
     def custom_init( self, nart ):
         """Load dungeon levels, and connect this dungeon to the adventure."""
         # Decide on a good name. Do this first in case we want to generate an antagonist
-        # or boss monster to include in the dungeon.
+        # or boss monster to include in the dungeon. The name generator will generate
+        # this antagonist, and it will be passed on to the levels of the dungeon.
         self.elements[ "ANTAGONIST" ] = False
         self.dname = self.gen_name()
         # Generate the levels
@@ -94,6 +95,7 @@ class AntagonisticTunnels( BardicCaves ):
 #  - To activate the chapter
 #  - To connect the next dungeon to the previous
 #  - Provide access to needed resources: shops, temple, etc.
+#  - Provide rumours regarding the previous/current chapter.
 
 
 class BC_DirectConnection( Plot ):
@@ -117,6 +119,8 @@ class BC_DirectConnection( Plot ):
         if self._ready:
             self.chapter.activate()
             self._ready = False
+            #explo.alert("[PORTENT]")
+            explo.alert("They say that a journey of a thousand miles begins with a single step. Today your journey begins as you prepare to leave the city of [city] and begin your adventure.")
 
         # Print message, activate chapter upon entering city the first time.
         if self.do_cutscene:
@@ -129,6 +133,20 @@ class BC_DirectConnection( Plot ):
 
             cutscene.roll_cutscene( explo, [cs1,] )
             #self.do_cutscene = False
+
+    def get_dialogue_grammar( self, npc, explo ):
+        if self.chapter.active:
+            dname = self.elements.get("DNAME")
+            mygram = {
+                "[RUMOUR]": ["[rumourleadin] there are [monsters] coming from the {}.".format( dname )],
+            }
+            city = self.elements["LOCALE"]
+            anti = self.elements.get( "ANTAGONIST" )
+            if anti:
+                mygram["[HOWAREYOU]"] = ["Heavens save {} from the {}.".format(city,anti),]
+                mygram["[RUMOUR]"].append( "[rumourleadin] {} lives in fear of the {}.".format( city, anti ) )
+            return mygram
+
 
 
 class BC_DwarvenCity( Plot ):
@@ -154,7 +172,7 @@ class BC_DwarvenCity( Plot ):
 
         # Create the guardian.
         btype = monsters.choose_monster_type(self.rank,self.rank+2,{(context.DES_EARTH,context.MTY_FIGHTER,context.MTY_CONSTRUCT):True,context.DES_EARTH:context.MAYBE})
-        boss = monsters.generate_boss( btype, self.rank+3 )
+        boss = self.register_element( "_BOSS", monsters.generate_boss( btype, self.rank+3 ) )
         interior.name = "{0}'s Lair".format( boss )
 
         # Connect to previous level.
@@ -210,6 +228,22 @@ class BC_DwarvenCity( Plot ):
             explo.alert( "You step into a bustling dwarven city." )
             self.chapter.activate()
             self._ready = False
+    def get_dialogue_grammar( self, npc, explo ):
+        dname = self.elements.get("DNAME")
+        city = self.elements.get("LOCALE")
+        monster = self.elements.get("_BOSS")
+        if self.chapter.prev and self.chapter.prev.active:
+            mygram = {
+                "[RUMOUR]": ["[rumourleadin] the dwarves of {} protect the world from {}.".format( city, dname ),
+                    "[rumourleadin] {} is now under siege from {} the {}.".format( city, monster, monster.monster_name )
+                    ],
+            }
+            return mygram
+        elif self.chapter.active:
+            mygram = {
+                "[RUMOUR]": ["[rumourleadin] beneath {} lies {}.".format( city, dname )],
+            }
+            return mygram
 
 class BC_AdvanceAgent( Plot ):
     # Fight an agent of next chapter's ANTAGONIST.
@@ -238,7 +272,7 @@ class BC_AdvanceAgent( Plot ):
         int_goalroom.contents.append( team )
 
         # Create the guardian.
-        boss = self.register_element( "ENEMY", monsters.generate_npc(team=team,upgrade=True,rank=self.rank+3) )
+        boss = self.register_element( "_BOSS", monsters.generate_npc(team=team,upgrade=True,rank=self.rank+3) )
         self.enemy_defeated = False
         interior.name = "{}'s Chamber".format( boss )
         int_goalroom.contents.append( boss )
@@ -253,17 +287,31 @@ class BC_AdvanceAgent( Plot ):
         sp = self.add_sub_plot( nart, "BARDIC_FRESHSTART" )
         self.register_element( "DESTINATION", sp.elements.get( "LOCALE" ) )
         return True
-
-    def ENEMY_DEATH( self, explo ):
+    def _BOSS_DEATH( self, explo ):
         self.enemy_defeated = True
-
     def t_COMBATOVER( self, explo ):
         if self.enemy_defeated:
             # Activate the resolution, whatever that is.
-            explo.alert( "You discover that {} was carrying a map leading to {}. That should be your next destination.".format(self.elements["ENEMY"],self.elements["DESTINATION"]) )
+            explo.alert( "You discover that {} was carrying a map leading to {}. That should be your next destination.".format(self.elements["_BOSS"],self.elements["DESTINATION"]) )
             explo.alert( "New world map location discovered." )
             self.chapter.activate()
             self.active = False
+    def get_dialogue_grammar( self, npc, explo ):
+        dname = self.elements.get("DNAME")
+        enemy = self.elements.get("ANTAGONIST")
+        olddname = self.elements["LAST_DUNGEON"].dname
+        monster = self.elements.get("_BOSS")
+        newloc = self.elements.get("DESTINATION")
+        if self.chapter.prev and self.chapter.prev.active:
+            mygram = {
+                "[RUMOUR]": ["[rumourleadin] the {} is in league with the {}.".format( olddname, enemy )],
+            }
+            return mygram
+        elif self.chapter.active:
+            mygram = {
+                "[RUMOUR]": ["[rumourleadin] the {} is near {}.".format( dname, newloc )],
+            }
+            return mygram
 
 
 #

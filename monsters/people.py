@@ -31,7 +31,7 @@ class Hurthling( base.Monster ):
     VOICE = dialogue.voice.HURTHISH
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
      context.MAP_WILDERNESS,
-     context.MTY_HUMANOID, context.MTY_THIEF )
+     context.MTY_HUMANOID, context.MTY_THIEF, context.GEN_KINGDOM )
     ENC_LEVEL = 1
     TREASURE = treasuretype.Low()
     ATTACK = items.Attack( (1,4,0), element = stats.RESIST_PIERCING )
@@ -55,7 +55,7 @@ class NoviceWarrior( base.Monster ):
     HABITAT = ( context.HAB_EVERY, context.HAB_BUILDING, context.SET_EVERY,
      context.DES_CIVILIZED,
      context.MTY_HUMANOID, context.MTY_FIGHTER,
-     context.GEN_CHAOS )
+     context.GEN_CHAOS, context.GEN_KINGDOM )
     ENC_LEVEL = 2
     TREASURE = treasuretype.Low()
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )
@@ -97,7 +97,7 @@ class NovicePriest( base.Monster ):
     MOVE_POINTS = 10
     HABITAT = ( context.HAB_EVERY, context.HAB_BUILDING, context.SET_EVERY,
      context.DES_CIVILIZED, context.DES_SOLAR, context.DES_AIR,
-     context.MTY_HUMANOID, context.MTY_PRIEST )
+     context.MTY_HUMANOID, context.MTY_PRIEST, context.GEN_KINGDOM )
     ENC_LEVEL = 3
     TREASURE = treasuretype.Standard( ( items.scrolls.Rank1Scroll, items.scrolls.Rank2Scroll ) )
     COMBAT_AI = aibrain.BasicTechnicalAI()
@@ -118,7 +118,7 @@ class NoviceMage( base.Monster ):
     MOVE_POINTS = 10
     HABITAT = ( context.HAB_EVERY, context.HAB_BUILDING, context.SET_EVERY,
      context.DES_CIVILIZED, context.DES_LUNAR, context.DES_FIRE,
-     context.MTY_HUMANOID, context.MTY_MAGE )
+     context.MTY_HUMANOID, context.MTY_MAGE, context.GEN_KINGDOM )
     ENC_LEVEL = 3
     TREASURE = treasuretype.Standard( ( items.scrolls.Rank1Scroll, items.scrolls.Rank2Scroll ) )
     COMBAT_AI = aibrain.BasicTechnicalAI()
@@ -232,7 +232,8 @@ class Warrior( base.Monster ):
     MOVE_POINTS = 8
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.DES_CIVILIZED,
-     context.MTY_HUMANOID, context.MTY_FIGHTER, context.MTY_LEADER )
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.MTY_LEADER,
+     context.GEN_KINGDOM )
     ENC_LEVEL = 5
     TREASURE = treasuretype.Standard((items.SWORD,))
     ATTACK = items.Attack( (1,10,0), element = stats.RESIST_SLASHING )
@@ -254,7 +255,7 @@ class Priest( base.Monster ):
     MOVE_POINTS = 10
     HABITAT = ( context.HAB_EVERY, context.HAB_BUILDING, context.SET_EVERY,
      context.DES_CIVILIZED, context.DES_SOLAR, context.MTY_LEADER,
-     context.MTY_HUMANOID, context.MTY_PRIEST )
+     context.MTY_HUMANOID, context.MTY_PRIEST, context.GEN_KINGDOM )
     ENC_LEVEL = 6
     TREASURE = treasuretype.HighItems( ( items.scrolls.Rank2Scroll, items.scrolls.Rank3Scroll, items.POTION ) )
     COMBAT_AI = aibrain.BasicTechnicalAI()
@@ -276,7 +277,7 @@ class Mercenary( base.Monster ):
     MOVE_POINTS = 10
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.MAP_DUNGEON,
-     context.MTY_HUMANOID, context.MTY_FIGHTER )
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_KINGDOM )
     ENC_LEVEL = 6
     TREASURE = treasuretype.Low( (items.POLEARM,items.LIGHT_ARMOR) )
     ATTACK = items.Attack( (2,6,0), element = stats.RESIST_SLASHING, reach=2 )
@@ -294,7 +295,7 @@ class Ranger( base.Monster ):
     MOVE_POINTS = 10
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
      context.MAP_WILDERNESS,
-     context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_NATURE )
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_NATURE, context.GEN_KINGDOM )
     ENC_LEVEL = 6
     TREASURE = treasuretype.Standard( ( items.ARROW, items.BOW ) )
     COMPANIONS = (NoviceDruid,)
@@ -327,7 +328,7 @@ class Conjuoror( base.Monster ):
     MOVE_POINTS = 10
     HABITAT = ( context.HAB_EVERY, context.HAB_BUILDING, context.SET_EVERY,
      context.DES_CIVILIZED, context.DES_LUNAR, context.DES_FIRE,
-     context.MTY_HUMANOID, context.MTY_MAGE )
+     context.MTY_HUMANOID, context.MTY_MAGE, context.GEN_KINGDOM )
     ENC_LEVEL = 7
     TREASURE = treasuretype.HighItems( ( items.scrolls.Rank3Scroll, items.scrolls.Rank4Scroll ) )
     COMBAT_AI = aibrain.BasicTechnicalAI()
@@ -352,7 +353,7 @@ class Executioner( base.Monster ):
     MOVE_POINTS = 8
     HABITAT = ( context.HAB_EVERY, context.SET_RENFAN,
      context.MTY_HUMANOID, context.MTY_BOSS,
-     context.MTY_FIGHTER )
+     context.MTY_FIGHTER, context.GEN_KINGDOM )
     ENC_LEVEL = 7
     TREASURE = treasuretype.Standard((items.AXE,))
     COMPANIONS = (Bushwhacker,)
@@ -392,7 +393,7 @@ class Healer( base.Monster ):
     MOVE_POINTS = 10
     HABITAT = ( context.HAB_EVERY, context.HAB_BUILDING, context.SET_EVERY,
      context.DES_CIVILIZED, context.DES_SOLAR, context.DES_WATER, context.MTY_BOSS,
-     context.MTY_HUMANOID, context.MTY_PRIEST )
+     context.MTY_HUMANOID, context.MTY_PRIEST, context.GEN_KINGDOM )
     ENC_LEVEL = 10
     TREASURE = treasuretype.HighItems( ( items.potions.PotionOfHealing, items.scrolls.Rank4Scroll, items.scrolls.Rank5Scroll ) )
     COMBAT_AI = aibrain.BasicTechnicalAI()

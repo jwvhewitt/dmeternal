@@ -394,5 +394,11 @@ def personalize_text_for_character( explo, speaker, msg ):
     speaker_voice = speaker.get_voice()
     return personalize_text( msg , speaker_voice, mygram )
 
-
+def personalize_text_for_narrator( explo, msg ):
+    mygram = grammar.base_grammar( None, None, explo )
+    for p in explo.camp.active_plots():
+        pgram = p.get_dialogue_grammar( None, explo )
+        if pgram:
+            grammar.absorb( mygram, pgram )
+    return convert_tokens( msg, mygram )
 

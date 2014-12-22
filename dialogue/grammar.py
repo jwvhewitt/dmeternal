@@ -149,6 +149,8 @@ GRAM_DATABASE = {
         ],
     "[pc]": ["[positive_adjective] adventurers", "adventurers"
         ],
+    "[PORTENT]": [ "The world is veiled in darkness.", "Dogs and cats, living together."
+        ],
     "[positive_adjective]": ["awesome","beautiful","bold","brave","cheerful",
         "good","happy","incredible","just","noble","perfect","smart", "virtuous",
         "gentle"

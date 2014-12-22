@@ -26,13 +26,14 @@ class Faction( object ):
 class AntagonistFaction( Faction ):
     # A random list of primary contexts for the antagonist faction...
     ANTAGONIST_PRIMARY = ( context.GEN_GIANT, context.GEN_GOBLIN, context.GEN_UNDEAD, context.GEN_DRAGON,
-        context.GEN_CHAOS, context.MTY_MAGE )
+        context.GEN_CHAOS, context.GEN_KINGDOM, context.MTY_MAGE )
     ANTAGONIST_SECONDARY = {
         context.GEN_CHAOS: ( context.DES_EARTH, context.DES_AIR, context.DES_FIRE, context.DES_WATER, context.MTY_FIGHTER, context.MTY_MAGE ),
+        context.GEN_DRAGON: ( context.DES_FIRE, context.DES_WATER, context.DES_EARTH, context.DES_AIR ),
         context.GEN_GIANT: ( context.DES_EARTH, context.MTY_FIGHTER ),
         context.GEN_GOBLIN: ( context.MTY_FIGHTER, context.MTY_THIEF, context.DES_FIRE, context.DES_LUNAR ),
+        context.GEN_KINGDOM: ( context.MTY_FIGHTER, context.MTY_MAGE, context.MTY_PRIEST ),
         context.GEN_UNDEAD: ( context.DES_LUNAR, context.DES_EARTH, context.DES_AIR ),
-        context.GEN_DRAGON: ( context.DES_FIRE, context.DES_WATER, context.DES_EARTH, context.DES_AIR ),
         context.MTY_MAGE: ( context.DES_LUNAR, context.DES_FIRE, context.GEN_CHAOS ),
     }
     RANDOM_SECONDARY = (
@@ -42,8 +43,9 @@ class AntagonistFaction( Faction ):
     ANTAGONIST_ORG = {
         context.GEN_CHAOS: [ "Cabal","Citadel","Cult","Warband" ],
         context.GEN_DRAGON: [ "Dragons","Wings" ],
-        context.GEN_GIANT: [ "Clan","Tribe","Marauders" ],
+        context.GEN_GIANT: [ "Clan","Tribe","Marauders","Ogres","Giants" ],
         context.GEN_GOBLIN: [ "Goblins","Orcs","Raiders","Ravagers","Boyz" ],
+        context.GEN_KINGDOM: [ "Kingdom", "Lords" ],
         context.GEN_UNDEAD: [ "Spirits","Dead","Ghosts" ],
         context.MTY_FIGHTER: [ "Legion","Army","Warriors" ],
         context.MTY_MAGE: [ "Adepts","Order","Coven","Wizards" ],
@@ -52,8 +54,8 @@ class AntagonistFaction( Faction ):
     }
     ANTAGONIST_ADJECTIVE = {
         context.DES_AIR: [ "Blue","Sky" ],
-        context.DES_FIRE: [ "Burning","Red" ],
-        context.DES_EARTH: [ "Stone","Deep" ],
+        context.DES_FIRE: [ "Fiery","Red" ],
+        context.DES_EARTH: [ "Stone","Deep","Grim" ],
         context.DES_LUNAR: [ "Dark","Dreadful","Unholy" ],
         context.DES_SOLAR: [ "Bright","Silver","Holy" ],
         context.DES_WATER: [ "Blue","Sea" ],
@@ -61,6 +63,7 @@ class AntagonistFaction( Faction ):
         context.GEN_DRAGON: [ "Golden","Ancient","Proud" ],
         context.GEN_GIANT: [ "Savage","Brutal" ],
         context.GEN_GOBLIN: [ "Bloody","Hard","Green" ],
+        context.GEN_KINGDOM: [ "Royal", "Regal" ],
         context.GEN_UNDEAD: [ "Vengeful","Restless" ],
         context.MTY_FIGHTER: [ "Mighty", "Iron" ],
         context.MTY_MAGE: [ "Unknown", "Mystic" ],
@@ -72,6 +75,7 @@ class AntagonistFaction( Faction ):
         context.GEN_DRAGON: [ "Rage","Claw","Lair" ],
         context.GEN_GIANT: [ "Mountains","Fist" ],
         context.GEN_GOBLIN: [ "Tooth","Axe","Skull" ],
+        context.GEN_KINGDOM: [ "Crown", "Tyrant", "King", "Queen" ],
         context.GEN_UNDEAD: [ "Tomb","Crypt" ],
         context.MTY_FIGHTER: [ "Sword", "Blade" ],
         context.MTY_MAGE: [ "Staff", "Tome", "Rune" ],
@@ -80,7 +84,8 @@ class AntagonistFaction( Faction ):
     }
     ANTAGONIST_VOICE = {
         context.GEN_GOBLIN: namegen.ORC,
-        context.GEN_DRAGON: namegen.DRAGON
+        context.GEN_DRAGON: namegen.DRAGON,
+        context.GEN_KINGDOM: namegen.DEFAULT,
     }
     NAME_PATTERN = (
         "{org} of the {adjective} {icon}",
