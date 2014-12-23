@@ -405,7 +405,7 @@ class WildernessInn( Plot ):
         exterior.special_c[ "window" ] = maps.SMALL_WINDOW
         exterior.special_c[ "sign1" ] = maps.DRINK_SIGN
         self.register_element( "_EXTERIOR", exterior, dident="LOCALE" )
-        interior = maps.Scene( 50,50, sprites={maps.SPRITE_FLOOR: "terrain_floor_wood.png" },
+        interior = maps.Scene( 50,50, sprites={maps.SPRITE_WALL: "terrain_wall_wood.png",maps.SPRITE_FLOOR: "terrain_floor_wood.png" },
             biome=context.HAB_BUILDING, setting=self.setting, desctags=(context.DES_CIVILIZED,) )
         igen = randmaps.BuildingScene( interior )
         gate_1 = waypoints.GateDoor()

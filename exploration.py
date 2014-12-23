@@ -492,8 +492,9 @@ class Explorer( object ):
             if hasattr( c, "condition" ) and c.condition:
                 self.invoke_enchantments( c )
 
-    def alert( self, in_txt ):
-        txt = dialogue.personalize_text_for_narrator( self, in_txt )
+    def alert( self, txt, use_grammar=True ):
+        if use_grammar:
+            txt = dialogue.personalize_text_for_narrator( self, txt )
         mydest = pygame.Rect( self.screen.get_width() // 2 - 200, self.screen.get_height()//2 - 100, 400, 200 )
         mytext = pygwrap.render_text( pygwrap.SMALLFONT, txt, 400 )
         mydest = mytext.get_rect( center = (self.screen.get_width() // 2, self.screen.get_height()//2) )
@@ -867,6 +868,8 @@ class Explorer( object ):
                 mymenu.add_item( t.menu_str(), t )
             mymenu.sort()
             mymenu.add_alpha_keys()
+            mymenu.add_item( "-----", False )
+            mymenu.add_item( "View Inventory", 6 )
         else:
             # Add the characters.
             for pc in self.camp.party:
@@ -895,6 +898,8 @@ class Explorer( object ):
         elif choice == 5:
             self.camp.save(self.screen)
             self.no_quit = False
+        elif choice == 6:
+            self.view_party( self.camp.party.index( pc ) )
 
         elif choice in self.camp.party:
             # Picked a PC. Cast one of their spells.
@@ -988,6 +993,9 @@ class Explorer( object ):
                         self.field_camp()
                     elif gdi.unicode == u"s":
                         services.SpellManager()(self)
+                    elif gdi.unicode == u"h" or gdi.unicode == u"?" or gdi.key == pygame.K_F1:
+                        self.alert("HELP\n ==== \n 1-4 View party member\n Q Quit and save\n c Center view\n M View map\n R Rest\n s Manage spells",False)
+
                     elif gdi.unicode == u"*":
                         for pc in self.camp.party:
                             pc.xp += 1000

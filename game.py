@@ -34,7 +34,7 @@ import glob
 import random
 import chargen
 
-VERSION_ID = "0.2.0 Alpha"
+VERSION_ID = "0.3.0 Alpha"
 
 
 class PosterRedraw( object ):
@@ -135,8 +135,8 @@ if __name__=='__main__':
 
     rpm.add_item( "Create Character", chargen.make_and_save_character )
     rpm.add_item( "Load Campaign", load_campaign )
-    rpm.add_item( "Start Campaign", default_start_campaign )
-    rpm.add_item( "Start Bardic Campaign", bardic_start_campaign )
+    rpm.add_item( "Start New Campaign", bardic_start_campaign )
+    rpm.add_item( "Start Gen1 Campaign", default_start_campaign )
     rpm.add_item( "Browse Characters", campaign.browse_pcs )
     rpm.add_item( "Quit Game", None )
 
@@ -145,6 +145,8 @@ if __name__=='__main__':
         cmd = rpm.query()
         if cmd:
             cmd( screen )
+        if pygwrap.GOT_QUIT:
+            break
 
 
 
