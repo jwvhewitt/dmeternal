@@ -30,7 +30,7 @@ class RNC_GeneralMerchant( Plot ):
         return pstate.elements.get("NPC")
     def custom_init( self, nart ):
         # Add a shop.
-        self.shop = self.register_element( "SHOPSERVICE", services.Shop( ware_types=services.MINIMAL_STORE, rank=self.rank+3,
+        self.shop = self.register_element( "SHOPSERVICE", services.Shop( ware_types=services.MINIMAL_STORE, rank=self.rank+6,
          allow_misc=True, allow_magic=True, num_items=10 ) )
         self.first_time = True
         return True
@@ -61,7 +61,7 @@ class RNC_WeaponMerchant( Plot ):
             and isinstance( pstate.elements["NPC"].mr_level, self.ALLOWED_JOBS ) )
     def custom_init( self, nart ):
         # Add a shop.
-        self.shop = self.register_element( "SHOPSERVICE", services.Shop( ware_types=services.WEAPON_STORE, rank=self.rank+3,
+        self.shop = self.register_element( "SHOPSERVICE", services.Shop( ware_types=services.WEAPON_STORE, rank=self.rank+6,
          allow_misc=False, allow_magic=True, num_items=10 ) )
         self.first_time = True
         return True
@@ -91,7 +91,7 @@ class RNC_ArmorMerchant( Plot ):
             and isinstance( pstate.elements["NPC"].mr_level, self.ALLOWED_JOBS ) )
     def custom_init( self, nart ):
         # Add a shop.
-        self.shop = self.register_element( "SHOPSERVICE", services.Shop( ware_types=services.ARMOR_STORE, rank=self.rank+3,
+        self.shop = self.register_element( "SHOPSERVICE", services.Shop( ware_types=services.ARMOR_STORE, rank=self.rank+7,
          allow_misc=False, allow_magic=True, num_items=10 ) )
         self.first_time = True
         return True
@@ -121,7 +121,7 @@ class RNC_MagicMerchant( Plot ):
             and isinstance( pstate.elements["NPC"].mr_level, self.ALLOWED_JOBS ) )
     def custom_init( self, nart ):
         # Add a shop.
-        self.shop = self.register_element( "SHOPSERVICE", services.Shop( ware_types=services.MAGIC_STORE, rank=self.rank+3,
+        self.shop = self.register_element( "SHOPSERVICE", services.Shop( ware_types=services.MAGIC_STORE, rank=self.rank+4,
          allow_misc=False, allow_magic=True, num_items=10 ) )
         self.first_time = True
         return True
@@ -182,7 +182,7 @@ class RJT_Default( Plot ):
             npc = monsters.generate_npc( job=self.elements[ "JOB" ] )
             self.register_element( "NPC", npc, dident="_ROOM" )
             # Maybe give this NPC something extra to do.
-            if random.randint(1,3) == 2:
+            if random.randint(1,6) == 2:
                 self.add_sub_plot( nart, "RESOURCE_NPCCONVO" )
         return True
 
