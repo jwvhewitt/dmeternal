@@ -266,7 +266,7 @@ class HolyWeapon( Enhancer ):
                     effects.Paralyze( max_duration = 3 )
                 ,)
             ,),)
-        ,) ) 
+        ), ) 
         ),))
     BONUSES = stats.StatMod({ stats.PHYSICAL_ATTACK: 5, stats.RESIST_LUNAR: 25 })
 
@@ -283,7 +283,7 @@ class HolyBow( Enhancer ):
                     effects.Paralyze( max_duration = 3 )
                 ,)
             ,),)
-        ,) ) )
+        ,), ) )
     BONUSES = stats.StatMod({ stats.PHYSICAL_ATTACK: 10, stats.RESIST_LUNAR: 25 })
 
 class Vorpal( Enhancer ):

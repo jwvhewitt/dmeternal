@@ -104,12 +104,12 @@ class GoblinPyromaniac( base.Monster ):
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_CRUSHING )
     TECHNIQUES = ( invocations.Invocation( "Fire Bomb",
         effects.OpposedRoll( att_skill=stats.PHYSICAL_ATTACK, att_stat=stats.REFLEXES, def_stat=stats.REFLEXES, att_modifier=-25, on_success = (
-            effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion ),
+            effects.HealthDamage( (1,4,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion ),
             effects.Enchant( enchantments.BurnLowEn )
         ,), on_failure = (
-            effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion )
+            effects.HealthDamage( (1,4,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion )
         ,) ),
-        com_tar=targetarea.Blast(radius=1,reach=6), shot_anim=animobs.Fireball, ai_tar=invocations.TargetEnemy() ), )
+        com_tar=targetarea.Blast(radius=1,reach=4), shot_anim=animobs.Fireball, ai_tar=invocations.TargetEnemy() ), )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 3, self ) )
 
@@ -612,5 +612,43 @@ class OrcChampion( base.Monster ):
     ATTACK = items.Attack( (2,6,0), element = stats.RESIST_SLASHING )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 8, self ) )
+
+
+
+#  ****************
+#  ***  TROLLS  ***
+#  ****************
+
+class Troll( base.Monster ):
+    name = "Troll"
+    statline = { stats.STRENGTH: 19, stats.TOUGHNESS: 19, stats.REFLEXES: 10, \
+        stats.INTELLIGENCE: 6, stats.PIETY: 9, stats.CHARISMA: 6, \
+        stats.RESIST_FIRE: -100, stats.RESIST_ACID: -100 }
+    SPRITENAME = "monster_goblins.png"
+    FRAME = 28
+    TEMPLATES = ()
+    MOVE_POINTS = 10
+    VOICE = dialogue.voice.ORCISH
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.MAP_DUNGEON,
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN )
+    ENC_LEVEL = 6
+    TREASURE = treasuretype.High()
+    ATTACK = items.Attack( (1,8,0), element = stats.RESIST_CRUSHING )
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 6, self ) )
+        self.condition.append( enchantments.PermaRegeneration() )
+
+# Rock Troll
+# Weird Troll
+# Troll Warrior
+# Rock Troll Warrior
+# Troll Champion
+# Troll Priest
+# Armored Troll
+# Fire Troll
+# Iron Troll
+# Troll King + Troll Bodyguard
+
 
 

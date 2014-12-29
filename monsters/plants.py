@@ -34,7 +34,7 @@ class GreySlime( base.Monster ):
      context.SET_EVERY, context.DES_EARTH, context.MTY_BEAST,
      context.MTY_PLANT, context.GEN_NATURE )
     ENC_LEVEL = 2
-
+    COMBAT_AI = aibrain.BrainDeadAI()
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_ACID, damage_mod=None,
         hit_anim=animobs.GreenExplosion )
     def mitose( self, element ):

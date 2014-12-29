@@ -39,6 +39,7 @@ class PewterGolem( base.Monster ):
     HABITAT = ( context.HAB_BUILDING, context.SET_EVERY,
      context.MTY_CONSTRUCT, )
     ENC_LEVEL = 3
+    COMBAT_AI = aibrain.SteadyAI()
     TREASURE = treasuretype.Standard()
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_CRUSHING )
     def init_monster( self ):
@@ -56,19 +57,21 @@ class PewterGolem( base.Monster ):
 class ClockworkSoldier( base.Monster ):
     name = "Clockwork Soldier"
     statline = { stats.STRENGTH: 18, stats.TOUGHNESS: 18, stats.REFLEXES: 12, \
-        stats.INTELLIGENCE: 1, stats.PIETY: 12, stats.CHARISMA: 8 }
+        stats.INTELLIGENCE: 1, stats.PIETY: 12, stats.CHARISMA: 8, \
+        stats.RESIST_LIGHTNING: -150 }
     SPRITENAME = "monster_constructs.png"
     FRAME = 11
     TEMPLATES = (stats.CONSTRUCT,)
-    MOVE_POINTS = 10
+    MOVE_POINTS = 8
     VOICE = None
     HABITAT = ( context.HAB_EVERY, context.HAB_TUNNELS, context.SET_EVERY,
      context.MAP_DUNGEON,
      context.MTY_CONSTRUCT, context.MTY_FIGHTER )
     ENC_LEVEL = 5
+    COMBAT_AI = aibrain.BrainDeadAI()
     # Clockwork soldiers don't have normal treasure, but may drop a nice sword.
     TREASURE = treasuretype.Standard( (items.SWORD,), swag_chance=25, swag_quality=2, scale=0 )
-    ATTACK = items.Attack( (1,10,0), element = stats.RESIST_SLASHING )
+    ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )
     def init_monster( self ):
         self.levels.append( base.Defender( 5, self ) )
 

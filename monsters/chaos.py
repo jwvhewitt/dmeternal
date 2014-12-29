@@ -393,7 +393,27 @@ class CentaurKnight( base.Monster ):
 
 # Flame Mother (Fire,Mage)
 # Deceiver (Air,Mage)
-# Creeping Chaos
+
+class CrawlingChaos( base.Monster ):
+    name = "Crawling Chaos"
+    statline = { stats.STRENGTH: 16, stats.TOUGHNESS: 19, stats.REFLEXES: 10, \
+        stats.INTELLIGENCE: 19, stats.PIETY: 27, stats.CHARISMA: 12,
+        stats.RESIST_ATOMIC: 500 }
+    SPRITENAME = "monster_chaos.png"
+    FRAME = 16
+    TEMPLATES = ()
+    MOVE_POINTS = 6
+    HABITAT = ( context.HAB_TUNNELS,
+     context.SET_EVERY, context.DES_LUNAR, context.MTY_BEAST,
+     context.GEN_CHAOS )
+    ENC_LEVEL = 9
+    COMBAT_AI = aibrain.BrainDeadAI()
+    ATTACK = items.Attack( (1,12,0), element = stats.RESIST_LUNAR, damage_mod=None,
+        hit_anim=animobs.PurpleExplosion )
+    def mitose( self, element ):
+        return element in ( stats.RESIST_SLASHING, stats.RESIST_PIERCING, stats.RESIST_CRUSHING, stats.RESIST_ATOMIC )
+    def init_monster( self ):
+        self.levels.append( base.Beast( 9, self ) )
 
 class CentaurChampion( base.Monster ):
     name = "Centaur Champion"    
