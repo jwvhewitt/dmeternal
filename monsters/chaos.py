@@ -15,6 +15,7 @@ import undead
 import enchantments
 import people
 import treasuretype
+import abilities
 
 #
 # Chaos is not necessarily a destructive force- though to the powers-that-be
@@ -152,13 +153,7 @@ class Centaur( base.Monster ):
     COMBAT_AI = aibrain.BasicTechnicalAI()
     TREASURE = treasuretype.Standard()
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_SLASHING )
-    TECHNIQUES = ( invocations.Invocation( "Arrow",
-      effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, on_success = (
-        effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_PIERCING, anim=animobs.RedBoom )
-      ,), on_failure = (
-        effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.TargetEnemy()
-    ), )
+    TECHNIQUES = ( abilities.SHORTBOW, )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 2, self ) )
 
@@ -299,13 +294,7 @@ class CentaurWarrior( base.Monster ):
     TREASURE = treasuretype.Standard((items.ARROW,))
     COMPANIONS = ( Centaur, )
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_PIERCING )
-    TECHNIQUES = ( invocations.Invocation( "Arrow",
-      effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, on_success = (
-        effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_PIERCING, anim=animobs.RedBoom )
-      ,), on_failure = (
-        effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.TargetEnemy()
-    ), )
+    TECHNIQUES = ( abilities.LONGBOW, )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 5, self ) )
 
@@ -367,13 +356,8 @@ class CentaurKnight( base.Monster ):
     COMBAT_AI = aibrain.BasicTechnicalAI()
     COMPANIONS = ( Centaur, CentaurWarrior )
     ATTACK = items.Attack( (2,6,0), element = stats.RESIST_SLASHING )
-    TECHNIQUES = ( invocations.Invocation( "Arrow",
-      effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, on_success = (
-        effects.HealthDamage( (1,10,0), stat_bonus=stats.STRENGTH, element=stats.RESIST_PIERCING, anim=animobs.RedBoom )
-      ,), on_failure = (
-        effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=9), shot_anim=animobs.Arrow, ai_tar=invocations.TargetEnemy()
-    ), spells.solarspells.MAJOR_CURE, spells.solarspells.CURE_POISON )
+    TECHNIQUES = ( abilities.COMPOSITEBOW, spells.solarspells.MAJOR_CURE,
+      spells.solarspells.CURE_POISON )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 7, self ) )
 
@@ -438,13 +422,7 @@ class CentaurChampion( base.Monster ):
             effects.Enchant( enchantments.PoisonClassic )
         ,) )
     )
-    TECHNIQUES = ( invocations.Invocation( "Arrow",
-      effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, on_success = (
-        effects.HealthDamage( (1,10,0), stat_bonus=stats.STRENGTH, element=stats.RESIST_PIERCING, anim=animobs.RedBoom )
-      ,), on_failure = (
-        effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=9), shot_anim=animobs.Arrow, ai_tar=invocations.TargetEnemy()
-    ), )
+    TECHNIQUES = ( abilities.COMPOSITEBOW, )
     def init_monster( self ):
         self.levels.append( base.Leader( 9, self ) )
 

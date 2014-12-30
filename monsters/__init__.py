@@ -8,6 +8,7 @@ import context
 import stats
 import items
 import treasuretype
+import abilities
 from dialogue import voice
 
 import animals

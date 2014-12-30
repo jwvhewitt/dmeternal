@@ -10,6 +10,7 @@ import effects
 import animobs
 import targetarea
 import treasuretype
+import abilities
 
 
 class Barbarian( base.Monster ):
@@ -46,13 +47,7 @@ class BarbarianScout( base.Monster ):
     TREASURE = treasuretype.Low( (items.BOW,items.ARROW) )
     COMBAT_AI = aibrain.BasicTechnicalAI()
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_SLASHING )
-    TECHNIQUES = ( invocations.Invocation( "Arrow",
-      effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, on_success = (
-        effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_PIERCING, anim=animobs.RedBoom )
-      ,), on_failure = (
-        effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.TargetEnemy()
-    ), )
+    TECHNIQUES = ( abilities.SHORTBOW, )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 2, self ) )
 
@@ -113,13 +108,7 @@ class BarbarianChief( base.Monster ):
      context.MTY_HUMANOID, context.MTY_LEADER, context.MTY_BOSS, context.GEN_GIANT )
     ENC_LEVEL = 7
     TREASURE = treasuretype.High( (items.SWORD,items.LIGHT_ARMOR,items.CLOAK) )
-    TECHNIQUES = ( invocations.Invocation( "Arrow",
-      effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, att_modifier=5, on_success = (
-        effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_PIERCING, anim=animobs.RedBoom )
-      ,), on_failure = (
-        effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.TargetEnemy()
-    ), )
+    TECHNIQUES = ( abilities.COMPOSITEBOW, )
     COMPANIONS = ( Barbarian,BarbarianScout,Berserker )
     LONER = True
     ATTACK = items.Attack( (2,6,0), element = stats.RESIST_SLASHING )

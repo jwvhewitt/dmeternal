@@ -14,6 +14,7 @@ import animals
 import undead
 import enchantments
 import treasuretype
+import abilities
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  1   ***
@@ -301,13 +302,7 @@ class Ranger( base.Monster ):
     COMPANIONS = (NoviceDruid,)
     COMBAT_AI = aibrain.BasicTechnicalAI()
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )
-    TECHNIQUES = ( invocations.Invocation( "Arrow",
-      effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, on_success = (
-        effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_PIERCING, anim=animobs.RedBoom )
-      ,), on_failure = (
-        effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.TargetEnemy()
-    ), spells.earthspells.EARTHBIND )
+    TECHNIQUES = ( abilities.LONGBOW, spells.earthspells.EARTHBIND )
 
     def init_monster( self ):
         self.levels.append( base.Humanoid( 5, self ) )

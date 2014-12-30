@@ -12,6 +12,7 @@ import aibrain
 import random
 import enchantments
 import treasuretype
+import abilities
 
 #  *******************
 #  ***   GOBLINS   ***
@@ -54,13 +55,7 @@ class GoblinArcher( base.Monster ):
 
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_CRUSHING )
 
-    TECHNIQUES = ( invocations.Invocation( "Arrow",
-      effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, att_modifier=5, on_success = (
-        effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_PIERCING, anim=animobs.RedBoom )
-      ,), on_failure = (
-        effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.TargetEnemy()
-    ), )
+    TECHNIQUES = ( abilities.SHORTBOW, )
 
     def init_monster( self ):
         self.levels.append( base.Humanoid( 1, self ) )
@@ -192,13 +187,8 @@ class GoblinRanger( base.Monster ):
     TREASURE = treasuretype.Standard()
     COMBAT_AI = aibrain.BasicTechnicalAI()
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )
-    TECHNIQUES = ( invocations.Invocation( "Arrow",
-      effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, on_success = (
-        effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_PIERCING, anim=animobs.RedBoom )
-      ,), on_failure = (
-        effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.TargetEnemy()
-    ), spells.earthspells.EARTHBIND )
+    TECHNIQUES = ( abilities.LONGBOW,
+      spells.earthspells.EARTHBIND )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 5, self ) )
 
@@ -502,6 +492,32 @@ class HobgoblinWarlord( base.Monster ):
     def init_monster( self ):
         self.levels.append( base.Leader( 8, self ) )
 
+class HobgoblinOutcast( base.Monster ):
+    name = "Hobgoblin Outcast"
+    statline = { stats.STRENGTH: 16, stats.TOUGHNESS: 14, stats.REFLEXES: 18, \
+        stats.INTELLIGENCE: 12, stats.PIETY: 11, stats.CHARISMA: 13, \
+        stats.NATURAL_DEFENSE: 10, stats.PHYSICAL_ATTACK: 10, stats.RESIST_FIRE: 50,
+        stats.COUNTER_ATTACK: 30 }
+    SPRITENAME = "monster_goblins.png"
+    FRAME = 47
+    TEMPLATES = ()
+    MOVE_POINTS = 10
+    VOICE = dialogue.voice.ORCISH
+    HABITAT = ( context.HAB_EVERY, context.HAB_CAVE, context.SET_EVERY,
+     context.DES_LUNAR,
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN )
+    ENC_LEVEL = 12
+    TREASURE = treasuretype.Standard( (items.SWORD,items.ARROW) )
+    ATTACK = items.Attack( (3,8,0), element = stats.RESIST_SLASHING,
+     extra_effect=effects.OpposedRoll( att_stat=None, def_stat=stats.TOUGHNESS, on_success = (
+            effects.HealthDamage( (3,8,0), stat_bonus=None, element=stats.RESIST_POISON, anim=animobs.PoisonCloud ),
+            effects.Enchant( enchantments.PoisonClassic )
+        ,) )
+    )
+    TECHNIQUES = ( abilities.COMPOSITEBOW, )
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 13, self ) )
+
 
 #  ****************
 #  ***   ORCS   ***
@@ -563,13 +579,7 @@ class OrcArcher( base.Monster ):
     COMBAT_AI = aibrain.BasicTechnicalAI()
     COMPANIONS = (Orc,OrcWarrior,GoblinArcher,GoblinWarrior,HobgoblinThief)
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_SLASHING )
-    TECHNIQUES = ( invocations.Invocation( "Arrow",
-      effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, att_modifier=5, on_success = (
-        effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_PIERCING, anim=animobs.RedBoom )
-      ,), on_failure = (
-        effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.TargetEnemy()
-    ), )
+    TECHNIQUES = ( abilities.LONGBOW, )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 4, self ) )
 
@@ -613,6 +623,18 @@ class OrcChampion( base.Monster ):
     def init_monster( self ):
         self.levels.append( base.Humanoid( 8, self ) )
 
+# Orc         R3
+# Orc Warrior R4
+# Orc Archer
+# Orc Thief
+# Orc Champion
+# Orc Pirate
+# Orc Brigand
+# Orc Assassin
+# Orc Boss
+# Orc Commando
+# Orc Captain
+# Orc Warlord R17
 
 
 #  ****************
@@ -648,7 +670,7 @@ class Troll( base.Monster ):
 # Armored Troll
 # Fire Troll
 # Iron Troll
-# Troll King + Troll Bodyguard
+# Troll King + Troll Bodyguard R16
 
 
 

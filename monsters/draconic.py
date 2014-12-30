@@ -13,6 +13,7 @@ import random
 import enchantments
 import animals
 import treasuretype
+import abilities
 
 # This file contains monsters that are not dragons proper, but which
 # belong to the GEN_DRAGON faction. Examples include lizardmen and other
@@ -89,13 +90,7 @@ class ReptalArcher( base.Monster ):
     TREASURE = treasuretype.Standard((items.ARROW,))
     COMPANIONS = (ReptalWarrior,Reptal)
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_CRUSHING )
-    TECHNIQUES = ( invocations.Invocation( "Arrow",
-      effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, att_modifier=5, on_success = (
-        effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_PIERCING, anim=animobs.RedBoom )
-      ,), on_failure = (
-        effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.TargetEnemy()
-    ), )
+    TECHNIQUES = ( abilities.LONGBOW, )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 4, self ) )
 
