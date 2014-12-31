@@ -296,7 +296,12 @@ class StatDamage( NoEffect ):
         """Apply some hurting to whoever is in the indicated tile."""
         target = camp.scene.get_character_at_spot( pos )
         if target:
-            target.stat_damage[self.stat_to_damage] += self.amount
+            if self.amount > 1:
+                amount = random.randint(1,self.amount)
+            else:
+                amount = 1
+            target.stat_damage[self.stat_to_damage] += amount
+            anims.append( animobs.Caption( str(amount), pos, delay=delay, color=(250,200,50) ) )
         return self.children
 
 class StatRestore( NoEffect ):

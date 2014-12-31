@@ -32,12 +32,22 @@ SLEEP = Spell( "Sleep",
     ,) ), rank=2, gems={LUNAR:2}, com_tar=targetarea.Blast(radius=2), ai_tar=invocations.TargetEnemy() )
 
 ENERVATE = Spell( "Enervate",
-    "A ray of negative energy strikes one opponent, draining 2-12 mana instantly.",
-    effects.ManaDamage((2,6,0), stat_bonus=stats.INTELLIGENCE, anim=animobs.PurpleExplosion ),
+    "A ray of negative energy strikes one opponent, draining 4-16 mana instantly.",
+    effects.ManaDamage((4,4,0), stat_bonus=stats.INTELLIGENCE, anim=animobs.PurpleExplosion ),
     rank=2, gems={LUNAR:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.PurpleVortex, ai_tar=invocations.TargetEnemy(), mpfudge=-1 )
 
 
 # CIRCLE 3
+
+WITHER = Spell( "Wither",
+    "Conjures a sphere of negative energy, draining a single target for 2d10 dark damage and 1d6 points of strength.",
+    effects.OpposedRoll( on_success = (
+        effects.HealthDamage( (2,10,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_LUNAR, anim=animobs.PurpleExplosion ),
+        effects.StatDamage( stats.STRENGTH, amount=6 )
+    ,), on_failure = (
+        effects.HealthDamage( (1,9,1), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_LUNAR, anim=animobs.PurpleExplosion ),
+        effects.StatDamage( stats.STRENGTH, amount=1 )
+    ,) ), rank=3, gems={LUNAR:2}, com_tar=targetarea.SingleTarget(),ai_tar=invocations.TargetEnemy(),shot_anim=animobs.MysticBolt )
 
 
 # CIRCLE 4
