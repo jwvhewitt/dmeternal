@@ -30,7 +30,7 @@ class RNC_GeneralMerchant( Plot ):
         return pstate.elements.get("NPC")
     def custom_init( self, nart ):
         # Add a shop.
-        self.shop = self.register_element( "SHOPSERVICE", services.Shop( ware_types=services.MINIMAL_STORE, rank=self.rank+6,
+        self.shop = self.register_element( "SHOPSERVICE", services.Shop( ware_types=services.MINIMAL_STORE, rank=self.rank+random.randint(2,9),
          allow_misc=True, allow_magic=True, num_items=10 ) )
         self.first_time = True
         return True
@@ -61,7 +61,7 @@ class RNC_WeaponMerchant( Plot ):
             and isinstance( pstate.elements["NPC"].mr_level, self.ALLOWED_JOBS ) )
     def custom_init( self, nart ):
         # Add a shop.
-        self.shop = self.register_element( "SHOPSERVICE", services.Shop( ware_types=services.WEAPON_STORE, rank=self.rank+6,
+        self.shop = self.register_element( "SHOPSERVICE", services.Shop( ware_types=services.WEAPON_STORE, rank=self.rank+random.randint(2,7),
          allow_misc=False, allow_magic=True, num_items=10 ) )
         self.first_time = True
         return True
@@ -91,7 +91,7 @@ class RNC_ArmorMerchant( Plot ):
             and isinstance( pstate.elements["NPC"].mr_level, self.ALLOWED_JOBS ) )
     def custom_init( self, nart ):
         # Add a shop.
-        self.shop = self.register_element( "SHOPSERVICE", services.Shop( ware_types=services.ARMOR_STORE, rank=self.rank+7,
+        self.shop = self.register_element( "SHOPSERVICE", services.Shop( ware_types=services.ARMOR_STORE, rank=self.rank+random.randint(3,6),
          allow_misc=False, allow_magic=True, num_items=10 ) )
         self.first_time = True
         return True
@@ -121,7 +121,7 @@ class RNC_MagicMerchant( Plot ):
             and isinstance( pstate.elements["NPC"].mr_level, self.ALLOWED_JOBS ) )
     def custom_init( self, nart ):
         # Add a shop.
-        self.shop = self.register_element( "SHOPSERVICE", services.Shop( ware_types=services.MAGIC_STORE, rank=self.rank+4,
+        self.shop = self.register_element( "SHOPSERVICE", services.Shop( ware_types=services.MAGIC_STORE, rank=self.rank+random.randint(2,4),
          allow_misc=False, allow_magic=True, num_items=10 ) )
         self.first_time = True
         return True
