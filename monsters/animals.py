@@ -9,6 +9,7 @@ import animobs
 import targetarea
 import enchantments
 import treasuretype
+import abilities
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  1   ***
@@ -699,10 +700,7 @@ class Scarab( base.Monster ):
         ,)), com_tar=targetarea.Cone(reach=4), ai_tar=invocations.TargetEnemy(), mp_cost=3
       ), )
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING,
-     extra_effect=effects.OpposedRoll( att_stat=None, def_stat=stats.TOUGHNESS, on_success = (
-            effects.HealthDamage( (2,6,0), stat_bonus=None, element=stats.RESIST_POISON, anim=animobs.PoisonCloud ),
-            effects.Enchant( enchantments.PoisonClassic )
-        ,) )
+     extra_effect=abilities.POISON_ATTACK_2d6
     )
     def init_monster( self ):
         self.levels.append( base.Beast( 7, self ) )

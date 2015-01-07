@@ -86,7 +86,7 @@ def default_start_campaign( screen ):
 def bardic_start_campaign( screen ):
     init = narrator.plots.PlotState(rank=1)
     pygwrap.please_stand_by( screen, "Building world..." )
-    nart = narrator.Narrative( init, adv_type="STUB_BARDIC" )
+    nart = narrator.Narrative( init, adv_type="STUB_BARDIC", end_rank=10 )
     if nart.story:
         nart.camp.dump_info()
         nart.build()

@@ -6,7 +6,9 @@ import effects
 import stats
 import animobs
 import targetarea
+import enchantments
 
+# Techniques
 
 SHORTBOW = invocations.Invocation( "Arrow",
       effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, att_modifier=5, on_success = (
@@ -31,4 +33,11 @@ COMPOSITEBOW = invocations.Invocation( "Arrow",
         effects.NoEffect( anim=animobs.SmallBoom )
       ,) ), com_tar=targetarea.SingleTarget(reach=9), shot_anim=animobs.Arrow, ai_tar=invocations.TargetEnemy()
     )
+
+# Extra Effects for attaching to attacks.
+
+POISON_ATTACK_2d6 = effects.OpposedRoll( att_stat=None, def_stat=stats.TOUGHNESS, on_success = (
+            effects.HealthDamage( (2,6,0), stat_bonus=None, element=stats.RESIST_POISON, anim=animobs.PoisonCloud ),
+            effects.Enchant( enchantments.PoisonClassic )
+        ,) )
 
