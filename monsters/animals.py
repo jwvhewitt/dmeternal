@@ -923,7 +923,7 @@ class Roc( base.Monster ):
      context.MAP_WILDERNESS,
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE,
      context.DES_AIR, context.DES_SOLAR )
-    ENC_LEVEL = 7
+    ENC_LEVEL = 14
     ATTACK = items.Attack( (3,8,0), element = stats.RESIST_PIERCING )
     TECHNIQUES = ( invocations.MPInvocation( "Wing Sweep",
         effects.OpposedRoll( att_skill=stats.PHYSICAL_ATTACK, att_stat=stats.REFLEXES, def_stat=stats.REFLEXES, on_success = (
