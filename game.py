@@ -86,12 +86,13 @@ def default_start_campaign( screen ):
 def bardic_start_campaign( screen ):
     init = narrator.plots.PlotState(rank=1)
     pygwrap.please_stand_by( screen, "Building world..." )
-    nart = narrator.Narrative( init, adv_type="STUB_BARDIC", end_rank=10 )
+    nart = narrator.Narrative( init, adv_type="STUB_BARDIC", end_rank=5 )
     if nart.story:
         nart.camp.dump_info()
         nart.build()
         camp = nart.camp
-        pcs = campaign.load_party( screen )
+#        pcs = campaign.load_party( screen )
+        pcs = campaign.random_party()
         if pcs:
             camp.name = pygwrap.input_string(screen, redrawer=PosterRedraw(screen), prompt="Enter campaign name" )
             camp.add_party( pcs )

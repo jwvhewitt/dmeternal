@@ -87,6 +87,7 @@ class ReptalArcher( base.Monster ):
      context.DES_WATER,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_DRAGON )
     ENC_LEVEL = 4
+    COMBAT_AI = aibrain.BasicTechnicalAI()
     TREASURE = treasuretype.Standard((items.ARROW,))
     COMPANIONS = (ReptalWarrior,Reptal)
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_CRUSHING )

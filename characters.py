@@ -105,7 +105,7 @@ class Level( object ):
 class Warrior( Level ):
     name = 'Warrior'
     desc = 'Highly trained fighters who can dish out- and take- a whole lot of physical damage.'
-    requirements = { stats.STRENGTH: 11 }
+    requirements = { stats.STRENGTH: 11, stats.TOUGHNESS: 5, stats.REFLEXES: 2 }
     statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 5, stats.MAGIC_ATTACK: 3, stats.MAGIC_DEFENSE: 3, \
         stats.AWARENESS: 4, stats.COUNTER_ATTACK: 3 } )
     HP_DIE = 12
@@ -122,7 +122,7 @@ class Warrior( Level ):
 class Thief( Level ):
     name = 'Thief'
     desc = 'Highly skilled at stealth and disarming traps.'
-    requirements = { stats.REFLEXES: 11 }
+    requirements = { stats.REFLEXES: 11, stats.INTELLIGENCE: 3 }
     statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 4, stats.MAGIC_ATTACK: 3, stats.MAGIC_DEFENSE: 5, \
         stats.DISARM_TRAPS: 6, stats.STEALTH: 5, stats.AWARENESS: 4, stats.LOOTING: 5 } )
     spell_circles = ()
@@ -157,7 +157,7 @@ class Bard( Level ):
 class Priest( Level ):
     name = 'Priest'
     desc = 'Priests learn water, solar, and air magic. They can also use a holy sign against undead.'
-    requirements = { stats.PIETY: 11 }
+    requirements = { stats.PIETY: 11, stats.INTELLIGENCE: 3, stats.CHARISMA: 3 }
     statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 4, stats.MAGIC_ATTACK: 4, stats.MAGIC_DEFENSE: 4, \
         stats.HOLY_SIGN: 5, stats.AWARENESS: 3 } )
     spell_circles = ( spells.WATER, spells.SOLAR, spells.AIR )
@@ -175,7 +175,7 @@ class Priest( Level ):
 class Mage( Level ):
     name = 'Mage'
     desc = 'Spellcasters who learn lunar, fire, and air magic.'
-    requirements = { stats.INTELLIGENCE: 11 }
+    requirements = { stats.INTELLIGENCE: 11, stats.PIETY: 3 }
     statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 3, stats.MAGIC_ATTACK: 5, stats.MAGIC_DEFENSE: 5, \
         stats.AWARENESS: 3 } )
     spell_circles = ( spells.LUNAR, spells.FIRE, spells.AIR )
@@ -192,7 +192,7 @@ class Mage( Level ):
 class Druid( Level ):
     name = 'Druid'
     desc = 'A natural spellcaster who learns earth, solar, and fire magic.'
-    requirements = { stats.TOUGHNESS: 9, stats.INTELLIGENCE: 11 }
+    requirements = { stats.TOUGHNESS: 9, stats.INTELLIGENCE: 3, stats.PIETY: 11 }
     statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 3, stats.MAGIC_ATTACK: 5, stats.MAGIC_DEFENSE: 4, \
         stats.AWARENESS: 4 } )
     spell_circles = ( spells.EARTH, spells.SOLAR, spells.FIRE )
@@ -278,7 +278,7 @@ class Samurai( Level ):
 class Monk( Level ):
     name = 'Monk'
     desc = 'Experts at unarmed fighting.'
-    requirements = { stats.TOUGHNESS: 15, stats.REFLEXES: 13, stats.PIETY: 13 }
+    requirements = { stats.STRENGTH: 3, stats.TOUGHNESS: 15, stats.REFLEXES: 13, stats.PIETY: 13 }
     statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 5, stats.MAGIC_ATTACK: 3, stats.MAGIC_DEFENSE: 4, \
         stats.KUNG_FU: 5, stats.NATURAL_DEFENSE: 4, stats.AWARENESS: 4 } )
     spell_circles = ()
@@ -887,10 +887,12 @@ class Character( stats.PhysicalThing ):
     def xp_value( self ):
         # Sum of the xp values of all held levels.
         it = sum( l.XP_VALUE * l.rank for l in self.levels )
+        xp_mod = max( sum( t.xp_mod for t in self.TEMPLATES ) + 100, 50 )
         if hasattr( self, "mitose" ):
             it = int( it * 1.25 )
         if hasattr( self, "ENC_LEVEL" ) and self.ENC_LEVEL > self.rank():
             it += ( self.ENC_LEVEL - self.rank() ) * 75
+        it = ( it * xp_mod ) // 100
         return it
 
     def has_template( self, temp ):

@@ -41,7 +41,7 @@ class BasicCave( Plot ):
         context.DES_LUNAR: context.DES_SOLAR, context.DES_SOLAR: context.DES_LUNAR
     }
     def custom_init( self, nart ):
-        myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
+        myscene = maps.Scene( 80, 80, 
             sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_under.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
             biome=context.HAB_CAVE, setting=self.setting, fac=self.elements.get("ANTAGONIST"),
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN) )
@@ -49,7 +49,7 @@ class BasicCave( Plot ):
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
         self.add_custom_decor( myscene, mymapgen )
 
-        for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
+        for t in range( random.randint(5,8) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
         self.add_sub_plot( nart, "SPECIAL_FEATURE" )
         self.add_sub_plot( nart, "SPECIAL_ENCOUNTER" )
@@ -75,7 +75,7 @@ class WaterCave( BasicCave ):
     LABEL = "DUNGEON_LEVEL"
     TAGS = set( (context.HAB_CAVE,context.DES_WATER) )
     def custom_init( self, nart ):
-        myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
+        myscene = maps.Scene( 80, 80, 
             sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_under.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
             biome=context.HAB_CAVE, setting=self.setting, fac=self.elements.get("ANTAGONIST"),
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_WATER) )
@@ -83,7 +83,7 @@ class WaterCave( BasicCave ):
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
         self.add_custom_decor( myscene, mymapgen )
 
-        for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
+        for t in range( random.randint(5,8) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
         self.add_sub_plot( nart, "SPECIAL_FEATURE" )
         self.add_sub_plot( nart, "SPECIAL_ENCOUNTER" )
@@ -115,7 +115,7 @@ class FireCave( BasicCave ):
     LABEL = "DUNGEON_LEVEL"
     TAGS = set( (context.HAB_CAVE,context.DES_FIRE) )
     def custom_init( self, nart ):
-        myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
+        myscene = maps.Scene( 80, 80, 
             sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_cthonic.png",
              maps.SPRITE_FLOOR: "terrain_floor_gravel.png",maps.SPRITE_CHEST: "terrain_chest_metal.png"},
             biome=context.HAB_CAVE, setting=self.setting, fac=self.elements.get("ANTAGONIST"),
@@ -124,7 +124,7 @@ class FireCave( BasicCave ):
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
         self.add_custom_decor( myscene, mymapgen )
 
-        for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
+        for t in range( random.randint(5,8) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
         self.add_sub_plot( nart, "SPECIAL_FEATURE" )
         self.add_sub_plot( nart, "SPECIAL_ENCOUNTER" )
@@ -158,7 +158,7 @@ class AirCave( BasicCave ):
     LABEL = "DUNGEON_LEVEL"
     TAGS = set( (context.HAB_CAVE,context.DES_AIR) )
     def custom_init( self, nart ):
-        myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
+        myscene = maps.Scene( 80, 80, 
             sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_canyon.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
             biome=context.HAB_CAVE, setting=self.setting, fac=self.elements.get("ANTAGONIST"),
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_AIR) )
@@ -166,7 +166,7 @@ class AirCave( BasicCave ):
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
         self.add_custom_decor( myscene, mymapgen )
 
-        for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
+        for t in range( random.randint(5,8) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
         self.add_sub_plot( nart, "SPECIAL_FEATURE" )
         self.add_sub_plot( nart, "SPECIAL_ENCOUNTER" )
@@ -177,7 +177,7 @@ class EarthCave( BasicCave ):
     LABEL = "DUNGEON_LEVEL"
     TAGS = set( (context.HAB_CAVE,context.DES_EARTH) )
     def custom_init( self, nart ):
-        myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
+        myscene = maps.Scene( 80, 80, 
             sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_under.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
             biome=context.HAB_CAVE, setting=self.setting, fac=self.elements.get("ANTAGONIST"),
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_EARTH) )
@@ -185,7 +185,7 @@ class EarthCave( BasicCave ):
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
         #self.add_custom_decor( myscene, mymapgen )
 
-        for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
+        for t in range( random.randint(5,8) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
         self.add_sub_plot( nart, "SPECIAL_FEATURE" )
         self.add_sub_plot( nart, "SPECIAL_ENCOUNTER" )
@@ -198,7 +198,7 @@ class EarthMushroomCave( BasicCave ):
     UNIQUE = True
     MIN_RANK = 2
     def custom_init( self, nart ):
-        myscene = maps.Scene( min( 90 + self.rank * 3, 129 ), min( 90 + self.rank * 3, 129 ), 
+        myscene = maps.Scene( 90, 90, 
             sprites={maps.SPRITE_WALL: "terrain_wall_cave.png", maps.SPRITE_GROUND: "terrain_ground_under.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
             biome=context.HAB_CAVE, setting=self.setting, fac=self.elements.get("ANTAGONIST"),
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_EARTH,context.MTY_PLANT) )
@@ -206,7 +206,7 @@ class EarthMushroomCave( BasicCave ):
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
         #self.add_custom_decor( myscene, mymapgen )
 
-        for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
+        for t in range( random.randint(6,9) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
         self.add_sub_plot( nart, "SPECIAL_ENCOUNTER" )
 
@@ -217,7 +217,7 @@ class SewerLevel( BasicCave ):
     LABEL = "DUNGEON_LEVEL"
     TAGS = set( (context.HAB_TUNNELS,context.DES_WATER) )
     def custom_init( self, nart ):
-        myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
+        myscene = maps.Scene( 80, 80, 
             sprites={maps.SPRITE_WALL: "terrain_wall_darkstone.png", maps.SPRITE_GROUND: "terrain_ground_under.png", maps.SPRITE_FLOOR: "terrain_floor_gravel.png"},
             biome=context.HAB_TUNNELS, setting=self.setting, fac=self.elements.get("ANTAGONIST"),
             desctags=(context.MAP_DUNGEON,context.MAP_GODOWN,context.DES_WATER) )
@@ -225,7 +225,7 @@ class SewerLevel( BasicCave ):
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
         self.add_custom_decor( myscene, mymapgen )
 
-        for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
+        for t in range( random.randint(5,8) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
         self.add_sub_plot( nart, "SPECIAL_FEATURE" )
         self.add_sub_plot( nart, "SPECIAL_ENCOUNTER" )
@@ -237,7 +237,7 @@ class BasicCryptLevel( BasicCave ):
     LABEL = "DUNGEON_LEVEL"
     TAGS = set( (context.HAB_TUNNELS,context.GEN_UNDEAD) )
     def custom_init( self, nart ):
-        myscene = maps.Scene( min( 70 + self.rank * 5, 129 ), min( 70 + self.rank * 5, 129 ), 
+        myscene = maps.Scene( 80, 80, 
             sprites={maps.SPRITE_WALL: "terrain_wall_bone.png", maps.SPRITE_GROUND: "terrain_ground_under.png",
              maps.SPRITE_FLOOR: "terrain_floor_tile.png", maps.SPRITE_CHEST: "terrain_chest_metal.png" },
             biome=context.HAB_TUNNELS, setting=self.setting, fac=self.elements.get("ANTAGONIST"),
@@ -246,7 +246,7 @@ class BasicCryptLevel( BasicCave ):
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
         self.add_custom_decor( myscene, mymapgen )
 
-        for t in range( random.randint(4+min(self.rank//3,6),8+min(self.rank//2,6)) ):
+        for t in range( random.randint(5,8) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
         self.add_sub_plot( nart, "SPECIAL_FEATURE" )
         self.add_sub_plot( nart, "SPECIAL_ENCOUNTER" )
@@ -268,7 +268,7 @@ class BasicForestLevel( BasicCave ):
     LABEL = "DUNGEON_LEVEL"
     TAGS = set( (context.HAB_FOREST,) )
     def custom_init( self, nart ):
-        myscene = maps.Scene( min( 95 + self.rank * 3, 129 ), min( 95 + self.rank * 3, 129 ), 
+        myscene = maps.Scene( 100, 100, 
             sprites={maps.SPRITE_WALL: "terrain_wall_woodfort.png", maps.SPRITE_GROUND: "terrain_ground_forest.png",
              maps.SPRITE_FLOOR: "terrain_floor_gravel.png" },
             biome=context.HAB_FOREST, setting=self.setting, fac=self.elements.get("ANTAGONIST"),
@@ -277,7 +277,7 @@ class BasicForestLevel( BasicCave ):
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
         #self.add_custom_decor( myscene, mymapgen )
 
-        for t in range( random.randint(2+min(self.rank//3,6),6+min(self.rank//2,6)) ):
+        for t in range( random.randint(3,6) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
         self.add_sub_plot( nart, "SPECIAL_FEATURE" )
         self.add_sub_plot( nart, "SPECIAL_ENCOUNTER" )

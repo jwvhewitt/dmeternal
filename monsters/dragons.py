@@ -50,7 +50,7 @@ class YoungCaveDragon( base.Monster ):
     TECHNIQUES = ( invocations.MPInvocation( "Toxic Breath",
         effects.OpposedRoll( def_stat=stats.TOUGHNESS, anim=animobs.PoisonCloud, on_success = (
             effects.Paralyze( max_duration = 3 )
-        ,) ), com_tar=targetarea.Cone(reach=4), ai_tar=invocations.TargetEnemy(), mp_cost=3
+        ,) ), com_tar=targetarea.Cone(reach=4), ai_tar=invocations.TargetEnemy(), mp_cost=4
       ), )
     def init_monster( self ):
         self.levels.append( base.Terror( 4, self ) )
@@ -76,7 +76,7 @@ class YoungSwampDragon( base.Monster ):
         effects.HealthDamage( (2,6,0), stat_bonus=stats.TOUGHNESS, element=stats.RESIST_ACID, anim=animobs.GreenExplosion )
       ,), on_failure = (
         effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_ACID, anim=animobs.GreenExplosion )
-      ,) ), com_tar=targetarea.Line(reach=5), ai_tar=invocations.TargetEnemy(), mp_cost=3
+      ,) ), com_tar=targetarea.Line(reach=5), ai_tar=invocations.TargetEnemy(), mp_cost=5
     ), )
     def init_monster( self ):
         self.levels.append( base.Terror( 4, self ) )
@@ -97,6 +97,7 @@ class YoungSkyDragon( base.Monster ):
     MOVE_POINTS = 8
     VOICE = dialogue.voice.DRACONIAN
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.MTY_DRAGON,
+     context.MAP_WILDERNESS,
      context.DES_AIR, context.GEN_DRAGON, context.MTY_BOSS )
     ENC_LEVEL = 5
     TREASURE = treasuretype.DragonHoard()
@@ -106,10 +107,36 @@ class YoungSkyDragon( base.Monster ):
         effects.HealthDamage( (2,6,0), stat_bonus=stats.TOUGHNESS, element=stats.RESIST_LIGHTNING, anim=animobs.Spark )
       ,), on_failure = (
         effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_LIGHTNING, anim=animobs.Spark )
-      ,) ), com_tar=targetarea.Line(reach=6), ai_tar=invocations.TargetEnemy(), mp_cost=3
+      ,) ), com_tar=targetarea.Line(reach=6), ai_tar=invocations.TargetEnemy(), mp_cost=6
     ), )
     def init_monster( self ):
         self.levels.append( base.Terror( 5, self ) )
+
+class YoungIceDragon( base.Monster ):
+    name = "Young Ice Dragon"
+    statline = { stats.STRENGTH: 14, stats.TOUGHNESS: 16, stats.REFLEXES: 14, \
+        stats.INTELLIGENCE: 12, stats.PIETY: 10, stats.CHARISMA: 12,
+        stats.RESIST_COLD: 100 }
+    SPRITENAME = "monster_dragons.png"
+    FRAME = 7
+    TEMPLATES = (stats.DRAGON,)
+    MOVE_POINTS = 8
+    VOICE = dialogue.voice.DRACONIAN
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.MTY_DRAGON,
+     context.DES_ICE, context.GEN_DRAGON, context.MTY_BOSS )
+    ENC_LEVEL = 5
+    TREASURE = treasuretype.DragonHoard()
+    ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )
+    TECHNIQUES = ( invocations.MPInvocation( "Frost Breath",
+      effects.OpposedRoll( att_stat=stats.REFLEXES, def_stat=stats.REFLEXES, on_success = (
+        effects.HealthDamage( (1,8,0), stat_bonus=stats.TOUGHNESS, element=stats.RESIST_COLD, anim=animobs.SnowCloud )
+      ,), on_failure = (
+        effects.HealthDamage( (1,4,0), stat_bonus=None, element=stats.RESIST_COLD, anim=animobs.SnowCloud )
+      ,) ), com_tar=targetarea.Cone(reach=4), ai_tar=invocations.TargetEnemy(), mp_cost=8
+    ), )
+    def init_monster( self ):
+        self.levels.append( base.Terror( 5, self ) )
+
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  6   ***
@@ -136,7 +163,7 @@ class YoungForestDragon( base.Monster ):
         effects.HealthDamage( (2,8,0), stat_bonus=stats.TOUGHNESS, element=stats.RESIST_POISON, anim=animobs.PoisonCloud )
       ,), on_failure = (
         effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_POISON, anim=animobs.PoisonCloud )
-      ,) ), com_tar=targetarea.Blast(radius=1), ai_tar=invocations.TargetEnemy(), mp_cost=4
+      ,) ), com_tar=targetarea.Blast(radius=1), ai_tar=invocations.TargetEnemy(), mp_cost=9, shot_anim=animobs.GreenComet
     ), )
     def init_monster( self ):
         self.levels.append( base.Terror( 6, self ) )
@@ -174,7 +201,7 @@ class CaveDragon( base.Monster ):
     TECHNIQUES = ( invocations.MPInvocation( "Toxic Breath",
         effects.OpposedRoll( def_stat=stats.TOUGHNESS, anim=animobs.PoisonCloud, on_success = (
             effects.Paralyze( max_duration = 3 )
-        ,) ), com_tar=targetarea.Cone(reach=6), ai_tar=invocations.TargetEnemy(), mp_cost=6
+        ,) ), com_tar=targetarea.Cone(reach=6), ai_tar=invocations.TargetEnemy(), mp_cost=8
       ), )
     def init_monster( self ):
         self.levels.append( base.Terror( 8, self ) )
@@ -202,7 +229,7 @@ class SwampDragon( base.Monster ):
         effects.HealthDamage( (3,8,0), stat_bonus=stats.TOUGHNESS, element=stats.RESIST_ACID, anim=animobs.GreenExplosion )
       ,), on_failure = (
         effects.HealthDamage( (1,12,0), stat_bonus=None, element=stats.RESIST_ACID, anim=animobs.GreenExplosion )
-      ,) ), com_tar=targetarea.Line(reach=6), ai_tar=invocations.TargetEnemy(), mp_cost=6
+      ,) ), com_tar=targetarea.Line(reach=6), ai_tar=invocations.TargetEnemy(), mp_cost=9
     ), )
     def init_monster( self ):
         self.levels.append( base.Terror( 8, self ) )
@@ -235,7 +262,7 @@ class SkyDragon( base.Monster ):
         effects.HealthDamage( (5,6,0), stat_bonus=stats.TOUGHNESS, element=stats.RESIST_LIGHTNING, anim=animobs.Spark )
       ,), on_failure = (
         effects.HealthDamage( (2,8,0), stat_bonus=None, element=stats.RESIST_LIGHTNING, anim=animobs.Spark )
-      ,) ), com_tar=targetarea.Line(reach=8), ai_tar=invocations.TargetEnemy(), mp_cost=6
+      ,) ), com_tar=targetarea.Line(reach=8), ai_tar=invocations.TargetEnemy(), mp_cost=12
     ), )
     def init_monster( self ):
         self.levels.append( base.Terror( 9, self ) )
@@ -277,7 +304,7 @@ class OldCaveDragon( base.Monster ):
     TECHNIQUES = ( invocations.MPInvocation( "Toxic Breath",
         effects.OpposedRoll( def_stat=stats.TOUGHNESS, anim=animobs.PoisonCloud, on_success = (
             effects.Paralyze( max_duration = 3 )
-        ,) ), com_tar=targetarea.Cone(reach=8), ai_tar=invocations.TargetEnemy(), mp_cost=9
+        ,) ), com_tar=targetarea.Cone(reach=8), ai_tar=invocations.TargetEnemy(), mp_cost=12
       ), )
     def init_monster( self ):
         self.levels.append( base.Terror( 12, self ) )
@@ -305,7 +332,7 @@ class OldSwampDragon( base.Monster ):
         effects.HealthDamage( (5,8,0), stat_bonus=stats.TOUGHNESS, element=stats.RESIST_ACID, anim=animobs.GreenExplosion )
       ,), on_failure = (
         effects.HealthDamage( (2,12,0), stat_bonus=None, element=stats.RESIST_ACID, anim=animobs.GreenExplosion )
-      ,) ), com_tar=targetarea.Line(reach=8), ai_tar=invocations.TargetEnemy(), mp_cost=9
+      ,) ), com_tar=targetarea.Line(reach=8), ai_tar=invocations.TargetEnemy(), mp_cost=15
     ), )
     def init_monster( self ):
         self.levels.append( base.Terror( 12, self ) )
@@ -351,7 +378,7 @@ class AncientCaveDragon( base.Monster ):
     TECHNIQUES = ( invocations.MPInvocation( "Toxic Breath",
         effects.OpposedRoll( def_stat=stats.TOUGHNESS, anim=animobs.PoisonCloud, on_success = (
             effects.Paralyze( max_duration = 3 )
-        ,) ), com_tar=targetarea.Cone(reach=10), ai_tar=invocations.TargetEnemy(), mp_cost=12
+        ,) ), com_tar=targetarea.Cone(reach=10), ai_tar=invocations.TargetEnemy(), mp_cost=16
       ), )
     def init_monster( self ):
         self.levels.append( base.Terror( 16, self ) )
@@ -379,7 +406,7 @@ class AncientSwampDragon( base.Monster ):
         effects.HealthDamage( (10,8,0), stat_bonus=stats.TOUGHNESS, element=stats.RESIST_ACID, anim=animobs.GreenExplosion )
       ,), on_failure = (
         effects.HealthDamage( (4,10,0), stat_bonus=None, element=stats.RESIST_ACID, anim=animobs.GreenExplosion )
-      ,) ), com_tar=targetarea.Line(reach=10), ai_tar=invocations.TargetEnemy(), mp_cost=12
+      ,) ), com_tar=targetarea.Line(reach=10), ai_tar=invocations.TargetEnemy(), mp_cost=20
     ), )
     def init_monster( self ):
         self.levels.append( base.Terror( 16, self ) )

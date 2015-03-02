@@ -159,7 +159,7 @@ class Team( object ):
             self.fac.alter_monster_request( myhab )
 
         # Determine how many points of monster to generate.
-        pts = max( ( random.randint(150,250) * self.strength ) // 100, 1 )
+        pts = max( ( random.randint(175,225) * self.strength ) // 100, 1 )
 
         # We really don't want generation to fail. If no faction members can
         # be found, attempt to load without faction... or just anything.
@@ -172,6 +172,10 @@ class Team( object ):
         while pts > 0 and mclass:
             rel_level = max_rank + 1 - mclass.ENC_LEVEL
             m_pts = 200 / ( rel_level ** 2 // 12 + rel_level )
+
+            # Scale the points based on the xp value of the monster, assuming
+            # a normal rate of 100xp per rank.
+            m_pts = ( m_pts * mclass().xp_value() ) // ( mclass.ENC_LEVEL * 100 )
 
             # Determine what companions this monster might get.
             if self.hodgepodge:

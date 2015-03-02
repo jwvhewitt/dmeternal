@@ -36,6 +36,9 @@ import collections
 import container
 import maps
 import spells
+import monsters
+import characters
+import chargen
 
 
 class Campaign( object ):
@@ -251,6 +254,52 @@ def browse_pcs( screen ):
             rpm.add_item( str( pc ), pc )
         rpm.sort()
         pc = rpm.query()
+
+class random_party( list ):
+    """Create a random party of adventurers."""
+    FIGHTERS = ( characters.Warrior, characters.Samurai, characters.Knight,
+     characters.Monk, characters.Warrior, characters.Knight )
+    THIEVES = ( characters.Thief, characters.Ninja, characters.Bard, characters.Ranger,
+     characters.Thief, characters.Bard, characters.Ranger )
+    PRIESTS = ( characters.Priest, characters.Druid, characters.Priest )
+    MAGES = ( characters.Mage, characters.Necromancer, characters.Mage )
+    def __init__( self ):
+        list.__init__(self, [] )
+        self.append( self.create_pc( random.choice( self.FIGHTERS ) ) )
+        self.append( self.create_pc( random.choice( self.THIEVES ) ) )
+        self.append( self.create_pc( random.choice( self.PRIESTS ) ) )
+        self.append( self.create_pc( random.choice( self.MAGES ) ) )
+
+    def create_pc( self, job ):
+        """Create a PC with the given job."""
+        oldpc = None
+        for t in range( 10 ):
+            species = random.choice( characters.PC_SPECIES )
+            gender = random.randint(0,1)
+            newpc = characters.Character( species=species(), gender=gender )
+            tries = 1000
+            while ( tries > 0 ) and not job.can_take_level( newpc ):
+                newpc.roll_stats()
+                tries += -1
+            newpc.levels.append( job(1,newpc) )
+            chargen.give_starting_equipment( newpc )
+            newpc.name = monsters.gen_monster_name(newpc)
+
+            if self.newpc_is_better( newpc, oldpc ):
+                oldpc = newpc
+        return oldpc
+
+    def newpc_is_better( self, newpc, oldpc ):
+        if oldpc:
+            return self.rate_stats( newpc ) > self.rate_stats( oldpc )
+        else:
+            return True
+    def rate_stats( self, canpc ):
+        """Return a score rating the statistics of this candidate PC."""
+        total = 0
+        for s in stats.PRIMARY_STATS:
+            total += canpc.get_stat( s ) * ( 3 + canpc.mr_level.requirements.get( s, 0 ) )
+        return total
 
 def load_party( screen ):
     # Select up to four characters to form the new party.

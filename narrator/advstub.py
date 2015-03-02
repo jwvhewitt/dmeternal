@@ -49,6 +49,14 @@ class SpoonyStub( Plot ):
 
         return True
 
+# VDMA Visual Dungeon Monkey Adventure
+# - World map replaced by realms map, showing area to explore.
+#   Entering territory brings up VN style menu of places to explore and
+#   things to do.
+# - Core story + rival agents. PC may interact with agents during chapter.
+#   When chapter ends, success or failure of other agents determined.
+# - In general, "expert play" should make the game harder but unlock better
+#   or different endings.
 
 class BardicStub( Plot ):
     LABEL = "STUB_BARDIC"
