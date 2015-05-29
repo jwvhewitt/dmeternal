@@ -36,6 +36,7 @@ class Merchant( characters.Level ):
         items.GLOVE, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK, items.WAND )
     starting_equipment = (items.clothes.MerchantGarb,items.daggers.Dirk)
+    FRIENDMOD = {characters.Thief: -3, characters.Ninja: -3}
 
 class Innkeeper( characters.Level ):
     name = 'Innkeeper'

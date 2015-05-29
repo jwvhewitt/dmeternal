@@ -241,7 +241,7 @@ class LibraryOfTheDead( Plot ):
             # Record the one thing this boss cares about.
             self.boss_goal = random.choice( self.GOALS )
             self.boss_shop = self.register_element( "SHOPSERVICE",
-              services.Shop( services.MAGIC_STORE, rank=self.rank+5, allow_misc=False, allow_magic=True, num_items=25, turnover=5 ) )
+              services.Shop( services.MAGIC_STORE, rank=self.rank+5, allow_misc=False, num_items=25, turnover=5, npc=boss ) )
             self.shop_open = False
         return btype
     def get_dialogue_grammar( self, npc, explo ):
@@ -313,7 +313,7 @@ class NeutralTraders( Plot ):
         btype = monsters.choose_monster_type(self.rank-1,self.rank+2,myhabitat)
         if btype:
             boss = monsters.generate_boss( btype, self.rank-1, team=myteam )
-            self.shop = self.register_element( "SHOPSERVICE", services.Shop( rank=self.rank+3, allow_magic=True, num_items=15 ) )
+            self.shop = self.register_element( "SHOPSERVICE", services.Shop( rank=self.rank+3, num_items=15, npc=boss ) )
             self.first_time = True
             self.register_element( "BOSS", boss, "_ROOM" )
         return btype

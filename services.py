@@ -28,24 +28,25 @@ MAGIC_STORE = ( items.SCROLL, items.SCROLL, items.SCROLL, items.SCROLL, items.SC
     items.POTION, items.HOLYSYMBOL, items.WAND )
 
 class Shop( object ):
-    def __init__( self, ware_types = GENERAL_STORE, allow_misc=True, allow_magic=False, caption="Shop", magic_chance=20, rank=3, num_items=25, turnover=1 ):
+    def __init__( self, ware_types = GENERAL_STORE, allow_misc=True, enhance_at=20, caption="Shop", magic_chance=20, rank=3, num_items=25, turnover=1, npc=None ):
         self.wares = list()
         self.ware_types = ware_types
         self.allow_misc = allow_misc
-        self.allow_magic = allow_magic
+        self.enhance_at = enhance_at
         self.magic_chance = magic_chance
         self.caption = caption
         self.rank = rank
         self.num_items = num_items
         self.turnover = turnover
         self.last_updated = -1
+        self.npc = npc
 
-    def generate_item( self, itype, rank ):
+    def generate_item( self, itype, rank, magic_chance ):
         it = None
         tries = 0
         while ( tries < 200 ) and not it:
             it = items.choose_item( itype, rank )
-            if it and self.allow_magic and it.min_rank() < rank and random.randint(1,100)<=self.magic_chance:
+            if it and it.min_rank() < rank and random.randint(1,100)<=magic_chance:
                 items.make_item_magic( it, rank )
             if any( str( i ) == str( it ) for i in self.wares ):
                 it = None
@@ -56,6 +57,26 @@ class Shop( object ):
         # Once a day the wares get updated. Delete some items, make sure that
         # there's at least one item of every ware_type, and then fill up the
         # store to full capacity.
+
+        # A lot of stuff about the wares is going to depend on the shopkeeper's
+        # friendliness.
+        if self.npc:
+            friendliness = self.npc.get_friendliness( explo.camp )
+        else:
+            friendliness = 0
+
+        # The number of items is highly dependent on friendliness, or more
+        # specifically a lack thereof.
+        if friendliness < 0:
+            num_items = max( 5, ( self.num_items * ( 100 + 2 * friendliness ) ) // 100 )
+        else:
+            num_items = self.num_items + friendliness // 10
+        magic_chance = min( self.magic_chance, friendliness - self.enhance_at + 1 )
+
+        # Get rid of some of the old stock, to make room for new stock.
+        while len( self.wares ) > num_items:
+            it = random.choice( self.wares )
+            self.wares.remove( it )
         days = explo.camp.day - self.last_updated
         for n in range( max( 3, ( random.randint(1,6) + days ) * self.turnover )):
             if self.wares:
@@ -65,25 +86,31 @@ class Shop( object ):
                 break
 
         # The store rank tracks the party rank, but doesn't quite keep up.
-        rank = max( self.rank, ( self.rank + explo.camp.party_rank() ) // 2 )
+        rank = self.rank
+        if friendliness > 50:
+            rank = max( rank, explo.camp.party_rank() )
+        elif friendliness > -20:
+            rank = max( rank, ( rank + explo.camp.party_rank() ) // 2 )
 
+        # Generate one of each type of item this shop stocks first.        
         needed_wares = list( self.ware_types )
         for i in self.wares:
             if i.itemtype in needed_wares:
                 needed_wares.remove( i.itemtype )
-
         for w in needed_wares:
-            it = self.generate_item( w, rank )
+            it = self.generate_item( w, rank, magic_chance )
             if it:
                 self.wares.append( it )
+
+        # Fill the rest of the store later.
         tries = 0
-        while len( self.wares ) < self.num_items:
+        while len( self.wares ) < num_items:
             tries += 1
             if self.allow_misc or tries > 200:
                 itype = None
             else:
                 itype = random.choice( self.ware_types )
-            it = self.generate_item( itype, rank )
+            it = self.generate_item( itype, rank, magic_chance )
             if it:
                 if it.itemtype is items.POTION and hasattr( it, "quantity" ):
                     it.shop_quantity = 4 + random.randint( 1,6)

@@ -31,7 +31,7 @@ class RNC_GeneralMerchant( Plot ):
     def custom_init( self, nart ):
         # Add a shop.
         self.shop = self.register_element( "SHOPSERVICE", services.Shop( ware_types=services.MINIMAL_STORE, rank=self.rank+random.randint(2,9),
-         allow_misc=True, allow_magic=True, num_items=10 ) )
+         allow_misc=True, num_items=10, npc=self.elements.get("NPC") ) )
         self.first_time = True
         return True
     def SpeakFirstTime( self, explo ):
@@ -62,7 +62,7 @@ class RNC_WeaponMerchant( Plot ):
     def custom_init( self, nart ):
         # Add a shop.
         self.shop = self.register_element( "SHOPSERVICE", services.Shop( ware_types=services.WEAPON_STORE, rank=self.rank+random.randint(2,7),
-         allow_misc=False, allow_magic=True, num_items=10 ) )
+         allow_misc=False, num_items=10, npc=self.elements.get("NPC") ) )
         self.first_time = True
         return True
     def SpeakFirstTime( self, explo ):
@@ -92,7 +92,7 @@ class RNC_ArmorMerchant( Plot ):
     def custom_init( self, nart ):
         # Add a shop.
         self.shop = self.register_element( "SHOPSERVICE", services.Shop( ware_types=services.ARMOR_STORE, rank=self.rank+random.randint(3,6),
-         allow_misc=False, allow_magic=True, num_items=10 ) )
+         allow_misc=False, num_items=10, npc=self.elements.get("NPC") ) )
         self.first_time = True
         return True
     def SpeakFirstTime( self, explo ):
@@ -122,7 +122,7 @@ class RNC_MagicMerchant( Plot ):
     def custom_init( self, nart ):
         # Add a shop.
         self.shop = self.register_element( "SHOPSERVICE", services.Shop( ware_types=services.MAGIC_STORE, rank=self.rank+random.randint(2,4),
-         allow_misc=False, allow_magic=True, num_items=10 ) )
+         allow_misc=False, num_items=10, npc=self.elements.get("NPC") ) )
         self.first_time = True
         return True
     def NPC_offers( self, explo ):
@@ -225,7 +225,7 @@ class RJT_DungeonShop( Plot ):
         gate_1.mini_map_label = "Dungeon Shop"
         int_mainroom.contents.append( npc )
         self.register_element( "SHOPKEEPER", npc )
-        self.shop = self.register_element( "SHOPSERVICE", services.Shop( rank=locale.rank+3, allow_magic=True ) )
+        self.shop = self.register_element( "SHOPSERVICE", services.Shop( rank=locale.rank+3, npc=npc ) )
         self.first_time = True
         return True
     def SpeakFirstTime( self, explo ):

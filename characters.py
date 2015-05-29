@@ -31,6 +31,8 @@ class Level( object ):
     XP_VALUE = 200
     MIN_RANK = 0
     FULL_HP_AT_FIRST = True
+    FRIENDMOD = dict()
+
     def __init__( self, rank=0, pc=None ):
         self.rank = 0
         self.hp = 0
@@ -329,6 +331,7 @@ class SentientSpecies( object ):
     starting_equipment = ()
     MOVE_POINTS = 10
     TEMPLATES = ()
+    FRIENDMOD = dict()
 
     def __init__( self ):
         self.skin_color = random.randint( 0 , self.NUM_COLORS - 1 )
@@ -436,6 +439,25 @@ class Centaur( SentientSpecies ):
     MOVE_POINTS = 12
 
 PC_SPECIES = (Human, Dwarf, Elf, Gnome, Orc, Hurthling, Fuzzy, Reptal, Centaur )
+
+# Set FRIENDMODs for jobs + species now that everything's defined.
+Thief.FRIENDMOD = { Priest: -5, Knight: -5 }
+Priest.FRIENDMOD = { Thief: -3, Necromancer: -5, Ninja: -3 }
+Druid.FRIENDMOD = { Necromancer: -5 }
+Knight.FRIENDMOD = { Thief: -5, Necromancer: -5, Ninja: -3 }
+Ranger.FRIENDMOD = { Necromancer: -3, }
+Necromancer.FRIENDMOD = { Necromancer: 3, Priest: -5, Druid: -5, Knight: -5, Ranger: -5 }
+Samurai.FRIENDMOD = { Ninja: -5 }
+Ninja.FRIENDMOD = { Samurai: -5 }
+Human.FRIENDMOD = { Orc: -5, Reptal: -5, }
+Dwarf.FRIENDMOD = { Warrior: 3, Orc: -5, Elf: -3 }
+Orc.FRIENDMOD = { Dwarf: -3, Elf: -5, Human: -5 }
+Elf.FRIENDMOD = { Druid: 3, Orc: -3, Dwarf: -5, Reptal: -3 }
+Gnome.FRIENDMOD = { Mage: 3, Necromancer: 3 }
+Hurthling.FRIENDMOD = { Hurthling: 3, Orc: -3, Reptal: -5, Centaur: -3 }
+Fuzzy.FRIENDMOD = { Fuzzy: 5, }
+Reptal.FRIENDMOD = { Reptal: 3, Human: -5, Dwarf: -3, Elf: -3, Hurthling: -3, Gnome: -3 }
+
 
 class CappedModifierList( list ):
     """Stat bonus from list items capped to max positive - max negative"""
@@ -736,6 +758,31 @@ class Character( stats.PhysicalThing ):
                 return self.team.default_reaction
         else:
             return 999
+
+    def get_friendliness( self, camp ):
+        # The first time friendliness is queried, start with a random amount.
+        if not hasattr( self, "friendliness" ):
+            it = random.randint(1,11) - random.randint(1,11)
+            self.friendliness = it
+        else:
+            it = self.friendliness
+        if self.team and self.team.fac:
+            it += self.team.fac.reaction
+
+        # Modify friendliness by the npc's race and job.
+        if self.species:
+            for pc in camp.party:
+                if pc.species:
+                    it += self.species.FRIENDMOD.get( pc.species.__class__, 0 )
+                    it += self.mr_level.FRIENDMOD.get( pc.species.__class__, 0 )
+                it += self.species.FRIENDMOD.get( pc.mr_level.__class__, 0 )
+                it += self.mr_level.FRIENDMOD.get( pc.mr_level.__class__, 0 )
+
+        # Modify friendliness by the party spokesperson's charisma.
+        pc = camp.party_spokesperson()
+        it += ( pc.get_stat( stats.CHARISMA ) - 13 ) * 4
+
+        return it
 
     def is_hostile( self, camp ):
         """Return True if this character is hostile to the party."""

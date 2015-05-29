@@ -33,6 +33,19 @@ def base_grammar( pc, npc, explo ):
     mygram["[scene]"].append( str( explo.scene ) )
     mygram["[city]"].append( str( explo.camp.current_root_scene() ) )
 
+    if npc:
+        friendliness = npc.get_friendliness( explo.camp )
+        if friendliness < -50:
+            absorb( mygram, DISLIKE_GRAMMAR )
+            absorb( mygram, HATE_GRAMMAR )
+        elif friendliness < -20:
+            absorb( mygram, DISLIKE_GRAMMAR )
+        elif friendliness > 50:
+            absorb( mygram, LIKE_GRAMMAR )
+            absorb( mygram, LOVE_GRAMMAR )
+        elif friendliness > 20:
+            absorb( mygram, LIKE_GRAMMAR )
+
     return mygram
 
 GRAM_DATABASE = {
@@ -147,7 +160,7 @@ GRAM_DATABASE = {
         "brown", "grey", "pink", "black", "white", "big", "small", "old", "young",
         "hot","cold","warm","cool",
         ],
-    "[pc]": ["[positive_adjective] adventurers", "adventurers"
+    "[pc]": ["adventurers",
         ],
     "[PORTENT]": [ "The world is veiled in darkness.", "Dogs and cats, living together."
         ],
@@ -168,7 +181,7 @@ GRAM_DATABASE = {
         ],
     "[SERVICE_INN]": [ "", "I will get a room prepared for you right away.",
         ],
-    "[SERVICE_TEMPLE]": [ "", "Remember that it is better to give than to receive, which is why we insist that you pay up front.",
+    "[SERVICE_TEMPLE]": [ "", "Allow us to heal your ills.",
         ],
     "[SHOP]": [ "", "Take a look around. Let me know if you need any help."
         ],
@@ -192,6 +205,42 @@ GRAM_DATABASE = {
         ],
     }
 
+LOVE_GRAMMAR = {
+    "[HELLO]": [ "Great to see you, [pc]!"
+        ],
+    "[pc]": ["[positive_adjective] heroes",
+        ],
+    }
 
+LIKE_GRAMMAR = {
+    "[HELLO]": [ "Hello [pc]!", "Good to see you, [pc]."
+        ],
+    "[pc]": ["[positive_adjective] adventurers", "heroes",
+        ],
+    "[SERVICE_TEMPLE]": [ "I will do what I can to heal you.",
+        ],
+    "[SHOP]": [ "I hope you can find everything you need. If not, let me know.",
+        ],
+    }
+
+DISLIKE_GRAMMAR = {
+    "[HELLO]": [ "Oh, it's you.",
+        ],
+    "[pc]": ["[negative_adjective] adventurers",
+        ],
+    "[SERVICE_TEMPLE]": [ "Remember that it is better to give than to receive, which is why we insist that you pay up front.",
+        ],
+    "[SHOP]": [ "Don't try to swipe anything; I'll be keeping my eye on you.",
+        ],
+    }
+
+HATE_GRAMMAR = {
+    "[pc]": ["idiots",
+        ],
+    "[SERVICE_TEMPLE]": [ "If the gods want you to live, I will do as they command.",
+        ],
+    "[SHOP]": [ "Just buy what you need and get the hell out.",
+        ],
+    }
 
 

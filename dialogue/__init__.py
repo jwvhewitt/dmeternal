@@ -31,6 +31,7 @@ import replies
 import re
 import characters
 import services
+import image
 
 def harvest( mod, class_to_collect ):
     mylist = []
@@ -213,6 +214,8 @@ class ConvoRedraw( pygame.Rect ):
         super(ConvoRedraw, self).__init__(x,y,self.WIDTH,self.HEIGHT)
         self.npc = npc
         self.regenerate_avatar()
+        self.smilies = image.Image( "sys_friendliness.png", 15, 15 )
+        self.friendliness = 0
 
         self.menu_rect = pygame.Rect( x,y+self.HEIGHT-self.MENU_HEIGHT,self.WIDTH,self.MENU_HEIGHT )
         self.text_rect = pygame.Rect( x, y+70, self.WIDTH, self.HEIGHT - self.MENU_HEIGHT - 86 )
@@ -228,6 +231,18 @@ class ConvoRedraw( pygame.Rect ):
         myimg.render( mybmp, frame=self.npc.FRAME )
         self.img = pygame.transform.scale2x( mybmp )
 
+    def get_smiley( self, friendliness ):
+        if friendliness < -50:
+            return 0
+        elif friendliness < -20:
+            return 1
+        elif friendliness > 50:
+            return 4
+        elif friendliness > 20:
+            return 3
+        else:
+            return 2
+
     def __call__( self, screen ):
         if self.predraw:
             self.predraw( screen )
@@ -236,6 +251,8 @@ class ConvoRedraw( pygame.Rect ):
         # Header avatar
         if self.img:
             screen.blit(self.img , (self.x-20,self.y-20) )
+            self.smilies.render( screen, (self.x+50,self.y), self.get_smiley(self.friendliness))
+            pygwrap.draw_text( screen, pygwrap.SMALLFONT, str( self.friendliness), pygame.Rect( self.x+55, self.y+16, 64, pygwrap.SMALLFONT.get_linesize() ), justify = -1 )
 
         # Header info- name and level/gender/race/class
         y = self.y + 6
@@ -280,6 +297,7 @@ def converse( explo, pc, npc, cue ):
 
 
     while coff:
+        crd.friendliness = npc.get_friendliness(explo.camp)
         crd.text = personalize_text( coff.msg , npc_voice, mygram )
         mymenu = rpgmenu.Menu( explo.screen, crd.menu_rect.x, crd.menu_rect.y, crd.menu_rect.width, crd.menu_rect.height, border=None, predraw=crd )
         for i in coff.replies:

@@ -154,6 +154,9 @@ PT_DATABASE = {
         PTEntry( "preshishley", { voice.KITTEH: True, voice.SMART: True } ),
         PTEntry( "suitably", { voice.HURTHISH: True } ),
         ),
+    "evil": (
+        PTEntry( "ungood", { voice.ELVEN: True } ),
+        ),
     "forever":   (
         PTEntry( "furevur", { voice.KITTEH: True } ),
         PTEntry( "til never", { voice.GNOMIC: True } ),

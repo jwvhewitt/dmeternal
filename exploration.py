@@ -286,8 +286,6 @@ class Explorer( object ):
 
         self.record_anim = False
 
-        self.shop = services.Shop()
-
         # Update the view of all party members.
         for pc in camp.party:
             if pc.pos and pc.is_alright():

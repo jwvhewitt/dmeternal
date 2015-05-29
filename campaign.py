@@ -273,7 +273,7 @@ class random_party( list ):
     def create_pc( self, job ):
         """Create a PC with the given job."""
         oldpc = None
-        for t in range( 10 ):
+        for t in range( 5 ):
             species = random.choice( characters.PC_SPECIES )
             gender = random.randint(0,1)
             newpc = characters.Character( species=species(), gender=gender )
