@@ -115,6 +115,15 @@ def load_campaign( screen ):
         if camp:
             camp.play( screen )
 
+def test_campaign_generator( screen ):
+    for t in range( 500 ):
+        nart = narrator.Narrative( narrator.plots.PlotState(rank=1), adv_type="STUB_BARDIC", end_rank=5 )
+        nart.build()
+        print t
+
+    for p in narrator.UNSORTED_PLOT_LIST:
+        print "{} [{}]".format( p, p._used )
+
 
 
 if __name__=='__main__':
@@ -139,6 +148,7 @@ if __name__=='__main__':
     rpm.add_item( "Start New Campaign", bardic_start_campaign )
     rpm.add_item( "Start Gen1 Campaign", default_start_campaign )
     rpm.add_item( "Browse Characters", campaign.browse_pcs )
+    rpm.add_item( "Test Campaign Generator", test_campaign_generator )
     rpm.add_item( "Quit Game", None )
 
     cmd = True

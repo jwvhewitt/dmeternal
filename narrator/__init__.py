@@ -70,11 +70,13 @@ class Narrative( object ):
 
 # The list of plots will be stored as a dictionary based on label.
 PLOT_LIST = collections.defaultdict( list )
+UNSORTED_PLOT_LIST = list()
 def harvest( mod ):
     for name in dir( mod ):
         o = getattr( mod, name )
         if inspect.isclass( o ) and issubclass( o , Plot ) and o is not Plot:
             PLOT_LIST[ o.LABEL ].append( o )
+            UNSORTED_PLOT_LIST.append( o )
 
 import advstub
 import bardicbits

@@ -6,6 +6,7 @@ import random
 import copy
 import pfov
 import enchantments
+import stats
 
 GENERAL_STORE = ( items.SWORD, items.AXE, items.MACE, items.DAGGER, items.STAFF,
     items.BOW, items.POLEARM, items.ARROW, items.SHIELD, items.SLING, items.BULLET,
@@ -123,12 +124,13 @@ class Shop( object ):
 
         for s in self.wares:
             sname = str( s )
+            scost = str( self.calc_purchase_price( explo, s ) )
             if hasattr( s, "spell" ) and not any( s.spell.name == t.name for t in explo.camp.known_spells ):
                 sname = "(New) {0}".format( sname )
             if s.slot != items.NOSLOT and not self.pc.can_equip(s):
-                mymenu.add_item( "#" + sname, s )
+                mymenu.add_item( "#{} ({}gp)".format( sname, scost ), s )
             else:
-                mymenu.add_item( sname, s )
+                mymenu.add_item( "{} ({}gp)".format( sname, scost ), s )
         mymenu.sort()
         mymenu.add_alpha_keys()
         mymenu.add_item( "Exit", False )
@@ -136,6 +138,25 @@ class Shop( object ):
         mymenu.quick_keys[ pygame.K_LEFT ] = -1
         mymenu.quick_keys[ pygame.K_RIGHT ] = 1
         return mymenu
+
+    def improve_friendliness( self, explo, item ):
+        """Dealing with a shopkeeper will generally increase friendliness."""
+        if self.npc:
+            target = abs( self.npc.get_friendliness( explo.camp ) ) + 50 - 5 * item.min_rank()
+            roll = random.randint( 1, 100 ) + explo.camp.party_spokesperson().get_stat_bonus( stats.CHARISMA )
+            if roll > target:
+                self.npc.friendliness += ( roll - target + 9 ) // 10
+
+    def calc_purchase_price( self, explo, item ):
+        """The sale price of an item depends on friendliness."""
+        it = item.cost()
+        if self.npc:
+            f = self.npc.get_friendliness( explo.camp )
+            if f < 0:
+                it = ( it * ( 120 - 2 * f ) ) // 100
+            else:
+                it = ( it * ( 240 - f ) ) // 200
+        return it
 
     LIMITED_QUANTITY_ITEMS = (items.SCROLL,items.POTION,items.GEM)
 
@@ -159,7 +180,8 @@ class Shop( object ):
                 myredraw.csheet = self.charsheets[self.pc]
             elif it:
                 # An item was selected. Deal with it.
-                if it.cost() > explo.camp.gold:
+                cost = self.calc_purchase_price( explo, it )
+                if cost > explo.camp.gold:
                     myredraw.caption = "You can't afford it!"
                 elif not self.pc.can_take_item( it ) or not self.pc.is_alright():
                     myredraw.caption = "You can't carry it!"
@@ -178,7 +200,8 @@ class Shop( object ):
                                 self.wares.remove( it )
 
                     self.pc.contents.append( it2 )
-                    explo.camp.gold -= it.cost()
+                    self.improve_friendliness( explo, it2 )
+                    explo.camp.gold -= cost
                     myredraw.caption = "You have bought {0}.".format(it2)
             else:
                 keep_going = False

@@ -73,6 +73,9 @@ class Plot( object ):
     chapter = None
     rank = 1
     active = False
+
+    _used = 0
+
     # Set scope to the scene identifier of the scene this plot's scripts are
     # attached to, or True for this plot to have global scope.
     scope = None
@@ -88,6 +91,9 @@ class Plot( object ):
         self.rank = pstate.rank or self.rank
         self.elements = pstate.elements.copy()
         self.subplots = dict()
+
+        # Increment the usage count, for getting info on plot numbers!
+        self.__class__._used += 1
 
         # The move_records are stored in case this plot gets removed.
         self.move_records = list()
@@ -203,6 +209,9 @@ class Plot( object ):
         for e,d in self.move_records:
             if e in d:
                 d.remove( e )
+
+        self.__class__._used += -1
+
         # Remove self from the uniques set, if necessary.
         if self.UNIQUE and self.__class__ in nart.uniques:
             nart.uniques.remove( self.__class__ )

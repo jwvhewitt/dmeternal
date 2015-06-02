@@ -149,6 +149,16 @@ class Team( object ):
             it += self.fac.reaction
         return it
 
+    def encounter_points( self, max_rank, mclass ):
+        """Return the encounter points per monster for this mclass."""
+        rel_level = max_rank + 1 - mclass.ENC_LEVEL
+        m_pts = 200 / ( rel_level ** 2 // 12 + rel_level )
+
+        # Scale the points based on the xp value of the monster, assuming
+        # a normal rate of 100xp per rank.
+        m_pts = ( m_pts * mclass().xp_value() ) // ( mclass.ENC_LEVEL * 100 )
+        return m_pts
+
     def build_encounter( self, gb ):
         min_rank = min( int( self.rank * 0.7 ), self.rank - 2 )
         max_rank = self.rank + 2
@@ -170,12 +180,7 @@ class Team( object ):
             mclass = gb.choose_monster( min_rank, max_rank, {context.SET_EVERY: True} )
 
         while pts > 0 and mclass:
-            rel_level = max_rank + 1 - mclass.ENC_LEVEL
-            m_pts = 200 / ( rel_level ** 2 // 12 + rel_level )
-
-            # Scale the points based on the xp value of the monster, assuming
-            # a normal rate of 100xp per rank.
-            m_pts = ( m_pts * mclass().xp_value() ) // ( mclass.ENC_LEVEL * 100 )
+            m_pts = self.encounter_points( max_rank, mclass )
 
             # Determine what companions this monster might get.
             if self.hodgepodge:
@@ -197,16 +202,22 @@ class Team( object ):
                 n = 1
             elif nextmon:
                 # There's another monster coming up.
-                max_n = pts//m_pts
+                max_n,left_n = divmod( pts, m_pts )
                 if max_n > 1:
                     n = random.randint( 1, max_n )
                 else:
                     n = max_n
+                # If the next monster in a hodgepodge is too big,
+                # just end with this monster.
+                if self.hodgepodge and left_n > 0 and self.encounter_points( max_rank, nextmon ) > ( left_n + 25 ):
+                    n = max_n + 1
+                    nextmon = 0
             else:
                 # This monster type is all we have. Spend all points on it.
                 n,pts = divmod( pts , m_pts )
                 if random.randint( 0, m_pts ) <= pts:
                     n += 1
+
 
             pts -= n * m_pts
 
