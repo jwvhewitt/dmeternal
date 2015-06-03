@@ -30,13 +30,21 @@ class Spell( invocations.Invocation ):
         else:
             return self.exp_tar and chara.current_mp() >= self.mp_cost()
 
-    def can_be_learned( self, chara ):
-        ok = self.gems_needed() <= ( chara.total_spell_gems() - chara.spell_gems_used() ) and self.rank <= (chara.rank() + 1) // 2
-        if ok:
-            for k,v in self.gems.iteritems():
-                if v > chara.spell_gems_of_color(k) - chara.spell_gems_of_color_used(k):
-                    ok = False
-                    break
+    def can_be_learned( self, chara, right_now=True ):
+        if right_now:
+            ok = self.gems_needed() <= ( chara.total_spell_gems() - chara.spell_gems_used() ) and self.rank <= (chara.rank() + 1) // 2
+            if ok:
+                for k,v in self.gems.iteritems():
+                    if v > chara.spell_gems_of_color(k) - chara.spell_gems_of_color_used(k):
+                        ok = False
+                        break
+        else:
+            ok = self.gems_needed() <= chara.total_spell_gems() and self.rank <= (chara.rank() + 1) // 2
+            if ok:
+                for k,v in self.gems.iteritems():
+                    if v > chara.spell_gems_of_color(k):
+                        ok = False
+                        break
         return ok
 
     def pay_invocation_price( self, chara ):

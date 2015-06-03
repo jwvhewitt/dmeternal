@@ -13,7 +13,7 @@ import characters
 import random
 
 class TestEncounter( Plot ):
-    LABEL = "zzTEST_FEATURE"
+    LABEL = "zzzTEST_FEATURE"
     def custom_init( self, nart ):
         scene = self.elements.get("LOCALE")
         mygen = nart.get_map_generator( scene )
@@ -21,7 +21,9 @@ class TestEncounter( Plot ):
         myteam = teams.Team(default_reaction=-999, rank=self.rank, 
           strength=0, habitat=scene.get_encounter_request(), fac=scene.fac )
         room.contents.append( myteam )
-        room.contents.append( monsters.chaos.MadMonk( myteam ) )
+        monster = monsters.goblins.GoblinArcher( myteam )
+        print monster.techniques
+        room.contents.append( monster )
         room.contents.append( waypoints.HealingFountain() )
         mychest = waypoints.SmallChest()
         mychest.stock(self.rank)

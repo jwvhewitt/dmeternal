@@ -55,7 +55,7 @@ class TargetEnemy( object ):
         # If there are no good targets, return an empty list.
         if not invo.com_tar.AUTOMATIC:
             # This targeter will have a reach attribute.
-            if hasattr( invo, "reach" ):
+            if hasattr( invo.com_tar, "reach" ):
                 return self.calc_positions( camp, user, invo.com_tar.reach )
             elif self.targets_in_area( camp, user, invo ):
                 # Not automatic, and no reach... let's just assume we can do it

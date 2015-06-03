@@ -630,44 +630,6 @@ class Explorer( object ):
         else:
             return True
 
-    def cast_explo_spell( self, n, can_switch=True ):
-        if n >= len( self.camp.party ):
-            n = 0
-        pc = self.camp.party[ n ]
-        keep_going = True
-        myredraw = charsheet.CharacterViewRedrawer( csheet=charsheet.CharacterSheet(pc, screen=self.screen, camp=self.camp), screen=self.screen, predraw=self.view, caption="Spells & Techniques" )
-
-        while keep_going:
-            mymenu = charsheet.RightMenu( self.screen, predraw = myredraw )
-            for tech in pc.techniques:
-                mymenu.add_item( str( tech ) , tech )
-            mymenu.sort()
-            mymenu.add_alpha_keys()
-            mymenu.add_item( "Exit", False )
-            myredraw.menu = mymenu
-            if can_switch:
-                mymenu.quick_keys[ pygame.K_LEFT ] = -1
-                mymenu.quick_keys[ pygame.K_RIGHT ] = 1
-
-            it = mymenu.query()
-            if it is -1:
-                n = ( n + len( self.camp.party ) - 1 ) % len( self.camp.party )
-                pc = self.camp.party[n]
-                myredraw.csheet = charsheet.CharacterSheet(pc, screen=self.screen, camp=self.camp)
-            elif it is 1:
-                n = ( n + 1 ) % len( self.camp.party )
-                pc = self.camp.party[n]
-                myredraw.csheet = charsheet.CharacterSheet(pc, screen=self.screen, camp=self.camp)
-
-            elif it:
-                # A spell was selected. Deal with it.
-                if pc.is_alright() and it.can_be_invoked( pc ):
-                    self.pc_use_technique( pc, it, it.exp_tar )
-                else:
-                    self.alert( "That technique cannot be used right now." )
-                keep_going = False
-            else:
-                keep_going = False
 
     def do_level_training( self, student ):
         myredraw = charsheet.CharacterViewRedrawer( csheet=charsheet.CharacterSheet(student, screen=self.screen, camp=self.camp), screen=self.screen, predraw=self.view, caption="Advance Rank" )
@@ -843,11 +805,59 @@ class Explorer( object ):
 
             self.scene.last_updated = self.camp.day
 
-    def pop_spell_menu( self, pc ):
-        mymenu = rpgmenu.PopUpMenu( self.screen, self.view )
+    def add_spells_for_pc( self, pc, mymenu ):
+        """Add all of this pc's castable exploration spells to the menu."""
         techs = pc.get_invocations( False )
         for t in techs:
             mymenu.add_item( t.menu_str(), t )
+        # In addition to the prepared spells, the character can cast directly
+        # from the library of known spells.
+        for t in self.camp.known_spells:
+            if t.can_be_learned( pc ) and t.can_be_invoked( pc, False ) and t not in techs:
+                mymenu.add_item( t.menu_str(), t )
+
+
+    def cast_explo_spell( self, n, can_switch=True ):
+        if n >= len( self.camp.party ):
+            n = 0
+        pc = self.camp.party[ n ]
+        keep_going = True
+        myredraw = charsheet.CharacterViewRedrawer( csheet=charsheet.CharacterSheet(pc, screen=self.screen, camp=self.camp), screen=self.screen, predraw=self.view, caption="Spells & Techniques" )
+
+        while keep_going:
+            mymenu = charsheet.RightMenu( self.screen, predraw = myredraw )
+            self.add_spells_for_pc( pc, mymenu )
+            mymenu.sort()
+            mymenu.add_alpha_keys()
+            mymenu.add_item( "Exit", False )
+            myredraw.menu = mymenu
+            if can_switch:
+                mymenu.quick_keys[ pygame.K_LEFT ] = -1
+                mymenu.quick_keys[ pygame.K_RIGHT ] = 1
+
+            it = mymenu.query()
+            if it is -1:
+                n = ( n + len( self.camp.party ) - 1 ) % len( self.camp.party )
+                pc = self.camp.party[n]
+                myredraw.csheet = charsheet.CharacterSheet(pc, screen=self.screen, camp=self.camp)
+            elif it is 1:
+                n = ( n + 1 ) % len( self.camp.party )
+                pc = self.camp.party[n]
+                myredraw.csheet = charsheet.CharacterSheet(pc, screen=self.screen, camp=self.camp)
+
+            elif it:
+                # A spell was selected. Deal with it.
+                if pc.is_alright() and it.can_be_invoked( pc ):
+                    self.pc_use_technique( pc, it, it.exp_tar )
+                else:
+                    self.alert( "That technique cannot be used right now." )
+                keep_going = False
+            else:
+                keep_going = False
+
+    def pop_spell_menu( self, pc ):
+        mymenu = rpgmenu.PopUpMenu( self.screen, self.view )
+        self.add_spells_for_pc( pc, mymenu )
         mymenu.sort()
         mymenu.add_alpha_keys()
         mymenu.add_item( "Cancel", False )
@@ -861,9 +871,7 @@ class Explorer( object ):
 
         if pc and pc in self.camp.party:
             # Add the techniques.
-            techs = pc.get_invocations( False )
-            for t in techs:
-                mymenu.add_item( t.menu_str(), t )
+            self.add_spells_for_pc( pc, mymenu )
             mymenu.sort()
             mymenu.add_alpha_keys()
             mymenu.add_item( "-----", False )
