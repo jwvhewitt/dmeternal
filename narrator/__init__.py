@@ -9,11 +9,12 @@ import worlds
 
 class Narrative( object ):
     """The builder class which constructs a campaign."""
-    def __init__( self, pstate, end_rank=5, adv_type="ADVSTUB" ):
+    def __init__( self, pstate, start_rank=1, end_rank=5, adv_type="ADVSTUB" ):
         self.camp = campaign.Campaign()
         self.generators = list()
         self.errors = list()
         self.uniques = set()
+        self.start_rank = start_rank
         self.end_rank = end_rank
         # Add the seed plot.
         self.story = self.generate_sub_plot( pstate, adv_type )
@@ -94,6 +95,7 @@ import puzzlebits
 import resolution
 import resources
 import rewards
+import shortiebits
 import sidestories
 import socialbits
 import specencounters
@@ -115,6 +117,7 @@ harvest( puzzlebits )
 harvest( resolution )
 harvest( resources )
 harvest( rewards )
+harvest( shortiebits )
 harvest( sidestories )
 harvest( socialbits )
 harvest( specencounters )

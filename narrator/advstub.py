@@ -49,6 +49,59 @@ class SpoonyStub( Plot ):
 
         return True
 
+# Shortie Done-in-one Dungeon Monkey Adventure
+# - A small adventure, typically consisting of a single dungeon or wilderness
+#   area.
+# - Despite the limited area, see how interesting you can make it.
+
+class ShortieStub( Plot ):
+    LABEL = "STUB_SHORTIE"
+    SHORTIE_GRAMMAR = {
+        # [ADVENTURE] is the top level token- it will expand into a number of
+        # high level tokens.
+        "[ADVENTURE]": [ "[IMPERILED_PLACE] [ENEMY_BASE] [ENEMY_GOAL]",
+            ],
+
+        "[ENEMY_BASE]": [ "SDI_ENEMY_FORT SDI_ENEMY_BARRACKS SDI_BLOCKED_GATE",
+            "SDI_HIDDEN_BASE SDI_WILD_DUNGEON SDI_ENEMY_BARRACKS"
+            ],
+
+        "[ENEMY_GOAL]": [ "SDI_SUPERWEAPON",
+            "SDI_BOSSFIGHT"
+            ],
+
+        "[IMPERILED_PLACE]": [ "SDI_AMBUSH SDI_VILLAGE",
+            "SDI_ALLIED_CAMP SDI_RECON", "SDI_VILLAGE SDI_RECON"
+            ],
+    }
+    def custom_init( self, nart ):
+        """Create the world + starting scene."""
+        w = worlds.World()
+        nart.camp.contents.append( w )
+        self.register_element( "WORLD", w )
+        self.chapter = Chapter( start_rank=nart.start_rank, end_rank=nart.end_rank, world=w )
+        self.rank = nart.start_rank
+        if not self.setting:
+            self.setting = context.SET_RENFAN
+
+        # Generate a plot outline for the adventure. We will do this using a
+        # context free grammar expansion of the token [ADVENTURE]. The resultant
+        # string will be a list of subplot request labels.
+        subplot_list = self.register_element( "shortie_outline", list( dialogue.grammar.convert_tokens( "[ADVENTURE]", self.SHORTIE_GRAMMAR ).split() ) )
+        print subplot_list
+
+        # Assemble the outline into an adventure. Basically, add a subplot of
+        # each generated type, in order. Each subplot describes a stage of the
+        # mini adventure- usually a single scene, maybe also several scenes or
+        # part of a scene, whatever.
+        prev_subplot = self
+        for spr in subplot_list:
+            prev_subplot = self.add_sub_plot( nart, spr,
+                PlotState().based_on(prev_subplot) )
+
+
+        return True
+
 # VDMA Visual Dungeon Monkey Adventure
 # - World map replaced by realms map, showing area to explore.
 #   Entering territory brings up VN style menu of places to explore and

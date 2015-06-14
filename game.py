@@ -88,6 +88,22 @@ def bardic_start_campaign( screen ):
     pygwrap.please_stand_by( screen, "Building world..." )
     nart = narrator.Narrative( init, adv_type="STUB_BARDIC", end_rank=5 )
     if nart.story:
+        #nart.camp.dump_info()
+        nart.build()
+        camp = nart.camp
+#        pcs = campaign.load_party( screen )
+        pcs = campaign.random_party()
+        if pcs:
+            camp.name = pygwrap.input_string(screen, redrawer=PosterRedraw(screen), prompt="Enter campaign name" )
+            camp.add_party( pcs )
+            camp.place_party()
+            camp.play( screen )
+
+def shortie_start_campaign( screen ):
+    init = narrator.plots.PlotState(rank=1)
+    pygwrap.please_stand_by( screen, "Building world..." )
+    nart = narrator.Narrative( init, adv_type="STUB_SHORTIE", end_rank=2 )
+    if nart.story:
         nart.camp.dump_info()
         nart.build()
         camp = nart.camp
@@ -116,7 +132,7 @@ def load_campaign( screen ):
             camp.play( screen )
 
 def test_campaign_generator( screen ):
-    for t in range( 500 ):
+    for t in range( 1000 ):
         nart = narrator.Narrative( narrator.plots.PlotState(rank=1), adv_type="STUB_BARDIC", end_rank=5 )
         nart.build()
         print t
@@ -145,7 +161,8 @@ if __name__=='__main__':
 
     rpm.add_item( "Create Character", chargen.make_and_save_character )
     rpm.add_item( "Load Campaign", load_campaign )
-    rpm.add_item( "Start New Campaign", bardic_start_campaign )
+    rpm.add_item( "Start Bardic Campaign", bardic_start_campaign )
+    rpm.add_item( "Start Short Adventure", shortie_start_campaign )
     rpm.add_item( "Start Gen1 Campaign", default_start_campaign )
     rpm.add_item( "Browse Characters", campaign.browse_pcs )
     rpm.add_item( "Test Campaign Generator", test_campaign_generator )

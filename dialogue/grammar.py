@@ -1,4 +1,5 @@
 import collections
+import random
 
 """ The grammar/token expander takes generic tokens and expands them into
     appropriate words or sentences. With the exception of hard coded plot based
@@ -47,6 +48,32 @@ def base_grammar( pc, npc, explo ):
             absorb( mygram, LIKE_GRAMMAR )
 
     return mygram
+
+
+def expand_token( token_block, gramdb ):
+    """Return an expansion of token according to gramdb. If no expansion possible, return token."""
+    a,b,suffix = token_block.partition("]")
+    token = a + b
+    if token in gramdb:
+        ex = random.choice( gramdb[token] )
+        all_words = list()
+        for word in ex.split():
+            if word[0] == "[":
+                word = expand_token( word, gramdb )
+            all_words.append( word )
+        if suffix and all_words:
+            all_words[-1] += suffix
+        return " ".join( all_words )
+    else:
+        return token
+
+def convert_tokens( in_text, gramdb ):
+    all_words = list()
+    for word in in_text.split():
+        if word[0] == "[":
+            word = expand_token( word, gramdb )
+        all_words.append( word )
+    return " ".join( all_words )
 
 GRAM_DATABASE = {
     "[acquaintance]": ["friend","brother","sister","cousin","lover","priest",

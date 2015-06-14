@@ -915,6 +915,12 @@ class Explorer( object ):
             # Presumably, this is an invocation of some kind.
             self.pc_use_technique( pc, choice, choice.exp_tar )
 
+    def flatten_world( self ):
+        """Error with the map generator. Destroy all walls."""
+        for x in range( self.scene.width ):
+            for y in range( self.scene.height ):
+                if self.scene.map[x][y].wall == maps.BASIC_WALL:
+                    self.scene.map[x][y].wall = None
 
     def go( self ):
         self.no_quit = True
@@ -1011,6 +1017,8 @@ class Explorer( object ):
                                 self.scene.map[x][y].visible = True
                     elif gdi.unicode == u"_":
                         self.camp.known_spells = spells.SPELL_LIST[:]
+                    elif gdi.unicode == u"!":
+                        self.flatten_world()
 
                 elif gdi.type == pygame.QUIT:
                     self.camp.save(self.screen)

@@ -344,36 +344,12 @@ def preprocess_out_text( otext ):
     return nutext
 
 
-def expand_token( token_block, gramdb ):
-    """Return an expansion of token according to gramdb. If no expansion possible, return token."""
-    a,b,suffix = token_block.partition("]")
-    token = a + b
-    if token in gramdb:
-        ex = random.choice( gramdb[token] )
-        all_words = list()
-        for word in ex.split():
-            if word[0] == "[":
-                word = expand_token( word, gramdb )
-            all_words.append( word )
-        if suffix and all_words:
-            all_words[-1] += suffix
-        return " ".join( all_words )
-    else:
-        return token
-
-def convert_tokens( in_text, gramdb ):
-    all_words = list()
-    for word in in_text.split():
-        if word[0] == "[":
-            word = expand_token( word, gramdb )
-        all_words.append( word )
-    return " ".join( all_words )
 
 
 def personalize_text( in_text, speaker_voice, gramdb ):
     """Return text personalized for the provided context."""
     # Split the text into individual words.
-    all_words = split_words_and_punctuation( convert_tokens( in_text, gramdb ) )
+    all_words = split_words_and_punctuation( grammar.convert_tokens( in_text, gramdb ) )
     out_text = []
 
     # Going through the words, check for conversions in the conversion table.
@@ -418,5 +394,5 @@ def personalize_text_for_narrator( explo, msg ):
         pgram = p.get_dialogue_grammar( None, explo )
         if pgram:
             grammar.absorb( mygram, pgram )
-    return convert_tokens( msg, mygram )
+    return grammar.convert_tokens( msg, mygram )
 
