@@ -71,11 +71,11 @@ class ShortieStub( Plot ):
             ],
 
         "[IMPERILED_PLACE]": [ "SDI_AMBUSH SDI_VILLAGE",
-            "SDI_ALLIED_CAMP SDI_RECON", "SDI_VILLAGE SDI_RECON"
+            "SDI_OUTPOST SDI_RECON", "SDI_VILLAGE SDI_RECON"
             ],
     }
     def custom_init( self, nart ):
-        """Create the world + starting scene."""
+        """Create the world + chapter."""
         w = worlds.World()
         nart.camp.contents.append( w )
         self.register_element( "WORLD", w )
@@ -95,9 +95,16 @@ class ShortieStub( Plot ):
         # mini adventure- usually a single scene, maybe also several scenes or
         # part of a scene, whatever.
         prev_subplot = self
+        genplots = list()
         for spr in subplot_list:
             prev_subplot = self.add_sub_plot( nart, spr,
                 PlotState().based_on(prev_subplot) )
+            genplots.append( prev_subplot )
+
+        # Set the adventure entrance to the IN_SCENE of the first generated
+        # subplot.
+        nart.camp.scene = genplots[0].elements.get( "IN_SCENE" )
+        nart.camp.entrance = genplots[0].elements.get( "IN_ENTRANCE" )
 
 
         return True

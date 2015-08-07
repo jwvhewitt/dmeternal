@@ -193,7 +193,7 @@ if __name__=="__main__":
 #    test_names( ELDRITCH, 100000 )
 
     for t in range( 100 ):
-        print JAPANESE.gen_word()
+        print random_style_name()
 
 
 #    print "Dragon"

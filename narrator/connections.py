@@ -210,6 +210,44 @@ class WildsToWilds( Plot ):
         myzone2.contents.append( stairs_2 )
         return True
 
+###   **************************
+###   ***   PREFAB_CONNECT   ***
+###   **************************
+###
+### Connect PREV to NEXT, but the doorway in PREV already exists. Just connect
+### the provided OTHERSIDE waypoint to a gateway on this side.
+
+class PrefabToWilds( Plot ):
+    LABEL = "PREFAB_CONNECT"
+    @classmethod
+    def matches( self, pstate ):
+        """Requires PREV, NEXT, and OTHERSIDE to exist, to both be wilderness."""
+        return ( pstate.elements.get( "PREV" ) and pstate.elements.get( "NEXT" )
+         and pstate.elements.get( "OTHERSIDE" )
+         and context.MAP_WILDERNESS in pstate.elements["PREV"].desctags
+         and context.MAP_WILDERNESS in pstate.elements["NEXT"].desctags )
+
+    def custom_init( self, nart ):
+        prev = self.elements[ "PREV" ]
+        next = self.elements[ "NEXT" ]
+
+        self.move_element( next, prev )
+
+        myzone2 = self.register_element( "_N_ROOM",
+         nart.get_map_generator( next ).DEFAULT_ROOM(tags=(context.ENTRANCE,context.CIVILIZED,context.MAP_ON_EDGE)), "NEXT" )
+
+        stairs_1 = self.elements[ "OTHERSIDE" ]
+        stairs_2 = waypoints.RoadSignBack()
+
+        stairs_1.destination = next
+        stairs_1.otherside = stairs_2
+        stairs_2.destination = prev
+        stairs_2.otherside = stairs_1
+
+        myzone2.contents.append( stairs_2 )
+        return True
+
+
 
 ###   **************************
 ###   ***   SECRET_CONNECT   ***
