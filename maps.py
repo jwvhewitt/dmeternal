@@ -733,6 +733,18 @@ class SceneView( object ):
         """Return the map y row for the given screen coordinates."""
         return ( ( sy - self.y_off ) / self.HTH - ( sx - self.x_off ) / self.HTW ) // 2
 
+    def map_pos_on_screen( self, screen, mx, my, margin_x=-1, margin_y=-1 ):
+        """Test if a map position would be visible on screen."""
+        if margin_x == -1:
+            margin_x = 0
+        if margin_y == -1:
+            margin_y = margin_x
+        sx = self.relative_x( mx, my ) + self.x_off
+        sy = self.relative_y( mx, my ) + self.y_off
+        screen_area = screen.get_rect()
+        return ( sx - margin_x < 0 ) or ( sx + margin_x >= screen_area.right ) or \
+            ( sy - margin_y < 0 ) or ( sy + margin_y >= screen_area.bottom )
+
 
     def check_origin( self ):
         """Make sure the offset point is within map boundaries."""

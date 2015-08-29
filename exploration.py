@@ -65,6 +65,8 @@ class MoveTo( object ):
         pc = exp.camp.first_living_pc()
         self.tries += -1
         if (not pc) or ( self.dest == pc.pos ) or ( self.tries < 1 ) or not exp.scene.on_the_map( *self.dest ):
+            if pc:
+                exp.view.focus( exp.screen, *pc.pos )
             return False
         else:
             first = True
@@ -91,6 +93,10 @@ class MoveTo( object ):
                     elif first:
                         keep_going = False
                     first = False
+            # Recenter if movement ends or moving off-screen.
+            pc = exp.camp.first_living_pc()
+            if pc and ( ( not keep_going ) or exp.view.map_pos_on_screen( exp.screen, pc.pos[0], pc.pos[1], 32 ) ):
+                exp.view.focus( exp.screen, *pc.pos )
             # Now that all of the pcs have moved, check the tiles_in_sight for
             # hidden models.
             exp.scene.update_party_position( exp.camp.party )
@@ -538,6 +544,7 @@ class Explorer( object ):
 
     def bump_model( self, target ):
         # Do the animation first.
+        self.view.focus( self.screen, *target.pos )
         pc = self.camp.party_spokesperson()
         anims = [ animobs.SpeakHello(pos=pc.pos), animobs.SpeakHello(pos=target.pos)]
         animobs.handle_anim_sequence( self.screen, self.view, anims )
@@ -738,6 +745,7 @@ class Explorer( object ):
                     if in_sight:
                         react = m.get_reaction( self.camp )
                         if react < characters.FRIENDLY_THRESHOLD:
+                            self.view.focus( self.screen, *m.pos )
                             if react < characters.ENEMY_THRESHOLD:
                                 anims = [ animobs.SpeakAttack(m.pos,loop=16), ]
                                 animobs.handle_anim_sequence( self.screen, self.view, anims )
