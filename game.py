@@ -68,7 +68,7 @@ class TitleScreenRedraw( object ):
 
 def start_campaign( init, screen ):
     pygwrap.please_stand_by( screen, "Building world..." )
-    nart = narrator.Narrative( init )
+    nart = narrator.Narrative( campaign.Campaign(), campaign.Campaign(), init )
     if nart.story:
         nart.camp.dump_info()
         nart.build()
@@ -86,7 +86,7 @@ def default_start_campaign( screen ):
 def bardic_start_campaign( screen ):
     init = narrator.plots.PlotState(rank=1)
     pygwrap.please_stand_by( screen, "Building world..." )
-    nart = narrator.Narrative( init, adv_type="STUB_BARDIC", end_rank=5 )
+    nart = narrator.Narrative( campaign.Campaign(), init, adv_type="STUB_BARDIC", end_rank=5 )
     if nart.story:
         #nart.camp.dump_info()
         nart.build()
@@ -102,7 +102,7 @@ def bardic_start_campaign( screen ):
 def shortie_start_campaign( screen ):
     init = narrator.plots.PlotState(rank=1)
     pygwrap.please_stand_by( screen, "Building world..." )
-    nart = narrator.Narrative( init, adv_type="STUB_SHORTIE", end_rank=2 )
+    nart = narrator.Narrative( campaign.Campaign(), init, adv_type="STUB_SHORTIE", end_rank=2 )
     if nart.story:
         nart.camp.dump_info()
         nart.build()
@@ -133,7 +133,7 @@ def load_campaign( screen ):
 
 def test_campaign_generator( screen ):
     for t in range( 1000 ):
-        nart = narrator.Narrative( narrator.plots.PlotState(rank=1), adv_type="STUB_BARDIC", end_rank=5 )
+        nart = narrator.Narrative( campaign.Campaign(), narrator.plots.PlotState(rank=1), adv_type="STUB_BARDIC", end_rank=5 )
         nart.build()
         print t
 

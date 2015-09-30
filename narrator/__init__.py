@@ -3,14 +3,13 @@ from plots import Plot
 import collections
 import random
 import inspect
-import campaign
 import worlds
 
 
 class Narrative( object ):
     """The builder class which constructs a campaign."""
-    def __init__( self, pstate, start_rank=1, end_rank=5, adv_type="ADVSTUB" ):
-        self.camp = campaign.Campaign()
+    def __init__( self, camp, pstate, start_rank=1, end_rank=5, adv_type="ADVSTUB" ):
+        self.camp = camp
         self.generators = list()
         self.errors = list()
         self.uniques = set()
