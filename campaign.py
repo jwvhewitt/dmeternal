@@ -39,6 +39,7 @@ import spells
 import monsters
 import characters
 import chargen
+import narrator
 
 
 class Campaign( object ):
@@ -231,6 +232,14 @@ class Campaign( object ):
         # Print info on all scenes in this world.
         for c in self.contents:
             c.dump_info()
+
+    def add_story( self, adv_type="" ):
+        init = narrator.plots.PlotState(rank=1)
+        nart = narrator.Narrative( self, init, adv_type=adv_type, end_rank=5 )
+        if nart.story:
+            nart.build()
+            return nart.story
+
 
 
 def browse_pcs( screen ):

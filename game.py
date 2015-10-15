@@ -68,7 +68,7 @@ class TitleScreenRedraw( object ):
 
 def start_campaign( init, screen ):
     pygwrap.please_stand_by( screen, "Building world..." )
-    nart = narrator.Narrative( campaign.Campaign(), campaign.Campaign(), init )
+    nart = narrator.Narrative( campaign.Campaign(), init )
     if nart.story:
         nart.camp.dump_info()
         nart.build()
