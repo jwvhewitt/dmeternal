@@ -185,6 +185,20 @@ class RoadSignForward( Waypoint ):
         else:
             explo.alert( self.desc )
 
+class RoadSignToAdventure( Waypoint ):
+    # This road sign will generate and start a new shortie adventure.
+    TILE = maps.Tile( None, None, maps.SIGN_FORWARD )
+    ATTACH_TO_WALL = False
+    destination = None
+    otherside = None
+    desc = "You stand before a road sign."
+    mini_map_label = "Way Forward"
+    def unlocked_use( self, explo ):
+        adv = explo.camp.add_story( "SHORTIE" )
+        if adv:
+            adv.begin_adventure( explo.camp, self.scene, self )
+
+
 class PowerCrystal( Waypoint ):
     TILE = maps.Tile( None, None, maps.CRYSTAL_ORB )
     desc = "You stand before a large crystal."

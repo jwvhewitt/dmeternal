@@ -391,7 +391,7 @@ class Scene( object ):
         self.setting=setting
         self.desctags = desctags
         self.fac = fac
-        self.scripts = list()
+        self.scripts = container.ContainerList()
         self.parent_scene = None
         self.in_sight = set()
 

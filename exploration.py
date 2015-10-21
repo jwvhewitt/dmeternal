@@ -16,10 +16,81 @@ import services
 import image
 import rpgmenu
 import spells
+import pathfinding
 
 
 # Commands should be callable objects which take the explorer and return a value.
 # If untrue, the command stops.
+
+class MoveToMk2( object ):
+    """A command for moving to a particular point."""
+    def __init__( self, explo, pos ):
+        """Move the party to pos."""
+        self.dest = pos
+        pc = explo.camp.first_living_pc()
+        self.path = pathfinding.AStarPath(explo.scene,pc.pos,pos)
+        self.step = 0
+
+    def is_earlier_model( self, party, pc, npc ):
+        """Return True if npc is a party member ahead of pc in marching order."""
+        # This movement routine assumes you can walk around/past any NPCs without
+        # causing a fuss, unless they're hostile in which case combat will be
+        # triggered so we don't have to worry about it anyhow. The one exception
+        # is other party members ahead in marching order- you can't walk in
+        # front of them, because that'd defeat the whole point of having a
+        # marching order, wouldn't it?
+        return ( pc in party ) and ( npc in party ) \
+            and party.index( pc ) > party.index( npc )
+
+    def move_pc( self, exp, pc, dest, first=False ):
+        # Move the PC one step along the path.
+        target = exp.scene.get_character_at_spot( dest )
+        if exp.scene.map[dest[0]][dest[1]].blocks_walking():
+            # There's an obstacle in the way.
+            if first:
+                exp.bump_tile( dest )
+            return False
+        elif target and first and dest == self.dest:
+            exp.bump_model( target )
+            return False
+        elif ( not target ) or not self.is_earlier_model( exp.camp.party, pc, target ):
+            if target:
+                target.pos = pc.pos
+            pc.pos = dest
+        return True
+
+    def __call__( self, exp ):
+        pc = exp.camp.first_living_pc()
+        self.step += 1
+
+        if (not pc) or ( self.dest == pc.pos ) or ( self.step >
+         len(self.path.results) ) or not exp.scene.on_the_map( *self.dest ):
+            return False
+        else:
+            first = True
+            keep_going = True
+            for pc in exp.camp.party:
+                if pc.is_alright() and exp.scene.on_the_map( *pc.pos ):
+                    if first:
+                        keep_going = self.move_pc( exp, pc, self.path.results[self.step], True )
+                        f_pos = pc.pos
+                        first = False
+                    else:
+                        path = pathfinding.AStarPath(exp.scene,pc.pos,f_pos)
+                        for t in range( min(3,len(path.results)-1)):
+                            self.move_pc( exp, pc, path.results[t+1] )
+
+            # Now that all of the pcs have moved, check the tiles_in_sight for
+            # hidden models.
+            exp.scene.update_party_position( exp.camp.party )
+            awareness = exp.camp.party_stat( stats.AWARENESS, stats.INTELLIGENCE )
+            for m in exp.scene.contents:
+                if isinstance( m, characters.Character ) and m.hidden and m.pos in exp.scene.in_sight and \
+                  awareness > m.get_stat( stats.STEALTH ) + m.get_stat_bonus(stats.REFLEXES):
+                    m.hidden = False
+
+            return keep_going
+
 
 class MoveTo( object ):
     """A command for moving to a particular point."""
@@ -34,6 +105,16 @@ class MoveTo( object ):
             self.hmap = hotmaps.PointMap( explo.scene, pos, limits=limit )
         else:
             self.hmap = hotmaps.PointMap( explo.scene, pos )
+
+        #pc = explo.camp.first_living_pc()
+        #for t in range(100):
+        #    astar = pathfinding.AStarPath( explo.scene, pc.pos, pos )
+        #print "{} -> {}".format(pc.pos,pos)
+        #print astar.results
+
+        #while pos:
+        #    print pos
+        #    pos = astar.results.get( pos )
 
     def is_later_model( self, party, pc, npc ):
         return ( pc in party ) and ( npc in party ) \
@@ -1027,7 +1108,7 @@ class Explorer( object ):
                     if gdi.button == 1:
                         # Left mouse button.
                         if ( self.view.mouse_tile != self.camp.first_living_pc().pos ) and self.scene.on_the_map( *self.view.mouse_tile ):
-                            self.order = MoveTo( self, self.view.mouse_tile )
+                            self.order = MoveToMk2( self, self.view.mouse_tile )
                             self.view.overlays.clear()
                         else:
                             self.pick_up( self.view.mouse_tile )

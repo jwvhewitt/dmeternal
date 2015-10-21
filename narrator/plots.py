@@ -200,20 +200,25 @@ class Plot( object ):
         """Return True if everything ok, or False otherwise."""
         return True
 
-    def remove( self, nart ):
+    def remove( self, nart=None ):
         """Remove this plot, including subplots and new elements, from campaign."""
         # First, remove all subplots.
         for sp in self.subplots.itervalues():
             sp.remove( nart )
         # Next, remove any elements created by this plot.
-        for e,d in self.move_records:
-            if e in d:
-                d.remove( e )
+        if hasattr( self, "move_records" ):
+            for e,d in self.move_records:
+                if e in d:
+                    d.remove( e )
 
         self.__class__._used += -1
 
+        # Remove self from the adventure.
+        if hasattr( self, "container" ) and self.container:
+            self.container.remove( self )
+
         # Remove self from the uniques set, if necessary.
-        if self.UNIQUE and self.__class__ in nart.uniques:
+        if nart and self.UNIQUE and self.__class__ in nart.uniques:
             nart.uniques.remove( self.__class__ )
 
     def install( self, nart ):

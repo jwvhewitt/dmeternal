@@ -51,7 +51,7 @@ class Campaign( object ):
         self.entrance = entrance
         self.destination = None
         self.contents = container.ContainerList()
-        self.scripts = list()
+        self.scripts = container.ContainerList()
         self.known_spells = list()
         self.fight = None
         self.gold = 300
@@ -106,7 +106,7 @@ class Campaign( object ):
 
     def party_rank( self ):
         total = sum( pc.rank() for pc in self.party )
-        return total/len(self.party)
+        return total//len(self.party)
 
     def party_spokesperson( self ):
         """Return the PC with the highest charisma."""
@@ -234,8 +234,8 @@ class Campaign( object ):
             c.dump_info()
 
     def add_story( self, adv_type="" ):
-        init = narrator.plots.PlotState(rank=1)
-        nart = narrator.Narrative( self, init, adv_type=adv_type, end_rank=5 )
+        init = narrator.plots.PlotState(rank=self.party_rank())
+        nart = narrator.Narrative( self, init, adv_type=adv_type, start_rank=init.rank, end_rank=init.rank+1 )
         if nart.story:
             nart.build()
             return nart.story
