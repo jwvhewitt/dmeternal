@@ -11,6 +11,7 @@ class HotTile( object ):
 
 class HotMap( object ):
     DELTA8 = [ (-1,-1), (0,-1), (1,-1), (-1,0), (1,0), (-1,1), (0,1), (1,1) ]
+    EXPENSIVE = 9999
     def __init__( self, scene, hot_points, obstacles=set(), expensive=set(), limits=None, avoid_models=False ):
         """Calculate this hotmap given scene and set of hot points."""
         # Obstacles block movement.
@@ -22,7 +23,7 @@ class HotMap( object ):
 
         self.obstacles = obstacles
         self.expensive = expensive
-        self.map = [[ int(9999)
+        self.map = [[ int(self.EXPENSIVE)
             for y in range(scene.height) ]
                 for x in range(scene.width) ]
 
@@ -33,18 +34,22 @@ class HotMap( object ):
                 self.map[p[0]][p[1]] = min( p[2], self.map[p[0]][p[1]] )
 
         if limits:
-            lo_x = max( limits.x, 1 )
-            hi_x = min( limits.x + limits.width + 1, scene.width - 1 )
-            lo_y = max( limits.y, 1 )
-            hi_y = min( limits.y + limits.height + 1, scene.height - 1 )
+            self.lo_x = max( limits.x, 1 )
+            self.hi_x = min( limits.x + limits.width + 1, scene.width - 1 )
+            self.lo_y = max( limits.y, 1 )
+            self.hi_y = min( limits.y + limits.height + 1, scene.height - 1 )
         else:
-            lo_x,hi_x,lo_y,hi_y = 1, scene.width-1, 1, scene.height-1
+            self.lo_x,self.hi_x,self.lo_y,self.hi_y = 1, scene.width-1, 1, scene.height-1
 
+        self.process_map( limits )
+
+    def process_map( self, limits ):
+        # Iterate through each of the tiles, 
         flag = True
         while flag:
             flag = False
-            for y in range( lo_y, hi_y ):
-                for x in range( lo_x, hi_x ):
+            for y in range( self.lo_y, self.hi_y ):
+                for x in range( self.lo_x, self.hi_x ):
                     p = (x,y)
                     if not self.blocks_movement( x, y ):
                         dh = 2 + self.map[x-1][y]
@@ -54,14 +59,14 @@ class HotMap( object ):
 
                         dp = min(dh,dv,dd,dp)
                         if p in self.expensive:
-                            dp += 8
+                            dp += 16
                         if dp < self.map[x][y]:
                             self.map[x][y] = dp
                             flag = True
 
 
-            for y in range( scene.height-2, 0, -1 ):
-                for x in range( scene.width - 2, 0, -1 ):
+            for y in range( self.hi_y-1, self.lo_y-1, -1 ):
+                for x in range( self.hi_x-1, self.lo_x-1, -1 ):
                     if not self.blocks_movement( x, y ):
                         dh = 2 + self.map[x+1][y]
                         dv = 2 + self.map[x][y+1]
@@ -70,7 +75,7 @@ class HotMap( object ):
 
                         dp = min(dh,dv,dd,dp)
                         if p in self.expensive:
-                            dp += 8
+                            dp += 16
                         if dp < self.map[x][y]:
                             self.map[x][y] = dp
                             flag = True
@@ -112,6 +117,33 @@ class HotMap( object ):
                     heat = self.map[x2][y2]
                     best_d = d
         return best_d
+
+    def mix( self, other_map, amount ):
+        for y in range( self.lo_y, self.hi_y ):
+            for x in range( self.lo_x, self.hi_x ):
+                self.map[x][y] += other_map.map[x][y] * amount
+
+    def show( self, x0, y0 ):
+        for y in range( y0-2,y0+3):
+            vals = list()
+            for x in range( x0-2,x0+3):
+                if self.scene.on_the_map(x,y):
+                    vals.append( '{:<8}'.format( self.map[x][y] ) )
+                else:
+                    vals.append( "XXX" )
+            print " ".join( vals )
+
+
+class AvoidMap( HotMap ):
+    def __init__( self, scene, hot_points, obstacles=set(), expensive=set(), limits=None, avoid_models=False ):
+        """Calculate this hotmap given scene and set of hot points."""
+        super( AvoidMap, self ).__init__( scene, hot_points, obstacles, expensive=expensive, avoid_models=avoid_models, limits=limits )
+        for y in range( self.lo_y, self.hi_y ):
+            for x in range( self.lo_x, self.hi_x ):
+                if self.map[x][y] < self.EXPENSIVE:
+                    self.map[x][y] *= -1.2
+        self.process_map( limits )
+
 
 
 class PointMap( HotMap ):

@@ -26,7 +26,7 @@ class Goblin( base.Monster ):
     SPRITENAME = "monster_goblins.png"
     FRAME = 0
     TEMPLATES = ()
-    MOVE_POINTS = 12
+    MOVE_POINTS = 8
     VOICE = dialogue.voice.ORCISH
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
      context.MAP_WILDERNESS,
@@ -34,6 +34,7 @@ class Goblin( base.Monster ):
     ENC_LEVEL = 1
     TREASURE = treasuretype.Low()
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_CRUSHING )
+    COMBAT_AI = aibrain.ArcherAI()
     def init_monster( self ):
         self.levels.append( base.Humanoid( 1, self ) )
 
@@ -44,14 +45,14 @@ class GoblinArcher( base.Monster ):
     SPRITENAME = "monster_goblins.png"
     FRAME = 26
     TEMPLATES = ()
-    MOVE_POINTS = 12
+    MOVE_POINTS = 8
     VOICE = dialogue.voice.ORCISH
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY, context.SET_RENFAN,
      context.MAP_WILDERNESS,
      context.MTY_HUMANOID, context.GEN_GOBLIN )
     ENC_LEVEL = 2
     TREASURE = treasuretype.High()
-    COMBAT_AI = aibrain.BasicTechnicalAI()
+    COMBAT_AI = aibrain.ArcherAI()
     COMPANIONS = (Goblin,)
 
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_CRUSHING )
@@ -68,7 +69,7 @@ class GoblinShaman( base.Monster ):
     SPRITENAME = "monster_goblins.png"
     FRAME = 7
     TEMPLATES = ()
-    MOVE_POINTS = 12
+    MOVE_POINTS = 8
     VOICE = dialogue.voice.ORCISH
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
      context.MTY_HUMANOID, context.MTY_PRIEST, context.GEN_GOBLIN )
@@ -90,7 +91,7 @@ class GoblinPyromaniac( base.Monster ):
     SPRITENAME = "monster_goblins.png"
     FRAME = 45
     TEMPLATES = ()
-    MOVE_POINTS = 12
+    MOVE_POINTS = 8
     VOICE = dialogue.voice.ORCISH
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.DES_FIRE,
@@ -118,7 +119,7 @@ class GoblinWarrior( base.Monster ):
     SPRITENAME = "monster_goblins.png"
     FRAME = 3
     TEMPLATES = ()
-    MOVE_POINTS = 12
+    MOVE_POINTS = 8
     VOICE = dialogue.voice.ORCISH
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
      context.MAP_WILDERNESS,
@@ -156,7 +157,7 @@ class GoblinCook( base.Monster ):
     SPRITENAME = "monster_goblins.png"
     FRAME = 39
     TEMPLATES = ()
-    MOVE_POINTS = 12
+    MOVE_POINTS = 8
     VOICE = dialogue.voice.ORCISH
     HABITAT = ( context.HAB_CAVE, context.SET_EVERY,
      context.MAP_DUNGEON,
@@ -177,7 +178,7 @@ class GoblinChampion( base.Monster ):
     SPRITENAME = "monster_goblins.png"
     FRAME = 2
     TEMPLATES = ()
-    MOVE_POINTS = 12
+    MOVE_POINTS = 8
     VOICE = dialogue.voice.ORCISH
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
      context.MAP_WILDERNESS,
@@ -197,7 +198,7 @@ class GoblinRanger( base.Monster ):
     SPRITENAME = "monster_goblins.png"
     FRAME = 12
     TEMPLATES = ()
-    MOVE_POINTS = 12
+    MOVE_POINTS = 8
     VOICE = dialogue.voice.ORCISH
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
      context.MAP_WILDERNESS,
@@ -242,7 +243,7 @@ class GoblinMage( base.Monster ):
     SPRITENAME = "monster_goblins.png"
     FRAME = 8
     TEMPLATES = ()
-    MOVE_POINTS = 12
+    MOVE_POINTS = 8
     VOICE = dialogue.voice.ORCISH
     HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
      context.MTY_HUMANOID, context.MTY_MAGE, context.GEN_GOBLIN )

@@ -22,7 +22,7 @@ import pathfinding
 # Commands should be callable objects which take the explorer and return a value.
 # If untrue, the command stops.
 
-class MoveToMk2( object ):
+class MoveTo( object ):
     """A command for moving to a particular point."""
     def __init__( self, explo, pos ):
         """Move the party to pos."""
@@ -92,96 +92,6 @@ class MoveToMk2( object ):
             return keep_going
 
 
-class MoveTo( object ):
-    """A command for moving to a particular point."""
-    def __init__( self, explo, pos ):
-        """Move the party to pos."""
-        self.dest = pos
-        self.tries = 300
-        pcpos = explo.camp.first_living_pc().pos
-        if explo.scene.distance( pcpos, pos ) < 30:
-            limit = pygame.Rect(0,0,50,50)
-            limit.center = ( (pos[0]+pcpos[0])//2, (pos[1]+pcpos[1])//2 )
-            self.hmap = hotmaps.PointMap( explo.scene, pos, limits=limit )
-        else:
-            self.hmap = hotmaps.PointMap( explo.scene, pos )
-
-        #pc = explo.camp.first_living_pc()
-        #for t in range(100):
-        #    astar = pathfinding.AStarPath( explo.scene, pc.pos, pos )
-        #print "{} -> {}".format(pc.pos,pos)
-        #print astar.results
-
-        #while pos:
-        #    print pos
-        #    pos = astar.results.get( pos )
-
-    def is_later_model( self, party, pc, npc ):
-        return ( pc in party ) and ( npc in party ) \
-            and party.index( pc ) < party.index( npc )
-
-    def smart_downhill_dir( self, exp, pc ):
-        """Return the best direction for the PC to move in."""
-        best_d = None
-        random.shuffle( self.hmap.DELTA8 )
-        heat = self.hmap.map[pc.pos[0]][pc.pos[1]]
-        for d in self.hmap.DELTA8:
-            x2 = d[0] + pc.pos[0]
-            y2 = d[1] + pc.pos[1]
-            if exp.scene.on_the_map(x2,y2) and ( self.hmap.map[x2][y2] < heat ):
-                target = exp.scene.get_character_at_spot( (x2,y2) )
-                if not target:
-                    heat = self.hmap.map[x2][y2]
-                    best_d = d
-                elif ( x2 == self.dest[0] ) and ( y2 == self.dest[1] ):
-                    heat = 0
-                    best_d = d
-                elif self.is_later_model( exp.camp.party, pc, target ):
-                    heat = self.hmap.map[x2][y2]
-                    best_d = d
-        return best_d
-
-
-    def __call__( self, exp ):
-        pc = exp.camp.first_living_pc()
-        self.tries += -1
-        if (not pc) or ( self.dest == pc.pos ) or ( self.tries < 1 ) or not exp.scene.on_the_map( *self.dest ):
-            return False
-        else:
-            first = True
-            keep_going = True
-            for pc in exp.camp.party:
-                if pc.is_alright() and exp.scene.on_the_map( *pc.pos ):
-                    d = self.smart_downhill_dir( exp, pc )
-                    if d:
-                        p2 = ( pc.pos[0] + d[0] , pc.pos[1] + d[1] )
-                        target = exp.scene.get_character_at_spot( p2 )
-
-                        if exp.scene.map[p2[0]][p2[1]].blocks_walking():
-                            # There's an obstacle in the way.
-                            if first:
-                                exp.bump_tile( p2 )
-                                keep_going = False
-                        elif ( not target ) or self.is_later_model( exp.camp.party, pc, target ):
-                            if target:
-                                target.pos = pc.pos
-                            pc.pos = p2
-                        elif first:
-                            exp.bump_model( target )
-                            keep_going = False
-                    elif first:
-                        keep_going = False
-                    first = False
-            # Now that all of the pcs have moved, check the tiles_in_sight for
-            # hidden models.
-            exp.scene.update_party_position( exp.camp.party )
-            awareness = exp.camp.party_stat( stats.AWARENESS, stats.INTELLIGENCE )
-            for m in exp.scene.contents:
-                if isinstance( m, characters.Character ) and m.hidden and m.pos in exp.scene.in_sight and \
-                  awareness > m.get_stat( stats.STEALTH ) + m.get_stat_bonus(stats.REFLEXES):
-                    m.hidden = False
-
-            return keep_going
 
 class InvExchange( object ):
     # The party will exchange inventory with a list.
@@ -1108,7 +1018,7 @@ class Explorer( object ):
                     if gdi.button == 1:
                         # Left mouse button.
                         if ( self.view.mouse_tile != self.camp.first_living_pc().pos ) and self.scene.on_the_map( *self.view.mouse_tile ):
-                            self.order = MoveToMk2( self, self.view.mouse_tile )
+                            self.order = MoveTo( self, self.view.mouse_tile )
                             self.view.overlays.clear()
                         else:
                             self.pick_up( self.view.mouse_tile )

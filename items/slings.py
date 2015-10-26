@@ -16,6 +16,5 @@ class Sling( MissileWeapon ):
     avatar_frame = 0
     mass = 8
     attackdata = Attack( (1,4,0), skill_mod=stats.REFLEXES, damage_mod=None, \
-        element=stats.RESIST_CRUSHING, reach=6 )
-    shot_anim = animobs.SlingStone
+        element=stats.RESIST_CRUSHING, shot_anim = animobs.SlingStone, reach=6 )
 

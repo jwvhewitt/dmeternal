@@ -61,7 +61,7 @@ LANCE = SingType( "LANCE", "Lance", slot = HAND1, cost_adjust=1.2 )
 class Attack( object ):
     def __init__( self, damage = (1,6,0), skill_mod = stats.STRENGTH, damage_mod = stats.STRENGTH,
          double_handed = False, element = stats.RESIST_SLASHING, reach = 1, hit_anim=animobs.RedBoom,
-         extra_effect = None ):
+         shot_anim=None, extra_effect = None ):
         self.damage = damage
         self.skill_mod = skill_mod
         self.damage_mod = damage_mod
@@ -69,6 +69,7 @@ class Attack( object ):
         self.element = element
         self.reach = reach
         self.hit_anim = hit_anim
+        self.shot_anim = shot_anim
         self.extra_effect = extra_effect
     def cost( self ):
         """Return the GP value of this attack."""
@@ -137,7 +138,6 @@ class Item( stats.PhysicalThing ):
     avatar_frame = 0
     mass = 1
     equipped = False
-    shot_anim=None
     enhancement = None
     def cost( self, include_enhancement=True, include_adjust=True ):
         it = 1

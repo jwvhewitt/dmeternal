@@ -15,7 +15,7 @@ SHORTBOW = invocations.Invocation( "Arrow",
         effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_PIERCING, anim=animobs.RedBoom )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.Arrow, ai_tar=invocations.TargetEnemy()
+      ,) ), com_tar=targetarea.SingleTarget(reach=7), shot_anim=animobs.Arrow, ai_tar=invocations.TargetEnemy()
     )
 
 LONGBOW = invocations.Invocation( "Arrow",

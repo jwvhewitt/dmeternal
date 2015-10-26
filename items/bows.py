@@ -17,8 +17,7 @@ class Shortbow( MissileWeapon ):
     avatar_frame = 0
     mass = 32
     attackdata = Attack( (1,6,0), skill_mod=stats.REFLEXES, damage_mod=None, \
-        element=stats.RESIST_PIERCING, reach=8 )
-    shot_anim = animobs.Arrow
+        element=stats.RESIST_PIERCING, shot_anim = animobs.Arrow, reach=8 )
 
 
 class Longbow( MissileWeapon ):
@@ -30,8 +29,7 @@ class Longbow( MissileWeapon ):
     avatar_frame = 1
     mass = 46
     attackdata = Attack( (1,8,0), skill_mod=stats.REFLEXES, damage_mod=None, \
-        element=stats.RESIST_PIERCING, reach=8 )
-    shot_anim = animobs.Arrow
+        element=stats.RESIST_PIERCING, shot_anim = animobs.Arrow, reach=8 )
 
 class CompositeShortbow( MissileWeapon ):
     true_name = "Composite Shortbow"
@@ -42,8 +40,7 @@ class CompositeShortbow( MissileWeapon ):
     avatar_frame = 2
     mass = 37
     attackdata = Attack( (1,8,0), skill_mod=stats.REFLEXES, damage_mod=stats.STRENGTH, \
-        element=stats.RESIST_PIERCING, reach=9 )
-    shot_anim = animobs.Arrow
+        element=stats.RESIST_PIERCING, shot_anim = animobs.Arrow, reach=9 )
 
 
 class CompositeLongbow( MissileWeapon ):
@@ -55,8 +52,7 @@ class CompositeLongbow( MissileWeapon ):
     avatar_frame = 3
     mass = 51
     attackdata = Attack( (1,10,0), skill_mod=stats.REFLEXES, damage_mod=stats.STRENGTH, \
-        element=stats.RESIST_PIERCING, reach=9 )
-    shot_anim = animobs.Arrow
+        element=stats.RESIST_PIERCING, shot_anim = animobs.Arrow, reach=9 )
 
 class FrostBow( ManaWeapon ):
     true_name = "Frost Bow"
@@ -66,7 +62,8 @@ class FrostBow( ManaWeapon ):
     avatar_frame = 6
     mass = 44
     attackdata = Attack( (2,8,0), skill_mod=stats.REFLEXES, damage_mod=stats.PIETY, \
-        element=stats.RESIST_COLD, reach=9, hit_anim=animobs.BlueExplosion, double_handed=True )
-    shot_anim = animobs.BlueBolt
+        element=stats.RESIST_COLD, reach=9, hit_anim=animobs.BlueExplosion,
+        shot_anim = animobs.BlueBolt, double_handed=True )
+
 
 

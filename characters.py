@@ -890,7 +890,9 @@ class Character( stats.PhysicalThing ):
     def get_attack_shot_anim( self ):
         weapon = self.contents.get_equip( items.HAND1 )
         if weapon:
-            return weapon.shot_anim
+            return weapon.attackdata.shot_anim
+        elif hasattr( self, "ATTACK" ):
+            fx = self.ATTACK.shot_anim
         else:
             return None
 
