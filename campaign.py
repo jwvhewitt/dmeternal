@@ -47,6 +47,7 @@ class Campaign( object ):
     def __init__( self, name = "BobDwarf19", scene=None, entrance=None, xp_scale = 0.65 ):
         self.name = name
         self.party = list()
+        self.graveyard = list()
         self.scene = scene
         self.entrance = entrance
         self.destination = None
@@ -140,26 +141,6 @@ class Campaign( object ):
         else:
             self.fight = combat.Combat( self, mon )
 
-
-    def old_place_party( self ):
-        """Stick the party close to the waypoint."""
-        good_points = list()
-        x0,y0 = self.entrance.pos
-        for x in range(x0-3,x0+4):
-            for y in range(y0-3,y0+4):
-                if self.scene.on_the_map(x,y) and not self.scene.map[x][y].blocks_walking() and not self.scene.get_character_at_spot((x,y)):
-                    good_points.append( (x,y) )
-        for pc in self.party:
-            if pc.is_alright():
-                if good_points:
-                    pos = random.choice( good_points )
-                    good_points.remove( pos )
-                else:
-                    pos = self.entrance.pos
-                pc.pos = pos
-                self.scene.contents.append( pc )
-                pfov.PCPointOfView( self.scene, pos[0], pos[1], 15 )
-
     def place_party( self ):
         """Stick the party close to the waypoint."""
         x0,y0 = self.entrance.pos
@@ -194,11 +175,26 @@ class Campaign( object ):
                 pc.mp_damage = max( pc.mp_damage - int( pc.max_mp() * max_restore ), 0 )
             pc.holy_signs_used = 0
             pc.condition.tidy( enchantments.DAILY )
-
+    def check_adventurers_guild( self, screen ):
+        if hasattr(self,"mru_advguild") and not self.first_living_pc():
+            for pc in self.party:
+                self.party.remove( pc )
+                self.graveyard.append( pc )
+            self.destination,self.entrance = self.mru_advguild
+            self.entrance.no_explo_use(self,screen)
+            if self.first_living_pc():
+                self.scene, self.destination = self.destination, None
+                self.place_party()
     def play( self, screen ):
+        # If the campaign is loaded without a valid party, and there's an
+        # adventurer's guild around, try to load a party.
+        self.check_adventurers_guild(screen)
         while self.first_living_pc() and not pygwrap.GOT_QUIT:
             exp = exploration.Explorer( screen, self )
             exp.go()
+            # If the party is dead, but there's an adventurer's guild in this
+            # campaign, go there.
+            self.check_adventurers_guild(screen)
             if self.destination:
                 self.remove_party_from_scene()
                 self.scene, self.destination = self.destination, None

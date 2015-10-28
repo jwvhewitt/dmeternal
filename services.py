@@ -762,7 +762,7 @@ class Temple( object ):
 
     def __call__( self, explo ):
         pc = explo.camp.party_spokesperson()
-        myredraw = charsheet.CharacterViewRedrawer( csheet=charsheet.CharacterSheet( pc , screen=explo.screen, camp=explo.camp ), screen=explo.screen, predraw=explo.view, caption=self.caption )
+        myredraw = charsheet.MenuRedrawer( csheet=charsheet.CharacterSheet( pc , screen=explo.screen, camp=explo.camp ), screen=explo.screen, predraw=explo.view, caption=self.caption )
 
         while True:
             rpm = charsheet.RightMenu( explo.screen, predraw=myredraw )

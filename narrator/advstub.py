@@ -19,6 +19,26 @@ import worlds
 # adventure components. Yay ADVSTUB!
 #
 
+class EndlessStub( Plot ):
+    LABEL = "STUB_ENDLESS"
+    # Creates a city with upgradeable services and a roadsign to adventure.
+
+    def custom_init( self, nart ):
+        """Create the world + starting scene."""
+        w = worlds.World()
+        nart.camp.contents.append( w )
+        self.register_element( "WORLD", w )
+        self.chapter = Chapter( end_rank=10, world=w )
+        if not self.setting:
+            self.setting = context.SET_RENFAN
+        self.add_first_locale_sub_plot( nart, locale_type="ETERNAL_CITY" )
+
+        for job in characters.PC_CLASSES:
+            self.add_sub_plot( nart, "RESOURCE_JOBTRAINER", PlotState( elements={"JOB":job} ) )
+
+        return True
+
+
 class SpoonyStub( Plot ):
     LABEL = "STUB_SPOONY"
     # Creates a supposedly plot-rich dungeon adventure.

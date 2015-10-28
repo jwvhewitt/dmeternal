@@ -34,7 +34,6 @@ class Goblin( base.Monster ):
     ENC_LEVEL = 1
     TREASURE = treasuretype.Low()
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_CRUSHING )
-    COMBAT_AI = aibrain.ArcherAI()
     def init_monster( self ):
         self.levels.append( base.Humanoid( 1, self ) )
 

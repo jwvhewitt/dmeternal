@@ -155,7 +155,49 @@ class CharacterSheet( pygame.Rect ):
                     self.just_print( screen, self.x+self.RIGHT_COLUMN, y, s.name+":", str(sv)+"%", width=160 )
                     y += pygwrap.SMALLFONT.get_linesize()
 
+class PartySheet( pygame.Rect ):
+    WIDTH = 320
+    HEIGHT = 450
+    BODY_Y = 70
+    RIGHT_COLUMN = 155
+    def __init__( self, party, x=0, y=0, screen = None, camp = None ):
+        if screen:
+            x = screen.get_width() // 2 - self.WIDTH
+            y = screen.get_height() // 2 - self.HEIGHT // 2 + 32
+        super(PartySheet, self).__init__(x,y,self.WIDTH,self.HEIGHT)
+        self.party = party
+        self.avatars = dict()
+        self.camp = camp
+        self.regenerate_avatars()
+        self.spell_gem_sprite = image.Image( "sys_gems.png", 10, 16 )
+    def regenerate_avatars( self ):
+        self.avatars.clear()
+        for pc in self.party:
+            mybmp = pygame.Surface( (54 , 54) )
+            mybmp.fill((0,0,255))
+            mybmp.set_colorkey((0,0,255),pygame.RLEACCEL)
+            myimg = pc.generate_avatar()
+            myimg.render( mybmp, frame=pc.FRAME )
+            self.avatars[pc] = pygame.transform.scale2x( mybmp )
+    def render( self, screen ):
+        pygwrap.default_border.render( screen , self )
+
+        y = self.y + 6
+
+        for pc in self.party:
+            screen.blit(self.avatars[pc] , (self.x-20,y-20) )
+
+            # Header info- name and level/gender/race/class
+            pygwrap.draw_text( screen, pygwrap.BIGFONT, pc.name, pygame.Rect( self.x+64, y, self.width-64, pygwrap.BIGFONT.get_linesize() ), justify = 0, color=(240,240,240) )
+            y += pygwrap.BIGFONT.get_linesize()
+            pygwrap.draw_text( screen, pygwrap.SMALLFONT, pc.desc(), pygame.Rect( self.x+64, y, self.width-64, pygwrap.SMALLFONT.get_linesize() ), justify = 0 )
+            y += pygwrap.SMALLFONT.get_linesize()
+            pygwrap.draw_text( screen, pygwrap.SMALLFONT, "XP: "+str(pc.xp)+"/"+str(pc.xp_for_next_level()), pygame.Rect( self.x+64, y, self.width-64, pygwrap.SMALLFONT.get_linesize() ), justify = 0 )
+            y += 32
+
+
 class MenuRedrawer( object ):
+    # The menu redrawer used by the character generator.
     def __init__( self , border_rect = None, backdrop = "bg_wests_stonewall5.png", charsheet = None, screen = None, caption = None ):
         self.backdrop = image.Image( backdrop )
         self.counter = 0

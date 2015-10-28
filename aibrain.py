@@ -103,7 +103,6 @@ class BasicAI( object ):
                 avoid_positions.add( m.pos )
 
         hmap = hotmaps.HotMap( explo.scene, attack_positions, avoid_models=True, expensive=expensive_points )
-        hmap.mix(hotmaps.AvoidMap(explo.scene,avoid_positions),0.5)
         return hmap
     def try_technique_use( self, explo, chara, redraw=None ):
         candidates = chara.get_invocations( True )

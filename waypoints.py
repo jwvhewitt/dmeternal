@@ -14,6 +14,10 @@ import rpgmenu
 import pygame
 import pygwrap
 import effects
+import charsheet
+import glob
+import util
+import cPickle
 
 class PuzzleMenu( rpgmenu.Menu ):
     WIDTH = 350
@@ -339,5 +343,63 @@ class Signpost( Waypoint ):
 class TreeStump( Waypoint ):
     TILE = maps.Tile( None, None, maps.TREE_STUMP )
     desc = "You stand before a tree stump."
+
+class BookOfHeroes( Waypoint ):
+    TILE = maps.Tile( None, None, maps.SIGNPOST )
+    desc = "You stand before a book."
+    caption = "Book of Heroes"
+    def add_members( self, camp, screen, predraw ):
+        file_list = glob.glob( util.user_dir( "c_*.sav" ) )
+        pc_list = []
+        charsheets = dict()
+        for fname in file_list:
+            f = open( fname, "rb" )
+            pc = cPickle.load( f )
+            f.close()
+            if pc:
+                pc_list.append( pc )
+                charsheets[ pc ] = charsheet.CharacterSheet( pc , screen=screen )
+        psr = charsheet.PartySelectRedrawer( charsheets=charsheets,
+         predraw=predraw, screen=screen, caption="Select Party Members" )
+        while len( camp.party ) < 4:
+            rpm = charsheet.RightMenu( screen, predraw=psr, add_desc=False )
+            psr.menu = rpm
+            for pc in pc_list:
+                rpm.add_item( str( pc ), pc )
+            rpm.sort()
+            rpm.add_alpha_keys()
+            pc = rpm.query()
+
+            if pc:
+                pc_list.remove( pc )
+                camp.party.append( pc )
+            else:
+                break
+    def open_menu( self, camp, screen, predraw=None ):
+        # Save the most recently used adventurer's guild. If all characters die,
+        # this is where the game restarts.
+        camp.mru_advguild = (self.scene,self)
+        mypartysheet = charsheet.PartySheet( camp.party , screen=screen, camp=camp )
+        myredraw = charsheet.CharacterViewRedrawer( csheet=mypartysheet, screen=screen, predraw=predraw, caption=self.caption )
+
+        while True:
+            rpm = charsheet.RightMenu( screen, predraw=myredraw )
+
+            rpm.add_item( "Add Members", self.add_members )
+            rpm.add_item( "Exit {0}".format(self.caption), False, self.desc )
+            rpm.add_alpha_keys()
+
+            it = rpm.query()
+
+            if it:
+                it( camp, screen, predraw )
+                mypartysheet.regenerate_avatars()
+            else:
+                break
+    def no_explo_use( self, camp, screen ):
+        self.open_menu( camp, screen )
+    def unlocked_use( self, explo ):
+        self.open_menu( explo.camp, explo.screen, explo.view )
+
 
 

@@ -49,7 +49,7 @@ class ShortieStub( Plot ):
             ],
     }
     def custom_init( self, nart ):
-        """Create the world + chapter."""
+        """Create the chapter."""
         self.chapter = Chapter( start_rank=nart.start_rank, end_rank=nart.end_rank, world=self )
         self.chapter.root = self
         self.contents = container.ContainerList(owner=self)
