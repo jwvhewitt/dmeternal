@@ -25,8 +25,6 @@ import pygwrap
 import items
 import stats
 import rpgmenu
-import util
-import cPickle
 import charsheet
 import inspect
 
@@ -276,9 +274,7 @@ def make_character( screen ):
 def make_and_save_character( screen ):
     pc = make_character( screen )
     if pc:
-        f = open( util.user_dir( "c_" + pc.name + ".sav" ) , "wb" )
-        cPickle.dump( pc , f, -1 )
-        f.close()
+        pc.save()
     return pc
 
 if __name__=='__main__':

@@ -15,6 +15,7 @@ import pygame
 import pygwrap
 import effects
 import charsheet
+import charloader
 import glob
 import util
 import cPickle
@@ -349,30 +350,30 @@ class BookOfHeroes( Waypoint ):
     desc = "You stand before a book."
     caption = "Book of Heroes"
     def add_members( self, camp, screen, predraw ):
-        file_list = glob.glob( util.user_dir( "c_*.sav" ) )
-        pc_list = []
+        charloader.load_characters( camp.party, screen, predraw )
+        if camp.party:
+            camp.remove_party_from_scene()
+            camp.entrance = self
+            camp.place_party()
+    def remove_members( self, camp, screen, predraw ):
         charsheets = dict()
-        for fname in file_list:
-            f = open( fname, "rb" )
-            pc = cPickle.load( f )
-            f.close()
-            if pc:
-                pc_list.append( pc )
-                charsheets[ pc ] = charsheet.CharacterSheet( pc , screen=screen )
+        for pc in camp.party:
+            charsheets[ pc ] = charsheet.CharacterSheet( pc , screen=screen )
         psr = charsheet.PartySelectRedrawer( charsheets=charsheets,
-         predraw=predraw, screen=screen, caption="Select Party Members" )
-        while len( camp.party ) < 4:
+         predraw=predraw, screen=screen, caption="Remove Party Members" )
+        while camp.party:
             rpm = charsheet.RightMenu( screen, predraw=psr, add_desc=False )
             psr.menu = rpm
-            for pc in pc_list:
+            for pc in camp.party:
                 rpm.add_item( str( pc ), pc )
             rpm.sort()
             rpm.add_alpha_keys()
             pc = rpm.query()
 
             if pc:
-                pc_list.remove( pc )
-                camp.party.append( pc )
+                pc.save()
+                camp.party.remove( pc )
+                camp.scene.contents.remove( pc )
             else:
                 break
     def open_menu( self, camp, screen, predraw=None ):
@@ -386,6 +387,7 @@ class BookOfHeroes( Waypoint ):
             rpm = charsheet.RightMenu( screen, predraw=myredraw )
 
             rpm.add_item( "Add Members", self.add_members )
+            rpm.add_item( "Remove Members", self.remove_members )
             rpm.add_item( "Exit {0}".format(self.caption), False, self.desc )
             rpm.add_alpha_keys()
 

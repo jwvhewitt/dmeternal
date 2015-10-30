@@ -33,6 +33,7 @@ import image
 import glob
 import random
 import chargen
+import charloader
 
 VERSION_ID = "0.3.0 Alpha"
 
@@ -65,15 +66,22 @@ class TitleScreenRedraw( object ):
         screen.blit(self.logo.bitmap , self.logo_dest )
         screen.blit(self.version , self.version_dest )
 
+def choose_characters( screen ):
+    rpm = rpgmenu.Menu( screen,screen_center_x-100,screen_center_y + 25,200,200,predraw=None )
+    rpm.add_item( "Load Characters", True )
+    rpm.add_item( "Random Party", False )
+    if rpm.query():
+        return charloader.load_characters( list(), screen )
+    else:
+        return campaign.random_party()
 
 def start_campaign( init, screen ):
     pygwrap.please_stand_by( screen, "Building world..." )
     nart = narrator.Narrative( campaign.Campaign(), init )
     if nart.story:
-        nart.camp.dump_info()
         nart.build()
         camp = nart.camp
-        pcs = campaign.load_party( screen )
+        pcs = choose_characters( screen )
         if pcs:
             camp.name = pygwrap.input_string(screen, redrawer=PosterRedraw(screen), prompt="Enter campaign name" )
             camp.add_party( pcs )
@@ -88,11 +96,9 @@ def bardic_start_campaign( screen ):
     pygwrap.please_stand_by( screen, "Building world..." )
     nart = narrator.Narrative( campaign.Campaign(), init, adv_type="STUB_BARDIC", end_rank=5 )
     if nart.story:
-        #nart.camp.dump_info()
         nart.build()
         camp = nart.camp
-#        pcs = campaign.load_party( screen )
-        pcs = campaign.random_party()
+        pcs = choose_characters( screen )
         if pcs:
             camp.name = pygwrap.input_string(screen, redrawer=PosterRedraw(screen), prompt="Enter campaign name" )
             camp.add_party( pcs )
@@ -104,15 +110,13 @@ def endless_start_campaign( screen ):
     pygwrap.please_stand_by( screen, "Building world..." )
     nart = narrator.Narrative( campaign.Campaign(), init, adv_type="STUB_ENDLESS" )
     if nart.story:
-        nart.camp.dump_info()
         nart.build()
         camp = nart.camp
-#        pcs = campaign.load_party( screen )
-#        pcs = campaign.random_party()
-#        if pcs:
+        pcs = choose_characters( screen )
+        if pcs:
+            camp.add_party( pcs )
+            camp.place_party()
         camp.name = pygwrap.input_string(screen, redrawer=PosterRedraw(screen), prompt="Enter campaign name" )
-#        camp.add_party( pcs )
-#        camp.place_party()
         camp.play( screen )
 
 

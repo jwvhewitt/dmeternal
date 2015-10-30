@@ -9,6 +9,8 @@ import effects
 import animobs
 import aibrain
 import collections
+import util
+import cPickle
 
 # Reaction score constants
 FRIENDLY_THRESHOLD = 25
@@ -993,6 +995,16 @@ class Character( stats.PhysicalThing ):
                     if t.can_be_invoked( self, in_combat = in_combat ):
                         ilist.append( t )
         return ilist
+
+    def save( self ):
+        f = open( util.user_dir( "c_{}.sav".format(self.name) ) , "wb" )
+        cPickle.dump( self , f, -1 )
+        f.close()
+    def backup( self ):
+        f = open( util.user_dir( "c_{}.backup".format(self.name) ) , "wb" )
+        cPickle.dump( self , f, -1 )
+        f.close()
+
 
     def subject_pronoun( self ):
         return stats.SUBJECT_PRONOUN[ self.gender ]

@@ -105,7 +105,7 @@ class BasicAI( object ):
         hmap = hotmaps.HotMap( explo.scene, attack_positions, avoid_models=True, expensive=expensive_points )
         return hmap
     def try_technique_use( self, explo, chara, redraw=None ):
-        candidates = chara.get_invocations( True )
+        candidates = chara.get_invocations( True ) 
         acted = False
         if candidates:
             random.shuffle( candidates )

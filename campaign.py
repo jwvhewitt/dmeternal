@@ -306,38 +306,6 @@ class random_party( list ):
             total += canpc.get_stat( s ) * ( 3 + canpc.mr_level.requirements.get( s, 0 ) )
         return total
 
-def load_party( screen ):
-    # Select up to four characters to form the new party.
-    # Start by loading all characters from disk.
-    file_list = glob.glob( util.user_dir( "c_*.sav" ) )
-    pc_list = []
-    charsheets = dict()
-    party = []
-    for fname in file_list:
-        f = open( fname, "rb" )
-        pc = cPickle.load( f )
-        f.close()
-        if pc:
-            pc_list.append( pc )
-            charsheets[ pc ] = charsheet.CharacterSheet( pc , screen=screen )
-
-    psr = charsheet.PartySelectRedrawer( charsheets=charsheets, screen=screen, caption="Select Party Members" )
-    for t in range( 4 ):
-        rpm = charsheet.RightMenu( screen, predraw=psr, add_desc=False )
-        psr.menu = rpm
-        for pc in pc_list:
-            rpm.add_item( str( pc ), pc )
-        rpm.sort()
-        rpm.add_alpha_keys()
-        pc = rpm.query()
-
-        if pc:
-            pc_list.remove( pc )
-            party.append( pc )
-        else:
-            break
-
-    return party
 
 def fix_characters():
     file_list = glob.glob( util.user_dir( "c_*.sav" ) )
