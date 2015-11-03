@@ -75,6 +75,46 @@ def convert_tokens( in_text, gramdb ):
         all_words.append( word )
     return " ".join( all_words )
 
+class FailGrammar( object ):
+    """A grammar expansion that can fail. If an unknown token is found, the
+       sequence being generated is a dead end, and another sequence will be
+       tried."""
+    def __init__( self, in_text, gramdb ):
+        all_words = list()
+        for word in in_text.split():
+            if word[0] == "[":
+                word = self.expand_token( word, gramdb )
+            all_words.append( word )
+        self.result = " ".join( all_words )
+    def expand_token( self, token_block, gramdb ):
+        """Return an expansion of token according to gramdb."""
+        a,b,suffix = token_block.partition("]")
+        token = a + b
+        if token in gramdb:
+            possibilities = list( gramdb[token] )
+            random.shuffle( possibilities )
+            while possibilities:
+                all_ok = True
+                all_words = list()
+                ex = possibilities.pop()
+                for word in ex.split():
+                    if word[0] == "[":
+                        word = self.expand_token( word, gramdb )
+                    if word:
+                        all_words.append( word )
+                    else:
+                        all_ok = False
+                if all_ok:
+                    break
+            if all_words:
+                if suffix:
+                    all_words[-1] += suffix
+                return " ".join( all_words )
+
+    def __str__( self ):
+        return self.result
+
+
 GRAM_DATABASE = {
     "[acquaintance]": ["friend","brother","sister","cousin","lover","priest",
         "aunt","uncle","father","mother","guildmate","apprentice","teacher"
@@ -269,5 +309,24 @@ HATE_GRAMMAR = {
     "[SHOP]": [ "Just buy what you need and get the hell out.",
         ],
     }
+
+if __name__=='__main__':
+    GRAMGRAM = {
+        "[HELLO]": ["[ok] [ok]", "[ok] [no1]", "[yes1] [ok]"
+            ],
+        "[ok]": ["Gram", "gRam", "grAm", "graM"
+            ],
+        "[yes1]": ["[yes2] [yes2]", "[yes2] [no2]"
+            ],
+        "[yes2]": ["Bye", "bYe"
+            ],
+        "[no2]": [ "Super", "supeR"
+            ],
+        "[no1]": [ "Blah", "blaH"
+            ],
+        }
+    for t in range( 50 ):
+        mygram = FailGrammar("[HELLO]",GRAMGRAM)
+        print str( mygram )
 
 

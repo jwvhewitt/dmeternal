@@ -13,7 +13,7 @@ import characters
 import random
 
 class TestEncounter( Plot ):
-    LABEL = "TEST_FEATURE"
+    LABEL = "zzzTEST_FEATURE"
     def custom_init( self, nart ):
         scene = self.elements.get("LOCALE")
         mygen = nart.get_map_generator( scene )

@@ -275,6 +275,45 @@ class DividedIslandScene( RandomScene ):
         self.draw_direct_connection( gb, before_bridge.area.centerx, before_bridge.area.centery, bridge.area.centerx, bridge.area.centery )
         self.draw_direct_connection( gb, after_bridge.area.centerx, after_bridge.area.centery, bridge.area.centerx, bridge.area.centery )
 
+class WildernessPath( RandomScene ):
+    # Creates a wilderness area, adds a path with sorted contents along line.
+    WALL_FILTER = converter.ForestConverter()
+    MUTATE = mutator.CellMutator()
+    PREPARE = prep.HeightfieldPrep( loground=0.10, higround=0.95 )
+
+    def arrange_contents( self, gb ):
+        self.on_the_path = list()
+        for r in self.contents[:]:
+            if hasattr(r,"area") and hasattr(r,"priority"):
+                self.on_the_path.append( r )
+        self.on_the_path.sort( key = self.get_priority )
+        x_step = self.area.width // len( self.on_the_path )
+        x = self.area.x + x_step//2
+        for r in self.on_the_path:
+            r.area = pygame.Rect( 0, 0, min(r.width,x_step), r.height )
+            r.area.center = (x,self.area.centery+random.randint(-5,5))
+            x += x_step
+        # Now that the path has been sorted, sort the rest.
+        super(RandomScene,self).arrange_contents(gb)
+
+    def get_priority( self,r ):
+        return r.priority
+
+    def connect_contents( self, gb ):
+        # Run the basic connector first.
+        super(RandomScene,self).connect_contents(gb)
+        # Then, connect all path areas with HIGROUND.
+        r_prev = self.on_the_path[0]
+        for r in self.on_the_path[1:]:
+            self.draw_road_connection( gb, r.area.centerx, r.area.centery, r_prev.area.centerx, r_prev.area.centery )
+            r_prev = r
+
+    def draw_road_connection( self, gb, x1,y1,x2,y2 ):
+        path = animobs.get_line( x1,y1,x2,y2 )
+        for p in path:
+            self.fill( gb, pygame.Rect(p[0]-2,p[1]-2,5,5), wall=None )
+            self.fill( gb, pygame.Rect(p[0]-1,p[1]-1,3,3), floor=maps.HIGROUND )
+
 
 class EdgeOfCivilization( RandomScene ):
     """Civilized rooms connected to road; other rooms just connected by loground."""

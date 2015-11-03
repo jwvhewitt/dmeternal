@@ -16,9 +16,6 @@ import pygwrap
 import effects
 import charsheet
 import charloader
-import glob
-import util
-import cPickle
 
 class PuzzleMenu( rpgmenu.Menu ):
     WIDTH = 350

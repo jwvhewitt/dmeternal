@@ -31,11 +31,10 @@ class ShortieStub( Plot ):
     SHORTIE_GRAMMAR = {
         # [ADVENTURE] is the top level token- it will expand into a number of
         # high level tokens.
-        "[ADVENTURE]": [ "[IMPERILED_PLACE] [ENEMY_BASE] [ENEMY_GOAL]",
+        "[ADVENTURE]": [ "SDI_AMBUSH SDI_AMBUSH",
             ],
 
-        "[ENEMY_BASE]": [ "SDI_ENEMY_FORT SDI_ENEMY_BARRACKS SDI_BLOCKED_GATE",
-            "SDI_HIDDEN_BASE SDI_WILD_DUNGEON SDI_ENEMY_BARRACKS"
+        "[ENEMY_BASE]": [ "SDI_ENEMY_FORT SDI_ENEMY_BARRACKS",
             ],
 
         "[ENEMY_GOAL]": [ "SDI_SUPERWEAPON",
@@ -43,9 +42,6 @@ class ShortieStub( Plot ):
             ],
 
         "[IMPERILED_PLACE]": [ "SDI_AMBUSH SDI_VILLAGE",
-            "SDI_OUTPOST SDI_RECON", "SDI_VILLAGE SDI_RECON"
-            ],
-        "[TEST]": [ "SDI_TESTCOMBAT",
             ],
     }
     def custom_init( self, nart ):
@@ -60,7 +56,7 @@ class ShortieStub( Plot ):
         # Generate a plot outline for the adventure. We will do this using a
         # context free grammar expansion of the token [ADVENTURE]. The resultant
         # string will be a list of subplot request labels.
-        subplot_list = self.register_element( "shortie_outline", list( dialogue.grammar.convert_tokens( "[TEST]", self.SHORTIE_GRAMMAR ).split() ) )
+        subplot_list = self.register_element( "shortie_outline", list( dialogue.grammar.convert_tokens( "[ADVENTURE]", self.SHORTIE_GRAMMAR ).split() ) )
         print subplot_list
 
         # Assemble the outline into an adventure. Basically, add a subplot of
@@ -69,16 +65,35 @@ class ShortieStub( Plot ):
         # part of a scene, whatever.
         prev_subplot = self
         genplots = list()
+        ident = None
         for spr in subplot_list:
-            prev_subplot = self.add_sub_plot( nart, spr,
-                PlotState().based_on(prev_subplot) )
-            genplots.append( prev_subplot )
+            if spr is subplot_list[-1]:
+                ident = "_conclusion"
+            next_subplot = self.add_sub_plot( nart, spr,
+                PlotState().based_on(prev_subplot), ident=ident )
+            genplots.append( next_subplot )
+            if prev_subplot != self:
+                # Connect the OUT_ENTRANCE of the prev to the IN_ENTRANCE of the
+                # next.
+                pe,ne = prev_subplot.elements["OUT_ENTRANCE"], next_subplot.elements["IN_ENTRANCE"]
+                pe.destination,pe.otherside = next_subplot.elements["IN_SCENE"],ne
+                ne.destination,ne.otherside = prev_subplot.elements["OUT_SCENE"],pe
+            # That which was new has now become old.
+            prev_subplot = next_subplot
 
         # Set the adventure entrance to the IN_SCENE of the first generated
         # subplot.
         self._adventure_entrance = (genplots[0].elements.get( "IN_SCENE" ),genplots[0].elements.get( "IN_ENTRANCE" ))
+        exit = genplots[-1].elements.get( "OUT_ENTRANCE" )
+        self.register_element( "_EXIT", exit )
+        exit.plot_locked = True
 
         return True
+    def _EXIT_menu( self, thingmenu ):
+        thingmenu.desc = "This appears to be the way out."
+        thingmenu.add_item( "Leave this adventure.", self.use_exit )
+    def use_exit( self, explo ):
+        self.end_adventure( explo.camp )
 
     def begin_adventure( self, camp, exit_destination, exit_entrance ):
         # Unpack the adventure entrance stored during generation.
@@ -91,10 +106,15 @@ class ShortieStub( Plot ):
         camp.scripts.remove( self )
         self.remove()
 
-# Each shortie component should include an "IN_SCENE" and "IN_ENTRANCE" for use
-# if it is the first component generated. It may also contain an "OUT_SCENE" and
-# "OUT_ENTRANCE" which, if present, will be the connection to the next
-# component.
+# Each shortie component should include:
+# IN_SCENE,IN_ENTRANCE: Scene/Entrance where the subplot is entered.
+# OUT_SCENE, OUT_ENTRANCE: Scene/Entrance where the subplot is exited.
+#  -Note that IN_ENTRANCE need not be a valid gate; if not, transit from
+#   previous subplot is one-way only.
+#  -Also note that the destinations/behaviour of the entrances will be set by
+#   the parent SHORTIE plot. If this plot requires control of the entrances
+#   itself, move the declared entrance to an intermediate scene and control
+#   access to that scene.
 
 class ShortCombatTest( Plot ):
     LABEL = "SDI_TESTCOMBAT"
@@ -170,38 +190,35 @@ class BasicAmbush( Plot ):
     def custom_init( self, nart ):
         # Create the scene where the ambush will happen- a wilderness area with
         # a road.
-        myscene = maps.Scene( 50, 50, 
+        myscene = maps.Scene( 60, 60, 
             sprites={maps.SPRITE_WALL: "terrain_wall_woodfort.png", maps.SPRITE_GROUND: "terrain_ground_forest.png",
              maps.SPRITE_FLOOR: "terrain_floor_gravel.png" },
             biome=context.HAB_FOREST, setting=self.setting, fac=self.elements.get("ANTAGONIST"),
             desctags=(context.MAP_WILDERNESS,) )
-        mymapgen = randmaps.ForestScene( myscene )
+        mymapgen = randmaps.WildernessPath( myscene )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
 
-        # Create the ambush room in the middle- this is where the IN_ENTRANCE
-        # will go.
         myroom = randmaps.rooms.FuzzyRoom( parent=myscene )
-        myent = waypoints.Well()
+        myent = waypoints.Waypoint()
         myroom.contents.append( myent )
+        myroom.priority = 0
 
+        # Create the ambush room in the middle.
+        ambush_room = randmaps.rooms.FuzzyRoom( parent=myscene )
+        ambush_room.priority = 50
 
-        # If we have been provided with an OUT_ENTRANCE, link back to that from
-        # the beginning of the road. Otherwise, this is a one way trip.
-        if self.elements.get( "OUT_SCENE", None ):
-            # This isn't the first component in the adventure.
-            oe = self.elements.get( "OUT_ENTRANCE", None )
-            if oe:
-                # Create a two-way gate to here.
-                pass
-            else:
-                # Create one-way passage to here.
-                pass
+        # Create the exit on the end.
+        last_room = randmaps.rooms.FuzzyRoom( parent=myscene )
+        myexit = waypoints.RoadSignForward()
+        last_room.contents.append( myexit )
+        last_room.priority = 100
+
 
         # Save this component's data for the next component.
         self.register_element( "IN_SCENE", myscene )
         self.register_element( "IN_ENTRANCE", myent )
         self.register_element( "OUT_SCENE", myscene )
-        self.register_element( "OUT_ENTRANCE", None )
+        self.register_element( "OUT_ENTRANCE", myexit )
 
         return True
 

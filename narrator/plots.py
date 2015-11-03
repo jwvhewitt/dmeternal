@@ -117,7 +117,7 @@ class Plot( object ):
 
     def get_element_idents( self, ele ):
         """Return list of element idents assigned to this object."""
-        return [key for key,value in self.elements.items() if value is ele]
+        return [key for key,value in self.elements.items() + self.subplots.items() if value is ele]
 
     def add_sub_plot( self, nart, splabel, spstate=None, ident=None, necessary=True ):
         if not spstate:
@@ -246,6 +246,10 @@ class Plot( object ):
         # trigger handler will be "t_[trigger type]".
         # Trigger handler methods take the Exploration as a parameter.
         if thing:
+            if thing is self:
+                handler = getattr( self, "SELF_{0}".format( trigger ), None )
+                if handler:
+                    handler( explo )
             idlist = self.get_element_idents( thing )
             for label in idlist:
                 handler = getattr( self, "{0}_{1}".format( label, trigger ), None )

@@ -50,7 +50,7 @@ class MoveTo( object ):
             if first:
                 exp.bump_tile( dest )
             return False
-        elif target and first and dest == self.dest:
+        elif target and first and dest == self.dest and target not in exp.camp.party:
             exp.bump_model( target )
             return False
         elif ( not target ) or not self.is_earlier_model( exp.camp.party, pc, target ):
