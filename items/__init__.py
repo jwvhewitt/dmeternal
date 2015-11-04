@@ -457,6 +457,19 @@ def choose_item( item_type=None, max_rank=20 ):
     if candidates:
         return random.choice( candidates )
 
+def generate_scroll( target_rank=1 ):
+    """Return a spell scroll of rank closest to, but not over, target_rank."""
+    best_scroll = None
+    best_rank = 0
+    for ic in ITEM_LIST:
+        if issubclass( ic, scrolls.Rank1Scroll ):
+            i = ic()
+            if i.min_rank() <= target_rank and i.min_rank() > best_rank:
+                best_scroll = i
+                best_rank = i.min_rank()
+    return best_scroll
+
+
 def make_item_magic( item_to_enchant, target_rank ):
     pr = target_rank - item_to_enchant.min_rank()
     elist = list()
