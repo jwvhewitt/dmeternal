@@ -6,6 +6,11 @@ import math
 import animobs
 import context
 
+class RoomError( Exception ):
+    """Something went wrong during room construction."""
+    pass
+
+
 #  *****************
 #  ***   ROOMS   ***
 #  *****************
@@ -102,6 +107,9 @@ class Room( object ):
                         r.area = myrect
                         closed_area.append( myrect )
                     count += 1
+                if not r.area:
+                    raise RoomError( "ROOM ERROR: {}:{} cannot place {}".format(self,str( self.__class__ ),r) )
+
 
     def connect_contents( self, gb ):
         # Step Three: Connect all rooms in contents, making trails on map.
@@ -263,6 +271,8 @@ class SharpRoom( Room ):
             self.deal_with_empties(gb, empties )
 
     def render( self, gb ):
+        if not self.area:
+            raise RoomError( "ROOM ERROR: No area found for {} in {}".format(self,gb) )
         # Fill the floor with BASIC_FLOOR, and clear room interior
         self.fill( gb, self.area, floor=maps.BASIC_FLOOR )
         self.fill( gb, self.area.inflate(-2,-2), wall=None )

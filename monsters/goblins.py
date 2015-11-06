@@ -134,7 +134,7 @@ class GoblinPirate( base.Monster ):
     name = "Goblin Pirate"
     statline = { stats.STRENGTH: 11, stats.TOUGHNESS: 8, stats.REFLEXES: 14, \
         stats.INTELLIGENCE: 8, stats.PIETY: 8, stats.CHARISMA: 6,
-        stats.PHYSICAL_ATTACK: 10 }
+        stats.PHYSICAL_ATTACK: 10, stats.RESIST_WATER: 50 }
     SPRITENAME = "monster_goblins.png"
     FRAME = 17
     TEMPLATES = ()
@@ -145,7 +145,7 @@ class GoblinPirate( base.Monster ):
      context.MTY_HUMANOID, context.MTY_THIEF, context.GEN_GOBLIN )
     ENC_LEVEL = 4
     TREASURE = treasuretype.High()
-    ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )
+    ATTACK = items.Attack( (1,6,0), element = stats.RESIST_SLASHING )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 4, self ) )
 
@@ -205,7 +205,7 @@ class GoblinRanger( base.Monster ):
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN )
     ENC_LEVEL = 6
     TREASURE = treasuretype.Standard()
-    COMBAT_AI = aibrain.BasicTechnicalAI()
+    COMBAT_AI = aibrain.ArcherAI()
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )
     TECHNIQUES = ( abilities.LONGBOW,
       spells.earthspells.EARTHBIND )
@@ -816,7 +816,7 @@ class OrcArcher( base.Monster ):
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN )
     ENC_LEVEL = 4
     TREASURE = treasuretype.Standard((items.ARROW,items.BOW))
-    COMBAT_AI = aibrain.BasicTechnicalAI()
+    COMBAT_AI = aibrain.ArcherAI()
     COMPANIONS = (Orc,GoblinArcher,GoblinWarrior,HobgoblinThief)
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_SLASHING )
     TECHNIQUES = ( abilities.LONGBOW, )
@@ -1076,7 +1076,7 @@ class OrcSeaWitch( base.Monster ):
      context.MTY_BOSS,
      context.GEN_GOBLIN )
     ENC_LEVEL = 12
-    COMBAT_AI = aibrain.BasicTechnicalAI()
+    COMBAT_AI = aibrain.ArcherAI()
     COMPANIONS = ( OrcRaider, OrcPirate, SeaTroll )
     LONER = True
     TREASURE = treasuretype.HighItems((items.scrolls.Rank5Scroll, items.scrolls.Rank6Scroll))

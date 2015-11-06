@@ -198,7 +198,7 @@ class RoadSignToAdventure( Waypoint ):
     def unlocked_use( self, explo ):
         adv = explo.camp.add_story( "SHORTIE" )
         if adv:
-            adv.begin_adventure( explo.camp, self.scene, self )
+            adv.begin_adventure( explo, self.scene, self )
 
 
 class PowerCrystal( Waypoint ):

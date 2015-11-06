@@ -489,7 +489,9 @@ class Scene( object ):
 
     def is_model( self, thing ):
         """Return True if thing is a model which blocks movement through tile."""
-        return isinstance( thing , characters.Character )
+        # Characters count as models as long as they're alright. Otherwise they
+        # count as scenery.
+        return isinstance( thing , characters.Character ) and thing.is_alright()
 
     def get_character_at_spot( self, pos ):
         """Find and return first character at given position."""

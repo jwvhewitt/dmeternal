@@ -506,6 +506,16 @@ class Combat( object ):
             # Stock the gold.
             self.camp.gold += gold
 
+    def do_first_aid( self, explo ):
+        # At the end of combat, help anyone who was wounded.
+        fx = effects.HealthRestore( dice=(1,6,explo.camp.party_rank()), stat_bonus=None )
+        targets = list()
+        for pc in explo.camp.party:
+            if pc.is_alright() and hasattr( pc, "most_recent_wound" ) and pc.hp_damage > 0:
+                targets.append( pc.pos )
+                del pc.most_recent_wound
+        explo.invoke_effect( fx, None, targets )
+
     def go( self, explo ):
         """Perform this combat."""
 
@@ -529,6 +539,8 @@ class Combat( object ):
             # Combat has ended because we ran out of enemies. Dole experience.
             self.give_xp_and_treasure( explo )
             explo.check_trigger( "COMBATOVER" )
+            # Provide some end-of-combat first aid.
+            self.do_first_aid(explo)
 
         # PCs stop hiding when combat ends.
         for pc in self.camp.party:

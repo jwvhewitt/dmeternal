@@ -24,6 +24,7 @@ def absorb( gram, othergram ):
         if k not in gram:
             gram[k] = list()
         gram[k] += v
+    return gram
 
 def base_grammar( pc, npc, explo ):
     # Build a default grammar with the required elements.
@@ -102,6 +103,9 @@ def convert_tokens( in_text, gramdb, allow_maybe=True ):
         if word:
             all_words.append( word )
     return " ".join( all_words )
+
+# A colon in the grammar token implies that it's a line spoken by the PC; the
+#  labels before and after the token are the two NPC offers that it links.
 
 GRAM_DATABASE = {
     "[acquaintance]": ["friend","brother","sister","cousin","lover","priest",

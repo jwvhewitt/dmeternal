@@ -27,7 +27,7 @@ class TargetEnemy( object ):
     def get_targetability( self, camp, user, target ):
         # Return a positive integer if this is a desirable target, a negative
         # integer if this is a target best avoided, and zero for no preference.
-        if user.is_enemy( camp, target ):
+        if user.is_enemy( camp, target ) and target.is_alright():
             return 1
         elif user.is_ally( camp, target ):
             return self.ally_targetability
@@ -97,7 +97,8 @@ class TargetEnemyWithoutEnchantment( TargetEnemy ):
     def __init__( self, enchantment_to_check ):
         self.enchantment_to_check = enchantment_to_check
     def get_targetability( self, camp, user, target ):
-        if user.is_enemy( camp, target ) and not any( isinstance( e, self.enchantment_to_check ) for e in target.condition ):
+        if (user.is_enemy( camp, target ) and target.is_alright()
+         and not any( isinstance( e, self.enchantment_to_check ) for e in target.condition )):
             return 1
         else:
             return 0
@@ -107,7 +108,8 @@ class TargetAllyWithoutEnchantment( TargetEnemy ):
     def __init__( self, enchantment_to_check ):
         self.enchantment_to_check = enchantment_to_check
     def get_targetability( self, camp, user, target ):
-        if user.is_ally( camp, target ) and not any( isinstance( e, self.enchantment_to_check ) for e in target.condition ):
+        if (user.is_ally( camp, target ) and target.is_alright() and
+         not any( isinstance( e, self.enchantment_to_check ) for e in target.condition )):
             return 1
         else:
             return 0

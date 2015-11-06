@@ -125,7 +125,7 @@ class GenericArmory( Plot ):
         myhabitat[ context.MTY_HUMANOID ] = context.PRESENT
         myhabitat[ context.MTY_FIGHTER ] = context.MAYBE
         room.contents.append( teams.Team(default_reaction=-999, rank=self.rank+1, 
-          strength=120, habitat=myhabitat ) )
+          strength=100, habitat=myhabitat, fac=self.elements.get("ANTAGONIST")))
         room.contents.append( maps.WALL_WEAPON_RACK )
         room.contents.append( maps.WALL_WEAPON_RACK )
         for t in range( random.randint(2,4) ):

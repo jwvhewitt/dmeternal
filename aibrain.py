@@ -55,7 +55,7 @@ class BasicAI( object ):
 
         # Add the targets.
         for m in explo.scene.contents:
-            if chara.is_enemy( explo.camp, m ) and not m.hidden:
+            if chara.is_enemy( explo.camp, m ) and m.is_alright() and not m.hidden:
                 attack_positions.update( pfov.AttackReach( explo.scene, m.pos[0], m.pos[1], reach ).tiles )
             elif isinstance( m, enchantments.Field ) and self.AVOID_FIELDS:
                 expensive_points.add( m.pos )
@@ -157,7 +157,7 @@ class AdvancedAI( BasicAI ):
         # Get a list of targets.
         enemies = list()
         for m in explo.scene.contents:
-            if chara.is_enemy( explo.camp, m ) and not m.hidden:
+            if chara.is_enemy( explo.camp, m ) and m.is_alright() and not m.hidden:
                 enemies.append( m )
             elif isinstance( m, enchantments.Field ) and self.AVOID_FIELDS:
                 expensive_points.add( m.pos )
@@ -266,7 +266,7 @@ class ArcherAI( object ):
 
         # Add the targets.
         for m in explo.scene.contents:
-            if chara.is_enemy( explo.camp, m ) and not m.hidden:
+            if chara.is_enemy( explo.camp, m ) and m.is_alright() and not m.hidden:
                 attack_positions.update( pfov.AttackReach( explo.scene, m.pos[0], m.pos[1], reach ).tiles )
             elif isinstance( m, enchantments.Field ) and self.AVOID_FIELDS:
                 expensive_points.add( m.pos )

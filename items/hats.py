@@ -18,16 +18,18 @@ class NinjaMask( Item ):
     true_name = "Ninja Mask"
     true_desc = ""
     itemtype = HAT
+    statline = stats.StatMod({ stats.STEALTH: 5 })
     avatar_image = "avatar_hat.png"
     avatar_frame = 2
     mass = 1
 
-class Headband( NinjaMask ):
+class Headband( MageHat ):
     true_name = "Headband"
     true_desc = "A simple white headband."
     avatar_frame = 3
+    mass = 1
 
-class Bandana( NinjaMask ):
+class Bandana( Headband ):
     true_name = "Bandana"
     true_desc = ""
     avatar_frame = 4

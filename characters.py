@@ -105,6 +105,16 @@ class Level( object ):
             smod.append( str(k) + ":" + "{0:+}".format( v ) )
         return ", ".join( smod )
 
+    def give_stat_advances( self, pc ):
+        candidates = list()
+        for s in stats.PRIMARY_STATS:
+            s_weight = self.requirements.get( s, 0 ) + 10
+            candidates += (s,) * s_weight
+        stat_to_advance = random.choice( candidates )
+        pc.statline[ stat_to_advance ] += 1
+        return stat_to_advance
+
+
 
 class Warrior( Level ):
     name = 'Warrior'
@@ -610,6 +620,9 @@ class Character( stats.PhysicalThing ):
     def is_alright( self ):
         return self.current_hp() > 0
 
+    def is_dead( self ):
+        return self.current_hp() <= -10
+
     def max_mp( self ):
         # Bonus is the number of extra points per two levels.
         bonus = self.get_stat( stats.PIETY ) - 10
@@ -706,8 +719,7 @@ class Character( stats.PhysicalThing ):
         # If advancing same level, get stat bonus.
         stat_to_advance = None
         if level is self.mr_level:
-            stat_to_advance = random.choice( stats.PRIMARY_STATS )
-            self.statline[ stat_to_advance ] += 1
+            stat_to_advance = level.give_stat_advances( self )
         else:
             # If adding a new level, unequip items.
             self.mr_level = level

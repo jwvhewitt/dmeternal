@@ -278,7 +278,8 @@ class random_party( list ):
     def create_pc( self, job ):
         """Create a PC with the given job."""
         oldpc = None
-        for t in range( 5 ):
+        # Munchkins can change the number "5" to something obscene.
+        for t in xrange( 5 ):
             species = random.choice( characters.PC_SPECIES )
             gender = random.randint(0,1)
             newpc = characters.Character( species=species(), gender=gender )
@@ -287,11 +288,11 @@ class random_party( list ):
                 newpc.roll_stats()
                 tries += -1
             newpc.levels.append( job(1,newpc) )
-            chargen.give_starting_equipment( newpc )
-            newpc.name = monsters.gen_monster_name(newpc)
 
             if self.newpc_is_better( newpc, oldpc ):
                 oldpc = newpc
+                chargen.give_starting_equipment( newpc )
+                newpc.name = monsters.gen_monster_name(newpc)
         return oldpc
 
     def newpc_is_better( self, newpc, oldpc ):
@@ -303,7 +304,7 @@ class random_party( list ):
         """Return a score rating the statistics of this candidate PC."""
         total = 0
         for s in stats.PRIMARY_STATS:
-            total += canpc.get_stat( s ) * ( 3 + canpc.mr_level.requirements.get( s, 0 ) )
+            total += canpc.get_stat( s ) * ( 2 + canpc.mr_level.requirements.get( s, 0 ) )
         return total
 
 

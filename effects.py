@@ -196,6 +196,7 @@ class HealthDamage( NoEffect ):
                 camp.fight.cstat[target].asleep = False
 
             target.hp_damage += dmg
+            target.most_recent_wound = dmg
 
             anims.append( animobs.Caption( str(dmg), pos, delay=delay ) )
 

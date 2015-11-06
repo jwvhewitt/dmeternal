@@ -31,14 +31,14 @@ class ShortieStub( Plot ):
     SHORTIE_GRAMMAR = {
         # [ADVENTURE] is the top level token- it will expand into a number of
         # high level tokens.
-        "[ADVENTURE]": [ "SDI_AMBUSH SDI_VILLAGE SDI_ENEMY_FORT SDI_BOSSFIGHT",
+        "[ADVENTURE]": [ "SDI_AMBUSH SDI_VILLAGE SDI_ENEMY_FORT SDI_BIGBOSS",
             ],
 
         "[ENEMY_BASE]": [ "SDI_ENEMY_FORT SDI_ENEMY_BARRACKS",
             ],
 
         "[ENEMY_GOAL]": [ "SDI_SUPERWEAPON",
-            "SDI_BOSSFIGHT"
+            "SDI_BIGBOSS"
             ],
 
         "[IMPERILED_PLACE]": [ "SDI_AMBUSH SDI_VILLAGE",
@@ -57,7 +57,6 @@ class ShortieStub( Plot ):
         # context free grammar expansion of the token [ADVENTURE]. The resultant
         # string will be a list of subplot request labels.
         subplot_list = self.register_element( "shortie_outline", list( dialogue.grammar.convert_tokens( "[ADVENTURE]", self.SHORTIE_GRAMMAR ).split() ) )
-        print subplot_list
 
         # Assemble the outline into an adventure. Basically, add a subplot of
         # each generated type, in order. Each subplot describes a stage of the
@@ -87,6 +86,7 @@ class ShortieStub( Plot ):
         exit = self.genplots[-1].elements.get( "OUT_ENTRANCE" )
         self.register_element( "_EXIT", exit )
         exit.plot_locked = True
+        self.mr_subplot = self.genplots[0]
 
         self._do_message = True
 
@@ -97,11 +97,12 @@ class ShortieStub( Plot ):
     def use_exit( self, explo ):
         self.end_adventure( explo.camp )
 
-    def begin_adventure( self, camp, exit_destination, exit_entrance ):
+    def begin_adventure( self, explo, exit_destination, exit_entrance ):
         # Unpack the adventure entrance stored during generation.
         self.active = True
-        camp.destination,camp.entrance = self._adventure_entrance
+        explo.camp.destination,explo.camp.entrance = self._adventure_entrance
         self._adventure_exit = (exit_destination, exit_entrance)
+        explo.alert( "[=INTRO]" )
 
     def end_adventure( self, camp ):
         # Remove this adventure from campaign, move PCs to original place.
@@ -109,10 +110,53 @@ class ShortieStub( Plot ):
         camp.scripts.remove( self )
         self.remove()
 
+    DIALOGUE_GRAMMAR = {
+        "[=INTRO]": [ "You have been sent to bring [+SDI_BIGBOSS:name] the [+SDI_BIGBOSS:type] to justice. So far you have tracked them to [=location].",
+            "The [+SDI_VILLAGE] has called for a hero. [INTRO_PROBLEM]"
+            ],
+        "INTRO_PROBLEM": [ "Travelers passing through [+SDI_AMBUSH:name] have gone missing.",
+            "A [+SDI_BIGBOSS:type] named [+SDI_BIGBOSS:name] has been causing problems.",
+            ],
+        "[RUMOUR]": [   "[rumourleadin] [warning].",
+            ],
+        "[warning]": [ "[+warning]","[=warning]",
+            ],
+    }
+
+    def get_dialogue_grammar( self, npc, explo ):
+        """Return any grammar rules appropriate to this situation."""
+        gram = dialogue.grammar.absorb( dict(), self.DIALOGUE_GRAMMAR )
+        prefix = "-"
+        for sp in self.genplots:
+            g2 = sp.get_sdi_grammar()
+            if sp is self.mr_subplot:
+                prefix = "="
+            elif prefix == "=":
+                prefix = "+"
+            for k,v in g2.iteritems():
+                a,b,c = k.partition("[")
+                mod_k = b + prefix + c
+                if mod_k not in gram:
+                    gram[mod_k] = list()
+                gram[mod_k] += v
+        return gram
+
     def t_START( self, explo ):
         if self._do_message:
-            explo.alert( "This subplot remains." )
             self._do_message = False
+        # Determine the most recently entered subplot...
+        for sp in self.genplots:
+            if explo.scene is sp.elements["IN_SCENE"]:
+                if self.genplots.index(sp) > self.genplots.index(self.mr_subplot):
+                    self.mr_subplot = sp
+
+class SDIPlot( Plot ):
+    # Like a normal plot, but with extra functions for shortie adventures.
+    def get_sdi_grammar( self ):
+        """Return a dict of grammar related to this plot."""
+        # Prefix may be +, -, or =, depending on whether this is a previous,
+        # equivalent, or future shortie plot.
+        return dict()
 
 # Each shortie component should include:
 # IN_SCENE,IN_ENTRANCE: Scene/Entrance where the subplot is entered.
@@ -123,51 +167,13 @@ class ShortieStub( Plot ):
 #   the parent SHORTIE plot. If this plot requires control of the entrances
 #   itself, move the declared entrance to an intermediate scene and control
 #   access to that scene.
+#
+# Each shortie component should define the following grammar tags:
+#  [INTRO]  An introduction to be printed if the adventure starts in this
+#           subplot.
+#  [location]   A location of interest within the subplot. Optional.
+#
 
-class ShortCombatTest( Plot ):
-    LABEL = "SDI_TESTCOMBAT"
-    active = True
-    scope = True
-    def custom_init( self, nart ):
-        # Create the scene where the ambush will happen- a wilderness area with
-        # a road.
-        myscene = maps.Scene( 50, 50, 
-            sprites={maps.SPRITE_WALL: "terrain_wall_woodfort.png", maps.SPRITE_GROUND: "terrain_ground_forest.png",
-             maps.SPRITE_FLOOR: "terrain_floor_gravel.png" },
-            biome=context.HAB_FOREST, setting=self.setting, fac=self.elements.get("ANTAGONIST"),
-            desctags=(context.MAP_WILDERNESS,) )
-        mymapgen = randmaps.ForestScene( myscene )
-        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
-
-        # Create the ambush room in the middle- this is where the IN_ENTRANCE
-        # will go.
-        myroom = randmaps.rooms.FuzzyRoom( parent=myscene )
-        myent = waypoints.Well()
-        myroom.contents.append( myent )
-
-        for t in range( random.randint(1,3) ):
-            self.add_sub_plot( nart, "ENCOUNTER" )
-
-        room = mymapgen.DEFAULT_ROOM()
-        self.register_element( "_ROOM", room, dident="LOCALE" )
-        signpost = waypoints.Signpost()
-        self.register_element( "_SIGN", signpost, dident="_ROOM" )
-        signpost.plot_locked = True
-        signpost.mini_map_label = "Signpost"
-
-        # Save this component's data for the next component.
-        self.register_element( "IN_SCENE", myscene )
-        self.register_element( "IN_ENTRANCE", myent )
-        self.register_element( "OUT_SCENE", myscene )
-        self.register_element( "OUT_ENTRANCE", signpost )
-
-        return True
-    def _SIGN_menu( self, thingmenu ):
-        thingmenu.desc = "This appears to be the way out."
-        thingmenu.add_item( "Leave this adventure.", self.use_sign )
-    def use_sign( self, explo ):
-        self.do_message = True
-        self.chapter.root.end_adventure( explo.camp )
 
 
 #  SDI_ENEMY_FORT
@@ -175,20 +181,21 @@ class ShortCombatTest( Plot ):
 #   find a way in. In the simplest case this involves just fighting the guards
 #   at the front door.
 
-class BasicCaveHideout( Plot ):
+class BasicCaveHideout( SDIPlot ):
     LABEL = "SDI_ENEMY_FORT"
     active = True
     scope = "LOCALE"
     NAME_PATTERNS = ("{0} Wilds","{0} Wilderness")
     def custom_init( self, nart ):
         # Create the scene where the ambush will happen- a wilderness area.
-        myscene = maps.Scene( 60, 60, 
+        myscene = maps.Scene( 50, 50, 
             sprites={maps.SPRITE_WALL: "terrain_wall_woodfort.png", maps.SPRITE_GROUND: "terrain_ground_forest.png",
              maps.SPRITE_FLOOR: "terrain_floor_gravel.png" },
             biome=context.HAB_FOREST, setting=self.setting, fac=self.elements.get("ANTAGONIST"),
             desctags=(context.MAP_WILDERNESS,) )
         mymapgen = randmaps.ForestScene( myscene )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+        mymapgen.GAPFILL = randmaps.gapfiller.MonsterFiller(1,5,20)
         myscene.name = random.choice( self.NAME_PATTERNS ).format( namegen.random_style_name() )
 
         myroom = randmaps.rooms.FuzzyRoom( parent=myscene,
@@ -202,7 +209,7 @@ class BasicCaveHideout( Plot ):
          randmaps.rooms.MountainRoom(tags=(context.GOAL,)), dident="LOCALE" )
         antagonist = self.elements.get( "ANTAGONIST" )
         team = self.register_element( "TEAM", teams.Team(default_reaction=-999, rank=self.rank, 
-         strength=100, habitat=myscene.get_encounter_request(), fac=antagonist ) )
+         strength=50, habitat=myscene.get_encounter_request(), fac=antagonist ) )
         fortress.contents.append( team )
 
         # Add a boss to guard the entrance.
@@ -225,7 +232,7 @@ class BasicCaveHideout( Plot ):
         fortress.special_c["door"] = myexit
 
         # Add some extra pressure.
-        for t in range( random.randint(1,3) ):
+        if random.randint(1,4) != 4:
             self.add_sub_plot( nart, "ENCOUNTER" )
         if random.randint(1,4) == 1:
             self.add_sub_plot( nart, "SPECIAL_FEATURE" )
@@ -239,6 +246,13 @@ class BasicCaveHideout( Plot ):
         self.register_element( "OUT_ENTRANCE", myexit )
 
         return True
+    def get_sdi_grammar( self ):
+        """Return a dict of grammar related to this plot."""
+        mygram = {
+            "[location]": [str(self.elements["LOCALE"]),
+                ],
+        }
+        return mygram
 
 
 # SDI_ENEMY_BARRACKS
@@ -251,18 +265,22 @@ class BasicCaveHideout( Plot ):
 
 # SDI_SUPERWEAPON
 
-# SDI_BOSSFIGHT
+# SDI_BIGBOSS
+#
+# Grammar Tags:
+#   [SDI_BIGBOSS:name]   The name of the boss
+#   [SDI_BIGBOSS:type]   The type of the boss (optional)
 
-class BossInABox( Plot ):
+class BossInABox( SDIPlot ):
     # A simple building level, ending in a bossfight.
-    LABEL = "SDI_BOSSFIGHT"
+    LABEL = "SDI_BIGBOSS"
     active = True
     scope = "LOCALE"
     NAME_PATTERNS = ("{0}'s Hideout","{0}'s Sanctum")
     def custom_init( self, nart ):
         """Create the final dungeon, boss encounter, and resolution."""
         antagonist = self.elements.get( "ANTAGONIST" )
-        myscene = maps.Scene( 35,35, sprites={maps.SPRITE_WALL: "terrain_wall_darkbrick.png", 
+        myscene = maps.Scene( 45,45, sprites={maps.SPRITE_WALL: "terrain_wall_darkbrick.png", 
             maps.SPRITE_FLOOR: "terrain_floor_dungeon.png", },fac=antagonist,
             biome=context.HAB_BUILDING, setting=self.setting, desctags=(context.MAP_DUNGEON,context.MTY_HUMANOID) )
         igen = randmaps.SubtleMonkeyTunnelScene( myscene )
@@ -271,11 +289,14 @@ class BossInABox( Plot ):
         team = teams.Team(default_reaction=-999, rank=self.rank, strength=50,
          habitat=myscene.get_encounter_request(), fac=antagonist, respawn=False )
         goalroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=myscene,
-            anchor = randmaps.anchors.north )
+            anchor = random.choice((randmaps.anchors.northwest,randmaps.anchors.north,randmaps.anchors.northeast)) )
         goalroom.contents.append( team )
         door2 = waypoints.GateDoor()
         door2.anchor = randmaps.anchors.north
         goalroom.contents.append(door2)
+        mychest = waypoints.LargeChest()
+        mychest.stock(self.rank+1)
+        goalroom.contents.append( mychest )
 
         myhabitat = myscene.get_encounter_request()
         myhabitat[ context.MTY_HUMANOID ] = True
@@ -293,12 +314,12 @@ class BossInABox( Plot ):
 
             myscene.name = random.choice( self.NAME_PATTERNS ).format( boss )
 
-        if random.randint(1,10) > self.rank:
-            self.add_sub_plot( nart, "DUNGEON_ARMORY", PlotState().based_on( self ) )
+        if random.randint(1,10) <= self.rank:
+            self.add_sub_plot( nart, "ENCOUNTER", PlotState().based_on( self ) )
         self.enemy_defeated = False
 
         entranceroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=myscene,
-            anchor = randmaps.anchors.south )
+            anchor = random.choice((randmaps.anchors.southwest,randmaps.anchors.south,randmaps.anchors.southeast)) )
         door1 = waypoints.GateDoor()
         door1.anchor = randmaps.anchors.south
         entranceroom.contents.append(door1)
@@ -317,12 +338,25 @@ class BossInABox( Plot ):
     def t_COMBATOVER( self, explo ):
         if self.enemy_defeated:
             self.active = False
+    def get_sdi_grammar( self ):
+        """Return a dict of grammar related to this plot."""
+        mygram = {
+            "[location]": [str(self.elements["LOCALE"]),],
+            "[SDI_BIGBOSS:name]": [str(self.elements["ENEMY"]),],
+            "[SDI_BIGBOSS:type]": [self.elements["ENEMY"].monster_name,],
+            "[warning]":    ["{} is a tough enemy.".format(self.elements["ENEMY"]),
+                ],
+        }
+        return mygram
 
 
 # SDI_AMBUSH
 # The party has been ambushed! Oh noes!
+# Grammar Tags:
+#            "[SDI_AMBUSH:name]": [ str(self.elements["LOCALE"]),],
 
-class ImmediateAmbush( Plot ):
+
+class ImmediateAmbush( SDIPlot ):
     LABEL = "SDI_AMBUSH"
     active = True
     scope = "LOCALE"
@@ -374,8 +408,22 @@ class ImmediateAmbush( Plot ):
                 if hasattr(m,"team") and m.team is self.elements["TEAM"]:
                     explo.camp.activate_monster(m)
             self._do_message = False
+    def get_sdi_grammar( self ):
+        """Return a dict of grammar related to this plot."""
+        mygram = {
+            "[INTRO]": [ "Your party decides to travel the {}, seeking adventure. This area has recently been attacked by the {}.".format(self.elements["LOCALE"],self.elements["ANTAGONIST"]),
+                    "You travel to [+SDI_VILLAGE:name] for the annual [thing] festival. The path is peaceful and pleasant... too pleasant.",
+                    "Raiders from the {1} have been attacking {0}. The leaders of [+SDI_VILLAGE:name] have offered a reward to bring [+SDI_BIGBOSS:name] to justice.".format(self.elements["LOCALE"],self.elements["ANTAGONIST"]),
+                ],
+            "[location]": [str(self.elements["LOCALE"]),],
+            "[SDI_AMBUSH:name]": [ str(self.elements["LOCALE"]),],
+            "[warning]": [  "danger awaits on the road ahead",
+                ],
+        }
+        return mygram
 
-class AmbushInterrupted( Plot ):
+
+class AmbushInterrupted( SDIPlot ):
     LABEL = "SDI_AMBUSH"
     active = True
     scope = "LOCALE"
@@ -440,15 +488,31 @@ class AmbushInterrupted( Plot ):
     def NPC_offers( self, explo ):
         ol = list()
         if not self._reward_ready:
-            ol.append( dialogue.Offer( "Thanks for your help against the {}, but I fear more danger awaits on the road ahead.".format(self.elements["ANTAGONIST"]) ,
+            ol.append( dialogue.Offer( "Thanks for your help against the {}, but I fear [warning].".format(self.elements["ANTAGONIST"]) ,
              context = context.ContextTag([context.HELLO]) ) )
         return ol
+    def get_sdi_grammar( self ):
+        """Return a dict of grammar related to this plot."""
+        mygram = {
+            "[INTRO]": [    "Your party decides to travel the {}, seeking adventure. This area has recently been attacked by the {}.".format(self.elements["LOCALE"],self.elements["ANTAGONIST"]),
+                "You travel to [+SDI_VILLAGE:name]. This area has recently been attacked by the {}.".format(self.elements["ANTAGONIST"]),
+                "Raiders from the {1} have been attacking {0}. The leaders of [+SDI_VILLAGE:name] have offered a reward to bring [+SDI_BIGBOSS:name] to justice.".format(self.elements["LOCALE"],self.elements["ANTAGONIST"]),
+                ],
+            "[SDI_AMBUSH:name]": [ str(self.elements["LOCALE"]),],
+            "[warning]": [  "danger awaits on the road ahead",
+                ],
+        }
+        return mygram
 
 
 
 # SDI_VILLAGE
+#
+# Grammar Tags:
+#    [SDI_VILLAGE:name] The village name, usually "village of #".
+#
 
-class ForestVillage( Plot ):
+class ForestVillage( SDIPlot ):
     LABEL = "SDI_VILLAGE"
     # Create a small village.
     active = True
@@ -459,7 +523,6 @@ class ForestVillage( Plot ):
             biome=context.HAB_FOREST, setting=self.setting,
             desctags=(context.MAP_WILDERNESS,context.DES_CIVILIZED,) )
         mymapgen = randmaps.WildernessPath( myscene )
-        mymapgen.GAPFILL = randmaps.gapfiller.MonsterFiller(1,5,15)
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
 
         castle = self.register_element( "CITY",
@@ -496,6 +559,18 @@ class ForestVillage( Plot ):
 
         #self.add_sub_plot( nart, "TEST_FEATURE", necessary=False )
         return True
+
+    def get_sdi_grammar( self ):
+        """Return a dict of grammar related to this plot."""
+        mygram = {
+            "[SDI_VILLAGE:name]": [ "village of {}".format(self.elements["LOCALE"]),
+                ],
+            "[INTRO]": [ "",
+                ],
+            "[location]": [str(self.elements["LOCALE"]),
+                ],
+        }
+        return mygram
 
 
 # SDI_OUTPOST
