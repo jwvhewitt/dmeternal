@@ -15,8 +15,8 @@ FIRE_BOLT = Spell( "Fire Bolt",
         effects.HealthDamage( (1,8,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion )
     ,), on_failure = (
         effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion )
-    ,) ), rank=1, gems={FIRE:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.FireBolt, ai_tar=invocations.TargetEnemy(),
-    mpfudge=-1 )
+    ,) ), rank=1, gems={FIRE:1}, com_tar=targetarea.SingleTarget(),
+    shot_anim=animobs.FireBolt, ai_tar=invocations.TargetEnemy() )
 
 BURNING_WEAPON = Spell( "Burning Weapon",
     "Magical flames burst from an ally's weapon, causing an extra 1-6 points of damge per hit. This effect lasts until the end of combat.",
@@ -42,7 +42,7 @@ IGNITE = Spell( "Ignite",
         effects.Enchant( enchantments.BurnLowEn )
     ,), on_failure = (
         effects.HealthDamage( (2,5,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.Ignite )
-    ,) ), rank=2, gems={FIRE:1}, com_tar=targetarea.SingleTarget(reach=1),ai_tar=invocations.TargetEnemy(), mpfudge=-1 )
+    ,) ), rank=2, gems={FIRE:1}, com_tar=targetarea.SingleTarget(reach=1),ai_tar=invocations.TargetEnemy(), mpfudge=-2 )
 
 # CIRCLE 3
 

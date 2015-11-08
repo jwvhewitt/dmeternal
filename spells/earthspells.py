@@ -17,7 +17,7 @@ EARTHBIND = Spell( "Earthbind",
 CALL_CRITTER = Spell( "Call Critter",
     "This spell will summon a small woodland creature to fight on your behaf.",
     effects.CallMonster( {context.MTY_CREATURE: True, context.DES_EARTH: context.MAYBE, context.GEN_NATURE: context.MAYBE}, 2, anim=animobs.OrangeSparkle ),
-    rank=1, gems={EARTH:1}, com_tar=targetarea.SingleTarget(reach=2), ai_tar=invocations.TargetEmptySpot(), mpfudge = 2 )
+    rank=1, gems={EARTH:1}, com_tar=targetarea.SingleTarget(reach=2), ai_tar=invocations.TargetEmptySpot(), mpfudge = 3 )
 
 # CIRCLE 2
 
@@ -31,7 +31,7 @@ ACID_BOLT = Spell( "Acid Bolt",
     ), on_failure = (
         effects.HealthDamage( (1,5,0), stat_bonus=None, element=stats.RESIST_ACID, anim=animobs.GreenExplosion )
     ,) ), rank=2, gems={EARTH:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.GreenSpray,
-    ai_tar=invocations.TargetEnemy(), mpfudge=-1 )
+    ai_tar=invocations.TargetEnemy() )
 
 BEASTLY_MIGHT = Spell( "Beastly Might",
     "Imbues a single ally with supernatural strength, giving +4 strength, +4 toughness, and +5% to attack.",

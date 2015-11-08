@@ -14,13 +14,13 @@ AIR_ARMOR = Spell( "Shield of Wind",
     effects.TargetIsAlly( on_true = (
         effects.Enchant( enchantments.AirArmor, anim=animobs.BlueSparkle )
     ,) ), rank=1, gems={AIR:1}, com_tar=targetarea.SelfCentered(),
-    ai_tar=invocations.TargetAllyWithoutEnchantment(enchantments.AirArmor), mpfudge=-1 )
+    ai_tar=invocations.TargetAllyWithoutEnchantment(enchantments.AirArmor) )
 
 PROBE = Spell( "Probe",
     "This spell reveals secret knowledge about one target creature.",
     effects.NoEffect( anim=animobs.BlueSparkle, children = (
         effects.Probe()
-    ,) ), rank=1, gems={AIR:1}, mpfudge=-2, com_tar=targetarea.SingleTarget(), exp_tar=targetarea.SingleTarget() )
+    ,) ), rank=1, gems={AIR:1}, mpfudge=-1, com_tar=targetarea.SingleTarget(), exp_tar=targetarea.SingleTarget() )
 
 # CIRCLE TWO
 
@@ -54,7 +54,7 @@ THUNDER_STRIKE = Spell( "Thunder Strike",
 MAGIC_MAP = Spell( "Magic Map",
     "This spell reveals detailed knowledge about the local area.",
     effects.MagicMap( anim=animobs.BlueSparkle ),
-     rank=3, gems={AIR:2}, mpfudge=8, com_tar=targetarea.SelfOnly(), exp_tar=targetarea.SelfOnly() )
+     rank=3, gems={AIR:2}, com_tar=targetarea.SelfOnly(), exp_tar=targetarea.SelfOnly() )
 
 
 # CIRCLE FOUR

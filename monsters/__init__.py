@@ -139,7 +139,7 @@ def generate_npc( species=None, job=None, gender=None, rank=None, team=None, upg
     if not rank:
         rank = min(random.randint(1,10),random.randint(1,10))
 
-    npc = characters.Character( species=species(), gender=gender )
+    npc = base.NPCharacter( species=species(), gender=gender )
     npc.roll_stats()
     npc.team = team
 

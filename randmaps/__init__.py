@@ -125,6 +125,8 @@ class SubtleMonkeyTunnelScene( RandomScene ):
                         r.area = myrect
                         closed_area.append( myrect )
                     count += 1
+                if not r.area:
+                    raise RoomError( "ROOM ERROR: {}:{} cannot place {}".format(self,str( self.__class__ ),r) )
 
     def monkey_L_connection( self, gb, x1,y1,x2,y2 ):
         # Draw an L-connection between these two points, returning list of

@@ -696,6 +696,31 @@ class Explorer( object ):
             else:
                 keep_going = False
 
+    def reorder_party( self ):
+        new_party_order = list()
+        psheet = charsheet.PartySheet( new_party_order, screen=self.screen, camp=self.camp )
+        myredraw = charsheet.CharacterViewRedrawer( csheet=psheet, screen=self.screen, predraw=self.view, caption="Reorder Party" )
+
+        while self.camp.party:
+            mymenu = charsheet.RightMenu( self.screen, predraw = myredraw )
+            for pc in self.camp.party:
+                mymenu.add_item( str( pc ), pc )
+            mymenu.sort()
+            mymenu.add_alpha_keys()
+            mymenu.add_item( "Exit", False )
+            myredraw.menu = mymenu
+
+            it = mymenu.query()
+            if it:
+                self.camp.party.remove( it )
+                new_party_order.append( it )
+                psheet.regenerate_avatars()
+            else:
+                break
+        if self.camp.party:
+            new_party_order += self.camp.party
+        self.camp.party = new_party_order
+
     def monster_inactive( self, mon ):
         return mon not in self.camp.party and (( not self.camp.fight ) or mon not in self.camp.fight.active)
 
@@ -879,6 +904,7 @@ class Explorer( object ):
         mymenu.add_item( "View Map", 2 )
         mymenu.add_item( "Manage Spells", 3 )
         mymenu.add_item( "Camp and Rest", 4 )
+        mymenu.add_item( "Reorder Party", 7 )
         mymenu.add_item( "Quit Game", 5 )
         mymenu.add_item( "Exit", False )
 
@@ -897,6 +923,8 @@ class Explorer( object ):
             self.no_quit = False
         elif choice == 6:
             self.view_party( self.camp.party.index( pc ) )
+        elif choice == 7:
+            self.reorder_party()
 
         elif choice in self.camp.party:
             # Picked a PC. Cast one of their spells.

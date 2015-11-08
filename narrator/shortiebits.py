@@ -180,6 +180,12 @@ class SDIPlot( Plot ):
 #   There's an enemy fortress to discover in the wilderness, and you need to
 #   find a way in. In the simplest case this involves just fighting the guards
 #   at the front door.
+# Grammar Tags:
+#   [SDI_ENEMY_FORT:location]   The rough location of the enemy fort
+# To do:
+# - Well-guarded and obvious fortress.
+# - Pet guarded gate
+# - Locked fortress
 
 class BasicCaveHideout( SDIPlot ):
     LABEL = "SDI_ENEMY_FORT"
@@ -251,6 +257,8 @@ class BasicCaveHideout( SDIPlot ):
         mygram = {
             "[location]": [str(self.elements["LOCALE"]),
                 ],
+            "[SDI_ENEMY_FORT:location]": [str(self.elements["LOCALE"]),
+                ],
         }
         return mygram
 
@@ -270,6 +278,9 @@ class BasicCaveHideout( SDIPlot ):
 # Grammar Tags:
 #   [SDI_BIGBOSS:name]   The name of the boss
 #   [SDI_BIGBOSS:type]   The type of the boss (optional)
+# To do:
+# - NPC big boss
+# - Smaller boss with a big pet
 
 class BossInABox( SDIPlot ):
     # A simple building level, ending in a bossfight.
@@ -281,7 +292,7 @@ class BossInABox( SDIPlot ):
         """Create the final dungeon, boss encounter, and resolution."""
         antagonist = self.elements.get( "ANTAGONIST" )
         myscene = maps.Scene( 45,45, sprites={maps.SPRITE_WALL: "terrain_wall_darkbrick.png", 
-            maps.SPRITE_FLOOR: "terrain_floor_dungeon.png", },fac=antagonist,
+            maps.SPRITE_FLOOR: "terrain_floor_dungeon.png", }, fac=antagonist,
             biome=context.HAB_BUILDING, setting=self.setting, desctags=(context.MAP_DUNGEON,context.MTY_HUMANOID) )
         igen = randmaps.SubtleMonkeyTunnelScene( myscene )
         self.register_scene( nart, myscene, igen, ident="LOCALE" )
@@ -301,6 +312,7 @@ class BossInABox( SDIPlot ):
         myhabitat = myscene.get_encounter_request()
         myhabitat[ context.MTY_HUMANOID ] = True
         myhabitat[(context.MTY_LEADER,context.MTY_FIGHTER,context.MTY_MAGE)] = True
+        myhabitat[ context.MTY_BOSS ] = context.MAYBE
         if antagonist:
             antagonist.alter_monster_request( myhabitat )
         btype = monsters.choose_monster_type(self.rank,self.rank+2,myhabitat)
@@ -344,7 +356,7 @@ class BossInABox( SDIPlot ):
             "[location]": [str(self.elements["LOCALE"]),],
             "[SDI_BIGBOSS:name]": [str(self.elements["ENEMY"]),],
             "[SDI_BIGBOSS:type]": [self.elements["ENEMY"].monster_name,],
-            "[warning]":    ["{} is a tough enemy.".format(self.elements["ENEMY"]),
+            "[warning]":    ["{} is a tough enemy".format(self.elements["ENEMY"]),
                 ],
         }
         return mygram
@@ -355,6 +367,11 @@ class BossInABox( SDIPlot ):
 # Grammar Tags:
 #            "[SDI_AMBUSH:name]": [ str(self.elements["LOCALE"]),],
 
+# To do:
+# - Novice ambush: Arrive after caravan destroyed, talk to survivors, no fight.
+# - Too late ambush: Arrive after destruction, fight beasts at site. After
+#   battle get message confirming that humanoids were behind the attack.
+# - Trap ambush: Find destroyed caravan; searching cart brings out enemies.
 
 class ImmediateAmbush( SDIPlot ):
     LABEL = "SDI_AMBUSH"
@@ -379,9 +396,8 @@ class ImmediateAmbush( SDIPlot ):
         myent = waypoints.Waypoint()
         ambush_room.contents.append( myent )
         ambush_room.priority = 0
-        antagonist = self.elements.get( "ANTAGONIST" )
-        if not antagonist:
-            antagonist = self.register_element( "ANTAGONIST", teams.AntagonistFaction( context.GEN_GOBLIN ) )
+        antagonist = self.elements.setdefault( "ANTAGONIST", teams.AntagonistFaction( context.GEN_GOBLIN ) )
+
         team = self.register_element( "TEAM", teams.Team(default_reaction=-999, rank=self.rank, 
          strength=100, habitat=myscene.get_encounter_request(), fac=antagonist ) )
         ambush_room.contents.append( team )
@@ -449,9 +465,7 @@ class AmbushInterrupted( SDIPlot ):
         ambush_room = self.register_element( "_AMBUSHROOM",
          randmaps.rooms.FuzzyRoom(), dident="LOCALE" )
         ambush_room.priority = 50
-        antagonist = self.elements.get( "ANTAGONIST" )
-        if not antagonist:
-            antagonist = self.register_element( "ANTAGONIST", teams.AntagonistFaction( context.GEN_GOBLIN ) )
+        antagonist = self.elements.setdefault( "ANTAGONIST", teams.AntagonistFaction( context.GEN_GOBLIN ) )
         team = self.register_element( "TEAM", teams.Team(default_reaction=-999, rank=self.rank, 
          strength=100, habitat=myscene.get_encounter_request(), fac=antagonist ) )
         ambush_room.contents.append( team )
@@ -498,6 +512,7 @@ class AmbushInterrupted( SDIPlot ):
                 "You travel to [+SDI_VILLAGE:name]. This area has recently been attacked by the {}.".format(self.elements["ANTAGONIST"]),
                 "Raiders from the {1} have been attacking {0}. The leaders of [+SDI_VILLAGE:name] have offered a reward to bring [+SDI_BIGBOSS:name] to justice.".format(self.elements["LOCALE"],self.elements["ANTAGONIST"]),
                 ],
+            "[location]": [str(self.elements["LOCALE"]),],
             "[SDI_AMBUSH:name]": [ str(self.elements["LOCALE"]),],
             "[warning]": [  "danger awaits on the road ahead",
                 ],
@@ -511,6 +526,14 @@ class AmbushInterrupted( SDIPlot ):
 # Grammar Tags:
 #    [SDI_VILLAGE:name] The village name, usually "village of #".
 #
+# To do:
+# - Too late village: has already been destroyed, may find survivors. Or not.
+# - Orc Prisoners: Village has been captured by orcs; rescue them from mine.
+#   Survivors then help you find way to next chapter.
+# - Dwarven village: Have to go underground to find it.
+# - Elf village: Likewise hidden from plain sight.
+# - Fort Under Siege: Barred from entering fort; doors will open after the
+#   enemies have been defeated.
 
 class ForestVillage( SDIPlot ):
     LABEL = "SDI_VILLAGE"
@@ -565,7 +588,8 @@ class ForestVillage( SDIPlot ):
         mygram = {
             "[SDI_VILLAGE:name]": [ "village of {}".format(self.elements["LOCALE"]),
                 ],
-            "[INTRO]": [ "",
+            "[INTRO]": [ "You arrive in the village of {}. [INTRO_PROBLEM]".format(self.elements["LOCALE"]),
+                "This was supposed to be a nice relaxing trip to the {}. Of course, things rarely go according to plan for adventurers.".format(self.elements["LOCALE"]),
                 ],
             "[location]": [str(self.elements["LOCALE"]),
                 ],

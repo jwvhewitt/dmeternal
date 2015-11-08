@@ -27,7 +27,7 @@ BLAST_UNDEAD = Spell( "Blast Undead",
     ,), on_false = (
         effects.NoEffect( anim=animobs.SmallBoom )
     ,) ),
-    rank=1, gems={SOLAR:1,WATER:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.YellowBolt, mpfudge=-2 )
+    rank=1, gems={SOLAR:1,WATER:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.YellowBolt, mpfudge=-1 )
 
 
 # CIRCLE TWO
@@ -53,7 +53,7 @@ HEROISM = Spell( "Heroism",
     effects.TargetIsAlly( on_true = (
         effects.Enchant( enchantments.HeroismEn, anim=animobs.YellowSparkle )
     ,) ), rank=2, gems={AIR:1,WATER:1}, com_tar=targetarea.SelfCentered(),
-    ai_tar=invocations.TargetAllyWithoutEnchantment(enchantments.HeroismEn), mpfudge=1 )
+    ai_tar=invocations.TargetAllyWithoutEnchantment(enchantments.HeroismEn) )
 
 
 # CIRCLE THREE

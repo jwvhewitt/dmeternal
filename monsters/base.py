@@ -119,7 +119,13 @@ class Defender( characters.Level ):
 
 # Monster Monster Monster Monster Monster
 
-class Monster( characters.Character ):
+class NPCharacter( characters.Character ):
+    """The only difference? NPCs don't get saving grace until -10HP."""
+    def is_dead( self ):
+        return not self.is_alright()
+
+
+class Monster( NPCharacter ):
     SPRITENAME = "monster_default.png"
     statline = { stats.STRENGTH: 12, stats.TOUGHNESS: 12, stats.REFLEXES: 12, \
         stats.INTELLIGENCE: 12, stats.PIETY: 12, stats.CHARISMA: 12 }

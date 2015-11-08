@@ -19,7 +19,7 @@ MINOR_CURE = Spell( "Minor Cure",
     "This spell will heal one nearby ally for 1-10 damage.",
     effects.HealthRestore( dice=(1,10,0) ),
     rank=1, gems={SOLAR:1}, com_tar=targetarea.SingleTarget(reach=1), ai_tar=invocations.TargetWoundedAlly(),
-    exp_tar=targetarea.SinglePartyMember(), mpfudge = -1 )
+    exp_tar=targetarea.SinglePartyMember() )
 
 # CIRCLE 2
 
@@ -53,7 +53,7 @@ MAJOR_CURE = Spell( "Major Cure",
     "This spell will heal one nearby ally for 15-36 damage.",
     effects.HealthRestore( dice=(3,8,12) ),
     rank=4, gems={SOLAR:2}, com_tar=targetarea.SingleTarget(reach=1), ai_tar=invocations.TargetWoundedAlly(),
-    exp_tar=targetarea.SinglePartyMember(), mpfudge = -2 )
+    exp_tar=targetarea.SinglePartyMember(), mpfudge = -4 )
 
 RESTORATION = Spell( "Restoration",
     "This spell heals all stat damage that has been done to a single ally.",
@@ -69,13 +69,13 @@ MASS_CURE = Spell( "Mass Cure",
     effects.TargetIsAlly( on_true = (
         effects.HealthRestore( dice=(4,10,0) )
     ,) ), rank=5, gems={SOLAR:3}, com_tar=targetarea.SelfCentered(radius=3), ai_tar=invocations.TargetWoundedAlly(),
-    exp_tar=targetarea.AllPartyMembers(), mpfudge = 4 )
+    exp_tar=targetarea.AllPartyMembers() )
 
 REMOVE_CURSE = Spell( "Remove Curse",
     "This spell will dispel all harmful magical effects from a single party member.",
     effects.TidyEnchantments( enchantments.CURSE, anim=animobs.YellowSparkle ),
     rank=5, gems={SOLAR:2}, com_tar=targetarea.SingleTarget(reach=1),
-    exp_tar=targetarea.SinglePartyMember(), mpfudge = -2 )
+    exp_tar=targetarea.SinglePartyMember(), mpfudge = -5 )
 
 
 # CIRCLE 6
@@ -108,7 +108,7 @@ RENEWAL = Spell( "Renewal",
         effects.StatRestore( anim=None ),
     )),
     rank=7, gems={SOLAR:4}, com_tar=targetarea.SingleTarget(reach=1), ai_tar=invocations.TargetWoundedAlly(),
-    exp_tar=targetarea.SinglePartyMember(), mpfudge=2 )
+    exp_tar=targetarea.SinglePartyMember() )
 
 # CIRCLE 8
 

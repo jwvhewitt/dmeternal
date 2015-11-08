@@ -26,7 +26,7 @@ CHAOS_BOLT = Spell( "Chaos Bolt",
         effects.ManaDamage((1,4,0), stat_bonus=None, anim=animobs.PurpleExplosion ),
     )),
     rank=2, gems={LUNAR:1,SOLAR:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.WizardMissile,
-    ai_tar=invocations.TargetEnemy(), mpfudge=-2 )
+    ai_tar=invocations.TargetEnemy(), mpfudge=-3 )
 
 
 

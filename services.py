@@ -29,7 +29,7 @@ MAGIC_STORE = ( items.SCROLL, items.SCROLL, items.SCROLL, items.SCROLL, items.SC
     items.POTION, items.HOLYSYMBOL, items.WAND )
 
 class Shop( object ):
-    def __init__( self, ware_types = GENERAL_STORE, allow_misc=True, enhance_at=20, caption="Shop", magic_chance=20, rank=3, num_items=25, turnover=1, npc=None ):
+    def __init__( self, ware_types = GENERAL_STORE, allow_misc=True, enhance_at=20, caption="Shop", magic_chance=5, rank=3, num_items=25, turnover=1, npc=None ):
         self.wares = list()
         self.ware_types = ware_types
         self.allow_misc = allow_misc
@@ -72,7 +72,7 @@ class Shop( object ):
             num_items = max( 5, ( self.num_items * ( 100 + 2 * friendliness ) ) // 100 )
         else:
             num_items = self.num_items + friendliness // 10
-        magic_chance = min( self.magic_chance, friendliness - self.enhance_at + 1 )
+        magic_chance = max( self.magic_chance, friendliness - self.enhance_at + 1 )
 
         # Get rid of some of the old stock, to make room for new stock.
         while len( self.wares ) > num_items:

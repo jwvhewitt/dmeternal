@@ -19,7 +19,7 @@ WIZARD_MISSILE = Spell( "Wizard Missile",
     "This mystic bolt always strikes its target for 1-6 damage.",
     effects.HealthDamage((1,6,0), stat_bonus=None, element=stats.RESIST_LUNAR, anim=animobs.PurpleExplosion ),
     rank=1, gems={LUNAR:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.WizardMissile,
-    ai_tar=invocations.TargetEnemy(), mpfudge=-2 )
+    ai_tar=invocations.TargetEnemy(), mpfudge=-1 )
 
 # CIRCLE TWO
 
@@ -89,7 +89,7 @@ DEATH_RAY = Spell( "Death Ray",
                 effects.HealthDamage( (3,8,0), stat_bonus=None, element=stats.RESIST_LUNAR, anim=animobs.PurpleExplosion ), )
             ,),
         ),
-    ), rank=5, gems={LUNAR:4}, mpfudge=-3, com_tar=targetarea.SingleTarget(), shot_anim=animobs.PurpleVortex, ai_tar=invocations.TargetEnemy() )
+    ), rank=5, gems={LUNAR:4}, mpfudge=-9, com_tar=targetarea.SingleTarget(), shot_anim=animobs.PurpleVortex, ai_tar=invocations.TargetEnemy() )
 
 
 # CIRCLE 6

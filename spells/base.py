@@ -18,7 +18,7 @@ class Spell( invocations.Invocation ):
 
     def mp_cost( self ):
         """Return spell invocation cost."""
-        return max( self.rank + self.mpfudge + sum( self.gems.itervalues() ) * 2, 1 )
+        return max( (1 + sum( self.gems.itervalues() )) * (self.rank * 2 - 1 ) + self.mpfudge, 1 )
 
     def gems_needed( self ):
         """Return total number of spell gems needed."""
