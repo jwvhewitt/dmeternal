@@ -253,7 +253,7 @@ class MadMonk( base.Monster ):
     FRAME = 7
     TEMPLATES = ()
     MOVE_POINTS = 10
-    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+    HABITAT = ( context.HAB_EVERY, context.HAB_DESERT, context.SET_EVERY,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.MTY_PRIEST,
      context.DES_FIRE,
      context.GEN_CHAOS )

@@ -187,7 +187,7 @@ class Jackal( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 12
     VOICE = None
-    HABITAT = ( context.HAB_FOREST, context.SET_EVERY,
+    HABITAT = ( context.HAB_DESERT, context.SET_EVERY,
      context.MTY_BEAST, context.MTY_CREATURE, context.DES_LUNAR, context.GEN_NATURE )
     ENC_LEVEL = 2
 
@@ -380,7 +380,7 @@ class GiantLizard( base.Monster ):
     TEMPLATES = (stats.REPTILE,)
     MOVE_POINTS = 10
     VOICE = None
-    HABITAT = ( context.HAB_CAVE, context.SET_EVERY,
+    HABITAT = ( context.HAB_CAVE, context.HAB_DESERT, context.SET_EVERY,
      context.MTY_BEAST, context.MTY_CREATURE,
      context.GEN_NATURE, context.GEN_DRAGON )
     ENC_LEVEL = 4
@@ -666,7 +666,8 @@ class GiantEagle( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 16
     VOICE = None
-    HABITAT = ( context.HAB_FOREST, context.SET_EVERY, context.SET_RENFAN,
+    HABITAT = ( context.HAB_FOREST, context.HAB_DESERT,
+     context.SET_EVERY, context.SET_RENFAN,
      context.MAP_WILDERNESS,
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE,
      context.DES_AIR, context.DES_SOLAR )
@@ -685,7 +686,7 @@ class Scarab( base.Monster ):
     TEMPLATES = (stats.BUG,)
     MOVE_POINTS = 8
     VOICE = None
-    HABITAT = ( context.HAB_TUNNELS, context.SET_EVERY,
+    HABITAT = ( context.HAB_TUNNELS, context.HAB_DESERT, context.SET_EVERY,
      context.DES_SOLAR,
      context.MTY_BEAST, context.MTY_CREATURE )
     ENC_LEVEL = 7
@@ -756,7 +757,7 @@ class FireScorpion( base.Monster ):
     TEMPLATES = (stats.BUG,stats.FIRE)
     MOVE_POINTS = 10
     VOICE = None
-    HABITAT = ( context.HAB_CAVE, context.SET_EVERY,
+    HABITAT = ( context.HAB_CAVE, context.HAB_DESERT, context.SET_EVERY,
      context.DES_FIRE,
      context.MTY_BEAST, context.MTY_BOSS,
      context.MTY_CREATURE, context.GEN_NATURE )
@@ -919,7 +920,7 @@ class Roc( base.Monster ):
     MOVE_POINTS = 16
     VOICE = None
     TREASURE = treasuretype.Swallowed()
-    HABITAT = ( context.HAB_FOREST, context.SET_EVERY,
+    HABITAT = ( context.HAB_FOREST, context.HAB_DESERT, context.SET_EVERY,
      context.MAP_WILDERNESS,
      context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE,
      context.DES_AIR, context.DES_SOLAR )

@@ -186,6 +186,7 @@ class SDIPlot( Plot ):
 # - Well-guarded and obvious fortress.
 # - Pet guarded gate
 # - Locked fortress
+# - Can of Wyrms: Small courtyard full of enemies with unlocked puzzle door.
 
 class BasicCaveHideout( SDIPlot ):
     LABEL = "SDI_ENEMY_FORT"
@@ -194,12 +195,10 @@ class BasicCaveHideout( SDIPlot ):
     NAME_PATTERNS = ("{0} Wilds","{0} Wilderness")
     def custom_init( self, nart ):
         # Create the scene where the ambush will happen- a wilderness area.
-        myscene = maps.Scene( 50, 50, 
-            sprites={maps.SPRITE_WALL: "terrain_wall_woodfort.png", maps.SPRITE_GROUND: "terrain_ground_forest.png",
-             maps.SPRITE_FLOOR: "terrain_floor_gravel.png" },
-            biome=context.HAB_FOREST, setting=self.setting, fac=self.elements.get("ANTAGONIST"),
-            desctags=(context.MAP_WILDERNESS,) )
-        mymapgen = randmaps.ForestScene( myscene )
+        biome = self.elements.setdefault( "BIOME", randmaps.architect.make_wilderness() )
+        myscene,mymapgen = randmaps.architect.design_scene( 50, 50,
+          randmaps.ForestScene, biome, setting=self.setting,
+          fac=self.elements.get("ANTAGONIST"))
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
         mymapgen.GAPFILL = randmaps.gapfiller.MonsterFiller(1,5,20)
         myscene.name = random.choice( self.NAME_PATTERNS ).format( namegen.random_style_name() )
@@ -217,6 +216,10 @@ class BasicCaveHideout( SDIPlot ):
         team = self.register_element( "TEAM", teams.Team(default_reaction=-999, rank=self.rank, 
          strength=50, habitat=myscene.get_encounter_request(), fac=antagonist ) )
         fortress.contents.append( team )
+
+        # Register the cave stuff.
+        self.register_element( "DUNGEON_ARCHITECTURE",
+         randmaps.architect.CavernDungeon(antagonist) )
 
         # Add a boss to guard the entrance.
         myhabitat = myscene.get_encounter_request()
@@ -291,11 +294,12 @@ class BossInABox( SDIPlot ):
     def custom_init( self, nart ):
         """Create the final dungeon, boss encounter, and resolution."""
         antagonist = self.elements.get( "ANTAGONIST" )
-        myscene = maps.Scene( 45,45, sprites={maps.SPRITE_WALL: "terrain_wall_darkbrick.png", 
-            maps.SPRITE_FLOOR: "terrain_floor_dungeon.png", }, fac=antagonist,
-            biome=context.HAB_BUILDING, setting=self.setting, desctags=(context.MAP_DUNGEON,context.MTY_HUMANOID) )
-        igen = randmaps.SubtleMonkeyTunnelScene( myscene )
-        self.register_scene( nart, myscene, igen, ident="LOCALE" )
+        biome = self.elements.setdefault( "DUNGEON_ARCHITECTURE",
+          randmaps.architect.BuildingDungeon() )
+        myscene,mymapgen = randmaps.architect.design_scene( 45, 45,
+          randmaps.SubtleMonkeyTunnelScene, biome, setting=self.setting,
+          fac=self.elements.get("ANTAGONIST"))
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
 
         team = teams.Team(default_reaction=-999, rank=self.rank, strength=50,
          habitat=myscene.get_encounter_request(), fac=antagonist, respawn=False )
@@ -381,12 +385,10 @@ class ImmediateAmbush( SDIPlot ):
     def custom_init( self, nart ):
         # Create the scene where the ambush will happen- a wilderness area with
         # a road.
-        myscene = maps.Scene( 40, 40, 
-            sprites={maps.SPRITE_WALL: "terrain_wall_woodfort.png", maps.SPRITE_GROUND: "terrain_ground_forest.png",
-             maps.SPRITE_FLOOR: "terrain_floor_gravel.png" },
-            biome=context.HAB_FOREST, setting=self.setting, fac=self.elements.get("ANTAGONIST"),
-            desctags=(context.MAP_WILDERNESS,) )
-        mymapgen = randmaps.WildernessPath( myscene )
+        biome = self.elements.setdefault( "BIOME", randmaps.architect.make_wilderness() )
+        myscene,mymapgen = randmaps.architect.design_scene( 40, 40,
+          randmaps.WildernessPath, biome, setting=self.setting,
+          fac=self.elements.get("ANTAGONIST"))
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
         myscene.name = random.choice( self.NAME_PATTERNS ).format( namegen.random_style_name() )
 
@@ -447,12 +449,11 @@ class AmbushInterrupted( SDIPlot ):
     def custom_init( self, nart ):
         # Create the scene where the ambush will happen- a wilderness area with
         # a road.
-        myscene = maps.Scene( 60, 60, 
-            sprites={maps.SPRITE_WALL: "terrain_wall_woodfort.png", maps.SPRITE_GROUND: "terrain_ground_forest.png",
-             maps.SPRITE_FLOOR: "terrain_floor_gravel.png" },
-            biome=context.HAB_FOREST, setting=self.setting, fac=self.elements.get("ANTAGONIST"),
-            desctags=(context.MAP_WILDERNESS,) )
-        mymapgen = randmaps.WildernessPath( myscene )
+        biome = self.elements.setdefault( "BIOME", randmaps.architect.make_wilderness() )
+        antagonist = self.elements.setdefault( "ANTAGONIST", teams.AntagonistFaction( context.GEN_GOBLIN ) )
+        myscene,mymapgen = randmaps.architect.design_scene( 60, 60,
+          randmaps.WildernessPath, biome, setting=self.setting,
+          fac=antagonist)
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
         myscene.name = random.choice( self.NAME_PATTERNS ).format( namegen.random_style_name() )
 
@@ -465,7 +466,6 @@ class AmbushInterrupted( SDIPlot ):
         ambush_room = self.register_element( "_AMBUSHROOM",
          randmaps.rooms.FuzzyRoom(), dident="LOCALE" )
         ambush_room.priority = 50
-        antagonist = self.elements.setdefault( "ANTAGONIST", teams.AntagonistFaction( context.GEN_GOBLIN ) )
         team = self.register_element( "TEAM", teams.Team(default_reaction=-999, rank=self.rank, 
          strength=100, habitat=myscene.get_encounter_request(), fac=antagonist ) )
         ambush_room.contents.append( team )
@@ -542,10 +542,11 @@ class ForestVillage( SDIPlot ):
     scope = "LOCALE"
     def custom_init( self, nart ):
         """Create map, fill with city + services."""
-        myscene = maps.Scene( 80, 80, sprites={maps.SPRITE_GROUND: "terrain_ground_forest.png", maps.SPRITE_WALL: "terrain_wall_lightbrick.png"},
-            biome=context.HAB_FOREST, setting=self.setting,
-            desctags=(context.MAP_WILDERNESS,context.DES_CIVILIZED,) )
-        mymapgen = randmaps.WildernessPath( myscene )
+        biome = self.elements.setdefault( "BIOME", randmaps.architect.make_wilderness() )
+        myscene,mymapgen = randmaps.architect.design_scene( 80, 80,
+          randmaps.WildernessPath, biome, setting=self.setting)
+        myscene.desctags.append( context.DES_CIVILIZED )
+        myscene.sprites[maps.SPRITE_WALL]= "terrain_wall_lightbrick.png"
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
 
         castle = self.register_element( "CITY",

@@ -524,7 +524,8 @@ class HobgoblinOutcast( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 10
     VOICE = dialogue.voice.ORCISH
-    HABITAT = ( context.HAB_EVERY, context.HAB_CAVE, context.SET_EVERY,
+    HABITAT = ( context.HAB_EVERY, context.HAB_CAVE, context.HAB_DESERT,
+     context.SET_EVERY,
      context.DES_LUNAR,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN )
     ENC_LEVEL = 12
@@ -754,7 +755,7 @@ class FireTroll( base.Monster ):
     TEMPLATES = (stats.FIRE,)
     MOVE_POINTS = 10
     VOICE = dialogue.voice.ORCISH
-    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+    HABITAT = ( context.HAB_EVERY, context.HAB_DESERT, context.SET_EVERY,
      context.DES_FIRE,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GOBLIN )
     ENC_LEVEL = 14
@@ -1029,7 +1030,7 @@ class OrcBrigand( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 8
     VOICE = dialogue.voice.ORCISH
-    HABITAT = ( context.HAB_EVERY, context.HAB_FOREST, context.SET_EVERY,
+    HABITAT = ( context.HAB_EVERY, context.HAB_DESERT, context.SET_EVERY,
      context.MAP_DUNGEON,
      context.MTY_HUMANOID, context.MTY_THIEF, context.GEN_GOBLIN )
     ENC_LEVEL = 10

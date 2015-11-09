@@ -195,7 +195,8 @@ class SkeletonGuard( base.Monster ):
     TEMPLATES = (stats.UNDEAD,stats.BONE)
     MOVE_POINTS = 8
     VOICE = None
-    HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.SET_RENFAN,
+    HABITAT = ( context.HAB_EVERY, context.HAB_DESERT,
+     context.SET_EVERY, context.SET_RENFAN,
      context.MTY_UNDEAD, 
      context.DES_EARTH, context.DES_SOLAR, context.GEN_UNDEAD )
     ENC_LEVEL = 3
@@ -362,7 +363,7 @@ class Mummy( base.Monster ):
     TEMPLATES = (stats.UNDEAD,stats.MUMMY)
     MOVE_POINTS = 6
     VOICE = None
-    HABITAT = ( context.HAB_EVERY, context.HAB_TUNNELS, context.SET_EVERY,
+    HABITAT = ( context.HAB_DESERT, context.HAB_TUNNELS, context.SET_EVERY,
      context.MTY_UNDEAD, 
      context.DES_SOLAR, context.GEN_UNDEAD )
     ENC_LEVEL = 5
@@ -457,7 +458,7 @@ class MummyPriest( base.Monster ):
     TEMPLATES = (stats.UNDEAD,stats.MUMMY)
     MOVE_POINTS = 6
     VOICE = None
-    HABITAT = ( context.HAB_EVERY, context.HAB_TUNNELS, context.SET_EVERY,
+    HABITAT = ( context.HAB_DESERT, context.HAB_TUNNELS, context.SET_EVERY,
      context.MTY_UNDEAD, context.MTY_HUMANOID, context.MTY_PRIEST, context.MTY_MAGE, context.MTY_BOSS,
      context.DES_SOLAR, context.GEN_UNDEAD )
     ENC_LEVEL = 7

@@ -113,8 +113,8 @@ class DesertConverter( ForestConverter ):
                             mapgen.gb.map[x][y].wall = maps.TREES
                         else:
                             mapgen.gb.map[x][y].wall = None
-                    elif mapgen.gb.get_floor(x,y) is maps.HIGROUND:
-                        if self.desert_nearby( mapgen, x, y ) and random.randint(1,10) != 1:
+                    elif mapgen.gb.get_floor(x,y) == maps.HIGROUND:
+                        if self.desert_nearby( mapgen, x, y ) and random.randint(1,30) != 1:
                             mapgen.gb.map[x][y].wall = None
                             mapgen.gb.map[x][y].floor = maps.HIHILL
 

@@ -705,7 +705,6 @@ class Explorer( object ):
             mymenu = charsheet.RightMenu( self.screen, predraw = myredraw )
             for pc in self.camp.party:
                 mymenu.add_item( str( pc ), pc )
-            mymenu.sort()
             mymenu.add_alpha_keys()
             mymenu.add_item( "Exit", False )
             myredraw.menu = mymenu
