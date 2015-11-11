@@ -10,6 +10,7 @@ import animobs
 import targetarea
 import aibrain
 import animals
+import treasuretype
 
 # Contains critters that don't quite fit in anywhere else.
 
@@ -124,10 +125,41 @@ class CorpseEater( base.Monster ):
 #  ***   ENCOUNTER  LEVEL  6   ***
 #  *******************************
 
+
+
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  7   ***
 #  *******************************
 
+class Lamia( base.Monster ):
+    name = "Lamia"    
+    statline = { stats.STRENGTH: 18, stats.TOUGHNESS: 12, stats.REFLEXES: 15, \
+        stats.INTELLIGENCE: 13, stats.PIETY: 15, stats.CHARISMA: 12 }
+    SPRITENAME = "monster_default.png"
+    FRAME = 2
+    TEMPLATES = ()
+    MOVE_POINTS = 10
+    HABITAT = ( context.HAB_EVERY, context.HAB_DESERT, context.SET_EVERY,
+     context.DES_LUNAR,
+     context.MTY_HUMANOID, context.MTY_BOSS )
+    ENC_LEVEL = 7
+    TREASURE = treasuretype.HighItems()
+    ATTACK = items.Attack( (1,6,0), element = stats.RESIST_SLASHING, extra_effect=
+        effects.StatDamage( stats.PIETY, amount=4, anim=animobs.GreenBoom )
+    )
+    TECHNIQUES = ( invocations.MPInvocation( "Spirit Drain",
+        effects.TargetIsEnemy( on_true = (
+            effects.OpposedRoll( on_success = (
+                effects.ManaDamage( (1,8,0), stat_bonus=stats.TOUGHNESS, anim=animobs.PurpleExplosion ),
+                effects.CauseSleep()
+            ,), on_failure = (
+                effects.ManaDamage( (1,8,0), stat_bonus=None, anim=animobs.PurpleExplosion )
+        ,)),), on_false= (
+            effects.NoEffect( anim=animobs.PurpleExplosion )
+        ,)), com_tar=targetarea.Cone(reach=4), ai_tar=invocations.TargetEnemy(), mp_cost=12
+      ), )
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 8, self ) )
 
 
 #  *******************************
@@ -141,6 +173,29 @@ class CorpseEater( base.Monster ):
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  10   ***
 #  ********************************
+
+class Sphinx( base.Monster ):
+    name = "Sphinx"    
+    statline = { stats.STRENGTH: 19, stats.TOUGHNESS: 13, stats.REFLEXES: 12, \
+        stats.INTELLIGENCE: 18, stats.PIETY: 19, stats.CHARISMA: 19, \
+        stats.NATURAL_DEFENSE: 15 }
+    SPRITENAME = "monster_default.png"
+    FRAME = 37
+    TEMPLATES = ()
+    MOVE_POINTS = 12
+    HABITAT = ( context.HAB_DESERT, context.SET_EVERY,
+     context.MAP_WILDERNESS,
+     context.DES_SOLAR,
+     context.MTY_HUMANOID, context.MTY_LEADER, context.MTY_BOSS )
+    ENC_LEVEL = 10
+    TREASURE = treasuretype.High()
+    ATTACK = items.Attack( (2,6,4), element = stats.RESIST_SLASHING )
+    TECHNIQUES = ( spells.lunarspells.DEATH_RAY, spells.airspells.DISPEL_MAGIC,
+        spells.priestspells.SANCTUARY, spells.solarspells.REMOVE_CURSE,
+        spells.solarspells.MASS_CURE )
+    def init_monster( self ):
+        self.levels.append( base.Terror( 8, self ) )
+
 
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  11   ***

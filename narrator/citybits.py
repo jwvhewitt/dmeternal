@@ -30,10 +30,11 @@ class CityOnEdgeOfCiv( Plot ):
     LABEL = "CITY_SCENE"
     def custom_init( self, nart ):
         """Create map, fill with city + services."""
-        myscene = maps.Scene( 129, 129, sprites={maps.SPRITE_GROUND: "terrain_ground_forest.png", maps.SPRITE_WALL: "terrain_wall_lightbrick.png"},
-            biome=context.HAB_FOREST, setting=self.setting,
-            desctags=(context.MAP_WILDERNESS,context.DES_CIVILIZED,) )
-        mymapgen = randmaps.EdgeOfCivilization( myscene )
+        biome = self.elements.setdefault( "BIOME", randmaps.architect.make_wilderness() )
+        archi = self.register_element( "ARCHITECTURE", randmaps.architect.Village(biome.biome))
+        myscene,mymapgen = randmaps.architect.design_scene( 90, 90,
+          randmaps.EdgeOfCivilization, biome,secondary=archi,setting=self.setting)
+        myscene.desctags.append( context.DES_CIVILIZED )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
 
         castle = self.register_element( "CITY", randmaps.rooms.CastleRoom( width=35,height=35,tags=(context.CIVILIZED,context.ROOM_PUBLIC), parent=myscene ) )
@@ -41,7 +42,6 @@ class CityOnEdgeOfCiv( Plot ):
         myteam = teams.Team( strength=0, default_reaction=characters.SAFELY_FRIENDLY)
         castle.contents.append( myteam )
         myent = waypoints.Well()
-        #myent = waypoints.RoadSignToAdventure()
         myroom.contents.append( myent )
         myroom.contents.append( monsters.generate_npc(team=myteam) )
         myroom.contents.append( monsters.generate_npc(team=myteam) )
@@ -86,11 +86,11 @@ class MoriaVille( Plot ):
     scope = True
     def custom_init( self, nart ):
         """Create map, fill with city + services."""
-        myscene = maps.Scene( 50, 50, sprites={maps.SPRITE_GROUND: "terrain_ground_forest.png", maps.SPRITE_WALL: "terrain_wall_lightbrick.png"},
-            biome=context.HAB_FOREST, setting=self.setting,
-            desctags=(context.MAP_WILDERNESS,context.DES_CIVILIZED,) )
-        mymapgen = randmaps.ForestScene( myscene )
-        mymapgen.GAPFILL = None
+        biome = self.elements.setdefault( "BIOME", randmaps.architect.make_wilderness() )
+        archi = self.register_element( "ARCHITECTURE", randmaps.architect.Village(biome.biome))
+        myscene,mymapgen = randmaps.architect.design_scene( 50, 50,
+          randmaps.ForestScene, biome,secondary=archi,setting=self.setting)
+        myscene.desctags.append( context.DES_CIVILIZED )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
 
         castle = self.register_element( "CITY",
@@ -143,9 +143,11 @@ class GenerallyGeneralStore( Plot ):
         exterior.special_c[ "sign1" ] = maps.SWORD_SIGN
         exterior.special_c[ "sign2" ] = maps.SHIELD_SIGN
         self.register_element( "_EXTERIOR", exterior, dident="CITY" )
-        interior = maps.Scene( 50,50, sprites={maps.SPRITE_FLOOR: "terrain_floor_wood.png" },
-            biome=context.HAB_BUILDING, setting=self.setting, desctags=(context.DES_CIVILIZED,) )
-        igen = randmaps.BuildingScene( interior )
+
+        archi = self.elements.setdefault( "ARCHITECTURE", randmaps.architect.Village() )
+        interior,igen = randmaps.architect.design_scene( 50, 50, randmaps.BuildingScene,
+            archi, setting=self.setting )
+
         gate_1 = waypoints.GateDoor()
         gate_2 = waypoints.GateDoor()
         gate_1.destination = interior
@@ -192,9 +194,9 @@ class GenericInn( Plot ):
         exterior.special_c[ "sign1" ] = maps.DRINK_SIGN
         self.register_element( "_EXTERIOR", exterior, dident="CITY" )
 
-        interior = maps.Scene( 50,50, sprites={maps.SPRITE_FLOOR: "terrain_floor_wood.png" },
-            biome=context.HAB_BUILDING, setting=self.setting, desctags=(context.DES_CIVILIZED,) )
-        igen = randmaps.BuildingScene( interior )
+        archi = self.elements.setdefault( "ARCHITECTURE", randmaps.architect.Village() )
+        interior,igen = randmaps.architect.design_scene( 50, 50, randmaps.BuildingScene,
+            archi, setting=self.setting )
 
         gate_1 = waypoints.GateDoor()
         gate_2 = waypoints.GateDoor()
@@ -257,9 +259,11 @@ class GenericLibrary( Plot ):
         exterior.special_c[ "window" ] = maps.DARK_WINDOW
         exterior.special_c[ "sign1" ] = maps.BOOK_SIGN
         self.register_element( "_EXTERIOR", exterior, dident="CITY" )
-        interior = maps.Scene( 50,50, sprites={maps.SPRITE_FLOOR: "terrain_floor_wood.png" },
-            biome=context.HAB_BUILDING, setting=self.setting, desctags=(context.DES_CIVILIZED,) )
-        igen = randmaps.BuildingScene( interior )
+
+        archi = self.elements.setdefault( "ARCHITECTURE", randmaps.architect.Village() )
+        interior,igen = randmaps.architect.design_scene( 50, 50, randmaps.BuildingScene,
+            archi, setting=self.setting )
+
         interior.name = "{0} Library".format( locale )
         gate_1 = waypoints.GateDoor()
         gate_2 = waypoints.GateDoor()
@@ -312,10 +316,12 @@ class GenericTemple( Plot ):
         self.register_element( "_EXTERIOR", exterior, dident="CITY" )
 
         locale = self.elements.get( "LOCALE" )
-        interior = maps.Scene( 50,50, sprites={maps.SPRITE_FLOOR: "terrain_floor_bigtile.png",
-            maps.SPRITE_INTERIOR: "terrain_int_temple.png" },
-            biome=context.HAB_BUILDING, setting=self.setting, desctags=(context.DES_CIVILIZED,) )
-        igen = randmaps.BuildingScene( interior )
+
+        archi = self.elements.setdefault( "ARCHITECTURE", randmaps.architect.Village() )
+        interior,igen = randmaps.architect.design_scene( 50, 50, randmaps.BuildingScene,
+            archi, setting=self.setting )
+        interior.sprites[maps.SPRITE_FLOOR] = "terrain_floor_bigtile.png"
+        interior.sprites[maps.SPRITE_INTERIOR] = "terrain_int_temple.png"
         interior.name = "{0} Temple".format( locale )
 
         gate_1 = waypoints.GateDoor()
@@ -391,9 +397,9 @@ class GenericArmorShop( Plot ):
         exterior.special_c[ "sign2" ] = maps.HELMET_SIGN
         self.register_element( "_EXTERIOR", exterior, dident="CITY" )
 
-        interior = maps.Scene( 50,50, sprites={maps.SPRITE_FLOOR: "terrain_floor_wood.png" },
-            biome=context.HAB_BUILDING, setting=self.setting, desctags=(context.DES_CIVILIZED,) )
-        igen = randmaps.BuildingScene( interior )
+        archi = self.elements.setdefault( "ARCHITECTURE", randmaps.architect.Village() )
+        interior,igen = randmaps.architect.design_scene( 50, 50, randmaps.BuildingScene,
+            archi, setting=self.setting )
 
         gate_1 = waypoints.GateDoor()
         gate_2 = waypoints.GateDoor()
@@ -445,9 +451,9 @@ class GenericWeaponShop( Plot ):
         exterior.special_c[ "sign1" ] = maps.WEAPONS_SIGN
         self.register_element( "_EXTERIOR", exterior, dident="CITY" )
 
-        interior = maps.Scene( 50,50, sprites={maps.SPRITE_FLOOR: "terrain_floor_wood.png" },
-            biome=context.HAB_BUILDING, setting=self.setting, desctags=(context.DES_CIVILIZED,) )
-        igen = randmaps.BuildingScene( interior )
+        archi = self.elements.setdefault( "ARCHITECTURE", randmaps.architect.Village() )
+        interior,igen = randmaps.architect.design_scene( 50, 50, randmaps.BuildingScene,
+            archi, setting=self.setting )
 
         gate_1 = waypoints.GateDoor()
         gate_2 = waypoints.GateDoor()
@@ -496,9 +502,12 @@ class TheAdventurersGuild( Plot ):
         exterior.special_c[ "window" ] = maps.SMALL_WINDOW
         exterior.special_c[ "sign1" ] = maps.TOWER_SIGN
         self.register_element( "_EXTERIOR", exterior, dident="CITY" )
-        interior = maps.Scene( 50,50, sprites={maps.SPRITE_FLOOR: "terrain_floor_wood.png" },
-            biome=context.HAB_BUILDING, setting=self.setting, desctags=(context.DES_CIVILIZED,) )
-        igen = randmaps.BuildingScene( interior )
+
+        archi = self.elements.setdefault( "ARCHITECTURE", randmaps.architect.Village() )
+        interior,igen = randmaps.architect.design_scene( 50, 50, randmaps.BuildingScene,
+            archi, setting=self.setting )
+        interior.sprites[maps.SPRITE_FLOOR] = "terrain_floor_diamond.png"
+
         gate_1 = waypoints.GateDoor()
         gate_2 = waypoints.GateDoor()
         gate_1.destination = interior

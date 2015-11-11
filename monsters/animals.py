@@ -347,6 +347,25 @@ class Cow( base.Monster ):
     def init_monster( self ):
         self.levels.append( base.Beast( 3, self ) )
 
+class GiantScorpion( base.Monster ):
+    name = "Giant Scorpion"
+    statline = { stats.STRENGTH: 9, stats.TOUGHNESS: 11, stats.REFLEXES: 12, \
+        stats.INTELLIGENCE: 1, stats.PIETY: 7, stats.CHARISMA: 1 }
+    SPRITENAME = "monster_bugs.png"
+    FRAME = 18
+    TEMPLATES = (stats.BUG,)
+    MOVE_POINTS = 6
+    VOICE = None
+    HABITAT = ( context.HAB_DESERT, context.HAB_CAVE, context.SET_EVERY,
+     context.DES_SOLAR,
+     context.MTY_BEAST, context.MTY_CREATURE )
+    ENC_LEVEL = 3
+    ATTACK = items.Attack( (1,4,0), element = stats.RESIST_PIERCING,
+     extra_effect= abilities.POISON_ATTACK
+    )
+    def init_monster( self ):
+        self.levels.append( base.Beast( 2, self ) )
+
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  4   ***
@@ -491,6 +510,26 @@ class FireWeasel( base.Monster ):
     def init_monster( self ):
         self.levels.append( base.Beast( 4, self ) )
 
+class Viper( base.Monster ):
+    name = "Viper"
+    statline = { stats.STRENGTH: 10, stats.TOUGHNESS: 11, stats.REFLEXES: 14, \
+        stats.INTELLIGENCE: 1, stats.PIETY: 9, stats.CHARISMA: 1 }
+    SPRITENAME = "monster_default.png"
+    FRAME = 65
+    TEMPLATES = (stats.REPTILE,)
+    MOVE_POINTS = 8
+    VOICE = None
+    HABITAT = ( context.HAB_DESERT, context.HAB_TUNNELS, context.SET_EVERY,
+     context.DES_WATER,
+     context.MTY_BEAST, context.MTY_CREATURE )
+    ENC_LEVEL = 4
+    ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING,
+     extra_effect= abilities.POISON_ATTACK
+    )
+    def init_monster( self ):
+        self.levels.append( base.Beast( 3, self ) )
+
+
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  5   ***
@@ -573,6 +612,26 @@ class Ankheg( base.Monster ):
         self.levels.append( base.Defender( 2, self ) )
         self.levels.append( base.Beast( 2, self ) )
 
+class TrapdoorSpider( base.Monster ):
+    name = "Trapdoor Spider"
+    statline = { stats.STRENGTH: 14, stats.TOUGHNESS: 14, stats.REFLEXES: 12, \
+        stats.INTELLIGENCE: 1, stats.PIETY: 9, stats.CHARISMA: 1, \
+        stats.STEALTH: 30 }
+    SPRITENAME = "monster_bugs.png"
+    FRAME = 34
+    TEMPLATES = (stats.BUG,)
+    MOVE_POINTS = 6
+    VOICE = None
+    HABITAT = ( context.HAB_DESERT, context.HAB_CAVE, context.SET_EVERY,
+     context.DES_LUNAR,
+     context.MTY_BEAST, context.MTY_CREATURE )
+    ENC_LEVEL = 5
+    ATTACK = items.Attack( (1,4,0), element = stats.RESIST_PIERCING,
+     extra_effect= abilities.POISON_ATTACK
+    )
+    def init_monster( self ):
+        self.levels.append( base.Beast( 3, self ) )
+
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  6   ***
@@ -618,7 +677,7 @@ class TombScorpion( base.Monster ):
     statline = { stats.STRENGTH: 16, stats.TOUGHNESS: 12, stats.REFLEXES: 16, \
         stats.INTELLIGENCE: 1, stats.PIETY: 10, stats.CHARISMA: 1 }
     SPRITENAME = "monster_bugs.png"
-    FRAME = 18
+    FRAME = 17
     TEMPLATES = (stats.BUG,)
     MOVE_POINTS = 10
     VOICE = None
@@ -627,10 +686,7 @@ class TombScorpion( base.Monster ):
      context.MTY_BEAST, context.MTY_CREATURE )
     ENC_LEVEL = 6
     ATTACK = items.Attack( (1,10,0), element = stats.RESIST_PIERCING,
-     extra_effect=effects.OpposedRoll( att_stat=None, def_stat=stats.TOUGHNESS, on_success = (
-            effects.HealthDamage( (1,4,0), stat_bonus=None, element=stats.RESIST_POISON, anim=animobs.PoisonCloud ),
-            effects.Enchant( enchantments.PoisonClassic )
-        ,) )
+     extra_effect= abilities.POISON_ATTACK
     )
     def init_monster( self ):
         self.levels.append( base.Beast( 6, self ) )

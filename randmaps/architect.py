@@ -91,8 +91,6 @@ class CavernDungeon( Architecture ):
                 a,b = self.CUSTOM_DECOR_TYPES[ fac.secondary ]
                 self.decorate = a(**b)
 
-
-
 class BuildingDungeon( Architecture ):
     def __init__( self ):
         super(BuildingDungeon, self).__init__(biome=context.HAB_BUILDING,
@@ -102,6 +100,24 @@ class BuildingDungeon( Architecture ):
         self.sprites[maps.SPRITE_GROUND] = "terrain_ground_under.png"
         self.sprites[maps.SPRITE_FLOOR] = "terrain_floor_dungeon.png"
         self.sprites[maps.SPRITE_CHEST] = "terrain_chest_wood.png"
+
+class Village( Architecture ):
+    DEFAULT_WALL_OPTIONS = ["terrain_wall_lightbrick.png",]
+    CUSTOM_WALL_OPTIONS = {
+        context.HAB_FOREST: ["terrain_wall_wood.png","terrain_wall_logcabin.png"],
+        context.HAB_DESERT: ["terrain_wall_lightstone.png","terrain_wall_adobe.png"],
+    }
+    FLOOR_OPTIONS = ["terrain_floor_wood.png","terrain_floor_tile.png","terrain_floor_stone.png"
+    ]
+    def __init__( self, biome=None, fac=None ):
+        super(Village, self).__init__(biome=context.HAB_BUILDING,
+          desctags=[context.CIVILIZED,context.MAP_GOUP],
+          wall_filter=converter.BasicConverter())
+        wall_options = self.DEFAULT_WALL_OPTIONS + self.CUSTOM_WALL_OPTIONS.get(biome,[])
+        self.sprites[maps.SPRITE_WALL] = random.choice(wall_options)
+        self.sprites[maps.SPRITE_FLOOR] = random.choice(self.FLOOR_OPTIONS)
+        self.sprites[maps.SPRITE_CHEST] = "terrain_chest_wood.png"
+
 
 WILDERNESS_TYPES = [Forest,Forest,Desert]
 def make_wilderness():

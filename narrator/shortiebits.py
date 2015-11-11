@@ -31,7 +31,7 @@ class ShortieStub( Plot ):
     SHORTIE_GRAMMAR = {
         # [ADVENTURE] is the top level token- it will expand into a number of
         # high level tokens.
-        "[ADVENTURE]": [ "SDI_AMBUSH SDI_VILLAGE SDI_ENEMY_FORT SDI_BIGBOSS",
+        "[ADVENTURE]": [ "SDI_VILLAGE SDI_ENEMY_FORT SDI_BIGBOSS",
             ],
 
         "[ENEMY_BASE]": [ "SDI_ENEMY_FORT SDI_ENEMY_BARRACKS",
@@ -543,10 +543,10 @@ class ForestVillage( SDIPlot ):
     def custom_init( self, nart ):
         """Create map, fill with city + services."""
         biome = self.elements.setdefault( "BIOME", randmaps.architect.make_wilderness() )
+        archi = self.register_element( "ARCHITECTURE", randmaps.architect.Village(biome.biome))
         myscene,mymapgen = randmaps.architect.design_scene( 80, 80,
-          randmaps.WildernessPath, biome, setting=self.setting)
+          randmaps.WildernessPath, biome,secondary=archi,setting=self.setting)
         myscene.desctags.append( context.DES_CIVILIZED )
-        myscene.sprites[maps.SPRITE_WALL]= "terrain_wall_lightbrick.png"
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
 
         castle = self.register_element( "CITY",
