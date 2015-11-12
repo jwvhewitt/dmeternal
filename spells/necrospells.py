@@ -51,7 +51,8 @@ ACID_CLOUD = Spell( "Acid Cloud",
         effects.HealthDamage( (2,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_ACID, anim=animobs.GreenCloud )
     ,), on_failure = (
         effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_ACID, anim=animobs.GreenCloud )
-    ,) ), rank=3, gems={EARTH:1,LUNAR:1}, com_tar=targetarea.Blast(radius=3), shot_anim=animobs.GreenComet, ai_tar=invocations.TargetEnemy() )
+    ,) ), rank=3, gems={EARTH:1,LUNAR:1}, com_tar=targetarea.Blast(radius=3), shot_anim=animobs.GreenComet, 
+    ai_tar=invocations.TargetEnemy(min_distance=4) )
 
 PROTECT_FROM_GOOD = Spell( "Protection from Good",
     "All allies within 6 tiles get +10% defense, +10% aura, and 50% resistance to holy damage for the duration of combat.",
@@ -91,7 +92,8 @@ ACID_RAIN = Spell( "Acid Rain",
         effects.HealthDamage( (10,4,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_ACID, anim=animobs.AcidStorm )
     ,), on_failure = (
         effects.HealthDamage( (2,10,0), stat_bonus=None, element=stats.RESIST_ACID, anim=animobs.AcidStorm )
-    ,) ), rank=6, gems={EARTH:1,WATER:3}, com_tar=targetarea.Blast(radius=5), ai_tar=invocations.TargetEnemy() )
+    ,) ), rank=6, gems={EARTH:1,WATER:3}, com_tar=targetarea.Blast(radius=5), 
+    ai_tar=invocations.TargetEnemy(min_distance=6) )
 
 FREEZE_RAY = Spell( "Freeze Ray",
     "Freezes all targets in a 2 tile radius for 6d8 damage, and may cause paralysis.",
@@ -100,7 +102,8 @@ FREEZE_RAY = Spell( "Freeze Ray",
         effects.Paralyze( max_duration = 3 )
     ,), on_failure = (
         effects.HealthDamage( (2,12,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_COLD, anim=animobs.BlueExplosion )
-    ,) ), rank=6, gems={LUNAR:2,WATER:1}, com_tar=targetarea.Blast(radius=2),ai_tar=invocations.TargetEnemy(),shot_anim=animobs.BlueComet )
+    ,) ), rank=6, gems={LUNAR:2,WATER:1}, com_tar=targetarea.Blast(radius=2),
+    ai_tar=invocations.TargetEnemy(min_distance=3),shot_anim=animobs.BlueComet )
 
 
 # CIRCLE SEVEN
@@ -118,7 +121,8 @@ DEEP_DROWNING = Spell( "Deep Drowning",
                 effects.InstaKill( anim=animobs.CriticalHit ),
             )),
         ))
-    ,) ), rank=7, gems={LUNAR:2,WATER:2}, com_tar=targetarea.Blast(radius=1),ai_tar=invocations.TargetEnemy(),shot_anim=animobs.CrystalBall )
+    ,) ), rank=7, gems={LUNAR:2,WATER:2}, com_tar=targetarea.Blast(radius=1),
+    ai_tar=invocations.TargetEnemy(min_distance=2),shot_anim=animobs.CrystalBall )
 
 
 # CIRCLE EIGHT

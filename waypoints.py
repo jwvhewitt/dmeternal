@@ -193,12 +193,17 @@ class RoadSignToAdventure( Waypoint ):
     ATTACH_TO_WALL = False
     destination = None
     otherside = None
-    desc = "You stand before a road sign."
+    desc = "You stand before a road sign which points the way to adventure."
     mini_map_label = "Way Forward"
     def unlocked_use( self, explo ):
-        adv = explo.camp.add_story( "SHORTIE" )
-        if adv:
-            adv.begin_adventure( explo, self.scene, self )
+        #print explo.camp.scripts
+        ynmenu = PuzzleMenu( explo, self )
+        ynmenu.add_item( "Go on an adventure.", True )
+        ynmenu.add_item( "Stay here for now.", False )
+        if ynmenu.query():
+            adv = explo.camp.add_story( "SHORTIE" )
+            if adv:
+                adv.begin_adventure( explo, self.scene, self )
 
 
 class PowerCrystal( Waypoint ):
@@ -395,6 +400,7 @@ class BookOfHeroes( Waypoint ):
                 mypartysheet.regenerate_avatars()
             else:
                 break
+        camp.save( screen )
     def no_explo_use( self, camp, screen ):
         self.open_menu( camp, screen )
     def unlocked_use( self, explo ):

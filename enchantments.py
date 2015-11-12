@@ -70,7 +70,7 @@ class BlindedEn( Enchantment ):
 class BurnLowEn( Enchantment ):
     NAME = "Burning"
     def __init__( self ):
-        super(BurnLowEn, self).__init__(dispel=(MAGIC,COMBAT,CURSE))
+        super(BurnLowEn, self).__init__(dispel=(MAGIC,COMBAT,CURSE,stats.RESIST_WATER))
     FX = effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.RedCloud )
     MAX_USES = 5
 
@@ -91,7 +91,7 @@ class FireSignEn( Enchantment ):
     NAME = "Fire Sign"
     def __init__( self ):
         super(FireSignEn, self).__init__(statline=stats.StatMod({stats.PHYSICAL_DEFENSE:-10,stats.NATURAL_DEFENSE:-10,
-            stats.STEALTH:-200}),dispel=(COMBAT,MAGIC,CURSE))
+            stats.STEALTH:-200}),dispel=(COMBAT,MAGIC,CURSE,stats.RESIST_WATER))
 
 class FireWepEn( Enchantment ):
     NAME = "Fire Weapon"
@@ -102,7 +102,7 @@ class FireWepEn( Enchantment ):
 class FrostBurnEn( Enchantment ):
     NAME = "Frostburn"
     def __init__( self ):
-        super(FrostBurnEn, self).__init__(dispel=(MAGIC,COMBAT,CURSE))
+        super(FrostBurnEn, self).__init__(dispel=(MAGIC,COMBAT,CURSE,stats.RESIST_FIRE))
     FX = effects.HealthDamage( (3,4,0), stat_bonus=None, element=stats.RESIST_COLD, anim=animobs.SnowCloud )
     MAX_USES = 5
 
@@ -240,7 +240,9 @@ class Field( object ):
 class Entanglement( Field ):
     FX = None
     SPRITENAME = "field_entangle.png"
-
+    def __init__( self, pos, dispel=(COMBAT,MAGIC,stats.RESIST_FIRE,
+      stats.RESIST_ATOMIC), caster=None ):
+        super(Entanglement,self).__init__(pos,dispel=dispel,caster=caster)
     def invoke( self, explo ):
         # The character spends extra AP to move through this mess.
         target = explo.scene.get_character_at_spot( self.pos )

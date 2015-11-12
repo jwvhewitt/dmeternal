@@ -172,6 +172,11 @@ class HealthDamage( NoEffect ):
 
     def handle_effect( self, camp, originator, pos, anims, delay=0 ):
         """Apply some hurting to whoever is in the indicated tile."""
+        # Damage effects can clear fields, enchantments as a side effect.
+        # Do that first.
+        if self.element:
+            TidyEnchantments.tidy(camp, pos, self.element )
+
         target = camp.scene.get_character_at_spot( pos )
         if target:
             dmg = sum( random.randint(1,self.att_dice[1]) for x in range( self.att_dice[0] ) ) + self.att_dice[2]
@@ -439,15 +444,17 @@ class TidyEnchantments( NoEffect ):
             children = list()
         self.children = children
         self.anim = anim
-
-    def handle_effect( self, camp, originator, pos, anims, delay=0 ):
-        """Tidy character, field in the indicated tile."""
+    @staticmethod
+    def tidy( camp, pos, e_type ):
         target = camp.scene.get_character_at_spot( pos )
         if target:
-            target.condition.tidy( self.e_type )
+            target.condition.tidy( e_type )
         target = camp.scene.get_field_at_spot( pos )
-        if target and self.e_type in target.dispel:
+        if target and e_type in target.dispel:
             camp.scene.contents.remove( target )
+    def handle_effect( self, camp, originator, pos, anims, delay=0 ):
+        """Tidy character, field in the indicated tile."""
+        self.tidy( camp, pos, self.e_type )
         return self.children
 
 

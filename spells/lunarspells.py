@@ -29,7 +29,8 @@ SLEEP = Spell( "Sleep",
         effects.OpposedRoll( att_modifier=0, on_success = (
             effects.CauseSleep(),
         ))
-    ,) ), rank=2, gems={LUNAR:2}, com_tar=targetarea.Blast(radius=2), ai_tar=invocations.TargetEnemy() )
+    ,) ), rank=2, gems={LUNAR:2}, com_tar=targetarea.Blast(radius=2), 
+    ai_tar=invocations.TargetEnemy(min_distance=3) )
 
 ENERVATE = Spell( "Enervate",
     "A ray of negative energy strikes one opponent, draining 4-16 mana instantly.",
@@ -72,7 +73,8 @@ DEEP_SLEEP = Spell( "Deep Sleep",
         effects.OpposedRoll( att_modifier=10, on_success = (
             effects.CauseSleep(),
         ))
-    ,) ), rank=5, gems={LUNAR:2}, com_tar=targetarea.Blast(radius=4), ai_tar=invocations.TargetEnemy() )
+    ,) ), rank=5, gems={LUNAR:2}, com_tar=targetarea.Blast(radius=4), 
+    ai_tar=invocations.TargetEnemy(min_distance=5) )
 
 DEATH_RAY = Spell( "Death Ray",
     "This spells fires a bolt of negative energy which may kill a living target outright, or at least injure it severely.",

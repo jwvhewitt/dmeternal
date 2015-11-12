@@ -65,7 +65,7 @@ class MonkRobe( Clothing ):
 class NinjaGear( Clothing ):
     true_name = "Ninja Garb"
     true_desc = ""
-    avatar_frame = 9
+    avatar_frame = 15
     pants_frame = 3
     mass = 20
 
@@ -82,4 +82,21 @@ class LeatherJacket( Clothing ):
     avatar_frame = 11
     pants_frame = 3
     mass = 25
+
+class TrainingGear( Clothing ):
+    true_name = "Training Gear"
+    true_desc = ""
+    avatar_frame = 14
+    pants_frame = 3
+    mass = 30
+    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 5, stats.NATURAL_DEFENSE: 5 })
+
+class AssassinGear( Clothing ):
+    true_name = "Assassin Gear"
+    true_desc = ""
+    avatar_frame = 9
+    pants_frame = 3
+    mass = 20
+    statline = stats.StatMod({ stats.PHYSICAL_DEFENSE: 5, stats.STEALTH: 5 })
+
 

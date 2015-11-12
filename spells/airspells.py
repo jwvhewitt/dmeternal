@@ -74,7 +74,8 @@ TORNADO = Spell( "Tornado",
         effects.HealthDamage( (4,8,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_WIND, anim=animobs.Spiral )
     ,), on_failure = (
         effects.HealthDamage( (1,16,0), stat_bonus=None, element=stats.RESIST_WIND, anim=animobs.Spiral )
-    ,) ), rank=5, gems={AIR:3}, com_tar=targetarea.Blast(radius=3), shot_anim=animobs.Whirlwind, ai_tar=invocations.TargetEnemy() )
+    ,) ), rank=5, gems={AIR:3}, com_tar=targetarea.Blast(radius=3), shot_anim=animobs.Whirlwind,
+    ai_tar=invocations.TargetEnemy(min_distance=4) )
 
 
 # CIRCLE SIX
@@ -109,7 +110,8 @@ THUNDER_STORM = Spell( "Thunder Storm",
         effects.HealthDamage( (10,8,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_LIGHTNING, anim=animobs.ThunderStorm )
     ,), on_failure = (
         effects.HealthDamage( (4,10,0), stat_bonus=None, element=stats.RESIST_LIGHTNING, anim=animobs.ThunderStorm )
-    ,) ), rank=8, gems={AIR:5}, com_tar=targetarea.Blast(radius=5), ai_tar=invocations.TargetEnemy() )
+    ,) ), rank=8, gems={AIR:5}, com_tar=targetarea.Blast(radius=5), 
+    ai_tar=invocations.TargetEnemy(min_distance=6) )
 
 
 

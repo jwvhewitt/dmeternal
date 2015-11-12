@@ -97,7 +97,8 @@ SUNBURST = Spell( "Sunburst",
             effects.HealthDamage( (2,12,0), stat_bonus=None, element=stats.RESIST_SOLAR, anim=animobs.YellowExplosion ), )
         ),
         ), on_false = (effects.NoEffect( anim=animobs.YellowExplosion ),)
-    ), rank=7, gems={SOLAR:2}, com_tar=targetarea.Blast(radius=3,delay_from=1), shot_anim=animobs.GoldStone, ai_tar=invocations.TargetEnemy() )
+    ), rank=7, gems={SOLAR:2}, com_tar=targetarea.Blast(radius=3,delay_from=1), shot_anim=animobs.GoldStone, 
+    ai_tar=invocations.TargetEnemy(min_distance=4) )
 
 RENEWAL = Spell( "Renewal",
     "This spell will heal one nearby ally for 50-120 damage, retore drained stats, remove curses and cure poisoning.",

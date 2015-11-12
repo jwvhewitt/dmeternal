@@ -177,7 +177,7 @@ class Campaign( object ):
             pc.condition.tidy( enchantments.DAILY )
     def check_adventurers_guild( self, screen ):
         if hasattr(self,"mru_advguild") and not self.first_living_pc():
-            for pc in self.party:
+            for pc in list(self.party):
                 self.party.remove( pc )
                 self.graveyard.append( pc )
             self.destination,self.entrance = self.mru_advguild

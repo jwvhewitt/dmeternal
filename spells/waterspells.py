@@ -99,7 +99,8 @@ HAIL_STORM = Spell( "Hail Storm",
         effects.HealthDamage( (10,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_COLD, anim=animobs.IceStorm )
     ,), on_failure = (
         effects.HealthDamage( (3,10,0), stat_bonus=None, element=stats.RESIST_COLD, anim=animobs.IceStorm )
-    ,) ), rank=7, gems={WATER:4}, com_tar=targetarea.Blast(radius=5), shot_anim=animobs.BlueComet, ai_tar=invocations.TargetEnemy() )
+    ,) ), rank=7, gems={WATER:4}, com_tar=targetarea.Blast(radius=5), shot_anim=animobs.BlueComet, 
+    ai_tar=invocations.TargetEnemy(min_distance=6) )
 
 
 # CIRCLE EIGHT

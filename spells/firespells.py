@@ -52,7 +52,8 @@ EXPLOSION = Spell( "Explosion",
         effects.HealthDamage( (2,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.RedCloud )
     ,), on_failure = (
         effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.RedCloud )
-    ,) ), rank=3, gems={FIRE:2}, com_tar=targetarea.Blast(radius=3), shot_anim=animobs.Fireball, ai_tar=invocations.TargetEnemy() )
+    ,) ), rank=3, gems={FIRE:2}, com_tar=targetarea.Blast(radius=3), shot_anim=animobs.Fireball, 
+    ai_tar=invocations.TargetEnemy(min_distance=4) )
 
 # CIRCLE 4
 
@@ -107,7 +108,7 @@ NUCLEAR = Spell( "Nuclear",
     ,), on_failure = (
         effects.HealthDamage( (10,6,0), stat_bonus=None, element=stats.RESIST_ATOMIC, anim=animobs.Nuclear )
     ,) ), rank=9, gems={FIRE:5}, com_tar=targetarea.Blast(radius=4), shot_anim=animobs.Fireball,
-    ai_tar=invocations.TargetEnemy() )
+    ai_tar=invocations.TargetEnemy(min_distance=5) )
 
 
 

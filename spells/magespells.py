@@ -96,7 +96,8 @@ FROSTFIRE = Spell( "Frostfire",
         effects.Enchant( enchantments.FrostBurnEn )
     ,), on_failure = (
         effects.HealthDamage( (4,8,0), stat_bonus=None, element=stats.RESIST_COLD, anim=animobs.SnowCloud )
-    ,) ), rank=7, gems={FIRE:2,LUNAR:3}, com_tar=targetarea.Blast(radius=3), shot_anim=animobs.BlueComet, ai_tar=invocations.TargetEnemy() )
+    ,) ), rank=7, gems={FIRE:2,LUNAR:3}, com_tar=targetarea.Blast(radius=3), shot_anim=animobs.BlueComet, 
+    ai_tar=invocations.TargetEnemy(min_distance=4) )
 
 # CIRCLE EIGHT
 
@@ -107,7 +108,8 @@ METEOR_STORM = Spell( "Meteor Storm",
         effects.Enchant( enchantments.BurnLowEn )
     ), on_failure = (
         effects.HealthDamage( (3,12,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.MeteorStorm ),
-    ) ), rank=8, gems={FIRE:2,AIR:2}, com_tar=targetarea.Blast(radius=4), ai_tar=invocations.TargetEnemy() )
+    ) ), rank=8, gems={FIRE:2,AIR:2}, com_tar=targetarea.Blast(radius=4), 
+    ai_tar=invocations.TargetEnemy(min_distance=5) )
 
 
 # CIRCLE NINE

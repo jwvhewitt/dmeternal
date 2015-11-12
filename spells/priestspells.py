@@ -90,7 +90,7 @@ BLIZZARD = Spell( "Blizzard",
             on_death= (effects.HealthDamage( (1,5,0), stat_bonus=None, element=stats.RESIST_WIND, anim=animobs.Blizzard),),
      )
     ,) ), rank=4, gems={WATER:1,AIR:1}, com_tar=targetarea.Blast(radius=4, delay_from=1),
-    ai_tar=invocations.TargetEnemy() )
+    ai_tar=invocations.TargetEnemy(min_distance=5) )
 
 DIVINE_HAMMER = Spell( "Divine Hammer",
     "This attack does 4d8 holy damage to a single target. Unholy creatures may be stunned.",
@@ -118,7 +118,8 @@ SANCTUARY = Spell( "Sanctuary",
 SMITE = Spell( "Smite",
     "A bolt of lightning will unerringly strike all targets in a 2 tile radius for 3d10 damage.",
     effects.HealthDamage( (3,10,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_LIGHTNING, anim=animobs.BlueZap ),
-    rank=5, gems={AIR:3,SOLAR:1}, com_tar=targetarea.Blast(radius=2), shot_anim=animobs.Lightning, ai_tar=invocations.TargetEnemy() )
+    rank=5, gems={AIR:3,SOLAR:1}, com_tar=targetarea.Blast(radius=2), shot_anim=animobs.Lightning, 
+    ai_tar=invocations.TargetEnemy(min_distance=3) )
 
 SPELL_SHIELD = Spell( "Spell Shield",
     "All allies within 6 tiles get +25% aura until the end of combat.",

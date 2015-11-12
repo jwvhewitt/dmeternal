@@ -68,7 +68,8 @@ ELEMENTAL_STORM = Spell( "Elemental Storm",
         effects.HealthDamage( (2,4,0), stat_bonus=None, element=stats.RESIST_COLD, anim=animobs.BlueBoom ),
         effects.HealthDamage( (2,4,0), stat_bonus=None, element=stats.RESIST_LIGHTNING, anim=animobs.BlueZap ),
         effects.HealthDamage( (2,4,0), stat_bonus=None, element=stats.RESIST_ACID, anim=animobs.GreenSplat )
-    ) ), rank=5, gems={FIRE:2,SOLAR:1}, com_tar=targetarea.Blast(radius=3), shot_anim=animobs.CrystalBall, ai_tar=invocations.TargetEnemy() )
+    ) ), rank=5, gems={FIRE:2,SOLAR:1}, com_tar=targetarea.Blast(radius=3), shot_anim=animobs.CrystalBall, 
+    ai_tar=invocations.TargetEnemy(min_distance=4) )
 
 TRANSFORMATION = Spell( "Transformation",
     "Transforms all allies within six tiles, providing +10% to defense plus 25% resistance to slashing, crushing, and piercing damage.",
@@ -109,7 +110,7 @@ NATURAL_DISASTER = Spell( "Natural Disaster",
     ,), on_failure = (
         effects.HealthDamage( (5,10,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.Nuclear )
     ,) ), rank=8, gems={EARTH:2,FIRE:3}, com_tar=targetarea.Blast(radius=5, delay_from=1), shot_anim=animobs.BigMeteor,
-    ai_tar=invocations.TargetEnemy() )
+    ai_tar=invocations.TargetEnemy(min_distance=6) )
 
 # CIRCLE NINE
 

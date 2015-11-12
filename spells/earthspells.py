@@ -12,7 +12,8 @@ import invocations
 EARTHBIND = Spell( "Earthbind",
     "Conjures plants which grab at travelers, making passage through the area very difficult.",
     effects.PlaceField( enchantments.Entanglement, anim=animobs.OrangeSparkle ),
-    rank=1, gems={EARTH:1}, com_tar=targetarea.Blast(radius=4), mpfudge=1, ai_tar=invocations.TargetEnemy() )
+    rank=1, gems={EARTH:1}, com_tar=targetarea.Blast(radius=4), mpfudge=1,
+    ai_tar=invocations.TargetEnemyWithoutField(enchantments.Entanglement,5) )
 
 CALL_CRITTER = Spell( "Call Critter",
     "This spell will summon a small woodland creature to fight on your behaf.",

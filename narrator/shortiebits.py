@@ -149,6 +149,11 @@ class ShortieStub( Plot ):
             if explo.scene is sp.elements["IN_SCENE"]:
                 if self.genplots.index(sp) > self.genplots.index(self.mr_subplot):
                     self.mr_subplot = sp
+    def t_COMBATOVER( self, explo ):
+        if not explo.camp.first_living_pc():
+            explo.camp.destination,explo.camp.entrance = self._adventure_exit
+            explo.camp.scripts.remove( self )
+            self.remove()
 
 class SDIPlot( Plot ):
     # Like a normal plot, but with extra functions for shortie adventures.

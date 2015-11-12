@@ -22,12 +22,14 @@ import random
 
 class TargetEnemy( object ):
     # This targeter will attempt to use its invocation against an enemy model.
-    def __init__( self, ally_targetability=-1 ):
+    def __init__( self, ally_targetability=-1, min_distance=0 ):
         self.ally_targetability = ally_targetability
+        self.min_distance = min_distance
     def get_targetability( self, camp, user, target ):
         # Return a positive integer if this is a desirable target, a negative
         # integer if this is a target best avoided, and zero for no preference.
-        if user.is_enemy( camp, target ) and target.is_alright():
+        if ( user.is_enemy( camp, target ) and target.is_alright()
+          and camp.scene.distance(user.pos,target.pos) >= self.min_distance):
             return 1
         elif user.is_ally( camp, target ):
             return self.ally_targetability
@@ -102,6 +104,22 @@ class TargetEnemyWithoutEnchantment( TargetEnemy ):
             return 1
         else:
             return 0
+
+class TargetEnemyWithoutField( TargetEnemy ):
+    """Aim this invocation at an enemy without the requisite field."""
+    def __init__( self, field_to_check, min_distance=0 ):
+        self.field_to_check = field_to_check
+        self.min_distance = min_distance
+    def get_targetability( self, camp, user, target ):
+        fas = camp.scene.get_field_at_spot( target.pos )
+        if (user.is_enemy( camp, target ) and target.is_alright()
+          and camp.scene.distance( user.pos, target.pos ) >= self.min_distance
+          and not (fas and isinstance(fas,self.field_to_check)) ):
+            return 1
+        else:
+            return 0
+
+
 
 class TargetAllyWithoutEnchantment( TargetEnemy ):
     """Aim this invocation at an ally without the requisite enchantment."""

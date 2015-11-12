@@ -535,12 +535,13 @@ class Combat( object ):
                 self.cstat[chara].attacks_so_far = 0
             n += 1
 
-        if self.camp.num_pcs() > 0 and self.no_quit and not pygwrap.GOT_QUIT:
-            # Combat has ended because we ran out of enemies. Dole experience.
-            self.give_xp_and_treasure( explo )
+        if self.no_quit and not pygwrap.GOT_QUIT:
             explo.check_trigger( "COMBATOVER" )
-            # Provide some end-of-combat first aid.
-            self.do_first_aid(explo)
+            if self.camp.num_pcs() > 0:
+                # Combat has ended because we ran out of enemies. Dole experience.
+                self.give_xp_and_treasure( explo )
+                # Provide some end-of-combat first aid.
+                self.do_first_aid(explo)
 
         # PCs stop hiding when combat ends.
         for pc in self.camp.party:

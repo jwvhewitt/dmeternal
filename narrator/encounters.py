@@ -12,8 +12,35 @@ import teams
 import characters
 import random
 
+import stats
+import spells
+import aibrain
+class EarthbindTester( monsters.base.Monster ):
+    name = "Earthbind Tester"
+    statline = { stats.STRENGTH: 10, stats.TOUGHNESS: 12, stats.REFLEXES: 17, \
+        stats.INTELLIGENCE: 80, stats.PIETY: 80, stats.CHARISMA: 4,
+        stats.PHYSICAL_ATTACK: 5, stats.NATURAL_DEFENSE: 5 }
+    SPRITENAME = "monster_animals.png"
+    FRAME = 9
+    TEMPLATES = ()
+    MOVE_POINTS = 12
+    VOICE = None
+    HABITAT = ( context.HAB_BUILDING, context.HAB_TUNNELS,
+     context.SET_EVERY,
+     context.DES_EARTH, context.DES_CIVILIZED,
+     context.MTY_BEAST, context.MTY_CREATURE, context.GEN_NATURE )
+    ENC_LEVEL = 1
+    TECHNIQUES = ( spells.earthspells.EARTHBIND, )
+    COMBAT_AI = aibrain.BasicTechnicalAI()
+
+    ATTACK = items.Attack( (1,4,0), element = stats.RESIST_PIERCING )
+
+    def init_monster( self ):
+        self.levels.append( monsters.base.Beast( 1, self ) )
+
+
 class TestEncounter( Plot ):
-    LABEL = "zzzTEST_FEATURE"
+    LABEL = "TEST_FEATURE"
     def custom_init( self, nart ):
         scene = self.elements.get("LOCALE")
         mygen = nart.get_map_generator( scene )
@@ -21,7 +48,7 @@ class TestEncounter( Plot ):
         myteam = teams.Team(default_reaction=-999, rank=self.rank, 
           strength=0, habitat=scene.get_encounter_request(), fac=scene.fac )
         room.contents.append( myteam )
-        monster = monsters.goblins.Goblin( myteam )
+        monster = EarthbindTester( myteam )
         room.contents.append( monster )
         monster = monsters.goblins.Goblin( myteam )
         room.contents.append( monster )
