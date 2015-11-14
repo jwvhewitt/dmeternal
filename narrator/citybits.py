@@ -380,6 +380,34 @@ class ExtraArmorShop( Plot ):
         self.add_sub_plot( nart, "CITY_ARMORSHOP" )
         return True
 
+#  ******************************
+#  ***   VILLAGE_RANDOMSHOP   ***
+#  ******************************
+#
+# Unlike cities, villages don't start with a full complement of shops, and don't
+# even need a full complement. Choose a random shop type.
+
+class VillageGeneralStore( Plot ):
+    # Just add a weapon shop...
+    LABEL = "VILLAGE_RANDOMSHOP"
+    def custom_init( self, nart ):
+        self.add_sub_plot( nart, "CITY_GENERALSTORE" )
+        return True
+
+class VillageWeaponShop( Plot ):
+    # Just add a weapon shop...
+    LABEL = "VILLAGE_RANDOMSHOP"
+    def custom_init( self, nart ):
+        self.add_sub_plot( nart, "CITY_WEAPONSHOP" )
+        return True
+
+class VillageArmorShop( Plot ):
+    # Just add an armor shop...
+    LABEL = "VILLAGE_RANDOMSHOP"
+    def custom_init( self, nart ):
+        self.add_sub_plot( nart, "CITY_ARMORSHOP" )
+        return True
+
 
 #  ***************************
 #  ***   CITY_ARMORSHOP   ***

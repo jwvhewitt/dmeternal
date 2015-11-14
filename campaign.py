@@ -80,6 +80,7 @@ class Campaign( object ):
                     self.known_spells.append( spell )
                 elif spell.rank == 2:
                     candidates.append( spell )
+        self.update_library()
         for t in range( 3 ):
             if candidates:
                 spell = random.choice( candidates )
@@ -235,6 +236,16 @@ class Campaign( object ):
         if nart.story:
             nart.build()
             return nart.story
+
+    def library_has_spell( self, nuspell ):
+        # Return True if the library already has this spell.
+        return any( nuspell.name == t.name for t in self.known_spells )
+
+    def update_library( self ):
+        for pc in self.party:
+            for s in pc.techniques:
+                if isinstance( s, spells.Spell ) and not self.library_has_spell( s ):
+                    self.known_spells.append( s )
 
 
 

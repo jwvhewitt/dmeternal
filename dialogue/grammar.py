@@ -219,7 +219,9 @@ GRAM_DATABASE = {
         "brown", "grey", "pink", "black", "white", "big", "small", "old", "young",
         "hot","cold","warm","cool",
         ],
-    "[pc]": ["adventurers",
+    "[party]": [ "adventurers","wanderers"
+        ],
+    "[pc]": ["[party]",
         ],
     "[PORTENT]": [ "The world is veiled in darkness.", "Dogs and cats, living together."
         ],
@@ -253,6 +255,8 @@ GRAM_DATABASE = {
         ],
     "[SHOP_WEAPON]": [ "[SHOP]","You will be happy to own a good [weapon] the next time you see a [monster].",
         ],
+    "[REFUSE_QUEST]": [ "Oh well. Hopefully some better adventurers will come along soon."
+        ],
     "[thing]": [ "[weapon]","[monster]","[adjective] [monster]", "[armor]"
         ],
     "[TRAINING]": [ "", "Let me show you how it is done."
@@ -267,14 +271,18 @@ GRAM_DATABASE = {
 LOVE_GRAMMAR = {
     "[HELLO]": [ "Great to see you, [pc]!"
         ],
-    "[pc]": ["[positive_adjective] heroes",
+    "[party]": ["[positive_adjective] heroes",
+        ],
+    "[pc]": [ "[positive_adjective] hero",
         ],
     }
 
 LIKE_GRAMMAR = {
     "[HELLO]": [ "Hello [pc]!", "Good to see you, [pc]."
         ],
-    "[pc]": ["[positive_adjective] adventurers", "heroes",
+    "[party]": ["[positive_adjective] adventurers", "heroes",
+        ],
+    "[REFUSE_QUEST]": [ "I am very sorry to hear that."
         ],
     "[SERVICE_TEMPLE]": [ "I will do what I can to heal you.",
         ],
@@ -285,7 +293,9 @@ LIKE_GRAMMAR = {
 DISLIKE_GRAMMAR = {
     "[HELLO]": [ "Oh, it's you.",
         ],
-    "[pc]": ["[negative_adjective] adventurers",
+    "[party]": ["[negative_adjective] adventurers",
+        ],
+    "[REFUSE_QUEST]": [ "I should have known you aren't up to the challenge."
         ],
     "[SERVICE_TEMPLE]": [ "Remember that it is better to give than to receive, which is why we insist that you pay up front.",
         ],
@@ -294,7 +304,9 @@ DISLIKE_GRAMMAR = {
     }
 
 HATE_GRAMMAR = {
-    "[pc]": ["idiots",
+    "[party]": ["idiots",
+        ],
+    "[pc]": ["idiot",
         ],
     "[SERVICE_TEMPLE]": [ "If the gods want you to live, I will do as they command.",
         ],

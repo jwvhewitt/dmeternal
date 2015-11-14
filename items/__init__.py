@@ -433,7 +433,7 @@ harvest( wands )
 # Test Items
 #for ic in ITEM_LIST:
 #    i = ic()
-#    if i.itemtype in (CLOTHES, ):
+#    if i.itemtype in (POTION,GEM ):
 #        print "{0}: {1}/{2}gp".format( i, i.min_rank(), i.cost() )
 
 import enhancers

@@ -604,7 +604,7 @@ class Explorer( object ):
             mymenu.add_item( "Equip Item", self.equip_item )
         if hasattr( it, "use" ):
             mymenu.add_item( "Use Item", self.use_item )
-        if hasattr( it, "spell" ) and not any( it.spell.name == t.name for t in self.camp.known_spells ):
+        if hasattr( it, "spell" ) and not self.camp.library_has_spell( it.spell ):
             mymenu.add_item( "Learn Spell", self.learn_spell_from_item )
         mymenu.add_item( "Trade Item", self.trade_item )
         mymenu.add_item( "Drop Item", self.drop_item )
@@ -939,6 +939,30 @@ class Explorer( object ):
             for y in range( self.scene.height ):
                 if self.scene.map[x][y].wall == maps.BASIC_WALL:
                     self.scene.map[x][y].wall = None
+
+    def give_gold_and_xp( self, gold, xp, looting_ok=False ):
+        if xp or gold:
+            if xp and gold:
+                self.alert( "You earn {0} experience points and {1} gold pieces.".format( xp, gold ) )
+            elif xp:
+                self.alert( "You earn {0} experience points.".format( xp ) )
+            else:
+                self.alert( "You earn {0} gold pieces.".format( gold ) )
+
+            # Dole the XP.
+            for pc in self.camp.party:
+                if pc.is_alright():
+                    pc.xp += xp
+                # Check for expert looters in the party right now, too.
+                droll = random.randint(1,100)
+                if ( gold > 0 ) and looting_ok and ( droll < pc.get_stat( stats.LOOTING ) ):
+                    extra_gp = pc.get_stat( stats.LOOTING ) - droll + random.randint(1,6) * self.scene.rank
+                    self.alert( "{} found an extra {} gold pieces.".format( pc, extra_gp ) )
+                    self.camp.gold += extra_gp
+
+            # Stock the gold.
+            self.camp.gold += gold
+
 
     def go( self ):
         self.no_quit = True

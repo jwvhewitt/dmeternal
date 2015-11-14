@@ -357,6 +357,7 @@ class BookOfHeroes( Waypoint ):
             camp.remove_party_from_scene()
             camp.entrance = self
             camp.place_party()
+            camp.update_library()
     def remove_members( self, camp, screen, predraw ):
         charsheets = dict()
         for pc in camp.party:

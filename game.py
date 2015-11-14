@@ -108,7 +108,7 @@ def bardic_start_campaign( screen ):
 def endless_start_campaign( screen ):
     init = narrator.plots.PlotState(rank=1)
     pygwrap.please_stand_by( screen, "Building world..." )
-    nart = narrator.Narrative( campaign.Campaign(), init, adv_type="STUB_ENDLESS" )
+    nart = narrator.Narrative( campaign.Campaign(xp_scale=0.25), init, adv_type="STUB_ENDLESS" )
     if nart.story:
         nart.build()
         camp = nart.camp

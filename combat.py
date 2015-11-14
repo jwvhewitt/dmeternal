@@ -484,27 +484,7 @@ class Combat( object ):
                 if m.team.fac:
                     m.team.fac.reaction += -2
         xp = int( xp * self.camp.xp_scale ) // self.camp.num_pcs()
-        if xp or gold:
-            if xp and gold:
-                explo.alert( "You earn {0} experience points and {1} gold pieces.".format( xp, gold ) )
-            elif xp:
-                explo.alert( "You earn {0} experience points.".format( xp ) )
-            else:
-                explo.alert( "You earn {0} gold pieces.".format( gold ) )
-
-            # Dole the XP.
-            for pc in self.camp.party:
-                if pc.is_alright():
-                    pc.xp += xp
-                # Check for expert looters in the party right now, too.
-                droll = random.randint(1,100)
-                if ( gold > 0 ) and ( droll < pc.get_stat( stats.LOOTING ) ):
-                    extra_gp = pc.get_stat( stats.LOOTING ) - droll + random.randint(1,6) * self.scene.rank
-                    explo.alert( "{} found an extra {} gold pieces.".format( pc, extra_gp ) )
-                    self.camp.gold += extra_gp
-
-            # Stock the gold.
-            self.camp.gold += gold
+        explo.give_gold_and_xp( gold, xp, True )
 
     def do_first_aid( self, explo ):
         # At the end of combat, help anyone who was wounded.

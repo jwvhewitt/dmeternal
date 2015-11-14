@@ -3,6 +3,7 @@ import stats
 import image
 import items
 import random
+import spells
 
 # NPC CLASSES
 
@@ -53,6 +54,25 @@ class Innkeeper( characters.Level ):
         items.GLOVE, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK, items.WAND )
     starting_equipment = (items.clothes.NormalClothes,items.daggers.Dirk)
+
+# UNLISTED NPC CLASSES
+
+class Elder( characters.Level ):
+    name = 'Elder'
+    desc = 'The person will will probably give you a quest or something.'
+    requirements = { stats.TOUGHNESS: 8, stats.REFLEXES: 8, stats.INTELLIGENCE: 13, stats.PIETY: 13, stats.CHARISMA: 13 }
+    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 3, stats.MAGIC_ATTACK: 5, stats.MAGIC_DEFENSE: 5, \
+        stats.NATURAL_DEFENSE: 5, stats.AWARENESS: 3 } )
+    spell_circles = ( spells.SOLAR, spells.FIRE, spells.AIR, spells.WATER, spells.EARTH )
+    HP_DIE = 4
+    MP_DIE = 16
+    LEVELS_PER_GEM = 1
+    GEMS_PER_AWARD = 2
+    legal_equipment = ( items.STAFF, items.CLOTHES, \
+        items.GLOVE, items.SANDALS, items.SHOES, \
+        items.BOOTS, items.CLOAK )
+    starting_equipment = ( items.staves.Quarterstaff, items.clothes.MageRobe )
+
 
 # MONSTER CLASSES
 
