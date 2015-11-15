@@ -427,6 +427,59 @@ class ThiefCave( Plot ):
 
         return True
 
+#  ***************************
+#  ***   DUTILITY  ROOMS   ***
+#  ***************************
+#
+#  Some extra personality, probably without encounters, for an inhabited dungeon.
+
+class BoringRoom( Plot ):
+    LABEL = "DUTILITY_ROOM"
+    @classmethod
+    def matches( self, pstate ):
+        """Requires the SCENE to exist."""
+        return pstate.elements.get("LOCALE")
+    def custom_init( self, nart ):
+        scene = self.elements.get("LOCALE")
+        mygen = nart.get_map_generator( scene )
+        room = mygen.DEFAULT_ROOM()
+        self.register_element( "_ROOM", room, dident="LOCALE" )
+        return True
+
+
+class StorageRoom( Plot ):
+    LABEL = "DUTILITY_ROOM"
+    @classmethod
+    def matches( self, pstate ):
+        """Requires the SCENE to exist."""
+        return pstate.elements.get("LOCALE")
+    def custom_init( self, nart ):
+        scene = self.elements.get("LOCALE")
+        mygen = nart.get_map_generator( scene )
+        room = mygen.DEFAULT_ROOM()
+        room.DECORATE = randmaps.decor.GeneralStoreDec()
+        mychest = waypoints.SmallChest()
+        mychest.stock(max(1,self.rank-1))
+        room.contents.append( mychest )
+        self.register_element( "_ROOM", room, dident="LOCALE" )
+        return True
+
+class CookingRoom( Plot ):
+    LABEL = "DUTILITY_ROOM"
+    @classmethod
+    def matches( self, pstate ):
+        """Requires the SCENE to exist."""
+        return pstate.elements.get("LOCALE")
+    def custom_init( self, nart ):
+        scene = self.elements.get("LOCALE")
+        mygen = nart.get_map_generator( scene )
+        room = mygen.DEFAULT_ROOM()
+        room.DECORATE = randmaps.decor.GeneralStoreDec()
+        room.contents.append( maps.CAULDRON )
+        room.contents.append( maps.KEG )
+        self.register_element( "_ROOM", room, dident="LOCALE" )
+        return True
+
 
 
 

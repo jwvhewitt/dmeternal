@@ -65,7 +65,6 @@ class Campaign( object ):
         # Set spells
         has_color = [False,False,False,False,False,False]
         for pc in self.party:
-            pc.choose_random_spells()
             for t in spells.COLORS:
                 if pc.spell_gems_of_color(t):
                     has_color[t] = True
@@ -80,7 +79,6 @@ class Campaign( object ):
                     self.known_spells.append( spell )
                 elif spell.rank == 2:
                     candidates.append( spell )
-        self.update_library()
         for t in range( 3 ):
             if candidates:
                 spell = random.choice( candidates )
@@ -88,6 +86,7 @@ class Campaign( object ):
                 self.known_spells.append( spell )
             else:
                 break
+        self.update_library()
 
     def first_living_pc( self ):
         """Return the first living PC in the party."""
@@ -304,6 +303,7 @@ class random_party( list ):
                 oldpc = newpc
                 chargen.give_starting_equipment( newpc )
                 newpc.name = monsters.gen_monster_name(newpc)
+        oldpc.choose_random_spells()
         return oldpc
 
     def newpc_is_better( self, newpc, oldpc ):

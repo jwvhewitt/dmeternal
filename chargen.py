@@ -265,6 +265,7 @@ def make_character( screen ):
     name = pygwrap.input_string( screen, redrawer=redraw, prompt="Enter character name" )
     if name:
         pc.name = name
+        pc.choose_random_spells()
         return pc
     else:
         return None

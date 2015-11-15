@@ -32,7 +32,7 @@ class ShortieStub( Plot ):
     SHORTIE_GRAMMAR = {
         # [ADVENTURE] is the top level token- it will expand into a number of
         # high level tokens.
-        "[ADVENTURE]": [ "SDI_VILLAGE SDI_ENEMY_FORT SDI_BIGBOSS",
+        "[ADVENTURE]": [ "SDI_VILLAGE SDI_ENEMY_FORT SDI_ENEMY_BARRACKS SDI_BIGBOSS",
             ],
 
         "[ENEMY_BASE]": [ "SDI_ENEMY_FORT SDI_ENEMY_BARRACKS",
@@ -92,6 +92,13 @@ class ShortieStub( Plot ):
         self._do_message = True
 
         return True
+    def any_duplicates(self,thelist):
+        seen = set()
+        for x in thelist:
+            if x in seen:
+                return True
+            seen.add(x)
+        return False
     def _EXIT_menu( self, thingmenu ):
         thingmenu.desc = "This appears to be the way out."
         thingmenu.add_item( "Leave this adventure.", self.use_exit )
@@ -126,6 +133,7 @@ class ShortieStub( Plot ):
 
     DIALOGUE_GRAMMAR = {
         "[=CONCLUSION]": [ "After [-achievement] and [++achievement], you return home in victory.",
+            "After [++achievement], you return to [quest_giver] for your reward.",
             ],
         "[=INTRO]": [ "You have been sent to bring [+SDI_BIGBOSS:name] the [+SDI_BIGBOSS:type] to justice. So far you have tracked them to [=location].",
             "The [+SDI_VILLAGE] has called for a hero. [INTRO_PROBLEM]"
@@ -133,6 +141,8 @@ class ShortieStub( Plot ):
         "[INTRO_PROBLEM]": [ "Travelers passing through [+SDI_AMBUSH:name] have gone missing.",
             "A [+SDI_BIGBOSS:type] named [+SDI_BIGBOSS:name] has been causing problems.",
             "[=SUMMARY]",
+            ],
+        "[quest_giver]": [ "[-quest_giver]", "[=quest_giver]"
             ],
         "[RUMOUR]": [   "[rumourleadin] [warning].",
             ],
@@ -209,6 +219,8 @@ class SDIPlot( Plot ):
 #  [INTRO]  An introduction to be printed if the adventure starts in this
 #           subplot.
 #  [location]   A location of interest within the subplot. Optional.
+#  [quest_giver] The NPC who sent the party on this mission, and will presumably
+#           reward them afterward. Keep it current.
 #  [SUMMARY]    A summary of subplot's state, written from player-aligned
 #     perspective, in simple present tense.
 #  [warning]    A caution for the PC. Frequently encountered as a rumour.
@@ -258,8 +270,9 @@ class BasicCaveHideout( SDIPlot ):
         fortress = self.register_element( "_AMBUSHROOM",
          randmaps.rooms.MountainRoom(tags=(context.GOAL,)), dident="LOCALE" )
         antagonist = self.elements.get( "ANTAGONIST" )
-        team = self.register_element( "TEAM", teams.Team(default_reaction=-999, rank=self.rank, 
-         strength=50, habitat=myscene.get_encounter_request(), fac=antagonist ) )
+        team = self.register_element( "TEAM", teams.Team(default_reaction=-999, 
+         strength=50, habitat=myscene.get_encounter_request(), fac=antagonist,
+         rank=self.rank, respawn=False ) )
         fortress.contents.append( team )
 
         # Register the cave stuff.
@@ -332,6 +345,95 @@ class BasicCaveHideout( SDIPlot ):
 
 
 # SDI_ENEMY_BARRACKS
+#   The active base of a particular faction or group of monsters, as opposed to
+#   a ruin or natural cave system.
+#
+# Win Condition:
+#   Establish control or just get through it.
+# Grammar Tags:
+#   [SDI_ENEMY_BARRACKS:name]   The name of the base
+# To do:
+#
+
+class BasicBarracks( SDIPlot ):
+    # A simple dungeon level.
+    LABEL = "SDI_ENEMY_BARRACKS"
+    active = True
+    scope = "LOCALE"
+    NAME_PATTERNS = ("{0} Barracks","{0} Base")
+    def custom_init( self, nart ):
+        """Create the final dungeon, boss encounter, and resolution."""
+        antagonist = self.elements.setdefault( "ANTAGONIST", teams.AntagonistFaction() )
+        biome = self.elements.setdefault( "DUNGEON_ARCHITECTURE",
+          randmaps.architect.BuildingDungeon() )
+        myscene,mymapgen = randmaps.architect.design_scene( random.randint(50,65),
+          random.randint(50,65), randmaps.SubtleMonkeyTunnelScene,
+          biome, setting=self.setting, fac=antagonist)
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+        myscene.name = random.choice( self.NAME_PATTERNS ).format( antagonist )
+        myscene.desctags.append( context.MTY_HUMANOID )
+        mymapgen.GAPFILL = None
+
+        team = self.register_element( "TEAM", 
+         teams.Team(default_reaction=-999, rank=self.rank, strength=100,
+         habitat=myscene.get_encounter_request(), fac=antagonist,
+         respawn=False ))
+        goalroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=myscene )
+        goalroom.contents.append( team )
+        door2 = waypoints.GateDoor()
+        goalroom.contents.append(door2)
+        door2.plot_locked = True
+        self._door_locked = True
+        mychest = waypoints.MediumChest()
+        mychest.stock(self.rank)
+        goalroom.contents.append( mychest )
+
+        n = random.randint(1,3)
+        for t in range( n ):
+            self.add_sub_plot( nart, "ENCOUNTER", PlotState().based_on( self ) )
+        for t in range( 4-n ):
+            self.add_sub_plot( nart, "DUTILITY_ROOM", PlotState().based_on( self ) )
+        if random.randint(1,3) == 1:
+            self.add_sub_plot( nart, "SPECIAL_FEATURE" )
+        if random.randint(1,3) != 1:
+            self.add_sub_plot( nart, "SPECIAL_ENCOUNTER" )
+
+        entranceroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=myscene,
+            anchor = random.choice((randmaps.anchors.southwest,randmaps.anchors.south,randmaps.anchors.southeast)) )
+        door1 = waypoints.GateDoor()
+        entranceroom.contents.append(door1)
+
+        # Save this component's data for the next component.
+        self.register_element( "IN_SCENE", myscene )
+        self.register_element( "IN_ENTRANCE", door1 )
+        self.register_element( "OUT_SCENE", myscene )
+        self.register_element( "OUT_ENTRANCE", door2 )
+
+        return True
+    def OUT_ENTRANCE_menu( self, thingmenu ):
+        thingmenu.desc = "There are too many guards around for you to enter yet."
+    def t_COMBATOVER( self, explo ):
+        if self._door_locked and not self.elements["TEAM"].members_in_play( explo.scene ):
+            self.elements["OUT_ENTRANCE"].plot_locked = False
+            self._door_locked = False
+            explo.alert("With the guards defeated, you are free to pass this way.")
+            explo.check_trigger( "WIN", self )
+    def get_sdi_grammar( self ):
+        """Return a dict of grammar related to this plot."""
+        mygram = {
+            "[achievement]": [ "infiltrating the {}".format(self.elements["LOCALE"]),
+                ],
+            "[GO_QUEST]": ["Infiltrate the {}.".format(self.elements["LOCALE"]),
+                ],
+            "[location]": [str(self.elements["LOCALE"]),],
+            "[SDI_ENEMY_BARRACKS:name]": [str(self.elements["LOCALE"]),],
+            "[SUMMARY]": [ "The {} have many soldiers at their base.".format(str(self.elements["ANTAGONIST"])),
+                ],
+            "[warning]":    ["few who enter {} return alive".format(self.elements["LOCALE"]),
+                ],
+        }
+        return mygram
+
 
 # SDI_BLOCKED_GATE
 
@@ -382,8 +484,7 @@ class BossInABox( SDIPlot ):
 
         myhabitat = myscene.get_encounter_request()
         myhabitat[ context.MTY_HUMANOID ] = True
-        myhabitat[(context.MTY_LEADER,context.MTY_FIGHTER,context.MTY_MAGE)] = True
-        myhabitat[ context.MTY_BOSS ] = context.MAYBE
+        myhabitat[(context.MTY_BOSS,context.MTY_LEADER,context.MTY_FIGHTER,context.MTY_MAGE)] = True
         if antagonist:
             antagonist.alter_monster_request( myhabitat )
         btype = monsters.choose_monster_type(self.rank,self.rank+2,myhabitat)
@@ -707,6 +808,8 @@ class BoringVillage( SDIPlot ):
                 "The village of {} is under attack by enemies who come from [+SDI_ENEMY_FORT:location].".format(self.elements["LOCALE"]),
                 ],
         }
+        if self._reward_given:
+            mygram["[quest_giver]"] = [str(self.elements["NPC"]),]
         return mygram
     def accept_quest( self, explo ):
         self._reward(explo)
@@ -721,7 +824,7 @@ class BoringVillage( SDIPlot ):
              self.elements["NPC"],
              self.chapter.root.genplots[-1].elements.get("ENEMY"),
              self.elements.get("ANTAGONIST"))
-        if not self._reward_given:
+        if self is not self.chapter.root.genplots[-1] and not self._reward_given:
             r1 = dialogue.Reply( "Yes, we will.",
              destination=dialogue.Offer( "[+GO_QUEST] {}".format( self._reward.get_speech() ),
              effect=self.accept_quest ) )

@@ -106,9 +106,8 @@ class Heretic( base.Monster ):
     ENC_LEVEL = 3
     COMBAT_AI = aibrain.BasicTechnicalAI()
     TREASURE = treasuretype.Standard( ( items.scrolls.Rank1Scroll, items.scrolls.Rank2Scroll ) )
-    TECHNIQUES = ( spells.firespells.IGNITE,
-        spells.druidspells.ACID_SPRAY, spells.waterspells.FREEZE_FOE )
-    ATTACK = items.Attack( (1,8,0), element = stats.RESIST_CRUSHING )
+    TECHNIQUES = ( spells.firespells.IGNITE, spells.waterspells.FREEZE_FOE )
+    ATTACK = items.Attack( (1,4,0), element = stats.RESIST_CRUSHING )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 2, self ) )
 
