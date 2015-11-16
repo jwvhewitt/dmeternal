@@ -32,7 +32,7 @@ class ShortieStub( Plot ):
     SHORTIE_GRAMMAR = {
         # [ADVENTURE] is the top level token- it will expand into a number of
         # high level tokens.
-        "[ADVENTURE]": [ "SDI_VILLAGE SDI_ENEMY_FORT SDI_ENEMY_BARRACKS SDI_BIGBOSS",
+        "[ADVENTURE]": [ "SDI_ENEMY_BARRACKS SDI_VILLAGE SDI_ENEMY_FORT SDI_BIGBOSS",
             ],
 
         "[ENEMY_BASE]": [ "SDI_ENEMY_FORT SDI_ENEMY_BARRACKS",
@@ -365,7 +365,7 @@ class BasicBarracks( SDIPlot ):
         """Create the final dungeon, boss encounter, and resolution."""
         antagonist = self.elements.setdefault( "ANTAGONIST", teams.AntagonistFaction() )
         biome = self.elements.setdefault( "DUNGEON_ARCHITECTURE",
-          randmaps.architect.BuildingDungeon() )
+          randmaps.architect.BuildingDungeon(antagonist) )
         myscene,mymapgen = randmaps.architect.design_scene( random.randint(50,65),
           random.randint(50,65), randmaps.SubtleMonkeyTunnelScene,
           biome, setting=self.setting, fac=antagonist)
@@ -374,15 +374,20 @@ class BasicBarracks( SDIPlot ):
         myscene.desctags.append( context.MTY_HUMANOID )
         mymapgen.GAPFILL = None
 
+        # Determine room anchors.
+        anc_a,anc_b = random.choice(randmaps.anchors.OPPOSING_CARDINALS)
+
         team = self.register_element( "TEAM", 
          teams.Team(default_reaction=-999, rank=self.rank, strength=100,
          habitat=myscene.get_encounter_request(), fac=antagonist,
          respawn=False ))
-        goalroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=myscene )
+        goalroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=myscene,
+          anchor=anc_a )
         goalroom.contents.append( team )
         door2 = waypoints.GateDoor()
         goalroom.contents.append(door2)
         door2.plot_locked = True
+        door2.anchor = anc_a
         self._door_locked = True
         mychest = waypoints.MediumChest()
         mychest.stock(self.rank)
@@ -399,8 +404,9 @@ class BasicBarracks( SDIPlot ):
             self.add_sub_plot( nart, "SPECIAL_ENCOUNTER" )
 
         entranceroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=myscene,
-            anchor = random.choice((randmaps.anchors.southwest,randmaps.anchors.south,randmaps.anchors.southeast)) )
+            anchor = anc_b )
         door1 = waypoints.GateDoor()
+        door1.anchor = anc_b
         entranceroom.contents.append(door1)
 
         # Save this component's data for the next component.

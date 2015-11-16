@@ -57,8 +57,8 @@ class BasicCave( Plot ):
         return True
 
     CUSTOM_DECOR_TYPES = {
-        context.GEN_GOBLIN: (randmaps.decor.GoblinHomeDec,{"fill_factor": 200}),
-        context.GEN_UNDEAD: (randmaps.decor.CarnageDec,{"fill_factor": 200}),
+        context.GEN_GOBLIN: (randmaps.decor.GoblinHomeDec,{}),
+        context.GEN_UNDEAD: (randmaps.decor.CarnageDec,{}),
     }
     def add_custom_decor( self, myscene, mymapgen ):
         if myscene.fac and not mymapgen.DECORATE:

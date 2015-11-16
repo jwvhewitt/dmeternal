@@ -70,8 +70,10 @@ class CavernDungeon( Architecture ):
     WALL_OPTIONS = ["terrain_wall_cave.png","terrain_wall_mine.png",
         "terrain_wall_rocks.png"]
     CUSTOM_DECOR_TYPES = {
-        context.GEN_GOBLIN: (decor.GoblinHomeDec,{"fill_factor": 200}),
-        context.GEN_UNDEAD: (decor.CarnageDec,{"fill_factor": 200}),
+        context.GEN_GOBLIN: (decor.GoblinHomeDec,{}),
+        context.GEN_UNDEAD: (decor.CarnageDec,{}),
+        context.GEN_KINGDOM: (decor.BarracksDec,{}),
+        context.MTY_FIGHTER: (decor.BarracksDec,{}),
     }
     def __init__( self, fac=None ):
         super(CavernDungeon, self).__init__(biome=context.HAB_CAVE,
@@ -92,14 +94,30 @@ class CavernDungeon( Architecture ):
                 self.decorate = a(**b)
 
 class BuildingDungeon( Architecture ):
-    def __init__( self ):
+    CUSTOM_DECOR_TYPES = {
+        context.GEN_GOBLIN: (decor.GoblinHomeDec,{}),
+        context.GEN_UNDEAD: (decor.CarnageDec,{}),
+        context.GEN_KINGDOM: (decor.BarracksDec,{}),
+        context.MTY_FIGHTER: (decor.BarracksDec,{}),
+    }
+    WALL_OPTIONS = [ "terrain_wall_darkbrick.png","terrain_wall_darkstone.png",
+        "terrain_wall_dungeon.png","terrain_wall_woodfort.png"
+    ]
+    def __init__( self, fac=None ):
         super(BuildingDungeon, self).__init__(biome=context.HAB_BUILDING,
           desctags=[context.MAP_DUNGEON,context.MAP_GOUP,context.MTY_HUMANOID],
           wall_filter=converter.BasicConverter())
-        self.sprites[maps.SPRITE_WALL] = "terrain_wall_darkbrick.png"
+        self.sprites[maps.SPRITE_WALL] = random.choice(self.WALL_OPTIONS)
         self.sprites[maps.SPRITE_GROUND] = "terrain_ground_under.png"
         self.sprites[maps.SPRITE_FLOOR] = "terrain_floor_dungeon.png"
         self.sprites[maps.SPRITE_CHEST] = "terrain_chest_wood.png"
+        if fac:
+            if fac.primary in self.CUSTOM_DECOR_TYPES.keys():
+                a,b = self.CUSTOM_DECOR_TYPES[ fac.primary ]
+                self.decorate = a(**b)
+            elif fac.secondary in self.CUSTOM_DECOR_TYPES.keys():
+                a,b = self.CUSTOM_DECOR_TYPES[ fac.secondary ]
+                self.decorate = a(**b)
 
 class Village( Architecture ):
     DEFAULT_WALL_OPTIONS = ["terrain_wall_lightbrick.png",]

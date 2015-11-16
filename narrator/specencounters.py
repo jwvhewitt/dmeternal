@@ -133,7 +133,7 @@ class DragonLair( Plot ):
 
         # Add the goal room, stick the boss monster there.
         int_goalroom = igen.DEFAULT_ROOM( tags=(context.GOAL,), parent=interior )
-        int_goalroom.DECORATE = randmaps.decor.CarnageDec(fill_factor=5)
+        int_goalroom.DECORATE = randmaps.decor.CarnageDec()
 
         # Create the dragon.
         myteam = self.register_element( "TEAM", teams.Team( default_reaction=-999, strength=0 ) )
@@ -260,7 +260,7 @@ class LudicrousTreasureEncounter( Plot ):
     @classmethod
     def matches( self, pstate ):
         """Requires the LOCALE to exist and be a dungeon."""
-        return ( pstate.elements.get("LOCALE")
+        return ( pstate.elements.get("LOCALE") and pstate.rank > 1
                 and context.MAP_DUNGEON in pstate.elements["LOCALE"].desctags )
     def custom_init( self, nart ):
         scene = self.elements.get("LOCALE")

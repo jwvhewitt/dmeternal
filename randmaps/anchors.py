@@ -31,3 +31,9 @@ def south( par,chi ):
 def southeast(par,chi):
     chi.bottomright = par.bottomright
 
+OPPOSING_CARDINALS = ((north,south),(east,west),(south,north),(west,east))
+
+OPPOSING_PAIRS = ((northwest,southeast), (north,south), (northeast,southwest),
+    (west,east), (east,west), (southwest,northeast), (south,north),
+    (southeast, northwest))
+
