@@ -860,10 +860,6 @@ class Character( stats.PhysicalThing ):
         if self.get_stat( stats.CRITICAL_HIT ) > 0:
             hit.on_success.append( self.critical_hit_effect( roll_mod ) )
 
-        # Add any enchantment bonuses.
-        for e in self.condition:
-            self.add_attack_enhancements( roll, e )
-
         return roll
 
     def get_attack_reach( self ):
@@ -885,7 +881,7 @@ class Character( stats.PhysicalThing ):
         if weapon:
             fx = weapon.attackdata.get_effect( self, roll_mod )
             if weapon.enhancement:
-                self.add_attack_enhancements( fx, weapon.enhancement )
+                weapon.enhancement.modify_attack( fx, self )
             if hasattr( weapon, "AMMOTYPE" ):
                 ammo = self.contents.get_equip( items.HAND2 )
                 if ammo and ammo.enhancement and ammo.itemtype == weapon.AMMOTYPE:
@@ -894,6 +890,10 @@ class Character( stats.PhysicalThing ):
             fx = self.ATTACK.get_effect( self, roll_mod )
         else:
             fx = self.unarmed_attack_effect( roll_mod )
+        # Add any enchantment bonuses.
+        for e in self.condition:
+            self.add_attack_enhancements( roll, e )
+
         if self.hidden:
             # Also, sneak attacks get bonus damage.
             fx.on_success[0].att_dice = (fx.on_success[0].att_dice[0],

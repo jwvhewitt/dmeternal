@@ -56,7 +56,7 @@ class NoviceWarrior( base.Monster ):
     HABITAT = ( context.HAB_EVERY, context.HAB_BUILDING, context.SET_EVERY,
      context.DES_CIVILIZED,
      context.MTY_HUMANOID, context.MTY_FIGHTER,
-     context.GEN_CHAOS, context.GEN_KINGDOM )
+     context.GEN_CHAOS, context.GEN_KINGDOM, context.GEN_GIANT )
     ENC_LEVEL = 2
     TREASURE = treasuretype.Low()
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )

@@ -36,13 +36,13 @@ COMPOSITEBOW = invocations.Invocation( "Arrow",
 
 # Extra Effects for attaching to attacks.
 
-POISON_ATTACK = effects.OpposedRoll( att_stat=None, def_stat=stats.TOUGHNESS, on_success = (
+POISON_ATTACK = effects.TargetIs( effects.ALIVE, on_true=( effects.OpposedRoll( att_stat=None, def_stat=stats.TOUGHNESS, on_success = (
             effects.HealthDamage( (1,4,0), stat_bonus=None, element=stats.RESIST_POISON, anim=animobs.PoisonCloud ),
             effects.Enchant( enchantments.PoisonClassic )
-        ,) )
+        ,) ), ))
 
-POISON_ATTACK_2d6 = effects.OpposedRoll( att_stat=None, def_stat=stats.TOUGHNESS, on_success = (
+POISON_ATTACK_2d6 = effects.TargetIs( effects.ALIVE, on_true=( effects.OpposedRoll( att_stat=None, def_stat=stats.TOUGHNESS, on_success = (
             effects.HealthDamage( (2,6,0), stat_bonus=None, element=stats.RESIST_POISON, anim=animobs.PoisonCloud ),
             effects.Enchant( enchantments.PoisonClassic )
-        ,) )
+        ,) ), ))
 

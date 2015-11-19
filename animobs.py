@@ -545,7 +545,7 @@ class BigMeteor( Projectile ):
             if self.y_off >= 0:
                 self.needs_deletion = True
 
-def handle_anim_sequence( screen, view, anims, record_anim=True ):
+def handle_anim_sequence( screen, view, anims, record_anim=False ):
     tick = 0
     if record_anim:
         view.anims.clear()

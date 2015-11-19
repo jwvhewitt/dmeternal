@@ -107,7 +107,9 @@ class Attack( object ):
         return it
     def get_effect( self, user, att_modifier=0, target=None ):
         """Generate an effect tree for this attack."""
-        hit = effects.HealthDamage( att_dice=self.damage, stat_bonus=self.damage_mod, element=self.element, anim=self.hit_anim )
+        dmg = list( self.damage )
+        dmg[2] += user.get_stat( stats.WEAPON_DAMAGE_BONUS )
+        hit = effects.HealthDamage( att_dice=dmg, stat_bonus=self.damage_mod, element=self.element, anim=self.hit_anim )
         if self.double_handed:
             hit.stat_mod = 1.5
         miss = effects.NoEffect( anim=animobs.SmallBoom )
@@ -119,10 +121,6 @@ class Attack( object ):
         # If the attacker has critical hit skill, use it.
         if user.get_stat( stats.CRITICAL_HIT ) > 0:
             hit.on_success.append( user.critical_hit_effect( att_modifier ) )
-
-        # Add any enchantment bonuses.
-        for e in user.condition:
-            user.add_attack_enhancements( roll, e )
 
         return roll
 
@@ -168,7 +166,7 @@ class Item( stats.PhysicalThing ):
     def get_stat( self, stat ):
         it = self.statline.get( stat, 0 )
         if self.enhancement:
-            it += self.enhancement.BONUSES.get( stat, 0 )
+            it += self.enhancement.get_stat( stat )
         return it
     def __str__( self ):
         if self.identified:
@@ -177,12 +175,12 @@ class Item( stats.PhysicalThing ):
             else:
                 return self.true_name
         else:
-            return "?"+self.itemtype.name
+            return "?{}".format(self.itemtype.name)
     def desc( self ):
         if self.identified:
             msg = self.true_desc
             if self.enhancement:
-                msg = self.enhancement.DESCPAT.format( msg )
+                msg = self.enhancement.modify_desc( msg )
             return msg
         else:
             return "???"
@@ -191,14 +189,10 @@ class Item( stats.PhysicalThing ):
         smod = []
         if self.attackdata:
             smod.append( self.attackdata.stat_desc() )
-        if self.enhancement:
-            mydict = self.statline.copy()
-            for k,v in self.enhancement.BONUSES.iteritems():
-                mydict[k] = mydict.get( k, 0 ) + v
-        else:
-            mydict = self.statline
-        for k,v in mydict.iteritems():
-            smod.append( str(k) + ":" + "{0:+}".format( v ) )
+        for k in stats.PUBLIC_STATS:
+            v = self.get_stat( k )
+            if v:
+                smod.append( str(k) + ":" + "{0:+}".format( v ) )
         return ", ".join( smod )
 
     def can_attack( self, user ):
@@ -211,7 +205,7 @@ class Item( stats.PhysicalThing ):
         base_cost = self.cost(include_enhancement=False)
         mr = int( ( -9 + math.sqrt( 81 + 36 * base_cost * self.itemtype.rank_adjust ) ) / 18 )
         if self.enhancement:
-            mr += self.enhancement.PLUSRANK
+            mr += self.enhancement.min_rank()
         return mr
 
     @property
@@ -326,14 +320,10 @@ class ManaWeapon( Item ):
             smod.append( self.attackdata.stat_desc() )
             if self.MP_COST:
                 smod.append( "{0} MP".format( self.MP_COST ) )
-        if self.enhancement:
-            mydict = self.statline.copy()
-            for k,v in self.enhancement.BONUSES.iteritems():
-                mydict[k] = mydict.get( k, 0 ) + v
-        else:
-            mydict = self.statline
-        for k,v in mydict.iteritems():
-            smod.append( str(k) + ":" + "{0:+}".format( v ) )
+        for k in stats.PUBLIC_STATS:
+            v = self.get_stat( k )
+            if v:
+                smod.append( str(k) + ":" + "{0:+}".format( v ) )
         return ", ".join( smod )
     def can_attack( self, user ):
         """Return True if this weapon can be used to attack right now."""
@@ -438,12 +428,11 @@ harvest( wands )
 
 import enhancers
 # Compile the enhancements into a useful list.
-ENHANCEMENT_LIST = []
 def harvest_enhancements( mod ):
     for name in dir( mod ):
         o = getattr( mod, name )
         if inspect.isclass( o ) and issubclass( o , enhancers.Enhancer ) and o is not enhancers.Enhancer:
-            ENHANCEMENT_LIST.append( o )
+            enhancers.ENHANCEMENT_LIST.append( o )
 harvest_enhancements( enhancers )
 
 def choose_item( item_type=None, max_rank=20 ):
@@ -472,13 +461,15 @@ def generate_scroll( target_rank=1 ):
 
 def make_item_magic( item_to_enchant, target_rank ):
     pr = target_rank - item_to_enchant.min_rank()
-    elist = list()
-    for e in ENHANCEMENT_LIST:
-        if ( e.PLUSRANK <= pr ) and item_to_enchant.itemtype in e.AFFECTS:
-            elist.append( e )
-    if elist:
-        e = random.choice( elist )
-        item_to_enchant.enhancement = e()
+    e = enhancers.select_enhancer( item_to_enchant, pr )
+    if e:
+        item_to_enchant.enhancement = e(item_to_enchant,points=pr)
+
+# Test Magic Items
+#for t in range( 100 ):
+#    wep = swords.Longsword()
+#    make_item_magic( wep, t % 10 + wep.min_rank() )
+#    print "{}.{}: {}".format( t%10+3,wep,wep.desc() )
 
 WEAPON_TYPES = (SWORD,AXE,MACE,DAGGER,STAFF,BOW,SHIELD,POLEARM,SLING,FARMTOOL,LANCE)
 
