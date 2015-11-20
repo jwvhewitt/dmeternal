@@ -556,10 +556,9 @@ class ShinyArmor( Enhancer ):
 class HeroicArmor( Enhancer ):
     NAMEPAT = "Heroic {0}"
     DESCPAT = "{0} Its intricate design boosts morale and charisma."
-    PLUSRANK = 4
+    PLUSRANK = 5
     AFFECTS = (CLOTHES, LIGHT_ARMOR, HEAVY_ARMOR)
-    BONUSES_PER_RANK = stats.StatMod({ stats.CHARISMA: 1, stats.PHYSICAL_ATTACK: 5, stats.MAGIC_ATTACK: 5 })
-    UPRANKS = (2,3,4)
+    BONUSES_PER_RANK = stats.StatMod({ stats.CHARISMA: 2, stats.PHYSICAL_ATTACK: 5, stats.MAGIC_ATTACK: 5 })
     TYPE = ET_SECONDARY
 
 class InvulnerableArmor( Enhancer ):
@@ -580,7 +579,7 @@ class MagicShield( Enhancer ):
     # The basic armor enhancement.
     NAMEPAT = "{0} +{2}"
     PLUSRANK = 2
-    UPRANKS = (1,2,3,5)
+    UPRANKS = (1,1,2,3)
     BONUSES_PER_RANK = stats.StatMod({ stats.PHYSICAL_DEFENSE: 5, })
     AFFECTS = (SHIELD,)
     TYPE = ET_PRIMARY
@@ -613,10 +612,9 @@ class ShieldOfBashing( Enhancer ):
 class ShinyShield( Enhancer ):
     NAMEPAT = "Shiny {0}"
     DESCPAT = "{0} It provides a bonus to aura."
-    PLUSRANK = 2
+    PLUSRANK = 1
     AFFECTS = (SHIELD,)
     BONUSES_PER_RANK = stats.StatMod({ stats.MAGIC_DEFENSE: 5 })
-    TYPE = ET_SECONDARY
 
 class ResistShield( Enhancer ):
     NAMEPAT = "{0} of Resistance"
