@@ -54,6 +54,7 @@ class DwarvenWaraxe( Item ):
     avatar_frame = 6
     mass = 85
     attackdata = Attack( (2,6,0) )
+    statline = stats.StatMod({ stats.PHYSICAL_ATTACK: 5 })
 
 class OrcishBattleaxe( Item ):
     true_name = "Orcish Battleaxe"
@@ -62,7 +63,7 @@ class OrcishBattleaxe( Item ):
     avatar_image = "avatar_axe.png"
     avatar_frame = 7
     mass = 160
-    attackdata = Attack( (1,12,0), double_handed = True )
+    attackdata = Attack( (1,12,2), double_handed = True )
 
 
 class ExecutionersAxe( Item ):

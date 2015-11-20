@@ -892,7 +892,7 @@ class Character( stats.PhysicalThing ):
             fx = self.unarmed_attack_effect( roll_mod )
         # Add any enchantment bonuses.
         for e in self.condition:
-            self.add_attack_enhancements( roll, e )
+            self.add_attack_enhancements( fx, e )
 
         if self.hidden:
             # Also, sneak attacks get bonus damage.
