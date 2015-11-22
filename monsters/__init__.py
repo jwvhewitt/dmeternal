@@ -130,10 +130,18 @@ def upgrade_equipment( npc, rank ):
         maybe_replace_item( npc, items.generate_special_item( rank, random.choice((items.BOOTS, items.SHOES, items.SANDALS))))
 
 
+def choose_faction_appropriate( fac, full_list ):
+    """Filter a list of species or jobs based on the provided faction."""
+    candidates = list()
+    if fac:
+        for pcs in full_list:
+            if fac.primary in pcs.TAGS or fac.secondary in pcs.TAGS:
+                candidates.append( pcs )
+    return random.choice( candidates or full_list )
 
-def generate_npc( species=None, job=None, gender=None, rank=None, team=None, upgrade=False ):
+def generate_npc( species=None, job=None, gender=None, rank=None, team=None, upgrade=False, fac=None ):
     if not species:
-        species = random.choice( characters.PC_SPECIES )
+        species = choose_faction_appropriate( fac, characters.PC_SPECIES )
     if not gender:
         gender = random.randint(0,1)
     if not rank:
@@ -145,7 +153,7 @@ def generate_npc( species=None, job=None, gender=None, rank=None, team=None, upg
 
     if not job:
         choices = chargen.get_possible_levels( npc ) + chargen.get_possible_levels( npc, NPC_CLASSES )
-        job = random.choice( choices )
+        job = choose_faction_appropriate( fac, choices )
 
     if not job.can_take_level( npc ):
         tries = 100
@@ -187,6 +195,7 @@ def generate_boss( basemon, target_rank, team=None ):
     boss = basemon(team=team)
     if boss.ENC_LEVEL < target_rank:
         boss.levels.append( base.Terror( target_rank-boss.ENC_LEVEL, boss ))
+    boss.ENC_LEVEL = max(target_rank,boss.ENC_LEVEL)
     name = gen_monster_name( boss )
     boss.monster_name, boss.name = boss.name, name
     for t in range( target_rank ):

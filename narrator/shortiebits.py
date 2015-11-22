@@ -32,9 +32,10 @@ class ShortieStub( Plot ):
     SHORTIE_GRAMMAR = {
         # [ADVENTURE] is the top level token- it will expand into a number of
         # high level tokens.
-        "[ADVENTURE]": [ "SDI_ENEMY_BARRACKS SDI_VILLAGE SDI_ENEMY_FORT SDI_BIGBOSS",
+        "[zADVENTURE]": [ "SDI_DEFILED_PLACE",
             ],
-
+        "[ADVENTURE]": [ "[IMPERILED_PLACE] [ENEMY_BASE] [ENEMY_GOAL]",
+            ],
         "[ENEMY_BASE]": [ "SDI_ENEMY_FORT SDI_ENEMY_BARRACKS",
             ],
 
@@ -42,7 +43,8 @@ class ShortieStub( Plot ):
             "SDI_BIGBOSS"
             ],
 
-        "[IMPERILED_PLACE]": [ "SDI_AMBUSH SDI_VILLAGE",
+        "[IMPERILED_PLACE]": [ "SDI_AMBUSH SDI_VILLAGE", "SDI_VILLAGE",
+            "SDI_DEFILED_PLACE"
             ],
     }
     def custom_init( self, nart ):
@@ -57,7 +59,7 @@ class ShortieStub( Plot ):
         # Generate a plot outline for the adventure. We will do this using a
         # context free grammar expansion of the token [ADVENTURE]. The resultant
         # string will be a list of subplot request labels.
-        subplot_list = self.register_element( "SHORTIE_OUTLINE", list( dialogue.grammar.convert_tokens( "[ADVENTURE]", self.SHORTIE_GRAMMAR ).split() ) )
+        subplot_list = self.register_element( "SHORTIE_OUTLINE", list( dialogue.grammar.convert_tokens( "[zADVENTURE]", self.SHORTIE_GRAMMAR ).split() ) )
 
         # Assemble the outline into an adventure. Basically, add a subplot of
         # each generated type, in order. Each subplot describes a stage of the
@@ -228,6 +230,126 @@ class SDIPlot( Plot ):
 # 
 #
 
+# SDI_DEFILED_PLACE
+#   This place, a shrine or glade or whatnot, has been desecrated, blasphemed,
+#   or just plain old ransacked.
+# Win Condition:
+#   Secure the area. May involve defeating leftover raiders, stabilizing a
+#   magical meltdown, or what-have-you. Use your imagination!
+# Grammar Tags:
+#   [SDI_DEFILED_PLACE:location]    The name of the place that was defiled.
+# To do:
+# - Elemental Shrine
+# - Sacred Grove
+# - Ransacked Temple
+
+class ElementalShrine( SDIPlot ):
+    LABEL = "SDI_DEFILED_PLACE"
+    active = True
+    scope = True
+    NAME_PATTERNS = { context.DES_EARTH: "{} of Earth", context.DES_AIR: "{} of Air",
+        context.DES_WATER: "{} of Water", context.DES_FIRE: "{} of Fire"
+        }
+    BUILDING_TYPES = ("Shrine","Temple")
+    ELEMENTS = (context.DES_EARTH,context.DES_WATER,context.DES_AIR,context.DES_FIRE)
+    def custom_init( self, nart ):
+        # Create the scene where the ambush will happen- a wilderness area.
+        antagonist = self.elements.get( "ANTAGONIST" )
+        biome = self.elements.setdefault( "BIOME", randmaps.architect.make_wilderness() )
+        self._theme = random.choice( self.ELEMENTS )
+        archi = self.register_element( "ARCHITECTURE",
+         randmaps.architect.TempleArchitecture())
+        myscene,mymapgen = randmaps.architect.design_scene( 50, 50,
+          randmaps.ForestScene, biome, setting=self.setting,
+          fac=self.elements.get("ANTAGONIST"),secondary=archi)
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+        mymapgen.GAPFILL = randmaps.gapfiller.MonsterFiller(1,5,20)
+        myscene.desctags.append( self._theme )
+        myscene.name = self.NAME_PATTERNS[self._theme].format(random.choice( self.BUILDING_TYPES ))
+
+        # Create the temple exterior.
+        fortress = randmaps.rooms.CastleRoom( parent=myscene,width=21,height=21,
+          tags=(context.GOAL,))
+        exterior = randmaps.rooms.BuildingRoom( parent=fortress,
+         tags=(context.CIVILIZED,) )
+        exterior.special_c[ "window" ] = maps.SMALL_WINDOW
+        gate_1 = waypoints.GateDoor()
+        gate_1.mini_map_label = "Shrine"
+        exterior.special_c[ "door" ] = gate_1
+
+        interior,igen = randmaps.architect.design_scene( 40, 40,
+          randmaps.BuildingScene, archi, setting=self.setting)
+        self.register_scene( nart, interior, igen, ident="_TEMPLE", dident="LOCALE" )
+        interior.desctags.append( self._theme )
+        interior.name = "{} Interior".format( myscene.name )
+        int_mainroom = randmaps.rooms.SharpRoom( width=16,height=16,
+          anchor=randmaps.anchors.south, parent=interior )
+        gate_2 = waypoints.GateDoor()
+        int_mainroom.contents.append( gate_2 )
+        int_mainroom.DECORATE = randmaps.decor.TempleDec()
+        gate_2.anchor = randmaps.anchors.south
+        team = self.register_element( "TEAM", teams.Team(default_reaction=-999, 
+         strength=120, habitat=myscene.get_encounter_request(), fac=antagonist,
+         rank=self.rank, respawn=False ) )
+        int_mainroom.contents.append( team )
+        gate_1.destination = interior
+        gate_1.otherside = gate_2
+        gate_2.destination = myscene
+        gate_2.otherside = gate_1
+
+        # Create the scene entrance and exit on opposite ends of the map.
+        anc_a,anc_b = random.choice(randmaps.anchors.OPPOSING_PAIRS)
+        myroom1 = randmaps.rooms.FuzzyRoom( parent=myscene,anchor=anc_a )
+        myent = waypoints.RoadSignBack()
+        myroom1.contents.append( myent )
+
+        myroom2 = randmaps.rooms.FuzzyRoom( parent=myscene,anchor=anc_b )
+        myexit = waypoints.RoadSignForward()
+        myroom2.contents.append( myexit )
+        myexit.plot_locked = True
+        self._door_locked = True
+        self._do_message = True
+
+        # Save this component's data for the next component.
+        self.register_element( "IN_SCENE", myscene )
+        self.register_element( "IN_ENTRANCE", myent )
+        self.register_element( "OUT_SCENE", myscene )
+        self.register_element( "OUT_ENTRANCE", myexit )
+
+        return True
+    def get_sdi_grammar( self ):
+        """Return a dict of grammar related to this plot."""
+        mygram = {
+            "[achievement]": [ "investigating the {}".format(self.elements["LOCALE"]),
+                ],
+            "[GO_QUEST]": ["Go see what has happened to the {}, and defend it if necessary.".format(self.elements["LOCALE"]),
+                ],
+            "[INTRO]":  ["Your wanderings have brought you close to the {}. However, something seems to be wrong there.".format(self.elements["LOCALE"]),
+                ],
+            "[location]": [str(self.elements["LOCALE"]),
+                ],
+            "[SDI_DEFILED_PLACE:location]": [str(self.elements["LOCALE"]),
+                ],
+            "[SUMMARY]": [ "There has been a disturbance at the {}.".format(str(self.elements["LOCALE"])),
+                ],
+            "[warning]": [ "the {} has been defiled".format(str(self.elements["LOCALE"])),
+                ],
+        }
+        return mygram
+    def t_START( self, explo ):
+        if self._do_message and explo.scene is self.elements["_TEMPLE"]:
+            explo.alert("Without warning, you are ambushed!")
+            for m in explo.scene.contents:
+                if hasattr(m,"team") and m.team is self.elements["TEAM"]:
+                    explo.camp.activate_monster(m)
+    def OUT_ENTRANCE_menu( self, thingmenu ):
+        thingmenu.desc = "You should find out what happened at the {} before leaving.".format(self.elements["LOCALE"])
+    def t_COMBATOVER( self, explo ):
+        if explo.scene is self.elements["_TEMPLE"] and self._door_locked and not self.elements["TEAM"].members_in_play( explo.scene ):
+            self.elements["OUT_ENTRANCE"].plot_locked = False
+            self._door_locked = False
+            explo.alert("The spirit has been calmed. The question is, who would dare to desecrate this place?")
+            explo.check_trigger( "WIN", self )
 
 
 #  SDI_ENEMY_FORT
@@ -253,9 +375,10 @@ class BasicCaveHideout( SDIPlot ):
     def custom_init( self, nart ):
         # Create the scene where the ambush will happen- a wilderness area.
         biome = self.elements.setdefault( "BIOME", randmaps.architect.make_wilderness() )
+        antagonist = self.elements.setdefault( "ANTAGONIST",
+          teams.AntagonistFaction(random.choice(self.ANTAGONIST_SEEDS)) )
         myscene,mymapgen = randmaps.architect.design_scene( 50, 50,
-          randmaps.ForestScene, biome, setting=self.setting,
-          fac=self.elements.get("ANTAGONIST"))
+          randmaps.ForestScene, biome, setting=self.setting)
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
         mymapgen.GAPFILL = randmaps.gapfiller.MonsterFiller(1,5,20)
         myscene.name = random.choice( self.NAME_PATTERNS ).format( namegen.random_style_name() )
@@ -269,9 +392,8 @@ class BasicCaveHideout( SDIPlot ):
         # Create the fortress room.
         fortress = self.register_element( "_AMBUSHROOM",
          randmaps.rooms.MountainRoom(tags=(context.GOAL,)), dident="LOCALE" )
-        antagonist = self.elements.get( "ANTAGONIST" )
         team = self.register_element( "TEAM", teams.Team(default_reaction=-999, 
-         strength=50, habitat=myscene.get_encounter_request(), fac=antagonist,
+         strength=150, habitat=myscene.get_encounter_request(), fac=antagonist,
          rank=self.rank, respawn=False ) )
         fortress.contents.append( team )
 
@@ -288,10 +410,11 @@ class BasicCaveHideout( SDIPlot ):
         btype = monsters.choose_monster_type(self.rank-3,self.rank+1,myhabitat)
         if btype:
             boss = monsters.generate_boss( btype, self.rank+1, team=team )
-            myitem = items.generate_special_item( self.rank+1 )
+            myitem = items.generate_special_item( self.rank )
             if myitem:
                 boss.contents.append( myitem )
             fortress.contents.append( boss )
+            team.boss = boss
 
         # Create the exit... which in this case is the fortress entrance.
         myexit = waypoints.DungeonEntrance()
@@ -319,7 +442,95 @@ class BasicCaveHideout( SDIPlot ):
     def get_sdi_grammar( self ):
         """Return a dict of grammar related to this plot."""
         mygram = {
-            "[achievement]": [ "locating the enemy base",
+            "[achievement]": [ "locating the {} cave".format(self.elements["ANTAGONIST"]),
+                ],
+            "[GO_QUEST]": ["Gain access to the enemy fortress in the {}.".format(self.elements["LOCALE"]),
+                ],
+            "[location]": [str(self.elements["LOCALE"]),
+                ],
+            "[SDI_ENEMY_FORT:location]": [str(self.elements["LOCALE"]),
+                ],
+            "[SUMMARY]": [ "The {} have been spotted near a cave in the {}.".format(self.elements["ANTAGONIST"],str(self.elements["LOCALE"])),
+                ],
+            "[warning]": [ "there is a cave in the {} which is home to the {}".format(str(self.elements["LOCALE"]),self.elements["ANTAGONIST"]),
+                ],
+        }
+        return mygram
+    def OUT_ENTRANCE_menu( self, thingmenu ):
+        thingmenu.desc = "There are too many guards around for you to enter yet."
+    def t_COMBATOVER( self, explo ):
+        if self._door_locked and not self.elements["TEAM"].members_in_play( explo.scene ):
+            self.elements["OUT_ENTRANCE"].plot_locked = False
+            self._door_locked = False
+            explo.alert("With the guards defeated, you are free to enter the cave.")
+            explo.check_trigger( "WIN", self )
+
+class GuardedFortress( SDIPlot ):
+    LABEL = "SDI_ENEMY_FORT"
+    active = True
+    scope = "LOCALE"
+    NAME_PATTERNS = ("{0} Wilds","{0} Wilderness")
+    def custom_init( self, nart ):
+        # Create the scene where the ambush will happen- a wilderness area.
+        antagonist = self.elements.get( "ANTAGONIST" )
+        biome = self.elements.setdefault( "BIOME", randmaps.architect.make_wilderness() )
+        archi = self.register_element( "DUNGEON_ARCHITECTURE",
+         randmaps.architect.BuildingDungeon(antagonist))
+        myscene,mymapgen = randmaps.architect.design_scene( 50, 50,
+          randmaps.ForestScene, biome, setting=self.setting,
+          fac=self.elements.get("ANTAGONIST"),secondary=archi)
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+        mymapgen.GAPFILL = randmaps.gapfiller.MonsterFiller(1,5,20)
+        myscene.name = random.choice( self.NAME_PATTERNS ).format( namegen.random_style_name() )
+
+        # Create the fortress room and the guards.
+        fortress = randmaps.rooms.CastleRoom( parent=myscene,width=21,height=21,
+          tags=(context.GOAL,))
+        team = self.register_element( "TEAM", teams.Team(default_reaction=-999, 
+         strength=150, habitat=myscene.get_encounter_request(), fac=antagonist,
+         rank=self.rank, respawn=False ) )
+        fortress.contents.append( team )
+        fortroom = randmaps.rooms.FuzzyRoom(parent=fortress)
+
+        # Also add a reward- either straight up treasure chests, or an NPC boss
+        # who will probably be carrying some nice gear.
+        if random.randint(1,2) == 1:
+            boss = monsters.generate_npc( rank=self.rank, team=team, fac=antagonist )
+            fortress.contents.append( boss )
+            team.boss = boss
+        else:
+            mychest = waypoints.MediumChest()
+            mychest.stock(self.rank)
+            fortroom.contents.append( mychest )
+
+        # Create the scene entrance
+        myroom = randmaps.rooms.FuzzyRoom( parent=myscene,
+            anchor=random.choice((randmaps.anchors.northwest,randmaps.anchors.northeast,
+            randmaps.anchors.southwest,randmaps.anchors.southeast)) )
+        myent = waypoints.RoadSignBack()
+        myroom.contents.append( myent )
+
+        # Create the exit... which in this case is the fortress inside the walls.
+        exterior = randmaps.rooms.BuildingRoom( parent=fortress,
+         tags=(context.CIVILIZED,) )
+        exterior.special_c[ "window" ] = maps.SMALL_WINDOW
+        myexit = waypoints.GateDoor()
+        myexit.mini_map_label = "Fortress"
+        myexit.plot_locked = True
+        exterior.special_c[ "door" ] = myexit
+        self._door_locked = True
+
+        # Save this component's data for the next component.
+        self.register_element( "IN_SCENE", myscene )
+        self.register_element( "IN_ENTRANCE", myent )
+        self.register_element( "OUT_SCENE", myscene )
+        self.register_element( "OUT_ENTRANCE", myexit )
+
+        return True
+    def get_sdi_grammar( self ):
+        """Return a dict of grammar related to this plot."""
+        mygram = {
+            "[achievement]": [ "raiding the enemy base",
                 ],
             "[GO_QUEST]": ["Gain access to the enemy fortress in the {}.".format(self.elements["LOCALE"]),
                 ],
@@ -341,7 +552,6 @@ class BasicCaveHideout( SDIPlot ):
             self._door_locked = False
             explo.alert("With the guards defeated, you are free to enter the fortress.")
             explo.check_trigger( "WIN", self )
-
 
 
 # SDI_ENEMY_BARRACKS
@@ -457,7 +667,6 @@ class BasicBarracks( SDIPlot ):
 #   [SDI_BIGBOSS:name]   The name of the boss
 #   [SDI_BIGBOSS:type]   The type of the boss (optional)
 # To do:
-# - NPC big boss
 # - Smaller boss with a big pet
 
 class BossInABox( SDIPlot ):
@@ -476,7 +685,7 @@ class BossInABox( SDIPlot ):
           fac=self.elements.get("ANTAGONIST"))
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
 
-        team = teams.Team(default_reaction=-999, rank=self.rank, strength=50,
+        team = teams.Team(default_reaction=-999, rank=self.rank, strength=200,
          habitat=myscene.get_encounter_request(), fac=antagonist, respawn=False )
         goalroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=myscene,
             anchor = random.choice((randmaps.anchors.northwest,randmaps.anchors.north,randmaps.anchors.northeast)) )
@@ -501,7 +710,7 @@ class BossInABox( SDIPlot ):
                 boss.contents.append( myitem )
             goalroom.contents.append( boss )
             self.register_element( "ENEMY", boss )
-
+            team.boss = boss
             myscene.name = random.choice( self.NAME_PATTERNS ).format( boss )
 
         if random.randint(1,10) <= self.rank:
@@ -545,6 +754,81 @@ class BossInABox( SDIPlot ):
         }
         return mygram
 
+class NPCBossInABox( SDIPlot ):
+    # A simple building level, ending in a bossfight.
+    LABEL = "SDI_BIGBOSS"
+    active = True
+    scope = "LOCALE"
+    NAME_PATTERNS = ("{0}'s Hideout","{0}'s Sanctum")
+    def custom_init( self, nart ):
+        """Create the final dungeon, boss encounter, and resolution."""
+        antagonist = self.elements.get( "ANTAGONIST" )
+        biome = self.elements.setdefault( "DUNGEON_ARCHITECTURE",
+          randmaps.architect.BuildingDungeon() )
+        myscene,mymapgen = randmaps.architect.design_scene( 45, 45,
+          randmaps.SubtleMonkeyTunnelScene, biome, setting=self.setting,
+          fac=self.elements.get("ANTAGONIST"))
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+
+        team = teams.Team(default_reaction=-999, rank=self.rank, strength=200,
+         habitat=myscene.get_encounter_request(), fac=antagonist, respawn=False )
+        goalroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=myscene,
+            anchor = random.choice((randmaps.anchors.northwest,randmaps.anchors.north,randmaps.anchors.northeast)) )
+        goalroom.contents.append( team )
+        door2 = waypoints.GateDoor()
+        door2.anchor = randmaps.anchors.north
+        goalroom.contents.append(door2)
+        mychest = waypoints.LargeChest()
+        mychest.stock(self.rank+1)
+        goalroom.contents.append( mychest )
+
+        boss = monsters.generate_npc( rank=self.rank+2, team=team, fac=antagonist )
+        goalroom.contents.append( boss )
+        self.register_element( "ENEMY", boss )
+        team.boss = boss
+        myscene.name = random.choice( self.NAME_PATTERNS ).format( boss )
+
+        if random.randint(1,10) <= self.rank:
+            self.add_sub_plot( nart, "ENCOUNTER", PlotState().based_on( self ) )
+        self.enemy_defeated = False
+
+        entranceroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=myscene,
+            anchor = random.choice((randmaps.anchors.southwest,randmaps.anchors.south,randmaps.anchors.southeast)) )
+        door1 = waypoints.GateDoor()
+        door1.anchor = randmaps.anchors.south
+        entranceroom.contents.append(door1)
+
+        # Save this component's data for the next component.
+        self.register_element( "IN_SCENE", myscene )
+        self.register_element( "IN_ENTRANCE", door1 )
+        self.register_element( "OUT_SCENE", myscene )
+        self.register_element( "OUT_ENTRANCE", door2 )
+
+        return True
+
+    def ENEMY_DEATH( self, explo ):
+        self.enemy_defeated = True
+        explo.check_trigger( "WIN", self )
+    def t_COMBATOVER( self, explo ):
+        if self.enemy_defeated:
+            self.active = False
+    def get_sdi_grammar( self ):
+        """Return a dict of grammar related to this plot."""
+        mygram = {
+            "[achievement]": [ "defeating {}".format(self.elements["ENEMY"]),
+                ],
+            "[GO_QUEST]": ["Defeat {}.".format(self.elements["ENEMY"]),
+                ],
+            "[location]": [str(self.elements["LOCALE"]),],
+            "[SDI_BIGBOSS:name]": [str(self.elements["ENEMY"]),],
+            "[SDI_BIGBOSS:type]": [self.elements["ENEMY"].mr_level.name,],
+            "[SUMMARY]": [ "{} is an evil {}.".format(str(self.elements["ENEMY"]),self.elements["ENEMY"].mr_level.name),
+                ],
+            "[warning]":    ["{} will kill anyone that opposes {}".format(self.elements["ENEMY"],self.elements["ENEMY"].object_pronoun()),
+                ],
+        }
+        return mygram
+
 
 # SDI_AMBUSH
 # The party has been ambushed! Oh noes!
@@ -564,6 +848,10 @@ class ImmediateAmbush( SDIPlot ):
     active = True
     scope = "LOCALE"
     NAME_PATTERNS = ("{0} Highway","{0} Road")
+    @classmethod
+    def matches( self, pstate ):
+        """Requires the SCENE to exist."""
+        return pstate.rank > 2
     def custom_init( self, nart ):
         # Create the scene where the ambush will happen- a wilderness area with
         # a road.
@@ -580,7 +868,7 @@ class ImmediateAmbush( SDIPlot ):
         myent = waypoints.Waypoint()
         ambush_room.contents.append( myent )
         ambush_room.priority = 0
-        antagonist = self.elements.setdefault( "ANTAGONIST", teams.AntagonistFaction( context.GEN_GOBLIN ) )
+        antagonist = self.elements.setdefault( "ANTAGONIST", teams.AntagonistFaction() )
 
         team = self.register_element( "TEAM", teams.Team(default_reaction=-999, rank=self.rank, 
          strength=100, habitat=myscene.get_encounter_request(), fac=antagonist ) )
@@ -639,7 +927,7 @@ class AmbushInterrupted( SDIPlot ):
         # Create the scene where the ambush will happen- a wilderness area with
         # a road.
         biome = self.elements.setdefault( "BIOME", randmaps.architect.make_wilderness() )
-        antagonist = self.elements.setdefault( "ANTAGONIST", teams.AntagonistFaction( context.GEN_GOBLIN ) )
+        antagonist = self.elements.setdefault( "ANTAGONIST", teams.AntagonistFaction() )
         myscene,mymapgen = randmaps.architect.design_scene( 60, 60,
           randmaps.WildernessPath, biome, setting=self.setting,
           fac=antagonist)

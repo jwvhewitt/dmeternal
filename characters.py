@@ -11,6 +11,7 @@ import aibrain
 import collections
 import util
 import cPickle
+import context
 
 # Reaction score constants
 FRIENDLY_THRESHOLD = 25
@@ -34,6 +35,7 @@ class Level( object ):
     MIN_RANK = 0
     FULL_HP_AT_FIRST = True
     FRIENDMOD = dict()
+    TAGS = ()
 
     def __init__( self, rank=0, pc=None ):
         self.rank = 0
@@ -131,7 +133,7 @@ class Warrior( Level ):
         items.HELM, items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK, items.FARMTOOL, items.LANCE )
     starting_equipment = ( items.lightarmor.GladiatorArmor, items.swords.Broadsword, items.shoes.NormalBoots )
-
+    TAGS = (context.MTY_FIGHTER,)
 
 class Thief( Level ):
     name = 'Thief'
@@ -149,7 +151,7 @@ class Thief( Level ):
         items.HAT, items.GLOVE, items.SANDALS, \
         items.SHOES, items.BOOTS, items.CLOAK, items.WAND )
     starting_equipment = ( items.hats.Bandana, items.daggers.Stiletto, items.lightarmor.PaddedArmor, items.cloaks.ThiefCloak )
-
+    TAGS = (context.MTY_THIEF,)
 
 class Bard( Level ):
     name = 'Bard'
@@ -167,6 +169,7 @@ class Bard( Level ):
         items.GLOVE, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK, items.WAND )
     starting_equipment = ( items.swords.Rapier, items.hats.JauntyHat, items.lightarmor.LeatherArmor )
+    TAGS = (context.DES_AIR,context.GEN_KINGDOM)
 
 class Priest( Level ):
     name = 'Priest'
@@ -185,6 +188,8 @@ class Priest( Level ):
         items.HELM, items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK, items.HOLYSYMBOL )
     starting_equipment = ( items.maces.FlangedMace, items.lightarmor.PaddedRobe, items.shoes.NormalBoots, items.holysymbols.WoodSymbol )
+    TAGS = ( context.MTY_PRIEST, context.GEN_KINGDOM,context.DES_SOLAR,
+     context.DES_AIR,context.DES_WATER )
 
 class Mage( Level ):
     name = 'Mage'
@@ -202,6 +207,8 @@ class Mage( Level ):
         items.GLOVE, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK, items.WAND )
     starting_equipment = ( items.staves.Quarterstaff, items.clothes.MageRobe, items.hats.MageHat )
+    TAGS = ( context.MTY_MAGE, context.GEN_KINGDOM,context.DES_LUNAR,
+     context.DES_AIR,context.DES_FIRE )
 
 class Druid( Level ):
     name = 'Druid'
@@ -220,6 +227,8 @@ class Druid( Level ):
         items.GLOVE, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK, items.FARMTOOL )
     starting_equipment = ( items.farmtools.Sickle, items.clothes.DruidRobe, items.cloaks.NormalCloak )
+    TAGS = ( context.MTY_PRIEST, context.GEN_NATURE,context.DES_SOLAR,
+     context.DES_FIRE,context.DES_EARTH )
 
 class Knight( Level ):
     name = 'Knight'
@@ -237,6 +246,7 @@ class Knight( Level ):
         items.HELM, items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK, items.LANCE )
     starting_equipment = ( items.swords.Longsword, items.lightarmor.BrigandineArmor, items.shoes.NormalBoots )
+    TAGS = ( context.MTY_FIGHTER, context.GEN_KINGDOM,context.DES_SOLAR )
 
 class Ranger( Level ):
     name = 'Ranger'
@@ -254,6 +264,7 @@ class Ranger( Level ):
         items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK, items.FARMTOOL )
     starting_equipment = ( items.axes.HandAxe, items.lightarmor.RangerArmor, items.hats.WoodsmansHat, items.shoes.NormalBoots )
+    TAGS = ( context.MTY_FIGHTER, context.GEN_NATURE,context.DES_EARTH )
 
 class Necromancer( Level ):
     name = 'Necromancer'
@@ -271,6 +282,8 @@ class Necromancer( Level ):
         items.GLOVE, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK, items.WAND, items.FARMTOOL )
     starting_equipment = ( items.staves.Quarterstaff, items.clothes.NecromancerRobe, items.hats.NecromancerHat )
+    TAGS = ( context.MTY_MAGE, context.GEN_UNDEAD,context.DES_LUNAR,
+     context.DES_EARTH,context.DES_WATER )
 
 class Samurai( Level ):
     name = 'Samurai'
@@ -288,6 +301,7 @@ class Samurai( Level ):
         items.HELM, items.GLOVE, items.GAUNTLET, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK )
     starting_equipment = ( items.swords.Wakizashi, items.lightarmor.LeatherCuirass, items.shoes.NormalBoots )
+    TAGS = ( context.MTY_FIGHTER,context.DES_FIRE )
 
 class Monk( Level ):
     name = 'Monk'
@@ -305,6 +319,7 @@ class Monk( Level ):
         items.GLOVE, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK )
     starting_equipment = (items.clothes.MonkRobe, items.hats.Headband, items.staves.Quarterstaff, items.shoes.NormalSandals)
+    TAGS = ( context.MTY_PRIEST, )
 
 class Ninja( Level ):
     name = 'Ninja'
@@ -323,6 +338,7 @@ class Ninja( Level ):
         items.GLOVE, items.SANDALS, items.SHOES, \
         items.BOOTS, items.CLOAK )
     starting_equipment = (items.clothes.NinjaGear,items.swords.Wakizashi,items.hats.NinjaMask)
+    TAGS = ( context.MTY_THIEF, )
 
 PC_CLASSES = (Warrior,Thief,Bard,Priest,Mage,Druid,Knight,Ranger,Necromancer,Samurai,Monk,Ninja)
 
@@ -344,6 +360,7 @@ class SentientSpecies( object ):
     MOVE_POINTS = 10
     TEMPLATES = ()
     FRIENDMOD = dict()
+    TAGS = ()
 
     def __init__( self ):
         self.skin_color = random.randint( 0 , self.NUM_COLORS - 1 )
@@ -373,6 +390,7 @@ class SentientSpecies( object ):
 class Human( SentientSpecies ):
     name = "Human"
     desc = "I will assume that you know what a human is. They have no particular strengths or weaknesses."
+    TAGS = (context.GEN_KINGDOM,context.GEN_NATURE,context.GEN_CHAOS)
 
 class Dwarf( SentientSpecies ):
     name = "Dwarf"
@@ -383,6 +401,7 @@ class Dwarf( SentientSpecies ):
     HAIRSTYLE = { stats.MALE: (0,1,3,4,5,6,7,9, 15,16,24,26,27,30,31,34,36,38,42,43,44,45,46,47,48,49,51,52,53), \
         stats.FEMALE: (1,2,3,5,8,9, 14,15,17,18,19,20,21,22,23,25,26,28,29,31,32,33,34,35,36,37,38,39,40,41,42,43,45,46,47,48,49), \
         stats.NEUTER: (0,1,2,3,4,5,6,7,8,9, 10,11,12,13, 14,15,16,17,18,19, 20,21,22,23,24,25,26,27,28,29, 30,31,32,33,34,35,36,37,38,39, 40,41,42,43,44,45,46,47,48,49, 51,52,53 ) }
+    TAGS = (context.GEN_KINGDOM,context.DES_EARTH)
 
 class Elf( SentientSpecies ):
     name = "Elf"
@@ -395,6 +414,7 @@ class Elf( SentientSpecies ):
     HAIRSTYLE = { stats.MALE: (0,1,3,4,5,6,7,9, 10,11,12,13, 16,24,26,30,31,34,36,38,42,43,44,45,46,51,52,53), \
         stats.FEMALE: (1,2,3,5,8,9, 10,11,12,13, 14,17,18,19,20,21,22,23,25,26,28,29,31,32,33,34,35,36,37,38,39,40,41,42,43,45,46), \
         stats.NEUTER: (0,1,2,3,4,5,6,7,8,9, 10,11,12,13, 14,16,17,18,19, 20,21,22,23,24,25,26,28,29, 30,31,32,33,34,35,36,37,38,39, 40,41,42,43,44,45,46, 51,52,53 ) }
+    TAGS = (context.GEN_KINGDOM,context.GEN_NATURE,)
 
 class Gnome( SentientSpecies ):
     name = "Gnome"
@@ -402,6 +422,7 @@ class Gnome( SentientSpecies ):
     statline = { stats.STRENGTH: -2, stats.PIETY: 2, stats.STEALTH: 5 }
     starting_equipment = ( items.hats.GnomeHat, items.axes.Pickaxe )
     VOICE = dialogue.voice.GNOMIC
+    TAGS = (context.DES_EARTH,)
 
 class Orc( SentientSpecies ):
     name = "Orc"
@@ -413,6 +434,7 @@ class Orc( SentientSpecies ):
     HAIRSTYLE = { stats.MALE: (0,1,3,4,5,6,7,9, 15,16,24,26,27,30,31,34,36,38,42,43,44,45,46,47,48,49,51,52,53), \
         stats.FEMALE: (1,2,3,5,8,9, 14,15,17,18,19,20,21,22,23,25,26,28,29,31,32,33,34,35,36,37,38,39,40,41,42,43,45,46,47), \
         stats.NEUTER: (0,1,2,3,4,5,6,7,8,9, 10,11,12,13, 14,15,16,17,18,19, 20,21,22,23,24,25,26,27,28,29, 30,31,32,33,34,35,36,37,38,39, 40,41,42,43,44,45,46,47,48,49, 51,52,53 ) }
+    TAGS = (context.GEN_GOBLIN,)
 
 class Hurthling( SentientSpecies ):
     name = "Hurthling"
@@ -420,6 +442,8 @@ class Hurthling( SentientSpecies ):
     statline = { stats.STRENGTH: -3, stats.TOUGHNESS: -2, stats.REFLEXES: 4, \
         stats.STEALTH: 10 }
     VOICE = dialogue.voice.HURTHISH
+    TAGS = (context.GEN_KINGDOM,)
+
 
 class Fuzzy( SentientSpecies ):
     name = "Fuzzy"
@@ -427,6 +451,7 @@ class Fuzzy( SentientSpecies ):
     statline = { stats.INTELLIGENCE: -1, stats.PIETY: -1, stats.CHARISMA: 2 }
     FIRST_IMAGE = 18
     VOICE = dialogue.voice.KITTEH
+    TAGS = (context.GEN_CHAOS,)
 
 class Reptal( SentientSpecies ):
     name = "Reptal"
@@ -439,6 +464,7 @@ class Reptal( SentientSpecies ):
     starting_equipment = ( items.maces.Club, items.clothes.AnimalSkin )
     VOICE = dialogue.voice.DRACONIAN
     TEMPLATES = (stats.REPTILE,)
+    TAGS = (context.GEN_DRAGON,context.DES_FIRE,)
 
 class Centaur( SentientSpecies ):
     name = "Centaur"
@@ -449,6 +475,7 @@ class Centaur( SentientSpecies ):
     starting_equipment = ( items.polearms.Spear, items.clothes.LeatherJacket )
     VOICE = dialogue.voice.GREEK
     MOVE_POINTS = 12
+    TAGS = (context.GEN_CHAOS,context.GEN_NATURE,)
 
 PC_SPECIES = (Human, Dwarf, Elf, Gnome, Orc, Hurthling, Fuzzy, Reptal, Centaur )
 

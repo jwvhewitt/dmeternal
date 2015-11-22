@@ -136,15 +136,15 @@ def load_campaign( screen ):
             camp.play( screen )
 
 def test_campaign_generator( screen ):
+    camp = campaign.Campaign()
     for t in range( 1000 ):
-        nart = narrator.Narrative( campaign.Campaign(), narrator.plots.PlotState(rank=1), adv_type="STUB_BARDIC", end_rank=5 )
-        nart.build()
+        nart = narrator.Narrative( camp, narrator.plots.PlotState(rank=1), adv_type="SHORTIE", end_rank=5 )
+        #nart.build()
         print t
 
     for p in narrator.UNSORTED_PLOT_LIST:
-        print "{} [{}]".format( p, p._used )
-
-
+        if p._used > 0:
+            print "{} [{}]".format( p, p._used )
 
 if __name__=='__main__':
     pygame.init()

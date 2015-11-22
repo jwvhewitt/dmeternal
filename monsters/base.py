@@ -4,6 +4,7 @@ import image
 import items
 import random
 import spells
+import context
 
 # NPC CLASSES
 
@@ -21,6 +22,7 @@ class Peasant( characters.Level ):
         items.BULLET, items.CLOTHES, items.HAT, \
         items.GLOVE, items.SANDALS, items.SHOES, items.BOOTS, items.CLOAK )
     starting_equipment = (items.clothes.PeasantGarb,items.maces.Club)
+    TAGS = (context.GEN_KINGDOM,)
 
 class Merchant( characters.Level ):
     name = 'Merchant'
@@ -143,6 +145,9 @@ class NPCharacter( characters.Character ):
     """The only difference? NPCs don't get saving grace until -10HP."""
     def is_dead( self ):
         return not self.is_alright()
+    @property
+    def ENC_LEVEL( self ):
+        return self.rank()
 
 
 class Monster( NPCharacter ):

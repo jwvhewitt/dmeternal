@@ -85,25 +85,27 @@ class DIC_YouShallNotPass( Plot ):
         myhabitat=scene.get_encounter_request()
         myhabitat[ context.MTY_HUMANOID ] = context.PRESENT
         myhabitat[ context.MTY_FIGHTER ] = context.MAYBE
-        team = teams.Team(default_reaction=-999, rank=self.rank, strength=120, habitat=myhabitat, respawn=False )
+        team = teams.Team(default_reaction=-999, rank=self.rank, strength=200, habitat=myhabitat, respawn=False )
 
         myhabitat[(context.MTY_HUMANOID,context.MTY_LEADER)] = True
         myhabitat[context.MTY_LEADER] = context.MAYBE
         btype = monsters.choose_monster_type(self.rank,self.rank+2,myhabitat)
-        boss = monsters.generate_boss( btype, self.rank+2 )
-        boss.team = team
+        if btype:
+            boss = monsters.generate_boss( btype, self.rank+2 )
+            boss.team = team
+            team.boss = boss
 
         # Give the boss a magic weapon.
         weapon = items.choose_item( random.choice( items.WEAPON_TYPES ), self.rank )
         if weapon:
-            items.make_item_magic( weapon, self.rank + 2 )
+            items.make_item_magic( weapon, self.rank )
             weapon.identified = True
             boss.contents.append( weapon )
 
         bridge_room.contents.append( team )
         bridge_room.contents.append( boss )
 
-        return True
+        return btype
 
 
 #  **************************
@@ -132,12 +134,9 @@ class GenericArmory( Plot ):
             mychest = waypoints.MediumChest()
             mychest.stock(self.rank)
             weapon = None
-            bonus = 0
-            while ( bonus < 6 ) and not weapon:
-                weapon = items.choose_item( random.choice( items.WEAPON_TYPES ), self.rank + bonus )
-                bonus += 1
+            weapon = items.choose_item( random.choice( items.WEAPON_TYPES ), self.rank )
             if weapon:
-                items.make_item_magic( weapon, self.rank + 2 + bonus )
+                items.make_item_magic( weapon, self.rank + 1 )
                 weapon.identified = False
                 mychest.contents.append( weapon )
             room.contents.append( mychest )
@@ -235,10 +234,11 @@ class CursedTomb( Plot ):
         if btype:
             # We have a boss type, which means we can get a boss monster.
             bteam = teams.Team(default_reaction=-999, rank=self.rank, 
-              strength=100, habitat={context.MTY_UNDEAD: True, context.DES_LUNAR: context.MAYBE}, fac=None )
+              strength=200, habitat={context.MTY_UNDEAD: True, context.DES_LUNAR: context.MAYBE}, fac=None )
             boss = monsters.generate_boss( btype, self.rank+2, team=bteam )
+            bteam.boss = boss
             for t in range( 3 ):
-                myitem = items.generate_special_item( self.rank + random.randint(2,4) )
+                myitem = items.generate_special_item( self.rank + 1 )
                 if myitem:
                     boss.contents.append( myitem )
 
@@ -360,9 +360,11 @@ class FortifiedCamp( Plot ):
         room3.contents.append( mychest )
         room3.contents.append( maps.CAULDRON )
         self.register_element( "_ROOM", room, dident="LOCALE" )
-        boss = self.register_element( "NPC1", monsters.generate_npc(team=myteam,upgrade=True,rank=self.rank+random.randint(0,1)), dident="_ROOM")
+        boss = self.register_element( "NPC1",
+         monsters.generate_npc(team=myteam,upgrade=True,rank=self.rank+random.randint(0,1)),
+         dident="_ROOM",fac=scene.fac)
         for t in range( 2 ):
-            myitem = items.generate_special_item( self.rank + 2 )
+            myitem = items.generate_special_item( self.rank )
             if myitem:
                 boss.contents.append( myitem )
         return True

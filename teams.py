@@ -127,7 +127,8 @@ class AntagonistFaction( Faction ):
         self.name = pattern.format( propername=propername, adjective=random.choice(adjectives), org=random.choice(orgs), icon=random.choice(icons), dungeon=random.choice(dtype) )
 
 class Team( object ):
-    def __init__( self, default_reaction = 0, home=None, rank=1, strength=100, habitat=None, respawn=True, fac=None, hodgepodge=False ):
+    def __init__( self, default_reaction = 0, home=None, rank=1, strength=100,
+     habitat=None, respawn=True, fac=None, hodgepodge=False, boss=None ):
         self.default_reaction = default_reaction
         self.charm_roll = None
         self.home = home
@@ -137,6 +138,7 @@ class Team( object ):
         self.respawn = respawn
         self.fac = fac
         self.hodgepodge = hodgepodge
+        self.boss = boss
 
     def check_reaction( self, camp ):
         if self.charm_roll:
@@ -149,14 +151,21 @@ class Team( object ):
             it += self.fac.reaction
         return it
 
-    def encounter_points( self, max_rank, mclass ):
+    def encounter_points( self, max_rank, mon_rank, xp_value ):
         """Return the encounter points per monster for this mclass."""
-        rel_level = max_rank + 1 - mclass.ENC_LEVEL
-        m_pts = 200 / ( rel_level ** 2 // 12 + rel_level )
+        rel_level = max( max_rank + 1 - mon_rank , 1 )
+        m_pts = 200 / ( rel_level ** 2 / 12 + rel_level )
 
         # Scale the points based on the xp value of the monster, assuming
         # a normal rate of 100xp per rank.
-        m_pts = ( m_pts * mclass().xp_value() ) // ( mclass.ENC_LEVEL * 100 )
+        if mon_rank == 0:
+            print "ERROR: {} is the boss {}".format( self.boss, self.boss.ENC_LEVEL )
+            if hasattr( self.boss, "monster_name" ):
+                print self.boss.monster_name
+            else:
+                print "Apparently an NPC boss..."
+            print self.boss.desc()
+        m_pts = ( m_pts * xp_value ) // ( min( max_rank, mon_rank) * 100 )
         return m_pts
 
     def build_encounter( self, gb ):
@@ -171,6 +180,10 @@ class Team( object ):
         # Determine how many points of monster to generate.
         pts = max( ( random.randint(175,225) * self.strength ) // 100, 1 )
 
+        # If we've been given a boss, remove points for that first.
+        if self.boss:
+            pts -= self.encounter_points( max_rank, self.boss.ENC_LEVEL, self.boss.xp_value() )
+
         # We really don't want generation to fail. If no faction members can
         # be found, attempt to load without faction... or just anything.
         mclass = gb.choose_monster( min_rank, max_rank, myhab )
@@ -180,7 +193,7 @@ class Team( object ):
             mclass = gb.choose_monster( min_rank, max_rank, {context.SET_EVERY: True} )
 
         while pts > 0 and mclass:
-            m_pts = self.encounter_points( max_rank, mclass )
+            m_pts = self.encounter_points( max_rank, mclass.ENC_LEVEL, mclass().xp_value() )
 
             # Determine what companions this monster might get.
             if self.hodgepodge:
@@ -209,7 +222,7 @@ class Team( object ):
                     n = max_n
                 # If the next monster in a hodgepodge is too big,
                 # just end with this monster.
-                if self.hodgepodge and left_n > 0 and self.encounter_points( max_rank, nextmon ) > ( left_n + 25 ):
+                if self.hodgepodge and left_n > 0 and self.encounter_points( max_rank, nextmon.ENC_LEVEL, nextmon().xp_value() ) > ( left_n + 25 ):
                     n = max_n + 1
                     nextmon = 0
             else:

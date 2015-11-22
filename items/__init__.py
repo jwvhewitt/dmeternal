@@ -465,11 +465,6 @@ def make_item_magic( item_to_enchant, target_rank ):
     if e:
         item_to_enchant.enhancement = e(item_to_enchant,points=pr)
 
-# Test Magic Items
-#for t in range( 100 ):
-#    wep = swords.Longsword()
-#    make_item_magic( wep, t % 10 + wep.min_rank() )
-#    print "{}.{}: {}".format( t%10+3,wep,wep.desc() )
 
 WEAPON_TYPES = (SWORD,AXE,MACE,DAGGER,STAFF,BOW,SHIELD,POLEARM,SLING,FARMTOOL,LANCE)
 
@@ -488,6 +483,12 @@ def generate_special_item( item_rank, item_type=None ):
         it.identified = False
     return it
 
+# Test Magic Items
+#for t in range( 100 ):
+#    wep = choose_item( item_type = random.choice( WEAPON_TYPES + (CLOTHES,LIGHT_ARMOR,HEAVY_ARMOR,SHIELD) ), max_rank = 5 )
+#    make_item_magic( wep, t % 10 + wep.min_rank() )
+#    print "{}.{}: {}".format( t%10+3,wep,wep.desc() )
+
 
 def generate_hoard( drop_rank, drop_strength, item_types=PREMIUM_TYPES ):
     """Returns a tuple containing gold, list of items."""
@@ -498,14 +499,14 @@ def generate_hoard( drop_rank, drop_strength, item_types=PREMIUM_TYPES ):
     gp = max( ( drop_rank//2 + random.randint( 1, drop_rank + 1 ) ) * drop_strength + random.randint(1,100) - random.randint(1,100), random.randint(51,150) )
     hoard = list()
 
-    tries = random.randint( 0 , 3 + ( drop_rank + 1 ) // 2 )
+    tries = random.randint( 0 , 2 + ( drop_rank + 1 ) // 2 )
     while ( gp > 0 ) and ( tries > 0 ):
         i_rank = drop_rank
         if random.randint(1,20) == 17:
             # Generate an out-of-depth item.
-            i_rank += random.randint(3,5)
+            i_rank += random.randint(1,3)
             it = choose_item( item_type = random.choice( item_types ), max_rank = i_rank )
-            tries -= 1
+            tries -= 3
             if it:
                 it.identified = False
         elif random.randint(1,3) != 1:
@@ -514,8 +515,8 @@ def generate_hoard( drop_rank, drop_strength, item_types=PREMIUM_TYPES ):
             it = choose_item( max_rank = drop_rank )
         if it:
             delta_rank = i_rank - it.min_rank()
-            if random.randint(1,5) <= delta_rank:
-                if tries > 1 and random.randint(1,3) == 2:
+            if random.randint(1,6) <= delta_rank:
+                if tries > 1 and random.randint(1,6) == 2:
                     i_rank += 1
                     tries += -1
                 make_item_magic( it, i_rank )

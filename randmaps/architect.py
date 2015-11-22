@@ -136,6 +136,19 @@ class Village( Architecture ):
         self.sprites[maps.SPRITE_FLOOR] = random.choice(self.FLOOR_OPTIONS)
         self.sprites[maps.SPRITE_CHEST] = "terrain_chest_wood.png"
 
+class TempleArchitecture( Architecture ):
+    WALL_OPTIONS = [ "terrain_wall_lightbrick.png","terrain_wall_lightstone.png",
+        "terrain_wall_pillars.png","terrain_wall_purple.png"
+    ]
+    def __init__( self, fac=None ):
+        super(TempleArchitecture, self).__init__(biome=context.HAB_BUILDING,
+          desctags=[context.MAP_GOUP,context.MTY_PRIEST],
+          wall_filter=converter.BasicConverter())
+        self.sprites[maps.SPRITE_WALL] = random.choice(self.WALL_OPTIONS)
+        self.sprites[maps.SPRITE_FLOOR] = "terrain_floor_diamond.png"
+        self.sprites[maps.SPRITE_CHEST] = "terrain_chest_metal.png"
+        self.sprites[maps.SPRITE_INTERIOR] = "terrain_int_temple.png"
+
 
 WILDERNESS_TYPES = [Forest,Forest,Desert]
 def make_wilderness():

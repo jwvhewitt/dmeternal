@@ -38,7 +38,8 @@ class CallingCthulu( Plot ):
         interior.name = "{0}'s Lair".format( boss )
 
         # Create the goal room.
-        team = teams.Team(default_reaction=-999, rank=self.rank, strength=50, habitat=interior.get_encounter_request(), respawn=False )
+        team = teams.Team(default_reaction=-999, rank=self.rank, strength=200,
+         habitat=interior.get_encounter_request(), respawn=False, boss=boss )
         int_goalroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=interior )
         int_goalroom.contents.append( team )
         int_goalroom.contents.append( boss )

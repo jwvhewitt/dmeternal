@@ -179,7 +179,8 @@ class BC_DwarvenCity( Plot ):
         self.add_sub_plot( nart, "CONNECT", PlotState( elements={"PREV":self.elements["LAST_DUNGEON"],"NEXT":interior} ).based_on( self ) )
 
         # Create the goal room.
-        team = teams.Team(default_reaction=-999, rank=self.rank, strength=50, habitat=interior.get_encounter_request(), respawn=False )
+        team = teams.Team(default_reaction=-999, rank=self.rank, strength=150,
+         habitat=interior.get_encounter_request(), respawn=False, boss=boss )
         int_goalroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=interior )
         int_goalroom.contents.append( team )
         int_goalroom.contents.append( boss )
@@ -404,7 +405,8 @@ class StraightBardicBalrog( Plot ):
         self.register_scene( nart, interior, igen, ident="_LAIR" )
         self.add_sub_plot( nart, "CONNECT", PlotState( elements={"PREV":self.elements["LAST_DUNGEON"],"NEXT":interior} ).based_on( self ) )
 
-        team = teams.Team(default_reaction=-999, rank=self.rank, strength=50, habitat=interior.get_encounter_request(), respawn=False )
+        team = teams.Team(default_reaction=-999, rank=self.rank, strength=200,
+         habitat=interior.get_encounter_request(), respawn=False, boss=boss )
         int_goalroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=interior )
         int_goalroom.contents.append( team )
         boss.team = team

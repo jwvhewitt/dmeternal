@@ -37,12 +37,13 @@ class AdventurerBossEncounter( Plot ):
         myhabitat = scene.get_encounter_request()
         myhabitat[ context.MTY_HUMANOID ] = True
         myteam = teams.Team(default_reaction=-999, rank=self.rank, 
-          strength=125, habitat=myhabitat )
+          strength=200, habitat=myhabitat )
         room.contents.append( myteam )
         mh2 = myhabitat.copy()
         mh2[(context.MTY_LEADER,context.MTY_BOSS)] = True
-        boss = monsters.generate_npc(team=myteam,upgrade=True,rank=self.rank+1)
-        myitem = items.generate_special_item( self.rank + 3 )
+        boss = monsters.generate_npc(team=myteam,upgrade=True,rank=self.rank+1,fac=scene.fac)
+        myteam.boss = boss
+        myitem = items.generate_special_item( self.rank + 1 )
         if myitem:
             boss.contents.append( myitem )
         self.register_element( "_ROOM", room, dident="LOCALE" )
@@ -62,7 +63,7 @@ class Beastmaster( Plot ):
         mygen = nart.get_map_generator( scene )
         room = mygen.DEFAULT_ROOM()
         myteam = teams.Team(default_reaction=-999, rank=self.rank+1, 
-          strength=125, habitat={context.MTY_BEAST: True}, hodgepodge=True )
+          strength=200, habitat={context.MTY_BEAST: True}, hodgepodge=True )
         room.contents.append( myteam )
         myhabitat = scene.get_encounter_request()
         myhabitat[ context.MTY_HUMANOID ] = True
@@ -74,9 +75,10 @@ class Beastmaster( Plot ):
             myitem = items.generate_special_item( self.rank )
             if myitem:
                 boss.contents.append( myitem )
-            myspear = items.generate_special_item( self.rank + 4,item_type=items.POLEARM )
+            myspear = items.generate_special_item( self.rank + 1,item_type=items.POLEARM )
             if myspear:
                 boss.contents.append( myspear )
+            myteam.boss = boss
             self.register_element( "_ROOM", room, dident="LOCALE" )
             self.register_element( "BOSS", boss, "_ROOM" )
         return btype
@@ -154,7 +156,7 @@ class DragonLair( Plot ):
                 chests.append( mychest )
             # And the special treasure.
             for t in range( 3 ):
-                myitem = items.generate_special_item( self.rank + random.randint(2,4) )
+                myitem = items.generate_special_item( self.rank + random.randint(0,1) )
                 if myitem:
                     random.choice( chests ).contents.append( myitem )
             return True
@@ -182,7 +184,7 @@ class DungeonLibrary( Plot ):
         room.contents.append( mychest )
         room.contents.append( waypoints.Bookshelf() )
         for t in range( random.randint(2,3) ):
-            myitem = items.generate_special_item( self.rank + 1, items.SCROLL )
+            myitem = items.generate_scroll( self.rank + 1 )
             if myitem:
                 myitem.identified = True
                 mychest.contents.append( myitem )
@@ -192,8 +194,8 @@ class DungeonLibrary( Plot ):
         myteam = self.register_element( "TEAM", teams.Team(default_reaction=-999, rank=self.rank, 
           strength=120, habitat=myhabitat, hodgepodge = True ) )
         room.contents.append( myteam )
-        boss = monsters.generate_npc(team=myteam,upgrade=True,rank=self.rank+1,job=random.choice(self.JOBS))
-        myitem = items.generate_special_item( self.rank + 3 )
+        boss = monsters.generate_npc(team=myteam,upgrade=True,rank=self.rank+1,job=random.choice(self.JOBS),fac=scene.fac)
+        myitem = items.generate_special_item( self.rank )
         if myitem:
             boss.contents.append( myitem )
         room.contents.append( boss )
@@ -219,10 +221,10 @@ class EnemyParty( Plot ):
         myteam = self.register_element( "TEAM", teams.Team( default_reaction=-50, strength=0 ) )
         room.contents.append( myteam )
         self.register_element( "_ROOM", room, dident="LOCALE" )
-        p1 = self.register_element( "NPC1", monsters.generate_npc(team=myteam,job=random.choice( self.FIGHTERS ),upgrade=True,rank=self.rank), dident="_ROOM")
-        p2 = self.register_element( "NPC2", monsters.generate_npc(team=myteam,job=random.choice( self.THIEVES ),upgrade=True,rank=self.rank), dident="_ROOM")
-        p3 = self.register_element( "NPC3", monsters.generate_npc(team=myteam,job=random.choice( self.PRIESTS ),upgrade=True,rank=self.rank), dident="_ROOM")
-        p4 = self.register_element( "NPC4", monsters.generate_npc(team=myteam,job=random.choice( self.MAGES ),upgrade=True,rank=self.rank), dident="_ROOM")
+        p1 = self.register_element( "NPC1", monsters.generate_npc(team=myteam,job=random.choice( self.FIGHTERS ),upgrade=True,rank=self.rank,fac=scene.fac), dident="_ROOM")
+        p2 = self.register_element( "NPC2", monsters.generate_npc(team=myteam,job=random.choice( self.THIEVES ),upgrade=True,rank=self.rank,fac=scene.fac), dident="_ROOM")
+        p3 = self.register_element( "NPC3", monsters.generate_npc(team=myteam,job=random.choice( self.PRIESTS ),upgrade=True,rank=self.rank,fac=scene.fac), dident="_ROOM")
+        p4 = self.register_element( "NPC4", monsters.generate_npc(team=myteam,job=random.choice( self.MAGES ),upgrade=True,rank=self.rank,fac=scene.fac), dident="_ROOM")
         self.add_sub_plot( nart, "RESOURCE_NPCCONVO", PlotState( elements={"NPC":random.choice((p1,p2,p3,p4))} ).based_on( self ) )
         return True
 
@@ -239,14 +241,15 @@ class HumanoidBossEncounter( Plot ):
         myhabitat = scene.get_encounter_request()
         myhabitat[ context.MTY_HUMANOID ] = True
         myteam = teams.Team(default_reaction=-999, rank=self.rank, 
-          strength=125, habitat=myhabitat )
+          strength=200, habitat=myhabitat )
         room.contents.append( myteam )
         mh2 = myhabitat.copy()
         mh2[(context.MTY_LEADER,context.MTY_BOSS)] = True
         btype = monsters.choose_monster_type(self.rank-2,self.rank+2,mh2)
         if btype:
             boss = monsters.generate_boss( btype, self.rank+3, team=myteam )
-            myitem = items.generate_special_item( self.rank + 5 )
+            myteam.boss = boss
+            myitem = items.generate_special_item( self.rank+1 )
             if myitem:
                 boss.contents.append( myitem )
             self.register_element( "_ROOM", room, dident="LOCALE" )
@@ -298,7 +301,7 @@ class SkeletonTreasure( Plot ):
         mychest = self.register_element( "CHEST", waypoints.LargeChest(plot_locked = True), dident="_ROOM" )
         mychest.stock(self.rank)
         for t in range( random.randint(1,3) ):
-            myitem = items.generate_special_item( self.rank + random.randint(2,4) )
+            myitem = items.generate_special_item( self.rank + 1 )
             if myitem:
                 mychest.contents.append( myitem )
         self.trap_ready = False

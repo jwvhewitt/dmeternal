@@ -281,7 +281,7 @@ class RLI_VillagePerson( Plot ):
         gate_2.anchor = randmaps.anchors.south
         int_mainroom.DECORATE = randmaps.decor.BedroomDec()
 
-        npc = monsters.generate_npc()
+        npc = monsters.generate_npc(fac=pstate.elements["LOCALE"].fac)
         interior.name = "{0}'s Home".format( npc )
         gate_1.mini_map_label = interior.name
         suitor = self.elements.get("TARGET")

@@ -218,7 +218,7 @@ class LibraryOfTheDead( Plot ):
         mychest.stock(self.rank,item_types=(items.SCROLL,items.POTION))
         room.contents.append( mychest )
         for t in range( random.randint(5,8) ):
-            myitem = items.generate_special_item( self.rank + 1, items.SCROLL )
+            myitem = items.generate_scroll( self.rank + 1 )
             if myitem:
                 myitem.identified = True
                 mychest.contents.append( myitem )
@@ -232,7 +232,7 @@ class LibraryOfTheDead( Plot ):
         btype = monsters.choose_monster_type(self.rank-1,self.rank+4,mh2)
         if btype:
             boss = monsters.generate_boss( btype, self.rank+4, team=myteam )
-            myitem = items.generate_special_item( self.rank+7, items.WAND )
+            myitem = items.generate_special_item( self.rank+2, items.WAND )
             if myitem:
                 boss.contents.append( myitem )
             self.register_element( "_ROOM", room, dident="LOCALE" )
@@ -313,6 +313,7 @@ class NeutralTraders( Plot ):
         btype = monsters.choose_monster_type(self.rank-1,self.rank+2,myhabitat)
         if btype:
             boss = monsters.generate_boss( btype, self.rank-1, team=myteam )
+            myteam.boss = boss
             self.shop = self.register_element( "SHOPSERVICE", services.Shop( rank=self.rank+3, num_items=15, npc=boss ) )
             self.first_time = True
             self.register_element( "BOSS", boss, "_ROOM" )
