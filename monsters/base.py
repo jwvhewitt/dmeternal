@@ -40,6 +40,7 @@ class Merchant( characters.Level ):
         items.BOOTS, items.CLOAK, items.WAND )
     starting_equipment = (items.clothes.MerchantGarb,items.daggers.Dirk)
     FRIENDMOD = {characters.Thief: -3, characters.Ninja: -3}
+    TAGS = (context.GEN_KINGDOM,)
 
 class Innkeeper( characters.Level ):
     name = 'Innkeeper'

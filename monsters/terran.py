@@ -61,7 +61,7 @@ class Xorn( base.Monster ):
     TEMPLATES = (stats.ELEMENTAL,stats.EARTH)
     MOVE_POINTS = 4
     HABITAT = ( context.HAB_CAVE, context.SET_EVERY,
-     context.MTY_BOSS,
+     context.MTY_BOSS, context.MTY_ELEMENTAL, context.GEN_TERRAN,
      context.DES_EARTH )
     ENC_LEVEL = 9
     TREASURE = treasuretype.Standard( (items.GEM, ) )
@@ -93,7 +93,8 @@ class EarthElemental( base.Monster ):
     TEMPLATES = (stats.ELEMENTAL,stats.EARTH)
     MOVE_POINTS = 6
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
-     context.DES_EARTH, context.SUMMON_ELEMENTAL )
+     context.DES_EARTH, context.MTY_ELEMENTAL, context.GEN_TERRAN,
+     context.SUMMON_ELEMENTAL )
     ENC_LEVEL = 12
 
     ATTACK = items.Attack( (3,10,0), element = stats.RESIST_CRUSHING)

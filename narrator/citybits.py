@@ -32,6 +32,7 @@ class CityOnEdgeOfCiv( Plot ):
         """Create map, fill with city + services."""
         biome = self.elements.setdefault( "BIOME", randmaps.architect.make_wilderness() )
         archi = self.register_element( "ARCHITECTURE", randmaps.architect.Village(biome.biome))
+        culture = self.elements.setdefault( "CULTURE", teams.PolisFaction() )
         myscene,mymapgen = randmaps.architect.design_scene( 90, 90,
           randmaps.EdgeOfCivilization, biome,secondary=archi,setting=self.setting)
         myscene.desctags.append( context.DES_CIVILIZED )
@@ -43,8 +44,8 @@ class CityOnEdgeOfCiv( Plot ):
         castle.contents.append( myteam )
         myent = waypoints.Well()
         myroom.contents.append( myent )
-        myroom.contents.append( monsters.generate_npc(team=myteam) )
-        myroom.contents.append( monsters.generate_npc(team=myteam) )
+        myroom.contents.append( monsters.generate_npc(team=myteam,fac=culture) )
+        myroom.contents.append( monsters.generate_npc(team=myteam,fac=culture) )
 
         self.register_element( "ENTRANCE", myent )
 
@@ -88,9 +89,13 @@ class MoriaVille( Plot ):
         """Create map, fill with city + services."""
         biome = self.elements.setdefault( "BIOME", randmaps.architect.make_wilderness() )
         archi = self.register_element( "ARCHITECTURE", randmaps.architect.Village(biome.biome))
+        culture = self.register_element( "CULTURE",
+          teams.PolisFaction(dungeon_type=("Village","Hamlet","Town")) )
         myscene,mymapgen = randmaps.architect.design_scene( 50, 50,
-          randmaps.ForestScene, biome,secondary=archi,setting=self.setting)
+          randmaps.ForestScene, biome,fac=culture,secondary=archi,
+          setting=self.setting)
         myscene.desctags.append( context.DES_CIVILIZED )
+        myscene.name = culture.name
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
 
         castle = self.register_element( "CITY",
@@ -101,8 +106,8 @@ class MoriaVille( Plot ):
         castle.contents.append( myteam )
         myent = waypoints.RoadSignToAdventure()
         myroom.contents.append( myent )
-        myroom.contents.append( monsters.generate_npc(team=myteam) )
-        myroom.contents.append( monsters.generate_npc(team=myteam) )
+        myroom.contents.append( monsters.generate_npc(team=myteam,fac=culture) )
+        myroom.contents.append( monsters.generate_npc(team=myteam,fac=culture) )
 
         self.register_element( "ENTRANCE", myent )
 
@@ -145,8 +150,9 @@ class GenerallyGeneralStore( Plot ):
         self.register_element( "_EXTERIOR", exterior, dident="CITY" )
 
         archi = self.elements.setdefault( "ARCHITECTURE", randmaps.architect.Village() )
+        culture = self.elements.get("CULTURE")
         interior,igen = randmaps.architect.design_scene( 50, 50, randmaps.BuildingScene,
-            archi, setting=self.setting )
+            archi, setting=self.setting,fac=culture )
 
         gate_1 = waypoints.GateDoor()
         gate_2 = waypoints.GateDoor()
@@ -162,7 +168,7 @@ class GenerallyGeneralStore( Plot ):
         int_mainroom.contents.append( maps.PILED_GOODS )
         gate_2.anchor = randmaps.anchors.south
         int_mainroom.DECORATE = randmaps.decor.GeneralStoreDec()
-        npc = monsters.generate_npc( job=monsters.base.Merchant )
+        npc = monsters.generate_npc( job=monsters.base.Merchant,fac=culture )
         npc.tags.append( context.CHAR_SHOPKEEPER )
         interior.name = random.choice( self.NAME_PATTERNS ).format( npc )
         gate_1.mini_map_label = "General Store"
@@ -194,9 +200,10 @@ class GenericInn( Plot ):
         exterior.special_c[ "sign1" ] = maps.DRINK_SIGN
         self.register_element( "_EXTERIOR", exterior, dident="CITY" )
 
+        culture = self.elements.get("CULTURE")
         archi = self.elements.setdefault( "ARCHITECTURE", randmaps.architect.Village() )
         interior,igen = randmaps.architect.design_scene( 50, 50, randmaps.BuildingScene,
-            archi, setting=self.setting )
+            archi, setting=self.setting,fac=culture )
 
         gate_1 = waypoints.GateDoor()
         gate_2 = waypoints.GateDoor()
@@ -216,7 +223,7 @@ class GenericInn( Plot ):
         gate_2.anchor = randmaps.anchors.south
         int_mainroom.DECORATE = randmaps.decor.TavernDec(win=maps.SMALL_WINDOW)
 
-        npc = monsters.generate_npc(job=monsters.base.Innkeeper)
+        npc = monsters.generate_npc(job=monsters.base.Innkeeper,fac=culture)
         npc.tags.append( context.CHAR_INNKEEPER )
         interior.name = random.choice( self.NAME_PATTERNS ).format( npc, random.choice(monsters.MONSTER_LIST).name, random.choice(monsters.MONSTER_LIST).name )
         gate_1.mini_map_label = "Inn"
@@ -260,9 +267,10 @@ class GenericLibrary( Plot ):
         exterior.special_c[ "sign1" ] = maps.BOOK_SIGN
         self.register_element( "_EXTERIOR", exterior, dident="CITY" )
 
+        culture = self.elements.get("CULTURE")
         archi = self.elements.setdefault( "ARCHITECTURE", randmaps.architect.Village() )
         interior,igen = randmaps.architect.design_scene( 50, 50, randmaps.BuildingScene,
-            archi, setting=self.setting )
+            archi, setting=self.setting,fac=culture )
 
         interior.name = "{0} Library".format( locale )
         gate_1 = waypoints.GateDoor()
@@ -280,10 +288,10 @@ class GenericLibrary( Plot ):
         gate_2.anchor = randmaps.anchors.south
         int_mainroom.DECORATE = randmaps.decor.LibraryDec(win=maps.BRIGHT_WINDOW)
         if random.randint(1,100) == 23:
-            npc = monsters.generate_npc( job=characters.Ninja )
+            npc = monsters.generate_npc( job=characters.Ninja,fac=culture )
         else:
             npc = monsters.generate_npc( job=random.choice((characters.Mage,characters.Mage,characters.Necromancer,
-                characters.Mage,characters.Mage,characters.Necromancer,characters.Bard) ))
+                characters.Mage,characters.Mage,characters.Necromancer,characters.Bard) ),fac=culture)
         npc.tags.append( context.CHAR_SHOPKEEPER )
         int_mainroom.contents.append( npc )
         self.register_element( "SHOPKEEPER", npc )
@@ -317,9 +325,10 @@ class GenericTemple( Plot ):
 
         locale = self.elements.get( "LOCALE" )
 
+        culture = self.elements.get("CULTURE")
         archi = self.elements.setdefault( "ARCHITECTURE", randmaps.architect.Village() )
         interior,igen = randmaps.architect.design_scene( 50, 50, randmaps.BuildingScene,
-            archi, setting=self.setting )
+            archi, setting=self.setting,fac=culture )
         interior.sprites[maps.SPRITE_FLOOR] = "terrain_floor_bigtile.png"
         interior.sprites[maps.SPRITE_INTERIOR] = "terrain_int_temple.png"
         interior.name = "{0} Temple".format( locale )
@@ -343,7 +352,8 @@ class GenericTemple( Plot ):
 
         npc = monsters.generate_npc( job=random.choice((characters.Priest, characters.Priest,
             characters.Priest, characters.Priest, characters.Priest, characters.Priest, characters.Priest,
-            characters.Druid, characters.Druid, characters.Priest, characters.Monk, characters.Knight) ))
+            characters.Druid, characters.Druid, characters.Priest, characters.Monk, characters.Knight) ),
+            fac=culture)
         npc.tags.append( context.CHAR_HEALER )
         int_mainroom.contents.append( npc )
         self.register_element( "SHOPKEEPER", npc )
@@ -425,9 +435,10 @@ class GenericArmorShop( Plot ):
         exterior.special_c[ "sign2" ] = maps.HELMET_SIGN
         self.register_element( "_EXTERIOR", exterior, dident="CITY" )
 
+        culture = self.elements.get("CULTURE")
         archi = self.elements.setdefault( "ARCHITECTURE", randmaps.architect.Village() )
         interior,igen = randmaps.architect.design_scene( 50, 50, randmaps.BuildingScene,
-            archi, setting=self.setting )
+            archi, setting=self.setting,fac=culture )
 
         gate_1 = waypoints.GateDoor()
         gate_2 = waypoints.GateDoor()
@@ -444,7 +455,7 @@ class GenericArmorShop( Plot ):
         gate_2.anchor = randmaps.anchors.south
         int_mainroom.DECORATE = randmaps.decor.ArmorShopDec()
 
-        npc = monsters.generate_npc( job=monsters.base.Merchant )
+        npc = monsters.generate_npc( job=monsters.base.Merchant,fac=culture )
         npc.tags.append( context.CHAR_SHOPKEEPER )
         interior.name = random.choice( self.NAME_PATTERNS ).format( npc )
         gate_1.mini_map_label = "Armor Shop"
@@ -479,9 +490,10 @@ class GenericWeaponShop( Plot ):
         exterior.special_c[ "sign1" ] = maps.WEAPONS_SIGN
         self.register_element( "_EXTERIOR", exterior, dident="CITY" )
 
+        culture = self.elements.get("CULTURE")
         archi = self.elements.setdefault( "ARCHITECTURE", randmaps.architect.Village() )
         interior,igen = randmaps.architect.design_scene( 50, 50, randmaps.BuildingScene,
-            archi, setting=self.setting )
+            archi, setting=self.setting,fac=culture )
 
         gate_1 = waypoints.GateDoor()
         gate_2 = waypoints.GateDoor()
@@ -499,7 +511,7 @@ class GenericWeaponShop( Plot ):
         gate_2.anchor = randmaps.anchors.south
         int_mainroom.DECORATE = randmaps.decor.WeaponShopDec()
 
-        npc = monsters.generate_npc( job=monsters.base.Merchant )
+        npc = monsters.generate_npc( job=monsters.base.Merchant,fac=culture )
         npc.tags.append( context.CHAR_SHOPKEEPER )
         interior.name = random.choice( self.NAME_PATTERNS ).format( npc )
         gate_1.mini_map_label = "Weapon Shop"
@@ -531,9 +543,10 @@ class TheAdventurersGuild( Plot ):
         exterior.special_c[ "sign1" ] = maps.TOWER_SIGN
         self.register_element( "_EXTERIOR", exterior, dident="CITY" )
 
+        culture = self.elements.get("CULTURE")
         archi = self.elements.setdefault( "ARCHITECTURE", randmaps.architect.Village() )
         interior,igen = randmaps.architect.design_scene( 50, 50, randmaps.BuildingScene,
-            archi, setting=self.setting )
+            archi, setting=self.setting,fac=culture )
         interior.sprites[maps.SPRITE_FLOOR] = "terrain_floor_diamond.png"
 
         gate_1 = waypoints.GateDoor()

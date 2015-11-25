@@ -31,7 +31,7 @@ class Level( object ):
     LEVELS_PER_GEM = 1
     GEMS_PER_AWARD = 1
     legal_equipment = ()
-    XP_VALUE = 200
+    XP_VALUE = 150
     MIN_RANK = 0
     FULL_HP_AT_FIRST = True
     FRIENDMOD = dict()
@@ -401,7 +401,7 @@ class Dwarf( SentientSpecies ):
     HAIRSTYLE = { stats.MALE: (0,1,3,4,5,6,7,9, 15,16,24,26,27,30,31,34,36,38,42,43,44,45,46,47,48,49,51,52,53), \
         stats.FEMALE: (1,2,3,5,8,9, 14,15,17,18,19,20,21,22,23,25,26,28,29,31,32,33,34,35,36,37,38,39,40,41,42,43,45,46,47,48,49), \
         stats.NEUTER: (0,1,2,3,4,5,6,7,8,9, 10,11,12,13, 14,15,16,17,18,19, 20,21,22,23,24,25,26,27,28,29, 30,31,32,33,34,35,36,37,38,39, 40,41,42,43,44,45,46,47,48,49, 51,52,53 ) }
-    TAGS = (context.GEN_KINGDOM,context.DES_EARTH)
+    TAGS = (context.GEN_KINGDOM,context.GEN_TERRAN,context.DES_EARTH,)
 
 class Elf( SentientSpecies ):
     name = "Elf"
@@ -414,7 +414,7 @@ class Elf( SentientSpecies ):
     HAIRSTYLE = { stats.MALE: (0,1,3,4,5,6,7,9, 10,11,12,13, 16,24,26,30,31,34,36,38,42,43,44,45,46,51,52,53), \
         stats.FEMALE: (1,2,3,5,8,9, 10,11,12,13, 14,17,18,19,20,21,22,23,25,26,28,29,31,32,33,34,35,36,37,38,39,40,41,42,43,45,46), \
         stats.NEUTER: (0,1,2,3,4,5,6,7,8,9, 10,11,12,13, 14,16,17,18,19, 20,21,22,23,24,25,26,28,29, 30,31,32,33,34,35,36,37,38,39, 40,41,42,43,44,45,46, 51,52,53 ) }
-    TAGS = (context.GEN_KINGDOM,context.GEN_NATURE,)
+    TAGS = (context.GEN_KINGDOM,context.GEN_NATURE,context.GEN_FAERIE,)
 
 class Gnome( SentientSpecies ):
     name = "Gnome"
@@ -422,7 +422,7 @@ class Gnome( SentientSpecies ):
     statline = { stats.STRENGTH: -2, stats.PIETY: 2, stats.STEALTH: 5 }
     starting_equipment = ( items.hats.GnomeHat, items.axes.Pickaxe )
     VOICE = dialogue.voice.GNOMIC
-    TAGS = (context.DES_EARTH,)
+    TAGS = (context.GEN_TERRAN,context.DES_EARTH,context.MTY_THIEF)
 
 class Orc( SentientSpecies ):
     name = "Orc"
@@ -434,7 +434,7 @@ class Orc( SentientSpecies ):
     HAIRSTYLE = { stats.MALE: (0,1,3,4,5,6,7,9, 15,16,24,26,27,30,31,34,36,38,42,43,44,45,46,47,48,49,51,52,53), \
         stats.FEMALE: (1,2,3,5,8,9, 14,15,17,18,19,20,21,22,23,25,26,28,29,31,32,33,34,35,36,37,38,39,40,41,42,43,45,46,47), \
         stats.NEUTER: (0,1,2,3,4,5,6,7,8,9, 10,11,12,13, 14,15,16,17,18,19, 20,21,22,23,24,25,26,27,28,29, 30,31,32,33,34,35,36,37,38,39, 40,41,42,43,44,45,46,47,48,49, 51,52,53 ) }
-    TAGS = (context.GEN_GOBLIN,)
+    TAGS = (context.GEN_GOBLIN,context.MTY_FIGHTER)
 
 class Hurthling( SentientSpecies ):
     name = "Hurthling"
@@ -442,7 +442,7 @@ class Hurthling( SentientSpecies ):
     statline = { stats.STRENGTH: -3, stats.TOUGHNESS: -2, stats.REFLEXES: 4, \
         stats.STEALTH: 10 }
     VOICE = dialogue.voice.HURTHISH
-    TAGS = (context.GEN_KINGDOM,)
+    TAGS = (context.GEN_KINGDOM,context.GEN_FAERIE,context.MTY_THIEF)
 
 
 class Fuzzy( SentientSpecies ):
@@ -464,7 +464,7 @@ class Reptal( SentientSpecies ):
     starting_equipment = ( items.maces.Club, items.clothes.AnimalSkin )
     VOICE = dialogue.voice.DRACONIAN
     TEMPLATES = (stats.REPTILE,)
-    TAGS = (context.GEN_DRAGON,context.DES_FIRE,)
+    TAGS = (context.GEN_DRAGON,context.MTY_FIGHTER)
 
 class Centaur( SentientSpecies ):
     name = "Centaur"

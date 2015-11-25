@@ -1301,10 +1301,12 @@ class BoringVillage( SDIPlot ):
         """Create map, fill with city + services."""
         biome = self.elements.setdefault( "BIOME", randmaps.architect.make_wilderness() )
         archi = self.register_element( "ARCHITECTURE", randmaps.architect.Village(biome.biome))
+        culture = self.register_element( "CULTURE", teams.PolisFaction(dungeon_type=("Village","Hamlet")) )
         myscene,mymapgen = randmaps.architect.design_scene( 80, 80,
-          randmaps.WildernessPath, biome,secondary=archi,setting=self.setting)
+          randmaps.WildernessPath, biome,fac=culture,secondary=archi,setting=self.setting)
         myscene.desctags.append( context.DES_CIVILIZED )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+        myscene.name = culture.name
 
         castle = self.register_element( "CITY",
          randmaps.rooms.VillageRoom( width=25,height=25,anchor=randmaps.anchors.middle,
@@ -1313,12 +1315,12 @@ class BoringVillage( SDIPlot ):
         castleroom = randmaps.rooms.FuzzyRoom( tags=(context.ENTRANCE,), parent=castle )
         myteam = teams.Team( strength=0, default_reaction=characters.SAFELY_FRIENDLY)
         castle.contents.append( myteam )
-        castleroom.contents.append( monsters.generate_npc(team=myteam) )
-        castleroom.contents.append( monsters.generate_npc(team=myteam) )
+        castleroom.contents.append( monsters.generate_npc(team=myteam,fac=culture) )
+        castleroom.contents.append( monsters.generate_npc(team=myteam,fac=culture) )
 
         # Create the village elder.
         elder = monsters.generate_npc(team=myteam,rank=self.rank+1,
-          job=monsters.base.Elder,upgrade=True)
+          job=monsters.base.Elder,upgrade=True,fac=culture)
         self.register_element("NPC",elder)
         castleroom.contents.append(elder)
         self._reward_given = False
