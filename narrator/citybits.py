@@ -546,15 +546,14 @@ class TheAdventurersGuild( Plot ):
         exterior.special_c[ "door" ] = gate_1
         int_mainroom = randmaps.rooms.SharpRoom( tags=(context.CIVILIZED,context.ROOM_PUBLIC), anchor=randmaps.anchors.south, parent=interior )
         int_mainroom.contents.append( gate_2 )
-        int_mainroom.contents.append( maps.PILED_GOODS )
-        int_mainroom.contents.append( maps.PILED_GOODS )
         gate_2.anchor = randmaps.anchors.south
         int_mainroom.DECORATE = randmaps.decor.GeneralStoreDec()
  
         interior.name = random.choice( self.NAME_PATTERNS )
         gate_1.mini_map_label = "Adventurer's Guild"
-        boh = waypoints.BookOfHeroes()
+        boh = waypoints.BookOfHeroes(anchor=randmaps.anchors.middle)
         int_mainroom.contents.append( boh )
+        int_mainroom.contents.append( waypoints.LargeChest() )
         nart.camp.mru_advguild = (interior,boh)
 
         return True

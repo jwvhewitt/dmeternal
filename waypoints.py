@@ -42,7 +42,7 @@ class Waypoint( object ):
     ATTACH_TO_WALL = False
     name = "Waypoint"
     desc = ""
-    def __init__( self, scene=None, pos=(0,0), plot_locked=False, desc=None ):
+    def __init__( self, scene=None, pos=(0,0), plot_locked=False, desc=None, anchor=None ):
         """Place this waypoint in a scene."""
         if scene:
             self.place( scene, pos )
@@ -50,6 +50,8 @@ class Waypoint( object ):
         self.plot_locked = plot_locked
         if desc:
             self.desc = desc
+        if anchor:
+            self.anchor = anchor
 
     def place( self, scene, pos=None ):
         if hasattr( self, "container" ) and self.container:

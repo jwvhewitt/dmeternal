@@ -91,11 +91,11 @@ class ForestConverter( object ):
 
 class DesertConverter( ForestConverter ):
     """Convert True walls to rocks and trees and trees and rocks and rocks and trees and trees and rocks and mountains."""
-    def desert_nearby( self, mapgen, x, y ):
+    def desert_nearby( self, mapgen, x, y, terrain_to_check=(maps.HIGROUND,maps.HIHILL,None)):
         """Return True if all adjacent tiles are LOGROUND."""
         all_hi = True
         for d in mapgen.gb.DELTA8:
-            if mapgen.gb.get_floor( x + d[0], y + d[1] ) not in ( maps.HIGROUND, maps.HIHILL, None ):
+            if mapgen.gb.get_floor( x + d[0], y + d[1] ) not in terrain_to_check:
                 all_hi = False
                 break
         return all_hi

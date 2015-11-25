@@ -148,7 +148,7 @@ class Combat( object ):
 
             if explo.scene.map[x2][y2].blocks_walking():
                 if do_bump:
-                    explo.bump_tile( (x2,y2) )
+                    explo.bump_tile( (x2,y2), chara )
                     self.end_turn( chara )
                 return True
             elif not target:

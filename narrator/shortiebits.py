@@ -13,6 +13,9 @@ import namegen
 import random
 import container
 import aid
+import stats
+import effects
+import animobs
 
 # Shortie Done-in-one Dungeon Monkey Adventure
 # - A small adventure, typically consisting of a single dungeon or wilderness
@@ -31,20 +34,21 @@ class ShortieStub( Plot ):
 
     SHORTIE_GRAMMAR = {
         # [ADVENTURE] is the top level token- it will expand into a number of
-        # high level tokens.
-        "[zADVENTURE]": [ "SDI_DEFILED_PLACE",
+        # high level tokens. These eventually convert into subplot labels.
+        "[zADVENTURE]": [ "[IMPERILED_PLACE] [ENEMY_BASE] [ENEMY_GOAL]",
             ],
         "[ADVENTURE]": [ "[IMPERILED_PLACE] [ENEMY_BASE] [ENEMY_GOAL]",
             ],
         "[ENEMY_BASE]": [ "SDI_ENEMY_FORT SDI_ENEMY_BARRACKS",
+            "SDI_DANGEROUS_PATH SDI_ENEMY_FORT",
             ],
 
-        "[ENEMY_GOAL]": [ "SDI_SUPERWEAPON",
-            "SDI_BIGBOSS"
+        "[ENEMY_GOAL]": [ "SDI_BIGBOSS",
             ],
 
         "[IMPERILED_PLACE]": [ "SDI_AMBUSH SDI_VILLAGE", "SDI_VILLAGE",
-            "SDI_DEFILED_PLACE"
+            "SDI_DANGEROUS_PATH SDI_DEFILED_PLACE", "SDI_DEFILED_PLACE",
+            "SDI_DANGEROUS_PATH SDI_VILLAGE", "SDI_VILLAGE SDI_DEFILED_PLACE"
             ],
     }
     def custom_init( self, nart ):
@@ -59,7 +63,14 @@ class ShortieStub( Plot ):
         # Generate a plot outline for the adventure. We will do this using a
         # context free grammar expansion of the token [ADVENTURE]. The resultant
         # string will be a list of subplot request labels.
-        subplot_list = self.register_element( "SHORTIE_OUTLINE", list( dialogue.grammar.convert_tokens( "[zADVENTURE]", self.SHORTIE_GRAMMAR ).split() ) )
+        # Note that we don't want any repeating tokens, so try 100 times if need be.
+        tries = 0
+        while tries < 100:
+            subplot_list = self.register_element( "SHORTIE_OUTLINE", list( dialogue.grammar.convert_tokens( "[zADVENTURE]", self.SHORTIE_GRAMMAR ).split() ) )
+            tries += 1
+            if len(subplot_list) == len(set(subplot_list)):
+                # No repeat tokens. Let's get out of here.
+                break
 
         # Assemble the outline into an adventure. Basically, add a subplot of
         # each generated type, in order. Each subplot describes a stage of the
@@ -136,6 +147,11 @@ class ShortieStub( Plot ):
     DIALOGUE_GRAMMAR = {
         "[=CONCLUSION]": [ "After [-achievement] and [++achievement], you return home in victory.",
             "After [++achievement], you return to [quest_giver] for your reward.",
+            "It's been a busy day, but [++achievement] is finally done. [END_SHORTIE]"
+            "It wasn't easy [-achievement] and [++achievement]. [END_SHORTIE]"
+            ],
+        "[END_SHORTIE]": [ "You return home in victory.", "You return to [quest_giver] for your reward.",
+            "Now you can finally begin that vacation.", "The bards will sing of your acts today."
             ],
         "[=INTRO]": [ "You have been sent to bring [+SDI_BIGBOSS:name] the [+SDI_BIGBOSS:type] to justice. So far you have tracked them to [=location].",
             "The [+SDI_VILLAGE] has called for a hero. [INTRO_PROBLEM]"
@@ -230,6 +246,91 @@ class SDIPlot( Plot ):
 # 
 #
 
+# SDI_DANGEROUS_PATH
+#   You have to travel along this road, but it's dangerous.
+# Win Condition:
+#   Get to the end.
+# Grammar Tags:
+#   [SDI_DANGEROUS_PATH:location]    The name of the path.
+#   [SDI_DANGEROUS_PATH:threat]     The reason why the path is dangerous.
+# To do:
+# - Divided islands
+# - Straightforward with encounter in the middle
+# - Bandit lair: Lots of thieves
+# - Murder house: Middle Earth Chainsaw Massacre
+# - Through the mines: Over the mountain or through it
+
+class BasicWildernessPath( SDIPlot ):
+    LABEL = "SDI_DANGEROUS_PATH"
+    active = True
+    scope = "LOCALE"
+    NAME_PATTERNS = ("{0} Wilds","{0} Wilderness")
+    def custom_init( self, nart ):
+        # Create the scene where the ambush will happen- a wilderness area.
+        biome = self.elements.setdefault( "BIOME", randmaps.architect.make_wilderness() )
+        myscene,mymapgen = randmaps.architect.design_scene( 60, 60,
+          randmaps.ForestScene, biome, setting=self.setting)
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+        mymapgen.GAPFILL = randmaps.gapfiller.MonsterFiller(1,5,20)
+        myscene.name = random.choice( self.NAME_PATTERNS ).format( namegen.random_style_name() )
+
+        self._do_message = True
+
+        # Add an opportunity for extra treasure.
+        self.add_sub_plot( nart, "SUPPLEMENTAL_TREASURE" )
+
+        # Add some extra pressure.
+        for t in range( random.randint(1,3) ):
+            self.add_sub_plot( nart, "ENCOUNTER" )
+        if random.randint(1,4) != 1:
+            self.add_sub_plot( nart, "SPECIAL_FEATURE" )
+        if random.randint(1,4) == 1:
+            self.add_sub_plot( nart, "SPECIAL_ENCOUNTER" )
+
+        # Create the scene entrance and exit on opposite ends of the map.
+        anc_a,anc_b = random.choice(randmaps.anchors.OPPOSING_PAIRS)
+        myroom1 = randmaps.rooms.FuzzyRoom( parent=myscene,anchor=anc_a )
+        myent = waypoints.RoadSignBack()
+        myroom1.contents.append( myent )
+
+        myroom2 = randmaps.rooms.FuzzyRoom( parent=myscene,anchor=anc_b )
+        myexit = waypoints.RoadSignForward()
+        myroom2.contents.append( myexit )
+
+        # Save this component's data for the next component.
+        self.register_element( "IN_SCENE", myscene )
+        self.register_element( "IN_ENTRANCE", myent )
+        self.register_element( "OUT_SCENE", myscene )
+        self.register_element( "OUT_ENTRANCE", myexit )
+
+        return True
+    def get_sdi_grammar( self ):
+        """Return a dict of grammar related to this plot."""
+        mygram = {
+            "[achievement]": [ "crossing the {}".format(self.elements["LOCALE"]),
+                ],
+            "[GO_QUEST]": ["Travel to the {}.".format(self.elements["LOCALE"]),
+                ],
+            "[location]": [str(self.elements["LOCALE"]),
+                ],
+            "[SDI_DANGEROUS_PATH:location]": [str(self.elements["LOCALE"]),
+                ],
+            "[SDI_DANGEROUS_PATH:threat]": ["wild beasts",
+                ],
+            "[SUMMARY]": [ "The {} is a dangerous place.".format(str(self.elements["LOCALE"])),
+                ],
+            "[warning]": [ "the {} is home to many dangerous beasts".format(str(self.elements["LOCALE"])),
+                ],
+        }
+        return mygram
+    def t_START( self, explo ):
+        if self._do_message:
+            explo.alert("This stretch of wilderness is completely untamed. You will have to find your way through it to get where you're going.")
+            explo.check_trigger( "WIN", self )
+            self._do_message = False
+
+
+
 # SDI_DEFILED_PLACE
 #   This place, a shrine or glade or whatnot, has been desecrated, blasphemed,
 #   or just plain old ransacked.
@@ -239,9 +340,113 @@ class SDIPlot( Plot ):
 # Grammar Tags:
 #   [SDI_DEFILED_PLACE:location]    The name of the place that was defiled.
 # To do:
-# - Elemental Shrine
-# - Sacred Grove
+# - Sacred Grove Burnt Down
 # - Ransacked Temple
+# - Grave Robbers: Bodies stolen, set enemy as undead faction
+# - Grafitti: Set enemy as Chaos
+
+class GroveBattle( SDIPlot ):
+    LABEL = "SDI_DEFILED_PLACE"
+    active = True
+    scope = "LOCALE"
+    NAME_PATTERNS = ("{0} Grove","{0} Forest")
+    def custom_init( self, nart ):
+        # Create the scene where the ambush will happen- a wilderness area with
+        # a road.
+        biome = self.register_element( "BIOME", randmaps.architect.Forest() )
+        antagonist = self.elements.setdefault( "ANTAGONIST", teams.AntagonistFaction() )
+        myscene,mymapgen = randmaps.architect.design_scene( 60, 60,
+          randmaps.WildernessPath, biome, setting=self.setting)
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+        myscene.name = random.choice( self.NAME_PATTERNS ).format( namegen.random_style_name() )
+
+        myroom = randmaps.rooms.FuzzyRoom( parent=myscene )
+        myent = waypoints.RoadSignBack()
+        myroom.contents.append( myent )
+        myroom.priority = 0
+
+        # Create the ambush room in the middle.
+        ambush_room = self.register_element( "_AMBUSHROOM",
+         randmaps.rooms.FuzzyRoom(), dident="LOCALE" )
+        ambush_room.priority = 50
+        team = self.register_element( "TEAM", teams.Team(default_reaction=-999, rank=self.rank, 
+         strength=300, habitat=myscene.get_encounter_request(), fac=antagonist ) )
+        ambush_room.contents.append( team )
+        myhab = myscene.get_encounter_request()
+        myhab[context.MTY_BEAST] = True
+        myhab[context.GEN_NATURE] = context.MAYBE
+        friendlies = teams.Team( strength=150, default_reaction=characters.SAFELY_FRIENDLY,
+         rank=self.rank, habitat=myhab)
+        ambush_room.contents.append( friendlies )
+        npc = self.register_element( "NPC",
+         monsters.generate_npc(team=friendlies,rank=self.rank+1,upgrade=True,
+         job=characters.Druid),dident="_AMBUSHROOM" )
+        friendlies.boss = npc
+        self._reward_ready = True
+        self._do_message = True
+        ambush_room.contents.append( waypoints.TreeStump(anchor=randmaps.anchors.middle,
+         desc="You stand before the stump of what was once a mighty tree, before it was callously destroyed by the {}.".format(antagonist)
+         ))
+
+        # Create the exit on the end.
+        last_room = randmaps.rooms.FuzzyRoom( parent=myscene )
+        myexit = waypoints.RoadSignForward()
+        last_room.contents.append( myexit )
+        last_room.priority = 100
+
+        # Save this component's data for the next component.
+        self.register_element( "IN_SCENE", myscene )
+        self.register_element( "IN_ENTRANCE", myent )
+        self.register_element( "OUT_SCENE", myscene )
+        self.register_element( "OUT_ENTRANCE", myexit )
+
+        # After combat, the druid of the grove can provide temple services
+        # if they survive.
+        self.shop = services.Temple()
+
+        # Add a reward if the PCs save the NPC.
+        self.add_sub_plot( nart, "REWARD",
+         PlotState(elements={"ORIGIN":npc}).based_on(self), ident="next" )
+        return True
+    def t_START( self, explo ):
+        if self._do_message:
+            explo.alert("The normal quiet of {} has been replaced by the sounds of conflict.".format(self.elements["LOCALE"]))
+            self._do_message = False
+    def t_COMBATOVER( self, explo ):
+        if self._reward_ready and not self.elements["TEAM"].members_in_play( explo.scene ):
+            self.subplots["next"].active = True
+            explo.check_trigger( "WIN", self )
+            self._reward_ready = False
+    def NPC_offers( self, explo ):
+        ol = list()
+        if not self._reward_ready:
+            if self.subplots["next"].active:
+                ol.append( dialogue.Offer( "Thanks for your help against the {}, but we were too late to save the blessed tree.".format(self.elements["ANTAGONIST"]) ,
+                 context = context.ContextTag([context.HELLO]) ) )
+            ol.append( dialogue.Offer( "[SERVICE_TEMPLE]" ,
+             context = context.ContextTag([context.SERVICE,context.HEALING]), effect=self.shop ) )
+        return ol
+    def get_sdi_grammar( self ):
+        """Return a dict of grammar related to this plot."""
+        mygram = {
+            "[achievement]": [ "avenging the sacred tree of {}".format(self.elements["LOCALE"]),
+                ],
+            "[GO_QUEST]": ["Seek the druid of {}.".format(self.elements["LOCALE"]),
+                ],
+            "[INTRO]": [    "Your party decides to travel to {}, seeking adventure. This area has recently been attacked by the {}.".format(self.elements["LOCALE"],self.elements["ANTAGONIST"]),
+                ],
+            "[location]": [str(self.elements["LOCALE"]),],
+            "[SDI_DEFILED_PLACE:location]": [ str(self.elements["LOCALE"]),],
+            "[warning]": [  "not even the trees are safe",
+                ],
+            "[SUMMARY]": [ "The sacred tree of {} has been destroyed by the {}.".format(self.elements["LOCALE"],self.elements["ANTAGONIST"]),
+                ],
+        }
+        if self.elements["NPC"].is_alright() and not self._reward_ready:
+            mygram["[achievement]"] = [ "saving {} from the {}".format(self.elements["NPC"],self.elements["ANTAGONIST"]),
+                ]
+        return mygram
+
 
 class ElementalShrine( SDIPlot ):
     LABEL = "SDI_DEFILED_PLACE"
@@ -252,6 +457,11 @@ class ElementalShrine( SDIPlot ):
         }
     BUILDING_TYPES = ("Shrine","Temple")
     ELEMENTS = (context.DES_EARTH,context.DES_WATER,context.DES_AIR,context.DES_FIRE)
+    INTRO_PROBLEM = { context.DES_EARTH: "the earth has begun to rot",
+        context.DES_AIR: "the wind has stopped",
+        context.DES_WATER: "the sea has gone wild",
+        context.DES_FIRE: "the world is veiled in darkness"
+        }
     def custom_init( self, nart ):
         # Create the scene where the ambush will happen- a wilderness area.
         antagonist = self.elements.get( "ANTAGONIST" )
@@ -282,16 +492,31 @@ class ElementalShrine( SDIPlot ):
         self.register_scene( nart, interior, igen, ident="_TEMPLE", dident="LOCALE" )
         interior.desctags.append( self._theme )
         interior.name = "{} Interior".format( myscene.name )
-        int_mainroom = randmaps.rooms.SharpRoom( width=16,height=16,
+        int_mainroom = randmaps.rooms.SharpRoom( width=9,height=9,
           anchor=randmaps.anchors.south, parent=interior )
         gate_2 = waypoints.GateDoor()
         int_mainroom.contents.append( gate_2 )
         int_mainroom.DECORATE = randmaps.decor.TempleDec()
         gate_2.anchor = randmaps.anchors.south
+
+        crystal = self.register_element( "_CRYSTAL", waypoints.PowerCrystal(plot_locked=True))
+        crystal.anchor = randmaps.anchors.middle
+        int_mainroom.contents.append( crystal )
+
         team = self.register_element( "TEAM", teams.Team(default_reaction=-999, 
-         strength=120, habitat=myscene.get_encounter_request(), fac=antagonist,
+         strength=0, habitat=myscene.get_encounter_request(), fac=antagonist,
          rank=self.rank, respawn=False ) )
         int_mainroom.contents.append( team )
+
+        myhabitat = { self._theme: True, context.MTY_ELEMENTAL: context.MAYBE, context.MTY_CELESTIAL: context.MAYBE,
+         (context.MTY_BEAST,context.MTY_UNDEAD,context.MTY_CONSTRUCT,context.MTY_CELESTIAL,context.MTY_ELEMENTAL): True,
+         }
+        btype = monsters.choose_monster_type(self.rank-1,self.rank+2,myhabitat)
+        if btype:
+            boss = self.register_element("_MONSTER",monsters.generate_boss( btype, self.rank+2, team=team ))
+            boss.name = "Crystal Spirit"
+            int_mainroom.contents.append( boss )
+
         gate_1.destination = interior
         gate_1.otherside = gate_2
         gate_2.destination = myscene
@@ -316,15 +541,18 @@ class ElementalShrine( SDIPlot ):
         self.register_element( "OUT_SCENE", myscene )
         self.register_element( "OUT_ENTRANCE", myexit )
 
-        return True
+        return btype
     def get_sdi_grammar( self ):
         """Return a dict of grammar related to this plot."""
         mygram = {
-            "[achievement]": [ "investigating the {}".format(self.elements["LOCALE"]),
+            "[achievement]": [ "pacifying the {}".format(self.elements["LOCALE"]),
+                ],
+            "[CONCLUSION]": ["The spirits at the {} have been pacified. [END_SHORTIE]".format(self.elements["LOCALE"]),
                 ],
             "[GO_QUEST]": ["Go see what has happened to the {}, and defend it if necessary.".format(self.elements["LOCALE"]),
                 ],
             "[INTRO]":  ["Your wanderings have brought you close to the {}. However, something seems to be wrong there.".format(self.elements["LOCALE"]),
+                "There has been a series of bad omens; {}. Your party travels to the {} to discover the cause.".format(self.INTRO_PROBLEM[self._theme],self.elements["LOCALE"]),
                 ],
             "[location]": [str(self.elements["LOCALE"]),
                 ],
@@ -333,24 +561,62 @@ class ElementalShrine( SDIPlot ):
             "[SUMMARY]": [ "There has been a disturbance at the {}.".format(str(self.elements["LOCALE"])),
                 ],
             "[warning]": [ "the {} has been defiled".format(str(self.elements["LOCALE"])),
+                self.INTRO_PROBLEM[self._theme]
                 ],
         }
         return mygram
     def t_START( self, explo ):
         if self._do_message and explo.scene is self.elements["_TEMPLE"]:
-            explo.alert("Without warning, you are ambushed!")
+            explo.alert("You sense evil as you enter the room. Without warning, the guardian of the crystal attacks!")
             for m in explo.scene.contents:
                 if hasattr(m,"team") and m.team is self.elements["TEAM"]:
                     explo.camp.activate_monster(m)
+    def _open_the_exit( self,explo ):
+            self.elements["OUT_ENTRANCE"].plot_locked = False
+            self._door_locked = False
+            explo.check_trigger( "WIN", self )
+    def _smash_crystal( self, explo ):
+        if explo.bumper.get_stat( stats.STRENGTH ) + random.randint(1,20) > 20:
+            explo.alert("You strike the crystal, shattering it into a million pieces. The crystal guardian lets out an otherworldly shriek before fading into nothingness.")
+            self._open_the_exit( explo )
+            self.elements["TEAM"].default_reaction = 999
+            explo.scene.contents.remove(self.elements["_MONSTER"])
+            explo.camp.fight.active.remove(self.elements["_MONSTER"])
+            explo.alert("The spirit has been destroyed. The question is, who would dare to desecrate this place?")
+        else:
+            explo.alert("You strike the crystal, but don't even manage to scratch it.")
+    def _repair_crystal( self, explo ):
+        if (explo.bumper.get_stat( stats.MAGIC_ATTACK ) + explo.bumper.get_stat_bonus( stats.PIETY ) + random.randint(1,100)) > (45 + 4 * self.rank):
+            explo.alert("You touch the crystal. You are overwhelmed by the negative energy...")
+            explo.alert("Concentrating through the pain, you make mental contact with the crystal spirit. It peers deep into your soul, then decides you are not the one who attacked this place.")
+            explo.alert("The spirit fades away. The crystal begins to glow with a steady light once more.")
+            self._open_the_exit( explo )
+            self.elements["TEAM"].default_reaction = 999
+            explo.scene.contents.remove(self.elements["_MONSTER"])
+            explo.give_gold_and_xp( 0, 100 * self.rank + 50 )
+            explo.alert("The spirit has been calmed. The question is, who would dare to desecrate this place?")
+            self.elements["_CRYSTAL"].plot_locked = False
+        else:
+            explo.alert("You touch the crystal. You are overwhelmed by the negative energy!")
+            explo.invoke_effect( self.CRYSTAL_SHOCK, None, (explo.bumper.pos,) )
+    CRYSTAL_SHOCK = effects.NoEffect( children = (
+        effects.HealthDamage((1,6,0), stat_bonus=None, element=stats.RESIST_SOLAR, anim=animobs.YellowExplosion ),
+        effects.ManaDamage((2,6,0), stat_bonus=None, anim=animobs.PurpleExplosion ),
+    ))
+    def _CRYSTAL_menu( self, thingmenu ):
+        if self._door_locked:
+            thingmenu.desc = "The elemental crystal is flickering wildly. Something terrible must have happened here."
+            thingmenu.add_item( "Smash the crystal", self._smash_crystal )
+            thingmenu.add_item( "Touch the crystal", self._repair_crystal )
+            thingmenu.add_item( "Leave it alone", None )
+        else:
+            thingmenu.desc = "The elemental crystal has gone cold and dark."
     def OUT_ENTRANCE_menu( self, thingmenu ):
         thingmenu.desc = "You should find out what happened at the {} before leaving.".format(self.elements["LOCALE"])
     def t_COMBATOVER( self, explo ):
         if explo.scene is self.elements["_TEMPLE"] and self._door_locked and not self.elements["TEAM"].members_in_play( explo.scene ):
-            self.elements["OUT_ENTRANCE"].plot_locked = False
-            self._door_locked = False
             explo.alert("The spirit has been calmed. The question is, who would dare to desecrate this place?")
-            explo.check_trigger( "WIN", self )
-
+            self._open_the_exit(explo)
 
 #  SDI_ENEMY_FORT
 #   There's an enemy fortress to discover in the wilderness, and you need to
@@ -375,8 +641,7 @@ class BasicCaveHideout( SDIPlot ):
     def custom_init( self, nart ):
         # Create the scene where the ambush will happen- a wilderness area.
         biome = self.elements.setdefault( "BIOME", randmaps.architect.make_wilderness() )
-        antagonist = self.elements.setdefault( "ANTAGONIST",
-          teams.AntagonistFaction(random.choice(self.ANTAGONIST_SEEDS)) )
+        antagonist = self.elements.setdefault( "ANTAGONIST", teams.AntagonistFaction() )
         myscene,mymapgen = randmaps.architect.design_scene( 50, 50,
           randmaps.ForestScene, biome, setting=self.setting)
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
@@ -770,7 +1035,7 @@ class NPCBossInABox( SDIPlot ):
           fac=self.elements.get("ANTAGONIST"))
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
 
-        team = teams.Team(default_reaction=-999, rank=self.rank, strength=200,
+        team = teams.Team(default_reaction=-999, rank=self.rank, strength=250,
          habitat=myscene.get_encounter_request(), fac=antagonist, respawn=False )
         goalroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=myscene,
             anchor = random.choice((randmaps.anchors.northwest,randmaps.anchors.north,randmaps.anchors.northeast)) )

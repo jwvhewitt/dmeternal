@@ -48,7 +48,7 @@ class MoveTo( object ):
         if exp.scene.map[dest[0]][dest[1]].blocks_walking():
             # There's an obstacle in the way.
             if first:
-                exp.bump_tile( dest )
+                exp.bump_tile( dest, pc )
             return False
         elif target and first and dest == self.dest and target not in exp.camp.party:
             exp.bump_model( target )
@@ -518,9 +518,10 @@ class Explorer( object ):
                     pygame.display.flip()
             self.view.anims.clear()
 
-    def bump_tile( self, pos ):
+    def bump_tile( self, pos, pc ):
         target = self.scene.get_bumpable_at_spot( pos )
         if target:
+            self.bumper = pc
             target.bump( self )
 
     def converse_with_model( self, target, cue=dialogue.CUE_HELLO ):
