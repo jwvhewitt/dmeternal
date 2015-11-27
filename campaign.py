@@ -273,7 +273,9 @@ def browse_pcs( screen ):
 class random_party( list ):
     """Create a random party of adventurers."""
     FIGHTERS = ( characters.Warrior, characters.Samurai, characters.Knight,
-     characters.Monk, characters.Warrior, characters.Knight )
+     characters.Monk, characters.Warrior, characters.Knight,
+     characters.Warrior, characters.Warrior, characters.Warrior,
+     characters.Samurai, characters.Knight )
     THIEVES = ( characters.Thief, characters.Ninja, characters.Bard, characters.Ranger,
      characters.Thief, characters.Bard, characters.Ranger )
     PRIESTS = ( characters.Priest, characters.Druid, characters.Priest )

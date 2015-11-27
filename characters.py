@@ -157,11 +157,11 @@ class Bard( Level ):
     name = 'Bard'
     desc = 'Jacks of all trades, bards know a bit of fighting, thievery, and air magic.'
     requirements = { stats.REFLEXES: 13, stats.INTELLIGENCE: 11, stats.CHARISMA: 13 }
-    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 4, stats.MAGIC_ATTACK: 4, stats.MAGIC_DEFENSE: 4, \
+    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 5, stats.MAGIC_ATTACK: 5, stats.MAGIC_DEFENSE: 4, \
         stats.DISARM_TRAPS: 4, stats.AWARENESS: 4 } )
     spell_circles = ( spells.AIR, )
     HP_DIE = 8
-    MP_DIE = 6
+    MP_DIE = 8
     LEVELS_PER_GEM = 2
     legal_equipment = ( items.SWORD, items.MACE, items.DAGGER, items.STAFF, \
         items.BOW, items.ARROW, items.SLING, \

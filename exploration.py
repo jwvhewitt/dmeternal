@@ -833,7 +833,7 @@ class Explorer( object ):
         # In addition to the prepared spells, the character can cast directly
         # from the library of known spells.
         for t in self.camp.known_spells:
-            if t.can_be_learned( pc ) and t.can_be_invoked( pc, False ) and t not in techs:
+            if t.can_be_learned( pc, False ) and t.can_be_invoked( pc, False ) and t not in techs:
                 mymenu.add_item( t.menu_str(), t )
 
 
