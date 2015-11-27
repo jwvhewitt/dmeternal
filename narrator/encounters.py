@@ -103,7 +103,7 @@ class LargeTreasureEncounter( Plot ):
     @classmethod
     def matches( self, pstate ):
         """Requires the SCENE to exist."""
-        return ( pstate.elements.get("LOCALE")
+        return ( pstate.elements.get("LOCALE") and pstate.rank > 1
                 and context.MAP_DUNGEON in pstate.elements["LOCALE"].desctags )
     def custom_init( self, nart ):
         scene = self.elements.get("LOCALE")

@@ -274,6 +274,7 @@ class Explorer( object ):
         self.scene = camp.scene
         self.view = maps.SceneView( camp.scene )
         self.time = 0
+        self.safe_camp_bonus = 0
 
         self.record_anim = False
 
@@ -295,15 +296,17 @@ class Explorer( object ):
     def field_camp( self ):
         """The party is going camping. Yahoo!"""
         self.alert( "You camp down to take a short rest..." )
-        awareness = min( self.camp.party_stat( stats.AWARENESS, stats.INTELLIGENCE ), 75 ) + 15
+        awareness = min( self.camp.party_stat( stats.AWARENESS, stats.INTELLIGENCE ) + 55 - self.camp.scene.rank * 5 + self.safe_camp_bonus, 95 )
         if random.randint(1,100) <= awareness:
             self.camp.rest( 0.5 )
             self.alert( "...and wake up perfectly refreshed." )
+            self.safe_camp_bonus = 0
         elif random.randint(1,3)==2 and self.camp.gold > random.randint( 1500,10000 ):
             lose = max( self.camp.gold // 2, 1 )
             self.camp.gold -= lose
             self.camp.rest( 0.5 )
             self.alert( "...but when you wake up, {0}gp is missing!".format( lose ) )
+            self.safe_camp_bonus = 0
         else:
             pc = self.camp.first_living_pc()
             aoe = list()
@@ -321,6 +324,7 @@ class Explorer( object ):
                 else:
                     break
             self.alert( "...and get woken up by monsters!" )
+            self.safe_camp_bonus += 25
             self.camp.activate_monster( mons[0] )
 
 

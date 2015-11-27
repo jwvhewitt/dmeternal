@@ -147,14 +147,14 @@ class ShortieStub( Plot ):
     DIALOGUE_GRAMMAR = {
         "[=CONCLUSION]": [ "After [-achievement] and [++achievement], you return home in victory.",
             "After [++achievement], you return to [quest_giver] for your reward.",
-            "It's been a busy day, but [++achievement] is finally done. [END_SHORTIE]"
+            "It's been a busy day, but [++achievement] is finally done. [END_SHORTIE]",
             "It wasn't easy [-achievement] and [++achievement]. [END_SHORTIE]"
             ],
         "[END_SHORTIE]": [ "You return home in victory.", "You return to [quest_giver] for your reward.",
-            "Now you can finally begin that vacation.", "The bards will sing of your acts today."
+            "Now you can finally begin that vacation.", "The bards will sing of your acts today.",
             ],
         "[=INTRO]": [ "You have been sent to bring [+SDI_BIGBOSS:name] the [+SDI_BIGBOSS:type] to justice. So far you have tracked them to [=location].",
-            "The [+SDI_VILLAGE] has called for a hero. [INTRO_PROBLEM]"
+            "The [+SDI_VILLAGE] has called for a hero. [INTRO_PROBLEM]",
             ],
         "[INTRO_PROBLEM]": [ "Travelers passing through [+SDI_AMBUSH:name] have gone missing.",
             "A [+SDI_BIGBOSS:type] named [+SDI_BIGBOSS:name] has been causing problems.",
@@ -260,41 +260,44 @@ class SDIPlot( Plot ):
 # - Murder house: Middle Earth Chainsaw Massacre
 # - Through the mines: Over the mountain or through it
 
-class BasicWildernessPath( SDIPlot ):
+class ShortWildernessPath( SDIPlot ):
     LABEL = "SDI_DANGEROUS_PATH"
     active = True
     scope = "LOCALE"
     NAME_PATTERNS = ("{0} Wilds","{0} Wilderness")
+    @classmethod
+    def matches( self, pstate ):
+        return pstate.rank < 5
     def custom_init( self, nart ):
-        # Create the scene where the ambush will happen- a wilderness area.
+        # Create the wilderness area.
         biome = self.elements.setdefault( "BIOME", randmaps.architect.make_wilderness() )
-        myscene,mymapgen = randmaps.architect.design_scene( 60, 60,
+        myscene,mymapgen = randmaps.architect.design_scene( 50, 50,
           randmaps.ForestScene, biome, setting=self.setting)
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
         mymapgen.GAPFILL = randmaps.gapfiller.MonsterFiller(1,5,20)
         myscene.name = random.choice( self.NAME_PATTERNS ).format( namegen.random_style_name() )
+        myscene.desctags.append( context.MTY_BEAST )
+        #myscene.contents.append( randmaps.rooms.FuzzyRoom() )
+        #myscene.contents.append( randmaps.rooms.FuzzyRoom() )
 
         self._do_message = True
 
-        # Add an opportunity for extra treasure.
-        self.add_sub_plot( nart, "SUPPLEMENTAL_TREASURE" )
-
         # Add some extra pressure.
-        for t in range( random.randint(1,3) ):
+        for t in range( random.randint(1,2) ):
             self.add_sub_plot( nart, "ENCOUNTER" )
-        if random.randint(1,4) != 1:
-            self.add_sub_plot( nart, "SPECIAL_FEATURE" )
         if random.randint(1,4) == 1:
+            self.add_sub_plot( nart, "SPECIAL_FEATURE" )
+        elif random.randint(1,6) == 1:
             self.add_sub_plot( nart, "SPECIAL_ENCOUNTER" )
 
         # Create the scene entrance and exit on opposite ends of the map.
         anc_a,anc_b = random.choice(randmaps.anchors.OPPOSING_PAIRS)
         myroom1 = randmaps.rooms.FuzzyRoom( parent=myscene,anchor=anc_a )
-        myent = waypoints.RoadSignBack()
+        myent = waypoints.RoadSignBack(anchor=randmaps.anchors.middle)
         myroom1.contents.append( myent )
 
         myroom2 = randmaps.rooms.FuzzyRoom( parent=myscene,anchor=anc_b )
-        myexit = waypoints.RoadSignForward()
+        myexit = waypoints.RoadSignForward(anchor=randmaps.anchors.middle)
         myroom2.contents.append( myexit )
 
         # Save this component's data for the next component.
@@ -329,6 +332,78 @@ class BasicWildernessPath( SDIPlot ):
             explo.check_trigger( "WIN", self )
             self._do_message = False
 
+class BasicWildernessPath( SDIPlot ):
+    LABEL = "SDI_DANGEROUS_PATH"
+    active = True
+    scope = "LOCALE"
+    NAME_PATTERNS = ("{0} Wilds","{0} Wilderness")
+    @classmethod
+    def matches( self, pstate ):
+        return pstate.rank > 1
+    def custom_init( self, nart ):
+        # Create the scene where the ambush will happen- a wilderness area.
+        biome = self.elements.setdefault( "BIOME", randmaps.architect.make_wilderness() )
+        myscene,mymapgen = randmaps.architect.design_scene( 60, 60,
+          randmaps.ForestScene, biome, setting=self.setting)
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+        mymapgen.GAPFILL = randmaps.gapfiller.MonsterFiller(1,5,20)
+        myscene.name = random.choice( self.NAME_PATTERNS ).format( namegen.random_style_name() )
+
+        self._do_message = True
+
+        # Add an opportunity for extra treasure.
+        self.add_sub_plot( nart, "SUPPLEMENTAL_TREASURE" )
+
+        # Add some extra pressure.
+        for t in range( random.randint(1,3) ):
+            self.add_sub_plot( nart, "ENCOUNTER" )
+        if random.randint(1,4) != 1:
+            self.add_sub_plot( nart, "SPECIAL_FEATURE" )
+        if random.randint(1,4) == 1:
+            self.add_sub_plot( nart, "SPECIAL_ENCOUNTER" )
+
+        # Create the scene entrance and exit on opposite ends of the map.
+        anc_a,anc_b = random.choice(randmaps.anchors.OPPOSING_PAIRS)
+        myroom1 = randmaps.rooms.FuzzyRoom( parent=myscene,anchor=anc_a )
+        myent = waypoints.RoadSignBack(anchor=randmaps.anchors.middle)
+        myroom1.contents.append( myent )
+
+        myroom2 = randmaps.rooms.FuzzyRoom( parent=myscene,anchor=anc_b )
+        myexit = waypoints.RoadSignForward(anchor=randmaps.anchors.middle)
+        myroom2.contents.append( myexit )
+
+        # Save this component's data for the next component.
+        self.register_element( "IN_SCENE", myscene )
+        self.register_element( "IN_ENTRANCE", myent )
+        self.register_element( "OUT_SCENE", myscene )
+        self.register_element( "OUT_ENTRANCE", myexit )
+
+        return True
+    def get_sdi_grammar( self ):
+        """Return a dict of grammar related to this plot."""
+        mygram = {
+            "[achievement]": [ "crossing the {}".format(self.elements["LOCALE"]),
+                ],
+            "[GO_QUEST]": ["Travel to the {}.".format(self.elements["LOCALE"]),
+                ],
+            "[location]": [str(self.elements["LOCALE"]),
+                ],
+            "[SDI_DANGEROUS_PATH:location]": [str(self.elements["LOCALE"]),
+                ],
+            "[SDI_DANGEROUS_PATH:threat]": ["monsters",
+                ],
+            "[SUMMARY]": [ "There is a hidden danger in the {}.".format(str(self.elements["LOCALE"])),
+                ],
+            "[warning]": [ "many have disappeared in the {}".format(str(self.elements["LOCALE"])),
+                ],
+        }
+        return mygram
+    def t_START( self, explo ):
+        if self._do_message:
+            explo.alert("You will have to find your way through this wilderness to get where you're going.")
+            explo.check_trigger( "WIN", self )
+            self._do_message = False
+
 
 
 # SDI_DEFILED_PLACE
@@ -350,6 +425,10 @@ class GroveBattle( SDIPlot ):
     active = True
     scope = "LOCALE"
     NAME_PATTERNS = ("{0} Grove","{0} Forest")
+    @classmethod
+    def matches( self, pstate ):
+        return ( pstate.rank > 2 and ( not pstate.elements.get("BIOME") or
+                pstate.elements["BIOME"].biome in (context.HAB_FOREST,) ))
     def custom_init( self, nart ):
         # Create the scene where the ambush will happen- a wilderness area with
         # a road.
@@ -361,7 +440,7 @@ class GroveBattle( SDIPlot ):
         myscene.name = random.choice( self.NAME_PATTERNS ).format( namegen.random_style_name() )
 
         myroom = randmaps.rooms.FuzzyRoom( parent=myscene )
-        myent = waypoints.RoadSignBack()
+        myent = waypoints.RoadSignBack(anchor=randmaps.anchors.middle)
         myroom.contents.append( myent )
         myroom.priority = 0
 
@@ -390,7 +469,7 @@ class GroveBattle( SDIPlot ):
 
         # Create the exit on the end.
         last_room = randmaps.rooms.FuzzyRoom( parent=myscene )
-        myexit = waypoints.RoadSignForward()
+        myexit = waypoints.RoadSignForward(anchor=randmaps.anchors.middle)
         last_room.contents.append( myexit )
         last_room.priority = 100
 
@@ -525,11 +604,11 @@ class ElementalShrine( SDIPlot ):
         # Create the scene entrance and exit on opposite ends of the map.
         anc_a,anc_b = random.choice(randmaps.anchors.OPPOSING_PAIRS)
         myroom1 = randmaps.rooms.FuzzyRoom( parent=myscene,anchor=anc_a )
-        myent = waypoints.RoadSignBack()
+        myent = waypoints.RoadSignBack(anchor=randmaps.anchors.middle)
         myroom1.contents.append( myent )
 
         myroom2 = randmaps.rooms.FuzzyRoom( parent=myscene,anchor=anc_b )
-        myexit = waypoints.RoadSignForward()
+        myexit = waypoints.RoadSignForward(anchor=randmaps.anchors.middle)
         myroom2.contents.append( myexit )
         myexit.plot_locked = True
         self._door_locked = True
@@ -651,7 +730,7 @@ class BasicCaveHideout( SDIPlot ):
         myroom = randmaps.rooms.FuzzyRoom( parent=myscene,
             anchor=random.choice((randmaps.anchors.northwest,randmaps.anchors.northeast,
             randmaps.anchors.southwest,randmaps.anchors.southeast)) )
-        myent = waypoints.RoadSignBack()
+        myent = waypoints.RoadSignBack(anchor=randmaps.anchors.middle)
         myroom.contents.append( myent )
 
         # Create the fortress room.
@@ -760,7 +839,7 @@ class GuardedFortress( SDIPlot ):
         # Also add a reward- either straight up treasure chests, or an NPC boss
         # who will probably be carrying some nice gear.
         if random.randint(1,2) == 1:
-            boss = monsters.generate_npc( rank=self.rank, team=team, fac=antagonist )
+            boss = monsters.generate_npc( rank=self.rank, team=team, fac=antagonist, upgrade=True )
             fortress.contents.append( boss )
             team.boss = boss
         else:
@@ -772,7 +851,7 @@ class GuardedFortress( SDIPlot ):
         myroom = randmaps.rooms.FuzzyRoom( parent=myscene,
             anchor=random.choice((randmaps.anchors.northwest,randmaps.anchors.northeast,
             randmaps.anchors.southwest,randmaps.anchors.southeast)) )
-        myent = waypoints.RoadSignBack()
+        myent = waypoints.RoadSignBack(anchor=randmaps.anchors.middle)
         myroom.contents.append( myent )
 
         # Create the exit... which in this case is the fortress inside the walls.
@@ -1047,7 +1126,7 @@ class NPCBossInABox( SDIPlot ):
         mychest.stock(self.rank+1)
         goalroom.contents.append( mychest )
 
-        boss = monsters.generate_npc( rank=self.rank+2, team=team, fac=antagonist )
+        boss = monsters.generate_npc( rank=self.rank+2, team=team, fac=antagonist, upgrade=True )
         goalroom.contents.append( boss )
         self.register_element( "ENEMY", boss )
         team.boss = boss
@@ -1143,7 +1222,7 @@ class ImmediateAmbush( SDIPlot ):
 
         # Create the exit on the end.
         last_room = randmaps.rooms.FuzzyRoom( parent=myscene )
-        myexit = waypoints.RoadSignForward()
+        myexit = waypoints.RoadSignForward(anchor=randmaps.anchors.middle)
         last_room.contents.append( myexit )
         last_room.priority = 100
 
@@ -1220,7 +1299,7 @@ class AmbushInterrupted( SDIPlot ):
 
         # Create the exit on the end.
         last_room = randmaps.rooms.FuzzyRoom( parent=myscene )
-        myexit = waypoints.RoadSignForward()
+        myexit = waypoints.RoadSignForward(anchor=randmaps.anchors.middle)
         last_room.contents.append( myexit )
         last_room.priority = 100
 
@@ -1277,7 +1356,7 @@ class AmbushInterrupted( SDIPlot ):
 # Win Condition:
 #   Just show up, usually. A village is its own reward.
 # Grammar Tags:
-#    [SDI_VILLAGE:name] The village name, usually "village of #".
+#    [SDI_VILLAGE:name] The village name
 # To do:
 # - Too late village: has already been destroyed, may find survivors. Or not.
 # - Orc Prisoners: Village has been captured by orcs; rescue them from mine.
@@ -1327,13 +1406,13 @@ class BoringVillage( SDIPlot ):
 
         # Create the entrance at the beginning
         myroom = randmaps.rooms.FuzzyRoom( parent=myscene )
-        myent = waypoints.RoadSignBack()
+        myent = waypoints.RoadSignBack(anchor=randmaps.anchors.middle)
         myroom.contents.append( myent )
         myroom.priority = 0
 
         # Create the exit on the end.
         last_room = randmaps.rooms.FuzzyRoom( parent=myscene )
-        myexit = waypoints.RoadSignForward()
+        myexit = waypoints.RoadSignForward(anchor=randmaps.anchors.middle)
         last_room.contents.append( myexit )
         last_room.priority = 100
 
@@ -1355,18 +1434,18 @@ class BoringVillage( SDIPlot ):
     def get_sdi_grammar( self ):
         """Return a dict of grammar related to this plot."""
         mygram = {
-            "[GO_QUEST]": ["Travel to the village of {}.".format(self.elements["LOCALE"]),
+            "[GO_QUEST]": ["Travel to the {}.".format(self.elements["LOCALE"]),
                 ],
-            "[SDI_VILLAGE:name]": [ "village of {}".format(self.elements["LOCALE"]),
+            "[SDI_VILLAGE:name]": [ str(self.elements["LOCALE"]),
                 ],
-            "[INTRO]": [ "You arrive in the village of {}. [INTRO_PROBLEM]".format(self.elements["LOCALE"]),
+            "[INTRO]": [ "You arrive in the {}. [INTRO_PROBLEM]".format(self.elements["LOCALE"]),
                 "This was supposed to be a nice relaxing trip to the {}. Of course, things rarely go according to plan for adventurers.".format(self.elements["LOCALE"]),
                 ],
-            "[location]": ["village of {}".format(self.elements["LOCALE"]),
+            "[location]": [str(self.elements["LOCALE"]),
                 ],
-            "[SUMMARY]": [ "The village of {} has seen better times.".format(self.elements["LOCALE"]),
-                "The village of {} lives in fear of [+SDI_BIGBOSS:name].".format(self.elements["LOCALE"]),
-                "The village of {} is under attack by enemies who come from [+SDI_ENEMY_FORT:location].".format(self.elements["LOCALE"]),
+            "[SUMMARY]": [ "The {} has seen better times.".format(self.elements["LOCALE"]),
+                "The {} lives in fear of [+SDI_BIGBOSS:name].".format(self.elements["LOCALE"]),
+                "The {} is under attack by enemies who come from [+SDI_ENEMY_FORT:location].".format(self.elements["LOCALE"]),
                 ],
         }
         if self._reward_given:

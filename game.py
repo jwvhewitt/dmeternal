@@ -137,8 +137,8 @@ def load_campaign( screen ):
 
 def test_campaign_generator( screen ):
     camp = campaign.Campaign()
-    for t in range( 1000 ):
-        nart = narrator.Narrative( camp, narrator.plots.PlotState(rank=1), adv_type="SHORTIE", end_rank=5 )
+    for t in range( 100 ):
+        nart = narrator.Narrative( camp, narrator.plots.PlotState(rank=t%5+1), adv_type="SHORTIE",start_rank=t%5+1, end_rank=5 )
         #nart.build()
         print t
 

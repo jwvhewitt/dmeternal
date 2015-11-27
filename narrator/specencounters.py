@@ -37,7 +37,7 @@ class AdventurerBossEncounter( Plot ):
         myhabitat = scene.get_encounter_request()
         myhabitat[ context.MTY_HUMANOID ] = True
         myteam = teams.Team(default_reaction=-999, rank=self.rank, 
-          strength=200, habitat=myhabitat )
+          strength=150, habitat=myhabitat )
         room.contents.append( myteam )
         mh2 = myhabitat.copy()
         mh2[(context.MTY_LEADER,context.MTY_BOSS)] = True
@@ -57,7 +57,7 @@ class Beastmaster( Plot ):
     @classmethod
     def matches( self, pstate ):
         """Requires the LOCALE to exist and have a faction."""
-        return pstate.elements.get("LOCALE") and pstate.elements["LOCALE"].fac
+        return pstate.elements.get("LOCALE") and pstate.elements["LOCALE"].fac and pstate.rank > 2
     def custom_init( self, nart ):
         scene = self.elements.get("LOCALE")
         mygen = nart.get_map_generator( scene )
@@ -241,7 +241,7 @@ class HumanoidBossEncounter( Plot ):
         myhabitat = scene.get_encounter_request()
         myhabitat[ context.MTY_HUMANOID ] = True
         myteam = teams.Team(default_reaction=-999, rank=self.rank, 
-          strength=200, habitat=myhabitat )
+          strength=150, habitat=myhabitat )
         room.contents.append( myteam )
         mh2 = myhabitat.copy()
         mh2[(context.MTY_LEADER,context.MTY_BOSS)] = True

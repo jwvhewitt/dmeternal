@@ -361,8 +361,8 @@ class FortifiedCamp( Plot ):
         room3.contents.append( maps.CAULDRON )
         self.register_element( "_ROOM", room, dident="LOCALE" )
         boss = self.register_element( "NPC1",
-         monsters.generate_npc(team=myteam,upgrade=True,rank=self.rank+random.randint(0,1)),
-         dident="_ROOM",fac=scene.fac)
+         monsters.generate_npc(team=myteam,upgrade=True,fac=scene.fac,rank=self.rank+random.randint(0,1)),
+         dident="_ROOM")
         for t in range( 2 ):
             myitem = items.generate_special_item( self.rank )
             if myitem:
