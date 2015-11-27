@@ -376,9 +376,12 @@ class BookOfHeroes( Waypoint ):
             pc = rpm.query()
 
             if pc:
-                pc.save()
                 camp.party.remove( pc )
                 camp.scene.contents.remove( pc )
+                if pc.is_alright():
+                    pc.save()
+                else:
+                    camp.graveyard.append( pc )
             else:
                 break
     def open_menu( self, camp, screen, predraw=None ):

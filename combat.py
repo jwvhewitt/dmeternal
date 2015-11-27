@@ -14,6 +14,7 @@ import animobs
 import effects
 import enchantments
 import aibrain
+import services
 
 class TacticsRedraw( object ):
     def __init__( self, chara, comba, explo, hmap = None ):
@@ -430,15 +431,17 @@ class Combat( object ):
         pygame.display.flip()
 
         chara.COMBAT_AI.act( explo, chara, tacred )
+        self.end_turn( chara )
 
         # If very far from nearest PC, deactivate.
         for m in self.scene.contents:
             enemy_found = False
-            if isinstance( m, characters.Character ) and chara.is_enemy( self.camp, m ) and self.scene.distance( chara.pos, m.pos ) <= 15:
+            if isinstance( m, characters.Character ) and chara.is_enemy( self.camp, m ) and self.scene.distance( chara.pos, m.pos ) <= 12:
                 enemy_found = True
                 break
         if not enemy_found:
             self.active.remove( chara )
+
 
 
     def do_combat_action( self, explo, chara ):
@@ -496,6 +499,20 @@ class Combat( object ):
                 del pc.most_recent_wound
         explo.invoke_effect( fx, None, targets )
 
+    def recover_fainted(self,explo):
+        for pc in explo.camp.party:
+            if not (pc.is_dead() or pc.is_alright()):
+                # This PC is neither dead nor alright- in other words, fainted.
+                pc.hp_damage = pc.max_hp() - 1
+                pc.place( explo.camp.scene, services.Temple.get_return_pos(explo) )
+                explo.camp.scene.contents.append( pc )
+
+    def everybody_is_dead(self,explo):
+        # If the entire party is dead, dispose of their items and thwack their gold.
+        for pc in explo.camp.party:
+            pc.drop_everything(explo.camp.scene)
+        explo.camp.gold = explo.camp.gold // 4
+
     def go( self, explo ):
         """Perform this combat."""
 
@@ -516,12 +533,14 @@ class Combat( object ):
             n += 1
 
         if self.no_quit and not pygwrap.GOT_QUIT:
+            # Combat is over. Deal with things.
             explo.check_trigger( "COMBATOVER" )
             if self.camp.num_pcs() > 0:
                 # Combat has ended because we ran out of enemies. Dole experience.
                 self.give_xp_and_treasure( explo )
                 # Provide some end-of-combat first aid.
                 self.do_first_aid(explo)
+                self.recover_fainted(explo)
 
         # PCs stop hiding when combat ends.
         for pc in self.camp.party:

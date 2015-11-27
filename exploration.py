@@ -376,12 +376,9 @@ class Explorer( object ):
                 if not m.is_alright():
                     # There may be a script keeping this model alive...
                     self.scene.contents.remove( m )
-                    # Drop all held items.
-                    for i in m.contents[:]:
-                        if hasattr( i, "place" ):
-                            m.contents.remove(i)
-                            i.equipped = False
-                            i.place( self.scene, m.pos )
+                    if m.is_dead():
+                        # Drop all held items.
+                        m.drop_everything( self.scene )
             elif hasattr( m, "mitose_me" ) and m.mitose_me:
                 self.mitose( m )
                 del( m.mitose_me )
@@ -899,7 +896,7 @@ class Explorer( object ):
         else:
             # Add the characters.
             for pc in self.camp.party:
-                if pc.is_alright():
+                if pc.g():
                     mymenu.add_item( "{0} cast spell".format( pc ), pc )
             pc = self.camp.first_living_pc()
         mymenu.add_item( "-----", False )

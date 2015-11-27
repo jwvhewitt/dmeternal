@@ -1054,6 +1054,14 @@ class Character( stats.PhysicalThing ):
     def possessive_pronoun( self ):
         return stats.POSSESSIVE_PRONOUN[ self.gender ]
 
+    def drop_everything( self, scene ):
+        # Drop everything. Pretty self-explanatory.
+        for i in list(self.contents):
+            if hasattr( i, "place" ):
+                self.contents.remove(i)
+                i.equipped = False
+                i.place( scene, self.pos )
+
 
 def roll_initiative( pc ):
     """Convenience function for making initiative rolls."""

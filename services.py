@@ -613,7 +613,7 @@ class JobTraining( object ):
         del self.charsheets
 
 class Temple( object ):
-    def __init__( self, cost_for_resurrection = 100, cost_for_restoration=25, cost_for_curepoison=15, cost_for_removecurse=50, caption="Temple",
+    def __init__( self, cost_for_resurrection = 250, cost_for_restoration=25, cost_for_curepoison=15, cost_for_removecurse=50, caption="Temple",
       desc = "Welcome to the temple. What prayers are you in need of?" ):
         self.cost_for_resurrection = cost_for_resurrection
         self.cost_for_restoration = cost_for_restoration
@@ -634,21 +634,26 @@ class Temple( object ):
     def remove_curse_cost( self, pc ):
         return pc.rank() * self.cost_for_removecurse
 
-    def get_return_pos( self, explo ):
+    @staticmethod
+    def get_return_pos( explo ):
         x0,y0 = explo.camp.first_living_pc().pos
-        entry_points = pfov.AttackReach( explo.scene, x0, y0, 12, True ).tiles
-        for m in explo.scene.contents:
-            if explo.scene.is_model(m) and m.pos in entry_points:
-                entry_points.remove( m.pos )
-        if entry_points:
-            return random.choice( list( entry_points ) )
-        else:
-            return (x0,y0)
+        dist = 3
+        while dist <= 12:
+            entry_points = pfov.AttackReach( explo.scene, x0, y0, dist, True ).tiles
+            for m in explo.scene.contents:
+                if explo.scene.is_model(m) and m.pos in entry_points:
+                    entry_points.remove( m.pos )
+            if entry_points:
+                return random.choice( list( entry_points ) )
+            dist *= 2
+        return (x0,y0)
 
 
     def resurrection( self, explo ):
         charsheets = dict()
         for pc in explo.camp.party:
+            charsheets[ pc ] = charsheet.CharacterSheet( pc , screen=explo.screen, camp=explo.camp )
+        for pc in explo.camp.graveyard:
             charsheets[ pc ] = charsheet.CharacterSheet( pc , screen=explo.screen, camp=explo.camp )
         psr = charsheet.PartySelectRedrawer( predraw=explo.view, charsheets=charsheets, screen=explo.screen, caption="Resurrection" )
 
@@ -658,6 +663,8 @@ class Temple( object ):
             for pc in explo.camp.party:
                 if not pc.is_alright():
                     rpm.add_item( "{0} - {1}gp".format( str( pc ), self.resurrection_cost( pc ) ) , pc )
+            for pc in explo.camp.graveyard:
+                rpm.add_item( "{0} - {1}gp".format( str( pc ), self.resurrection_cost( pc ) ) , pc )
             rpm.sort()
             rpm.add_alpha_keys()
             rpm.add_item( "Exit", None )
@@ -665,14 +672,21 @@ class Temple( object ):
             pc = rpm.query()
             if pc:
                 if explo.camp.gold >= self.resurrection_cost( pc ):
-                    pos = self.get_return_pos( explo )
                     explo.camp.gold -= self.resurrection_cost( pc )
                     pc.hp_damage = 0
                     pc.mp_damage = 0
                     del pc.condition[:]
                     pc.holy_signs_used = 0
                     psr.caption = "{0} has returned!".format( str(pc) )
-                    pc.place( explo.scene, pos )
+                    if len(explo.camp.party)<4 and pc in explo.camp.graveyard:
+                        explo.camp.graveyard.remove( pc )
+                        explo.camp.party.append( pc )
+                    if pc in explo.camp.party:
+                        pos = self.get_return_pos( explo )
+                        pc.place( explo.scene, pos )
+                    else:
+                        explo.camp.graveyard.remove( pc )
+                        pc.save()
                 else:
                     psr.caption = "You can't afford it!"
             else:
@@ -767,7 +781,7 @@ class Temple( object ):
         while True:
             rpm = charsheet.RightMenu( explo.screen, predraw=myredraw )
 
-            if any( not pc.is_alright() for pc in explo.camp.party ):
+            if any( not pc.is_alright() for pc in explo.camp.party ) or explo.camp.graveyard:
                 rpm.add_item( "Resurrection", self.resurrection, self.desc )
             if any( ( pc.is_alright() and pc.stat_damage ) for pc in explo.camp.party ):
                 rpm.add_item( "Restoration", self.restoration, self.desc )
