@@ -193,7 +193,7 @@ class GoblinRanger( base.Monster ):
     name = "Goblin Ranger"
     statline = { stats.STRENGTH: 11, stats.TOUGHNESS: 8, stats.REFLEXES: 14, \
         stats.INTELLIGENCE: 8, stats.PIETY: 8, stats.CHARISMA: 6, \
-        stats.STEALTH: 30 }
+        stats.PHYSICAL_ATTACK: 5, stats.STEALTH: 30 }
     SPRITENAME = "monster_goblins.png"
     FRAME = 12
     TEMPLATES = ()
@@ -238,7 +238,7 @@ class GoblinLeader( base.Monster ):
 class GoblinMage( base.Monster ):
     name = "Goblin Mage"
     statline = { stats.STRENGTH: 11, stats.TOUGHNESS: 13, stats.REFLEXES: 16, \
-        stats.INTELLIGENCE: 16, stats.PIETY: 14, stats.CHARISMA: 12 }
+        stats.INTELLIGENCE: 14, stats.PIETY: 14, stats.CHARISMA: 12 }
     SPRITENAME = "monster_goblins.png"
     FRAME = 8
     TEMPLATES = ()
@@ -249,8 +249,9 @@ class GoblinMage( base.Monster ):
     ENC_LEVEL = 8
     TREASURE = treasuretype.Standard((items.scrolls.Rank2Scroll,items.scrolls.Rank3Scroll))
     COMBAT_AI = aibrain.BasicTechnicalAI()
-    ATTACK = items.Attack( (2,6,0), element = stats.RESIST_CRUSHING )
-    TECHNIQUES = ( spells.airspells.THUNDER_STRIKE, spells.lunarspells.SLEEP )
+    ATTACK = items.Attack( (1,8,0), element = stats.RESIST_CRUSHING )
+    TECHNIQUES = ( spells.airspells.THUNDER_STRIKE, spells.lunarspells.SLEEP,
+        spells.magespells.INCINERATE )
     def init_monster( self ):
         self.levels.append( base.Spellcaster( 8, self ) )
 
@@ -258,7 +259,7 @@ class GoblinElite( base.Monster ):
     name = "Goblin Elite"
     statline = { stats.STRENGTH: 13, stats.TOUGHNESS: 12, stats.REFLEXES: 16, \
         stats.INTELLIGENCE: 8, stats.PIETY: 10, stats.CHARISMA: 8, \
-        stats.NATURAL_DEFENSE: 10, stats.COUNTER_ATTACK: 30 }
+        stats.NATURAL_DEFENSE: 5, stats.COUNTER_ATTACK: 30 }
     SPRITENAME = "monster_goblins.png"
     FRAME = 5
     TEMPLATES = ()
@@ -270,9 +271,9 @@ class GoblinElite( base.Monster ):
      context.GEN_GOBLIN )
     ENC_LEVEL = 9
     TREASURE = treasuretype.Standard()
-    ATTACK = items.Attack( (2,8,0), element = stats.RESIST_CRUSHING )
+    ATTACK = items.Attack( (2,6,0), element = stats.RESIST_CRUSHING )
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 9, self ) )
+        self.levels.append( base.Humanoid( 10, self ) )
 
 class GoblinSamurai( base.Monster ):
     name = "Goblin Samurai"
@@ -316,7 +317,7 @@ class GoblinGuard( base.Monster ):
     TREASURE = treasuretype.Low()
     ATTACK = items.Attack( (2,8,0), element = stats.RESIST_SLASHING )
     def init_monster( self ):
-        self.levels.append( base.Defender( 11, self ) )
+        self.levels.append( base.Defender( 12, self ) )
 
 class GoblinHero( base.Monster ):
     name = "Goblin Hero"
@@ -333,9 +334,9 @@ class GoblinHero( base.Monster ):
     ENC_LEVEL = 12
     TREASURE = treasuretype.Standard()
     COMPANIONS = (GoblinElite,)
-    ATTACK = items.Attack( (3,6,0), element = stats.RESIST_SLASHING )
+    ATTACK = items.Attack( (2,6,0), element = stats.RESIST_SLASHING )
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 12, self ) )
+        self.levels.append( base.Leader( 14, self ) )
 
 class GoblinKing( base.Monster ):
     name = "Goblin King"
@@ -400,7 +401,7 @@ class Hobgoblin( base.Monster ):
     ENC_LEVEL = 2
     TREASURE = treasuretype.Standard()
     COMPANIONS = (Goblin,)
-    ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )
+    ATTACK = items.Attack( (1,6,0), element = stats.RESIST_SLASHING )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 2, self ) )
 
@@ -552,7 +553,7 @@ class HobgoblinOutcast( base.Monster ):
 
 class Troll( base.Monster ):
     name = "Troll"
-    statline = { stats.STRENGTH: 20, stats.TOUGHNESS: 20, stats.REFLEXES: 10, \
+    statline = { stats.STRENGTH: 23, stats.TOUGHNESS: 23, stats.REFLEXES: 14, \
         stats.INTELLIGENCE: 6, stats.PIETY: 9, stats.CHARISMA: 6, \
         stats.RESIST_FIRE: -100, stats.RESIST_ACID: -100 }
     SPRITENAME = "monster_goblins.png"
@@ -571,7 +572,7 @@ class Troll( base.Monster ):
 
 class RockTroll( base.Monster ):
     name = "Rock Troll"
-    statline = { stats.STRENGTH: 20, stats.TOUGHNESS: 20, stats.REFLEXES: 10, \
+    statline = { stats.STRENGTH: 23, stats.TOUGHNESS: 26, stats.REFLEXES: 10, \
         stats.INTELLIGENCE: 6, stats.PIETY: 9, stats.CHARISMA: 6 }
     SPRITENAME = "monster_goblins.png"
     FRAME = 38
@@ -590,7 +591,7 @@ class RockTroll( base.Monster ):
 
 class TrollWyrd( base.Monster ):
     name = "Troll Wyrd"
-    statline = { stats.STRENGTH: 19, stats.TOUGHNESS: 19, stats.REFLEXES: 10, \
+    statline = { stats.STRENGTH: 23, stats.TOUGHNESS: 21, stats.REFLEXES: 14, \
         stats.INTELLIGENCE: 10, stats.PIETY: 12, stats.CHARISMA: 6, \
         stats.RESIST_FIRE: -100, stats.RESIST_ACID: -100 }
     SPRITENAME = "monster_goblins.png"
@@ -616,7 +617,7 @@ class TrollWyrd( base.Monster ):
 
 class TrollWarrior( base.Monster ):
     name = "Troll Warrior"
-    statline = { stats.STRENGTH: 23, stats.TOUGHNESS: 23, stats.REFLEXES: 12, \
+    statline = { stats.STRENGTH: 23, stats.TOUGHNESS: 23, stats.REFLEXES: 14, \
         stats.INTELLIGENCE: 6, stats.PIETY: 9, stats.CHARISMA: 6, \
         stats.COUNTER_ATTACK: 30, \
         stats.RESIST_FIRE: -100, stats.RESIST_ACID: -100 }
@@ -637,7 +638,7 @@ class TrollWarrior( base.Monster ):
 
 class RockTrollWarrior( base.Monster ):
     name = "Rock Troll Warrior"
-    statline = { stats.STRENGTH: 23, stats.TOUGHNESS: 23, stats.REFLEXES: 12, \
+    statline = { stats.STRENGTH: 23, stats.TOUGHNESS: 26, stats.REFLEXES: 12, \
         stats.INTELLIGENCE: 6, stats.PIETY: 9, stats.CHARISMA: 6, \
         stats.COUNTER_ATTACK: 30, stats.NATURAL_DEFENSE: 10 }
     SPRITENAME = "monster_goblins.png"
@@ -679,7 +680,7 @@ class TrollChampion( base.Monster ):
 
 class SeaTroll( base.Monster ):
     name = "Sea Troll"
-    statline = { stats.STRENGTH: 24, stats.TOUGHNESS: 20, stats.REFLEXES: 12, \
+    statline = { stats.STRENGTH: 24, stats.TOUGHNESS: 25, stats.REFLEXES: 14, \
         stats.INTELLIGENCE: 6, stats.PIETY: 12, stats.CHARISMA: 5, \
         stats.NATURAL_DEFENSE: 10, \
         stats.RESIST_ACID: -100 }

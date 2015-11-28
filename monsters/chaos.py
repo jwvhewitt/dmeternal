@@ -95,7 +95,8 @@ class Hooligan( base.Monster ):
 class Heretic( base.Monster ):
     name = "Heretic"
     statline = { stats.STRENGTH: 12, stats.TOUGHNESS: 10, stats.REFLEXES: 12, \
-        stats.INTELLIGENCE: 13, stats.PIETY: 13, stats.CHARISMA: 12 }
+        stats.INTELLIGENCE: 13, stats.PIETY: 13, stats.CHARISMA: 12, \
+        stats.PHYSICAL_DEFENSE: -10 }
     SPRITENAME = "monster_chaos.png"
     FRAME = 17
     TEMPLATES = ()
@@ -358,7 +359,7 @@ class CentaurKnight( base.Monster ):
     TECHNIQUES = ( abilities.COMPOSITEBOW, spells.solarspells.MAJOR_CURE,
       spells.solarspells.CURE_POISON )
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 7, self ) )
+        self.levels.append( base.Humanoid( 8, self ) )
 
 # Plague Bearer (Water)
 
@@ -416,14 +417,11 @@ class CentaurChampion( base.Monster ):
     TREASURE = treasuretype.Standard((items.ARROW,items.POLEARM))
     COMPANIONS = ( CentaurKnight, CentaurWarrior )
     ATTACK = items.Attack( (2,6,0), element = stats.RESIST_SLASHING,
-     extra_effect=effects.OpposedRoll( att_stat=None, def_stat=stats.TOUGHNESS, on_success = (
-            effects.HealthDamage( (1,4,0), stat_bonus=None, element=stats.RESIST_POISON, anim=animobs.PoisonCloud ),
-            effects.Enchant( enchantments.PoisonClassic )
-        ,) )
+     extra_effect=abilities.POISON_ATTACK
     )
     TECHNIQUES = ( abilities.COMPOSITEBOW, )
     def init_monster( self ):
-        self.levels.append( base.Leader( 9, self ) )
+        self.levels.append( base.Leader( 10, self ) )
 
 
 #  ********************************

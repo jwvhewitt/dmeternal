@@ -12,6 +12,7 @@ import aibrain
 import random
 import enchantments
 import treasuretype
+import abilities
 
 
 #  *******************************
@@ -194,14 +195,16 @@ class CaveDragon( base.Monster ):
     TREASURE = treasuretype.DragonHoard()
     LONER = True
     COMPANIONS = ( YoungCaveDragon, )
-    ATTACK = items.Attack( (1,12,0), element = stats.RESIST_SLASHING, extra_effect=
-        effects.SavingThrow( roll_skill=stats.RESIST_POISON, roll_stat=stats.TOUGHNESS, roll_modifier=50, on_failure = (
-            effects.Enchant( enchantments.PoisonClassic, anim=animobs.DeathSparkle )
-        ,)) )
+    ATTACK = items.Attack( (1,12,0), element = stats.RESIST_SLASHING,
+        extra_effect=abilities.POISON_ATTACK )
     TECHNIQUES = ( invocations.MPInvocation( "Toxic Breath",
-        effects.OpposedRoll( def_stat=stats.TOUGHNESS, anim=animobs.PoisonCloud, on_success = (
-            effects.Paralyze( max_duration = 3 )
-        ,) ), com_tar=targetarea.Cone(reach=6), ai_tar=invocations.TargetEnemy(), mp_cost=8
+        effects.OpposedRoll( def_stat=stats.TOUGHNESS, anim=None, on_success = (
+            effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_POISON, anim=animobs.PoisonCloud ),
+            effects.Paralyze( max_duration = 3 ),
+            effects.Enchant( enchantments.PoisonClassic, anim=animobs.DeathSparkle ),
+        ), on_failure = (
+            effects.HealthDamage( (1,4,0), stat_bonus=None, element=stats.RESIST_POISON, anim=animobs.PoisonCloud ),
+        ) ), com_tar=targetarea.Cone(reach=6), ai_tar=invocations.TargetEnemy(), mp_cost=8
       ), )
     def init_monster( self ):
         self.levels.append( base.Terror( 8, self ) )
@@ -297,10 +300,8 @@ class OldCaveDragon( base.Monster ):
     TREASURE = treasuretype.DragonHoard()
     LONER = True
     COMPANIONS = ( CaveDragon, )
-    ATTACK = items.Attack( (4,8,0), element = stats.RESIST_SLASHING, extra_effect=
-        effects.SavingThrow( roll_skill=stats.RESIST_POISON, roll_stat=stats.TOUGHNESS, on_failure = (
-            effects.Enchant( enchantments.PoisonClassic, anim=animobs.DeathSparkle )
-        ,)) )
+    ATTACK = items.Attack( (4,8,0), element = stats.RESIST_SLASHING,
+     extra_effect=abilities.POISON_ATTACK_2d6 )
     TECHNIQUES = ( invocations.MPInvocation( "Toxic Breath",
         effects.OpposedRoll( def_stat=stats.TOUGHNESS, anim=animobs.PoisonCloud, on_success = (
             effects.Paralyze( max_duration = 3 )
@@ -371,10 +372,8 @@ class AncientCaveDragon( base.Monster ):
     TREASURE = treasuretype.DragonHoard()
     LONER = True
     COMPANIONS = ( OldCaveDragon, )
-    ATTACK = items.Attack( (8,8,0), element = stats.RESIST_SLASHING, extra_effect=
-        effects.SavingThrow( roll_skill=stats.RESIST_POISON, roll_stat=stats.TOUGHNESS, roll_modifier=-25, on_failure = (
-            effects.Enchant( enchantments.PoisonClassic, anim=animobs.DeathSparkle )
-        ,)) )
+    ATTACK = items.Attack( (8,8,0), element = stats.RESIST_SLASHING,
+     extra_effect=abilities.POISON_ATTACK_2d6)
     TECHNIQUES = ( invocations.MPInvocation( "Toxic Breath",
         effects.OpposedRoll( def_stat=stats.TOUGHNESS, anim=animobs.PoisonCloud, on_success = (
             effects.Paralyze( max_duration = 3 )

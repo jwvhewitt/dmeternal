@@ -505,7 +505,7 @@ class Combat( object ):
                 # This PC is neither dead nor alright- in other words, fainted.
                 pc.hp_damage = pc.max_hp() - 1
                 pc.place( explo.camp.scene, services.Temple.get_return_pos(explo) )
-                explo.camp.scene.contents.append( pc )
+                #explo.camp.scene.contents.append( pc )
 
     def everybody_is_dead(self,explo):
         # If the entire party is dead, dispose of their items and thwack their gold.

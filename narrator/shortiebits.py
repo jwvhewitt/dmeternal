@@ -637,6 +637,13 @@ class ElementalShrine( SDIPlot ):
                 ],
             "[SDI_DEFILED_PLACE:location]": [str(self.elements["LOCALE"]),
                 ],
+            # A special tag, used after the spirit is calmed.
+            "[SDI_DEFILED_PLACE:ending]": [ "The question is, who would dare to desecrate this place?",
+                "This must have been the work of [+SDI_BIGBOSS:name] the [SDI_BIGBOSS:type].",
+                "This must be related to the trouble [quest_giver] warned you about.",
+                "The ones who did this must have come from [+SDI_ENEMY_BARRACKS:name]; that's where you will find answers.",
+                "Maybe you will discover who did this, and why, in [+location].",
+                ],
             "[SUMMARY]": [ "There has been a disturbance at the {}.".format(str(self.elements["LOCALE"])),
                 ],
             "[warning]": [ "the {} has been defiled".format(str(self.elements["LOCALE"])),
@@ -662,7 +669,7 @@ class ElementalShrine( SDIPlot ):
             self.elements["TEAM"].default_reaction = 999
             explo.scene.contents.remove(self.elements["_MONSTER"])
             explo.camp.fight.active.remove(self.elements["_MONSTER"])
-            explo.alert("The spirit has been destroyed. The question is, who would dare to desecrate this place?")
+            explo.alert("The spirit has been destroyed. [=SDI_DEFILED_PLACE:ending]")
         else:
             explo.alert("You strike the crystal, but don't even manage to scratch it.")
     def _repair_crystal( self, explo ):
@@ -674,7 +681,7 @@ class ElementalShrine( SDIPlot ):
             self.elements["TEAM"].default_reaction = 999
             explo.scene.contents.remove(self.elements["_MONSTER"])
             explo.give_gold_and_xp( 0, 100 * self.rank + 50 )
-            explo.alert("The spirit has been calmed. The question is, who would dare to desecrate this place?")
+            explo.alert("The spirit has been calmed. [=SDI_DEFILED_PLACE:ending]")
             self.elements["_CRYSTAL"].plot_locked = False
         else:
             explo.alert("You touch the crystal. You are overwhelmed by the negative energy!")
@@ -695,7 +702,7 @@ class ElementalShrine( SDIPlot ):
         thingmenu.desc = "You should find out what happened at the {} before leaving.".format(self.elements["LOCALE"])
     def t_COMBATOVER( self, explo ):
         if explo.scene is self.elements["_TEMPLE"] and self._door_locked and not self.elements["TEAM"].members_in_play( explo.scene ):
-            explo.alert("The spirit has been calmed. The question is, who would dare to desecrate this place?")
+            explo.alert("The spirit has been calmed. [=SDI_DEFILED_PLACE:ending]")
             self._open_the_exit(explo)
 
 #  SDI_ENEMY_FORT
@@ -1127,7 +1134,13 @@ class NPCBossInABox( SDIPlot ):
         mychest.stock(self.rank+1)
         goalroom.contents.append( mychest )
 
-        boss = monsters.generate_npc( rank=self.rank+2, team=team, fac=antagonist, upgrade=True )
+        if self.rank < random.randint(2,4):
+            brank = self.rank + 2
+        elif self.rank < random.randint(6,10):
+            brank = self.rank + 3
+        else:
+            brank = self.rank + 4
+        boss = monsters.generate_npc( rank=brank, team=team, fac=antagonist, upgrade=True )
         goalroom.contents.append( boss )
         self.register_element( "ENEMY", boss )
         team.boss = boss

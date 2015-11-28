@@ -367,7 +367,7 @@ class Explorer( object ):
         self.record_anim = False
 
         # Remove dead models from the map, and handle probes and mitoses.
-        for m in self.scene.contents[:]:
+        for m in list(self.scene.contents):
             if hasattr( m, "probe_me" ) and m.probe_me:
                 self.probe( m )
                 m.probe_me = False
