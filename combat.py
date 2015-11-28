@@ -539,7 +539,7 @@ class Combat( object ):
                 # Combat has ended because we ran out of enemies. Dole experience.
                 self.give_xp_and_treasure( explo )
                 # Provide some end-of-combat first aid.
-                self.do_first_aid(explo)
+                #self.do_first_aid(explo)
                 self.recover_fainted(explo)
 
         # PCs stop hiding when combat ends.

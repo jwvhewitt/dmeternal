@@ -113,12 +113,12 @@ class MoriaVille( Plot ):
 
         #self.chapter.world.add_entrance( myscene, myscene.name, worlds.W_CITY, myent, True )
 
-        self.add_sub_plot( nart, "CITY_GENERALSTORE" )
-        self.add_sub_plot( nart, "CITY_LIBRARY" )
+        self.add_sub_plot( nart, "CITY_GENERALSTORE",spstate=PlotState(rank=random.randint(3,5)).based_on(self))
+        self.add_sub_plot( nart, "CITY_LIBRARY",spstate=PlotState(rank=random.randint(3,5)).based_on(self))
         self.add_sub_plot( nart, "CITY_INN" )
         self.add_sub_plot( nart, "CITY_TEMPLE" )
-        self.add_sub_plot( nart, "CITY_WEAPONSHOP" )
-        self.add_sub_plot( nart, "CITY_ARMORSHOP" )
+        self.add_sub_plot( nart, "CITY_WEAPONSHOP",spstate=PlotState(rank=random.randint(3,5)).based_on(self))
+        self.add_sub_plot( nart, "CITY_ARMORSHOP",spstate=PlotState(rank=random.randint(3,5)).based_on(self))
         self.add_sub_plot( nart, "CITY_ADVGUILD" )
 
         #self.add_sub_plot( nart, "TEST_FEATURE", necessary=False )

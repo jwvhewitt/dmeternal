@@ -45,7 +45,7 @@ class Shop( object ):
     def generate_item( self, itype, rank, magic_chance ):
         it = None
         tries = 0
-        while ( tries < 200 ) and not it:
+        while ( tries < 10 ) and not it:
             it = items.choose_item( itype, rank )
             if it and it.min_rank() < rank and random.randint(1,100)<=magic_chance:
                 items.make_item_magic( it, rank )
@@ -78,19 +78,22 @@ class Shop( object ):
         while len( self.wares ) > num_items:
             it = random.choice( self.wares )
             self.wares.remove( it )
-        days = explo.camp.day - self.last_updated
-        for n in range( max( 3, ( random.randint(1,6) + days ) * self.turnover )):
-            if self.wares:
-                it = random.choice( self.wares )
-                self.wares.remove( it )
-            else:
-                break
+        if explo:
+            days = explo.camp.day - self.last_updated
+            for n in range( max( 3, ( random.randint(1,6) + days ) * self.turnover )):
+                if self.wares:
+                    it = random.choice( self.wares )
+                    self.wares.remove( it )
+                else:
+                    break
+        else:
+            self.wares = list()
 
         # The store rank tracks the party rank, but doesn't quite keep up.
         rank = self.rank
         if friendliness > 50:
             rank = max( rank, explo.camp.party_rank() )
-        elif friendliness > -20:
+        elif friendliness > -20 and explo:
             rank = max( rank, ( rank + explo.camp.party_rank() ) // 2 )
 
         # Generate one of each type of item this shop stocks first.        
@@ -107,7 +110,7 @@ class Shop( object ):
         tries = 0
         while len( self.wares ) < num_items:
             tries += 1
-            if self.allow_misc or tries > 200:
+            if self.allow_misc or tries > 100:
                 itype = None
             else:
                 itype = random.choice( self.ware_types )
@@ -118,6 +121,7 @@ class Shop( object ):
                 self.wares.append( it )
             elif not it and not itype:
                 break
+
 
     def make_wares_menu( self, explo, myredraw ):
         mymenu = charsheet.RightMenu( explo.screen, predraw = myredraw )
@@ -139,11 +143,11 @@ class Shop( object ):
         mymenu.quick_keys[ pygame.K_RIGHT ] = 1
         return mymenu
 
-    def improve_friendliness( self, explo, item ):
+    def improve_friendliness( self, explo, item, modifier=0 ):
         """Dealing with a shopkeeper will generally increase friendliness."""
         if self.npc:
             target = abs( self.npc.get_friendliness( explo.camp ) ) + 50 - 5 * item.min_rank()
-            roll = random.randint( 1, 100 ) + explo.camp.party_spokesperson().get_stat_bonus( stats.CHARISMA )
+            roll = random.randint( 1, 100 ) + explo.camp.party_spokesperson().get_stat_bonus( stats.CHARISMA ) + modifier
             if roll > target:
                 self.npc.friendliness += ( roll - target + 9 ) // 10
 
@@ -247,6 +251,7 @@ class Shop( object ):
                 # An item was selected. Deal with it.
                 self.pc.contents.remove( it )
                 explo.camp.gold += self.sale_price( it )
+                self.improve_friendliness( explo, it, modifier=-20 )
                 if it.enhancement:
                     it.identified = True
                     self.wares.append( it )
@@ -798,5 +803,13 @@ class Temple( object ):
                 it( explo )
             else:
                 break
+
+if __name__=='__main__':
+    import cProfile
+
+    myshop = Shop(ware_types=MAGIC_STORE,magic_chance=25)
+    def testitem():
+        myshop.generate_item(random.choice(GENERAL_STORE),5,20)
+    cProfile.run( "myshop.update_wares(None)" )
 
 

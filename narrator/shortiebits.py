@@ -647,6 +647,7 @@ class ElementalShrine( SDIPlot ):
     def t_START( self, explo ):
         if self._do_message and explo.scene is self.elements["_TEMPLE"]:
             explo.alert("You sense evil as you enter the room. Without warning, the guardian of the crystal attacks!")
+            self._do_message = False
             for m in explo.scene.contents:
                 if hasattr(m,"team") and m.team is self.elements["TEAM"]:
                     explo.camp.activate_monster(m)

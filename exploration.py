@@ -896,7 +896,7 @@ class Explorer( object ):
         else:
             # Add the characters.
             for pc in self.camp.party:
-                if pc.g():
+                if pc.is_alright():
                     mymenu.add_item( "{0} cast spell".format( pc ), pc )
             pc = self.camp.first_living_pc()
         mymenu.add_item( "-----", False )
