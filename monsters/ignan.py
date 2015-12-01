@@ -55,7 +55,7 @@ class Salamander( base.Monster ):
     TEMPLATES = (stats.ELEMENTAL,stats.FIRE)
     MOVE_POINTS = 6
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
-     context.DES_FIRE,
+     context.DES_FIRE, context.MTY_ELEMENTAL,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.MTY_BOSS )
     ENC_LEVEL = 8
     TREASURE = treasuretype.Standard()
@@ -88,7 +88,7 @@ class SalamanderLeader( base.Monster ):
     TEMPLATES = (stats.ELEMENTAL,stats.FIRE)
     MOVE_POINTS = 6
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
-     context.DES_FIRE,
+     context.DES_FIRE, context.MTY_ELEMENTAL,
      context.MTY_HUMANOID, context.MTY_LEADER, context.MTY_BOSS )
     ENC_LEVEL = 11
     TREASURE = treasuretype.High()

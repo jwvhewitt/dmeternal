@@ -93,7 +93,7 @@ class GoblinPyromaniac( base.Monster ):
     MOVE_POINTS = 8
     VOICE = dialogue.voice.ORCISH
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
-     context.DES_FIRE,
+     context.DES_FIRE, context.MTY_BOSS,
      context.MTY_HUMANOID, context.GEN_GOBLIN )
     ENC_LEVEL = 4
     TREASURE = treasuretype.Standard()
@@ -107,14 +107,14 @@ class GoblinPyromaniac( base.Monster ):
         ,) ),
         com_tar=targetarea.Blast(radius=1,reach=4), shot_anim=animobs.Fireball, ai_tar=invocations.TargetEnemy() ), )
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 3, self ) )
+        self.levels.append( base.Humanoid( 4, self ) )
 
 
 class GoblinWarrior( base.Monster ):
     name = "Goblin Warrior"
     statline = { stats.STRENGTH: 11, stats.TOUGHNESS: 8, stats.REFLEXES: 14, \
         stats.INTELLIGENCE: 8, stats.PIETY: 8, stats.CHARISMA: 6,
-        stats.COUNTER_ATTACK: 15 }
+        stats.PHYSICAL_ATTACK: 10, stats.PHYSICAL_DEFENSE: 10, stats.COUNTER_ATTACK: 15 }
     SPRITENAME = "monster_goblins.png"
     FRAME = 3
     TEMPLATES = ()
@@ -128,7 +128,7 @@ class GoblinWarrior( base.Monster ):
     COMPANIONS = (Goblin,GoblinArcher)
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 4, self ) )
+        self.levels.append( base.Humanoid( 3, self ) )
 
 class GoblinPirate( base.Monster ):
     name = "Goblin Pirate"
@@ -193,7 +193,7 @@ class GoblinRanger( base.Monster ):
     name = "Goblin Ranger"
     statline = { stats.STRENGTH: 11, stats.TOUGHNESS: 8, stats.REFLEXES: 14, \
         stats.INTELLIGENCE: 8, stats.PIETY: 8, stats.CHARISMA: 6, \
-        stats.PHYSICAL_ATTACK: 5, stats.STEALTH: 30 }
+        stats.PHYSICAL_ATTACK: 10, stats.STEALTH: 30 }
     SPRITENAME = "monster_goblins.png"
     FRAME = 12
     TEMPLATES = ()
@@ -216,6 +216,7 @@ class GoblinLeader( base.Monster ):
     name = "Goblin Leader"
     statline = { stats.STRENGTH: 13, stats.TOUGHNESS: 11, stats.REFLEXES: 14, \
         stats.INTELLIGENCE: 14, stats.PIETY: 16, stats.CHARISMA: 12, \
+        stats.PHYSICAL_ATTACK: 10, \
         stats.NATURAL_DEFENSE: 10, stats.COUNTER_ATTACK: 25 }
     SPRITENAME = "monster_goblins.png"
     FRAME = 1
@@ -251,7 +252,7 @@ class GoblinMage( base.Monster ):
     COMBAT_AI = aibrain.BasicTechnicalAI()
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_CRUSHING )
     TECHNIQUES = ( spells.airspells.THUNDER_STRIKE, spells.lunarspells.SLEEP,
-        spells.magespells.INCINERATE )
+        spells.magespells.ANIMATION )
     def init_monster( self ):
         self.levels.append( base.Spellcaster( 8, self ) )
 
@@ -259,6 +260,7 @@ class GoblinElite( base.Monster ):
     name = "Goblin Elite"
     statline = { stats.STRENGTH: 13, stats.TOUGHNESS: 12, stats.REFLEXES: 16, \
         stats.INTELLIGENCE: 8, stats.PIETY: 10, stats.CHARISMA: 8, \
+        stats.PHYSICAL_ATTACK: 10, stats.MAGIC_DEFENSE: 10, \
         stats.NATURAL_DEFENSE: 5, stats.COUNTER_ATTACK: 30 }
     SPRITENAME = "monster_goblins.png"
     FRAME = 5
@@ -273,13 +275,14 @@ class GoblinElite( base.Monster ):
     TREASURE = treasuretype.Standard()
     ATTACK = items.Attack( (2,6,0), element = stats.RESIST_CRUSHING )
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 10, self ) )
+        self.levels.append( base.Humanoid( 8, self ) )
 
 class GoblinSamurai( base.Monster ):
     name = "Goblin Samurai"
     statline = { stats.STRENGTH: 13, stats.TOUGHNESS: 12, stats.REFLEXES: 16, \
         stats.INTELLIGENCE: 14, stats.PIETY: 14, stats.CHARISMA: 12, \
-        stats.NATURAL_DEFENSE: 15, stats.RESIST_FIRE: 100 }
+        stats.PHYSICAL_ATTACK: 10, stats.MAGIC_ATTACK: 10, \
+        stats.NATURAL_DEFENSE: 20, stats.RESIST_FIRE: 100 }
     SPRITENAME = "monster_goblins.png"
     FRAME = 6
     TEMPLATES = ()
@@ -299,13 +302,13 @@ class GoblinSamurai( base.Monster ):
         ,) ), com_tar=targetarea.Cone(reach=5), ai_tar=invocations.TargetEnemy(), mp_cost=6
       ), spells.firespells.EXPLOSION )
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 10, self ) )
+        self.levels.append( base.Humanoid( 9, self ) )
 
 class GoblinGuard( base.Monster ):
     name = "Goblin Guard"
     statline = { stats.STRENGTH: 14, stats.TOUGHNESS: 13, stats.REFLEXES: 17, \
         stats.INTELLIGENCE: 9, stats.PIETY: 11, stats.CHARISMA: 9,
-        stats.COUNTER_ATTACK: 25 }
+        stats.PHYSICAL_ATTACK: 15, stats.COUNTER_ATTACK: 25 }
     SPRITENAME = "monster_goblins.png"
     FRAME = 10
     TEMPLATES = ()
@@ -317,13 +320,14 @@ class GoblinGuard( base.Monster ):
     TREASURE = treasuretype.Low()
     ATTACK = items.Attack( (2,8,0), element = stats.RESIST_SLASHING )
     def init_monster( self ):
-        self.levels.append( base.Defender( 12, self ) )
+        self.levels.append( base.Defender( 10, self ) )
 
 class GoblinHero( base.Monster ):
     name = "Goblin Hero"
     statline = { stats.STRENGTH: 15, stats.TOUGHNESS: 14, stats.REFLEXES: 18, \
         stats.INTELLIGENCE: 8, stats.PIETY: 12, stats.CHARISMA: 8, \
-        stats.NATURAL_DEFENSE: 20, stats.COUNTER_ATTACK: 25 }
+        stats.PHYSICAL_ATTACK: 20, stats.MAGIC_DEFENSE: 10,
+        stats.NATURAL_DEFENSE: 30, stats.COUNTER_ATTACK: 25 }
     SPRITENAME = "monster_goblins.png"
     FRAME = 4
     TEMPLATES = ()
@@ -336,7 +340,7 @@ class GoblinHero( base.Monster ):
     COMPANIONS = (GoblinElite,)
     ATTACK = items.Attack( (2,6,0), element = stats.RESIST_SLASHING )
     def init_monster( self ):
-        self.levels.append( base.Leader( 14, self ) )
+        self.levels.append( base.Leader( 10, self ) )
 
 class GoblinKing( base.Monster ):
     name = "Goblin King"
@@ -495,8 +499,7 @@ class HobgoblinWarlord( base.Monster ):
     name = "Hobgoblin Warlord"
     statline = { stats.STRENGTH: 15, stats.TOUGHNESS: 13, stats.REFLEXES: 16, \
         stats.INTELLIGENCE: 12, stats.PIETY: 11, stats.CHARISMA: 11, \
-        stats.NATURAL_DEFENSE: 10, stats.PHYSICAL_ATTACK: 10, stats.RESIST_FIRE: 50,
-        stats.COUNTER_ATTACK: 30 }
+        stats.RESIST_FIRE: 50,stats.COUNTER_ATTACK: 30 }
     SPRITENAME = "monster_goblins.png"
     FRAME = 16
     TEMPLATES = ()
@@ -512,7 +515,7 @@ class HobgoblinWarlord( base.Monster ):
     COMPANIONS = (HobgoblinPriest,HobgoblinMage)
     ATTACK = items.Attack( (2,8,1), element = stats.RESIST_SLASHING )
     def init_monster( self ):
-        self.levels.append( base.Leader( 8, self ) )
+        self.levels.append( base.Leader( 10, self ) )
 
 class HobgoblinOutcast( base.Monster ):
     name = "Hobgoblin Outcast"
@@ -843,7 +846,7 @@ class OrcWarrior( base.Monster ):
     COMPANIONS = (Orc,OrcArcher,HobgoblinFighter)
     ATTACK = items.Attack( (1,10,0), element = stats.RESIST_SLASHING )
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 5, self ) )
+        self.levels.append( base.Humanoid( 6, self ) )
 
 class OrcThief( base.Monster ):
     name = "Orc Thief"
@@ -863,7 +866,7 @@ class OrcThief( base.Monster ):
     COMPANIONS = (OrcWarrior,Orc,HobgoblinThief)
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING )
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 4, self ) )
+        self.levels.append( base.Humanoid( 5, self ) )
 
 class OrcRaider( base.Monster ):
     name = "Orc Raider"
@@ -904,7 +907,7 @@ class OrcMage( base.Monster ):
     LONER = True
     COMPANIONS = (OrcWarrior,HobgoblinMage,GoblinWarrior,Troll)
     TECHNIQUES = ( spells.lunarspells.WITHER, spells.magespells.LIGHTNING_BOLT,
-        spells.airspells.AIR_ARMOR, spells.firespells.EXPLOSION )
+        spells.firespells.EXPLOSION )
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 3, self ) )

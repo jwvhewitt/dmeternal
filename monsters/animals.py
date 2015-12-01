@@ -652,7 +652,7 @@ class Lion( base.Monster ):
     ENC_LEVEL = 6
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )
     def init_monster( self ):
-        self.levels.append( base.Beast( 6, self ) )
+        self.levels.append( base.Beast( 8, self ) )
 
 class WildBoar( base.Monster ):
     name = "Wild Boar"
@@ -670,7 +670,7 @@ class WildBoar( base.Monster ):
     ENC_LEVEL = 6
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_PIERCING )
     def init_monster( self ):
-        self.levels.append( base.Beast( 6, self ) )
+        self.levels.append( base.Beast( 7, self ) )
 
 class TombScorpion( base.Monster ):
     name = "Tomb Scorpion"
@@ -807,7 +807,7 @@ class Crocodile( base.Monster ):
 class FireScorpion( base.Monster ):
     name = "Fire Scorpion"
     statline = { stats.STRENGTH: 19, stats.TOUGHNESS: 13, stats.REFLEXES: 18, \
-        stats.INTELLIGENCE: 1, stats.PIETY: 12, stats.CHARISMA: 1 }
+        stats.INTELLIGENCE: 4, stats.PIETY: 12, stats.CHARISMA: 1 }
     SPRITENAME = "monster_bugs.png"
     FRAME = 16
     TEMPLATES = (stats.BUG,stats.FIRE)
@@ -819,7 +819,7 @@ class FireScorpion( base.Monster ):
      context.MTY_CREATURE, context.GEN_NATURE )
     ENC_LEVEL = 8
     TECHNIQUES = ( invocations.MPInvocation( "Flamethrower",
-        effects.OpposedRoll( on_success = (
+        effects.OpposedRoll( att_stat=stats.REFLEXES, on_success = (
             effects.HealthDamage( (2,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.Ignite ),
             effects.Enchant( enchantments.BurnLowEn )
         ,), on_failure = (
@@ -827,10 +827,7 @@ class FireScorpion( base.Monster ):
         ,) ), com_tar=targetarea.Line(reach=6), ai_tar=invocations.TargetEnemy(), mp_cost=12
       ), )
     ATTACK = items.Attack( (2,8,0), element = stats.RESIST_PIERCING,
-     extra_effect=effects.OpposedRoll( att_stat=None, def_stat=stats.TOUGHNESS, on_success = (
-            effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_POISON, anim=animobs.PoisonCloud ),
-            effects.Enchant( enchantments.PoisonClassic )
-        ,) )
+     extra_effect=abilities.POISON_ATTACK_1d8
     )
     def init_monster( self ):
         self.levels.append( base.Beast( 8, self ) )
@@ -857,7 +854,7 @@ class GreatStag( base.Monster ):
     ATTACK = items.Attack( (2,8,0), element = stats.RESIST_PIERCING )
 
     def init_monster( self ):
-        self.levels.append( base.Beast( 9, self ) )
+        self.levels.append( base.Beast( 10, self ) )
 
 class PolarBear( base.Monster ):
     name = "Polar Bear"
@@ -877,7 +874,7 @@ class PolarBear( base.Monster ):
     ENC_LEVEL = 9
     ATTACK = items.Attack( (2,6,0), element = stats.RESIST_SLASHING )
     def init_monster( self ):
-        self.levels.append( base.Beast( 9, self ) )
+        self.levels.append( base.Beast( 12, self ) )
 
 
 #  ********************************

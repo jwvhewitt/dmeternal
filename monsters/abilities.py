@@ -41,6 +41,11 @@ POISON_ATTACK = effects.TargetIs( effects.ALIVE, on_true=( effects.OpposedRoll( 
             effects.Enchant( enchantments.PoisonClassic )
         ,) ), ))
 
+POISON_ATTACK_1d8 = effects.TargetIs( effects.ALIVE, on_true=( effects.OpposedRoll( att_stat=None, def_stat=stats.TOUGHNESS, on_success = (
+            effects.HealthDamage( (1,8,0), stat_bonus=None, element=stats.RESIST_POISON, anim=animobs.PoisonCloud ),
+            effects.Enchant( enchantments.PoisonClassic )
+        ,) ), ))
+
 POISON_ATTACK_2d6 = effects.TargetIs( effects.ALIVE, on_true=( effects.OpposedRoll( att_stat=None, def_stat=stats.TOUGHNESS, on_success = (
             effects.HealthDamage( (2,6,0), stat_bonus=None, element=stats.RESIST_POISON, anim=animobs.PoisonCloud ),
             effects.Enchant( enchantments.PoisonClassic )

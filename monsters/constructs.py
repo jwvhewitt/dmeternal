@@ -214,7 +214,7 @@ class AnimatedCandlestick( base.Monster ):
       ) ), com_tar=targetarea.SingleTarget(), ai_tar=invocations.TargetEnemy(), shot_anim=animobs.Fireball, mp_cost=5 ),
     )
     def init_monster( self ):
-        self.levels.append( base.Beast( 6, self ) )
+        self.levels.append( base.Beast( 7, self ) )
 
 
 #  *******************************

@@ -150,7 +150,7 @@ class Centaur( base.Monster ):
      context.DES_SOLAR,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_CHAOS )
     ENC_LEVEL = 3
-    COMBAT_AI = aibrain.BasicTechnicalAI()
+    COMBAT_AI = aibrain.ArcherAI()
     TREASURE = treasuretype.Standard()
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_SLASHING )
     TECHNIQUES = ( abilities.SHORTBOW, )
@@ -208,13 +208,13 @@ class ChaosMage( base.Monster ):
      context.MTY_HUMANOID, context.MTY_MAGE, context.GEN_CHAOS )
     ENC_LEVEL = 4
     TREASURE = treasuretype.Standard( ( items.scrolls.Rank1Scroll, items.scrolls.Rank2Scroll ) )
-    COMBAT_AI = aibrain.BasicTechnicalAI()
+    COMBAT_AI = aibrain.ArcherAI()
     COMPANIONS = (animals.MadDog,)
     ATTACK = items.Attack( (1,4,0), element = stats.RESIST_PIERCING )
     TECHNIQUES = ( spells.otherspells.CHAOS_BOLT, spells.lunarspells.WIZARD_MISSILE,
-        spells.solarspells.MODERATE_CURE )
+        spells.otherspells.CHAOTIC_AID )
     def init_monster( self ):
-        self.levels.append( base.Spellcaster( 4, self ) )
+        self.levels.append( base.Spellcaster( 5, self ) )
 
 # CROSSBOWMAN (Earth,Fighter)
 # (Water)
@@ -307,7 +307,7 @@ class Mutant( base.Monster ):
     name = "Mutant"
     statline = { stats.STRENGTH: 16, stats.TOUGHNESS: 22, stats.REFLEXES: 10, \
         stats.INTELLIGENCE: 4, stats.PIETY: 12, stats.CHARISMA: 2,
-        stats.NATURAL_DEFENSE: -10, stats.PHYSICAL_ATTACK: 10 }
+        stats.NATURAL_DEFENSE: -20 }
     SPRITENAME = "monster_chaos.png"
     FRAME = 8
     TEMPLATES = ()
@@ -323,7 +323,7 @@ class Mutant( base.Monster ):
     COMPANIONS = (Beastman,MadMonk)
     ATTACK = items.Attack( (2,6,0), element = stats.RESIST_CRUSHING )
     def init_monster( self ):
-        self.levels.append( base.Terror( 6, self ) )
+        self.levels.append( base.Terror( 8, self ) )
 
 
 # Chaos Knight
@@ -403,7 +403,7 @@ class CentaurChampion( base.Monster ):
     name = "Centaur Champion"    
     statline = { stats.STRENGTH: 17, stats.TOUGHNESS: 17, stats.REFLEXES: 15, \
         stats.INTELLIGENCE: 13, stats.PIETY: 15, stats.CHARISMA: 13, \
-        stats.NATURAL_DEFENSE: 15 }
+        stats.NATURAL_DEFENSE: 10 }
     SPRITENAME = "monster_chaos.png"
     FRAME = 9
     TEMPLATES = ()
@@ -414,6 +414,7 @@ class CentaurChampion( base.Monster ):
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.MTY_LEADER, context.MTY_BOSS,
      context.GEN_CHAOS )
     ENC_LEVEL = 9
+    COMBAT_AI = aibrain.ArcherAI()
     TREASURE = treasuretype.Standard((items.ARROW,items.POLEARM))
     COMPANIONS = ( CentaurKnight, CentaurWarrior )
     ATTACK = items.Attack( (2,6,0), element = stats.RESIST_SLASHING,
@@ -421,7 +422,7 @@ class CentaurChampion( base.Monster ):
     )
     TECHNIQUES = ( abilities.COMPOSITEBOW, )
     def init_monster( self ):
-        self.levels.append( base.Leader( 10, self ) )
+        self.levels.append( base.Leader( 12, self ) )
 
 
 #  ********************************
@@ -443,8 +444,7 @@ class CentaurChampion( base.Monster ):
 class CentaurHero( base.Monster ):
     name = "Centaur Hero"    
     statline = { stats.STRENGTH: 18, stats.TOUGHNESS: 18, stats.REFLEXES: 16, \
-        stats.INTELLIGENCE: 13, stats.PIETY: 15, stats.CHARISMA: 13, \
-        stats.NATURAL_DEFENSE: 20 }
+        stats.INTELLIGENCE: 13, stats.PIETY: 15, stats.CHARISMA: 13 }
     SPRITENAME = "monster_chaos.png"
     FRAME = 23
     TEMPLATES = ()
@@ -456,7 +456,7 @@ class CentaurHero( base.Monster ):
      context.GEN_CHAOS )
     ENC_LEVEL = 11
     TREASURE = treasuretype.Standard((items.ARROW,items.POLEARM,items.BOW))
-    COMBAT_AI = aibrain.BasicTechnicalAI()
+    COMBAT_AI = aibrain.ArcherAI()
     LONER = True
     COMPANIONS = ( CentaurKnight, CentaurChampion )
     ATTACK = items.Attack( (2,6,0), element = stats.RESIST_SLASHING,
@@ -477,7 +477,7 @@ class CentaurHero( base.Monster ):
       ,) ), com_tar=targetarea.SingleTarget(reach=9), shot_anim=animobs.Arrow, ai_tar=invocations.TargetEnemy()
     ), spells.solarspells.MAJOR_CURE, spells.solarspells.CURE_POISON )
     def init_monster( self ):
-        self.levels.append( base.Leader( 11, self ) )
+        self.levels.append( base.Leader( 15, self ) )
 
 
 #  ********************************

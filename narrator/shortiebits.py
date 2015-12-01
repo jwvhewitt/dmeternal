@@ -35,7 +35,7 @@ class ShortieStub( Plot ):
     SHORTIE_GRAMMAR = {
         # [ADVENTURE] is the top level token- it will expand into a number of
         # high level tokens. These eventually convert into subplot labels.
-        "[zADVENTURE]": [ "[IMPERILED_PLACE] [ENEMY_BASE] [ENEMY_GOAL]",
+        "[zADVENTURE]": [ "zSDI_BIGBOSS",
             ],
         "[ADVENTURE]": [ "[IMPERILED_PLACE] [ENEMY_BASE] [ENEMY_GOAL]",
             ],
@@ -1021,6 +1021,183 @@ class BasicBarracks( SDIPlot ):
 # To do:
 # - Smaller boss with a big pet
 
+class DragonBoss( SDIPlot ):
+    # A simple building level with a direct bossfight.
+    LABEL = "zSDI_BIGBOSS"
+    active = True
+    scope = "LOCALE"
+    NAME_PATTERNS = ("{0}'s Lair","{0}'s Sanctum")
+    @classmethod
+    def matches( self, pstate ):
+        """Only appears at the higher levels."""
+        return pstate.rank > 3
+    def custom_init( self, nart ):
+        """Create the final dungeon, boss encounter, and resolution."""
+        antagonist = self.elements.get( "ANTAGONIST" )
+        biome = self.elements.setdefault( "DUNGEON_ARCHITECTURE",
+          randmaps.architect.BuildingDungeon() )
+        myscene,mymapgen = randmaps.architect.design_scene( 30, 30,
+          randmaps.SubtleMonkeyTunnelScene, biome, setting=self.setting,
+          fac=antagonist)
+        mymapgen.GAPFILL = None
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+
+        anc_a,anc_b = random.choice( randmaps.anchors.OPPOSING_CARDINALS )
+        team = teams.Team(default_reaction=-999, rank=self.rank, strength=200,
+         habitat=myscene.get_encounter_request(), fac=antagonist, respawn=False )
+        goalroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=myscene,
+            anchor = anc_a )
+        goalroom.contents.append( team )
+        door2 = waypoints.GateDoor(anchor=anc_a)
+        goalroom.contents.append(door2)
+        mychest = waypoints.LargeChest()
+        mychest.stock(self.rank+1)
+        goalroom.contents.append( mychest )
+
+        myhabitat = myscene.get_encounter_request()
+        myhabitat[ context.MTY_DRAGON ] = True
+        myhabitat[(context.MTY_BOSS,context.MTY_LEADER,context.MTY_FIGHTER,context.MTY_MAGE)] = True
+        btype = monsters.choose_monster_type(self.rank+2,self.rank+3,myhabitat)
+        if btype:
+            boss = monsters.generate_boss( btype, self.rank+3, team=team )
+
+            myitem = items.generate_special_item( self.rank+1 )
+            if myitem:
+                boss.contents.append( myitem )
+            goalroom.contents.append( boss )
+            self.register_element( "ENEMY", boss )
+            team.boss = boss
+            myscene.name = random.choice( self.NAME_PATTERNS ).format( boss )
+            self.enemy_defeated = False
+
+        entranceroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=myscene,
+            anchor = anc_b )
+        door1 = waypoints.GateDoor(anchor=anc_b)
+        entranceroom.contents.append(door1)
+
+        # Save this component's data for the next component.
+        self.register_element( "IN_SCENE", myscene )
+        self.register_element( "IN_ENTRANCE", door1 )
+        self.register_element( "OUT_SCENE", myscene )
+        self.register_element( "OUT_ENTRANCE", door2 )
+
+        return btype
+
+    def ENEMY_DEATH( self, explo ):
+        self.enemy_defeated = True
+        explo.check_trigger( "WIN", self )
+    def t_COMBATOVER( self, explo ):
+        if self.enemy_defeated:
+            self.active = False
+    def get_sdi_grammar( self ):
+        """Return a dict of grammar related to this plot."""
+        mygram = {
+            "[achievement]": [ "slaying {}".format(self.elements["ENEMY"]),
+                ],
+            "[GO_QUEST]": ["Slay {}.".format(self.elements["ENEMY"]),
+                ],
+            "[location]": [str(self.elements["LOCALE"]),],
+            "[SDI_BIGBOSS:name]": [str(self.elements["ENEMY"]),],
+            "[SDI_BIGBOSS:type]": [self.elements["ENEMY"].monster_name,],
+            "[SUMMARY]": [ "{} is preparing for evil acts.".format(str(self.elements["ENEMY"])),
+                ],
+            "[warning]":    ["{} is a {}".format(self.elements["ENEMY"],self.elements["ENEMY"].monster_name),
+                ],
+        }
+        return mygram
+
+
+class InstantBoss( SDIPlot ):
+    # A simple building level with a direct bossfight.
+    LABEL = "SDI_BIGBOSS"
+    active = True
+    scope = "LOCALE"
+    NAME_PATTERNS = ("{0}'s Lair","{0}'s Sanctum")
+    @classmethod
+    def matches( self, pstate ):
+        """Only appears at the lower levels."""
+        return pstate.rank <= 3
+    def custom_init( self, nart ):
+        """Create the final dungeon, boss encounter, and resolution."""
+        antagonist = self.elements.get( "ANTAGONIST" )
+        biome = self.elements.setdefault( "DUNGEON_ARCHITECTURE",
+          randmaps.architect.BuildingDungeon() )
+        myscene,mymapgen = randmaps.architect.design_scene( 30, 30,
+          randmaps.SubtleMonkeyTunnelScene, biome, setting=self.setting,
+          fac=antagonist)
+        mymapgen.GAPFILL = None
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+
+        anc_a,anc_b = random.choice( randmaps.anchors.OPPOSING_CARDINALS )
+        team = teams.Team(default_reaction=-999, rank=self.rank, strength=200,
+         habitat=myscene.get_encounter_request(), fac=antagonist, respawn=False )
+        goalroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=myscene,
+            anchor = anc_a )
+        goalroom.contents.append( team )
+        door2 = waypoints.GateDoor(anchor=anc_a)
+        goalroom.contents.append(door2)
+        mychest = waypoints.MediumChest()
+        mychest.stock(self.rank+1)
+        goalroom.contents.append( mychest )
+
+        myhabitat = myscene.get_encounter_request()
+        myhabitat[ context.MTY_BEAST ] = False
+        myhabitat[(context.MTY_BOSS,context.MTY_LEADER,context.MTY_FIGHTER,context.MTY_MAGE)] = True
+        if antagonist:
+            antagonist.alter_monster_request( myhabitat )
+        btype = monsters.choose_monster_type(self.rank,self.rank+2,myhabitat)
+        if btype:
+            boss = monsters.generate_boss( btype, self.rank+3, team=team )
+        else:
+            boss = monsters.generate_npc( rank=self.rank+2, team=team, fac=antagonist, upgrade=True )
+            boss.monster_name = boss.mr_level.name
+
+        myitem = items.generate_special_item( self.rank+1 )
+        if myitem:
+            boss.contents.append( myitem )
+        goalroom.contents.append( boss )
+        self.register_element( "ENEMY", boss )
+        team.boss = boss
+        myscene.name = random.choice( self.NAME_PATTERNS ).format( boss )
+        self.enemy_defeated = False
+
+        entranceroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=myscene,
+            anchor = anc_b )
+        door1 = waypoints.GateDoor(anchor=anc_b)
+        entranceroom.contents.append(door1)
+
+        # Save this component's data for the next component.
+        self.register_element( "IN_SCENE", myscene )
+        self.register_element( "IN_ENTRANCE", door1 )
+        self.register_element( "OUT_SCENE", myscene )
+        self.register_element( "OUT_ENTRANCE", door2 )
+
+        return True
+
+    def ENEMY_DEATH( self, explo ):
+        self.enemy_defeated = True
+        explo.check_trigger( "WIN", self )
+    def t_COMBATOVER( self, explo ):
+        if self.enemy_defeated:
+            self.active = False
+    def get_sdi_grammar( self ):
+        """Return a dict of grammar related to this plot."""
+        mygram = {
+            "[achievement]": [ "defeating {}".format(self.elements["ENEMY"]),
+                ],
+            "[GO_QUEST]": ["Defeat {}.".format(self.elements["ENEMY"]),
+                ],
+            "[location]": [str(self.elements["LOCALE"]),],
+            "[SDI_BIGBOSS:name]": [str(self.elements["ENEMY"]),],
+            "[SDI_BIGBOSS:type]": [self.elements["ENEMY"].monster_name,],
+            "[SUMMARY]": [ "{} is preparing for evil acts.".format(str(self.elements["ENEMY"])),
+                ],
+            "[warning]":    ["{} is a dangerous {}".format(self.elements["ENEMY"],self.elements["ENEMY"].monster_name),
+                ],
+        }
+        return mygram
+
+
 class BossInABox( SDIPlot ):
     # A simple building level, ending in a bossfight.
     LABEL = "SDI_BIGBOSS"
@@ -1496,6 +1673,129 @@ class BoringVillage( SDIPlot ):
             self._message_ready = False
             explo.check_trigger( "WIN", self )
 
+class DwarfVillage( SDIPlot ):
+    LABEL = "SDI_VILLAGE"
+    # Create a small village with excellent shopping.
+    active = True
+    scope = True
+    def custom_init( self, nart ):
+        """Create outside map, fill with wilderness."""
+        biome = self.elements.setdefault( "BIOME", randmaps.architect.make_wilderness() )
+        culture = self.register_element( "CULTURE",
+          teams.PolisFaction(primary=context.GEN_TERRAN,dungeon_type=("Village","Halls")) )
+        myscene,mymapgen = randmaps.architect.design_scene( 50, 50,
+          randmaps.ForestScene, biome,fac=culture,
+          secondary=self.elements.get("ARCHITECTURE"),setting=self.setting)
+        myscene.desctags.append( context.DES_CIVILIZED )
+        self.register_scene( nart, myscene, mymapgen, ident="_OUTSIDE" )
+        myscene.name = "Outside {}".format(culture.name)
+
+        # Create the three outer rooms- entrance, village, exit.
+        anc_a,anc_b = random.choice(randmaps.anchors.OPPOSING_PAIRS)
+    
+        first_room = randmaps.rooms.FuzzyRoom( parent=myscene )
+        myent = waypoints.RoadSignBack(anchor=randmaps.anchors.middle)
+        first_room.contents.append( myent )
+        first_room.anchor = anc_a
+
+        last_room = randmaps.rooms.FuzzyRoom( parent=myscene )
+        myexit = waypoints.RoadSignForward(anchor=randmaps.anchors.middle)
+        last_room.contents.append( myexit )
+        last_room.anchor = anc_b
+
+        v_room = randmaps.rooms.MountainRoom(parent=myscene)
+        village_entrance = waypoints.MineEntrance()
+        village_entrance.mini_map_label = culture.name
+        v_room.contents.append( village_entrance )
+        v_room.special_c["door"] = village_entrance
+
+        # Create the cave for the village and add the contents.
+        cave_biome = randmaps.architect.CavernDungeon()
+        archi = self.register_element( "ARCHITECTURE", randmaps.architect.Village(context.HAB_CAVE))
+        cave,cavegen = randmaps.architect.design_scene( 50, 50,
+          randmaps.ForestScene, cave_biome,fac=culture,
+          secondary=archi,setting=self.setting)
+        self.register_scene( nart, cave, cavegen, ident="LOCALE" )
+        cave.name = culture.name
+
+        castle = self.register_element( "CITY",
+         randmaps.rooms.VillageRoom( width=29,height=29,anchor=randmaps.anchors.middle,
+         tags=(context.CIVILIZED,context.ROOM_PUBLIC), parent=cave ) )
+        castleroom = randmaps.rooms.FuzzyRoom( tags=(context.ENTRANCE,), parent=castle )
+        myteam = teams.Team( strength=0, default_reaction=characters.SAFELY_FRIENDLY)
+        castle.contents.append( myteam )
+        castleroom.contents.append( monsters.generate_npc(team=myteam,fac=culture) )
+        castleroom.contents.append( monsters.generate_npc(team=myteam,fac=culture) )
+
+        # Connect the cave-village to the outside world.
+        vx_room = randmaps.rooms.FuzzyRoom(width=5,height=5,parent=cave,anchor=randmaps.anchors.north)
+        village_exit = waypoints.StairsUp(anchor=randmaps.anchors.north)
+        vx_room.contents.append( village_exit )
+        village_exit.destination, village_exit.otherside = myscene,village_entrance
+        village_entrance.destination, village_entrance.otherside = cave,village_exit
+
+        # Create the village elder.
+        elder = self.register_element("NPC",monsters.generate_npc(team=myteam,rank=self.rank+1,
+          job=monsters.base.Elder,upgrade=True,fac=culture),dident="CITY")
+
+        self._message_ready = True
+
+        self.add_sub_plot( nart, "CITY_WEAPONSHOP",spstate=PlotState(rank=self.rank+random.randint(2,4)).based_on(self))
+        self.add_sub_plot( nart, "CITY_ARMORSHOP",spstate=PlotState(rank=self.rank+random.randint(2,4)).based_on(self))
+        self.add_sub_plot( nart, "CITY_INN" )
+        self.add_sub_plot( nart, "CITY_TEMPLE" )
+
+        # Save this component's data for the next component.
+        self.register_element( "IN_SCENE", myscene )
+        self.register_element( "IN_ENTRANCE", myent )
+        self.register_element( "OUT_SCENE", myscene )
+        self.register_element( "OUT_ENTRANCE", myexit )
+
+        return True
+
+    def get_sdi_grammar( self ):
+        """Return a dict of grammar related to this plot."""
+        mygram = {
+            "[GO_QUEST]": ["Travel to the {}.".format(self.elements["LOCALE"]),
+                ],
+            "[SDI_VILLAGE:name]": [ str(self.elements["LOCALE"]),
+                ],
+            "[INTRO]": [ "You are going to the {}. [INTRO_PROBLEM]".format(self.elements["LOCALE"]),
+                "You are traveling to the {}, renowned for its fine weapon- and armorsmiths. [INTRO_PROBLEM]".format(self.elements["LOCALE"]),
+                ],
+            "[location]": [str(self.elements["LOCALE"]),
+                ],
+            "[SUMMARY]": [ "The {} is in a dangerous place.".format(self.elements["LOCALE"]),
+                ],
+            "[warning]": [ "you will be overcharged for everything in the {}".format(self.elements["LOCALE"]),
+                ],
+        }
+        return mygram
+
+    def get_dialogue_grammar( self, npc, explo ):
+        if npc is self.elements["NPC"]:
+            return {
+                "[SDI_VILLAGE:Advice]": [
+                    "[SHORTIE_SUMMARY] [SHORTIE_PROBLEM]", "[+GO_QUEST] But, [warning]!",
+                    "You may know about [-achievement], but [+warning]!", "[RUMOUR] I'll bet they don't know that on the surface!"
+                    ],
+                "[SDI_VILLAGE:Hello]": [
+                    "[HELLO] Here in the [scene] we are rarely bothered by the surface world, but there are things you should know."
+                    ],
+            }
+    def NPC_offers( self, explo ):
+        ol = list()
+        ol.append( dialogue.Offer( "[SDI_VILLAGE:Advice]",
+         context = context.ContextTag([context.INFO,context.HINT])))
+        ol.append( dialogue.Offer( "[SDI_VILLAGE:Hello]",
+         context = context.ContextTag([context.HELLO,context.INFO,context.HINT])))
+        return ol
+
+    def t_START( self, explo ):
+        if self._message_ready and explo.camp.scene is self.elements["LOCALE"]:
+            explo.alert("You step into a bustling dwarven village.")
+            self._message_ready = False
+            explo.check_trigger( "WIN", self )
 
 
 # SDI_OUTPOST

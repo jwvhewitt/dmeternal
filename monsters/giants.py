@@ -49,7 +49,7 @@ class BarbarianScout( base.Monster ):
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_SLASHING )
     TECHNIQUES = ( abilities.SHORTBOW, )
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 2, self ) )
+        self.levels.append( base.Humanoid( 3, self ) )
 
 class BarbarianShaman( base.Monster ):
     name = "Barbarian Shaman"    
@@ -78,7 +78,8 @@ class BarbarianShaman( base.Monster ):
 class Berserker( base.Monster ):
     name = "Berserker"
     statline = { stats.STRENGTH: 14, stats.TOUGHNESS: 14, stats.REFLEXES: 12, \
-        stats.INTELLIGENCE: 10, stats.PIETY: 10, stats.CHARISMA: 10 }
+        stats.INTELLIGENCE: 10, stats.PIETY: 10, stats.CHARISMA: 10,
+        stats.PHYSICAL_ATTACK: 10 }
     SPRITENAME = "monster_giants.png"
     FRAME = 18
     TEMPLATES = ()
@@ -91,7 +92,7 @@ class Berserker( base.Monster ):
     TREASURE = treasuretype.Low( (items.AXE,) )
     ATTACK = items.Attack( (2,6,0), element = stats.RESIST_SLASHING )
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 6, self ) )
+        self.levels.append( base.Defender( 6, self ) )
 
 class BarbarianChief( base.Monster ):
     name = "Barbarian Chief"
@@ -151,7 +152,7 @@ class OgreChamp( base.Monster ):
     ATTACK = items.Attack( (1,12,0), element = stats.RESIST_CRUSHING )
 
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 6, self ) )
+        self.levels.append( base.Humanoid( 7, self ) )
 
 class OgreShaman( base.Monster ):
     name = "Ogre Shaman"
@@ -174,7 +175,7 @@ class OgreShaman( base.Monster ):
     TECHNIQUES = ( spells.waterspells.WINTER_WIND, spells.solarspells.MODERATE_CURE,
     )
     def init_monster( self ):
-        self.levels.append( base.Spellcaster( 7, self ) )
+        self.levels.append( base.Spellcaster( 8, self ) )
 
 class OgreLeader( base.Monster ):
     name = "Ogre Leader"
@@ -200,7 +201,7 @@ class OgreLeader( base.Monster ):
     COMPANIONS = ( Ogre, OgreChamp, OgreShaman )
     ATTACK = items.Attack( (4,4,0), element = stats.RESIST_CRUSHING )
     def init_monster( self ):
-        self.levels.append( base.Leader( 8, self ) )
+        self.levels.append( base.Leader( 9, self ) )
 
 class Ettin( base.Monster ):
     name = "Ettin"
@@ -220,7 +221,7 @@ class Ettin( base.Monster ):
     TREASURE = treasuretype.Low((items.GEM,items.HAT))
     ATTACK = items.Attack( (2,6,0), element = stats.RESIST_CRUSHING )
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 11, self ) )
+        self.levels.append( base.Humanoid( 12, self ) )
 
 class OgreMage( base.Monster ):
     name = "Ogre Mage"

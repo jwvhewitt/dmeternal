@@ -124,6 +124,7 @@ class Village( Architecture ):
     CUSTOM_WALL_OPTIONS = {
         context.HAB_FOREST: ["terrain_wall_wood.png","terrain_wall_logcabin.png"],
         context.HAB_DESERT: ["terrain_wall_lightstone.png","terrain_wall_adobe.png"],
+        context.HAB_CAVE: ["terrain_wall_lightstone.png","terrain_wall_rocks.png"],
     }
     FLOOR_OPTIONS = ["terrain_floor_wood.png","terrain_floor_tile.png","terrain_floor_stone.png"
     ]

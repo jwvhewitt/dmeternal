@@ -230,6 +230,7 @@ GRAM_DATABASE = {
         "gentle"
         ],
     "[RUMOUR]": [ "My [acquaintance] [verbed] a [thing].",
+        "[rumourleadin] the [thing] is [adjective]."
         ],
     "[rumourleadin]": [ "I heard that", "I think that", "As far as I know",
         "My [acquaintance] said that", "You should know", "It seems that",

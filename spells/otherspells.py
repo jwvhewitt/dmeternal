@@ -32,6 +32,10 @@ CHAOS_BOLT = Spell( "Chaos Bolt",
 
 # CIRCLE THREE
 
+CHAOTIC_AID = Spell( "Chaotic Aid",
+    "This spell calls forth a servant of chaos to aid you in battle.",
+    effects.CallMonster( {context.GEN_CHAOS: True, context.MTY_FIGHTER: True}, 5, anim=animobs.OrangeSparkle ),
+    rank=3, gems={EARTH:1,AIR:1}, com_tar=targetarea.SingleTarget(reach=2), ai_tar=invocations.TargetEmptySpot(), mpfudge = 3 )
 
 
 # CIRCLE FOUR

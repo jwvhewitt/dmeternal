@@ -492,7 +492,7 @@ class MagicArmor( Enhancer ):
     # The basic armor enhancement.
     NAMEPAT = "{0} +{2}"
     PLUSRANK = 2
-    UPRANKS = (2,2,3,5)
+    UPRANKS = (2,3,4,5)
     BONUSES_PER_RANK = stats.StatMod({ stats.PHYSICAL_DEFENSE: 5, stats.NATURAL_DEFENSE: 5,
         stats.RESIST_CRUSHING: 10, stats.RESIST_PIERCING: 10, stats.RESIST_SLASHING: 10 })
     AFFECTS = (CLOTHES, LIGHT_ARMOR, HEAVY_ARMOR )
@@ -578,7 +578,7 @@ class InvulnerableArmor( Enhancer ):
 class MagicShield( Enhancer ):
     # The basic armor enhancement.
     NAMEPAT = "{0} +{2}"
-    PLUSRANK = 2
+    PLUSRANK = 3
     UPRANKS = (1,2,3,5)
     BONUSES_PER_RANK = stats.StatMod({ stats.PHYSICAL_DEFENSE: 5, })
     AFFECTS = (SHIELD,)
@@ -636,7 +636,7 @@ class ResilentShield( Enhancer ):
 class ElementalShield( Enhancer ):
     NAMEPAT = "Elemental {0}"
     DESCPAT = "{0} It has been warded to provide 20% protection against fire, cold, lightning, and acid."
-    PLUSRANK = 4
+    PLUSRANK = 3
     AFFECTS = (SHIELD,)
     BONUSES_PER_RANK = stats.StatMod({ stats.RESIST_FIRE:20, stats.RESIST_COLD: 20, stats.RESIST_LIGHTNING: 20, stats.RESIST_ACID: 20 })
     UPRANKS = (1,2,3,5)
@@ -649,7 +649,7 @@ class ElementalShield( Enhancer ):
 class DefenseCloak( Enhancer ):
     NAMEPAT = "{0} of Defense +{2}"
     DESCPAT = "{0} It has been enhanced to provide a bonus to defense."
-    PLUSRANK = 2
+    PLUSRANK = 4
     AFFECTS = (CLOAK,)
     BONUSES_PER_RANK = stats.StatMod({ stats.PHYSICAL_DEFENSE: 5, stats.NATURAL_DEFENSE: 5 })
     UPRANKS = (2,3,4,6)
@@ -745,7 +745,7 @@ class PunchingGlove( Enhancer ):
     AFFECTS = (GLOVE,)
     BONUSES_PER_RANK = stats.StatMod({ stats.KUNG_FU:5 })
     TYPE = ET_PRIMARY
-    UPRANKS = (2,3)
+    UPRANKS = (3,4)
 
 class SpikyGlove( Enhancer ):
     NAMEPAT = "Spiky {0}"
@@ -818,7 +818,7 @@ class FleetShoe( Enhancer ):
     PLUSRANK = 3
     AFFECTS = (SANDALS,)
     BONUSES_PER_RANK = stats.StatMod({ stats.NATURAL_DEFENSE:5 })
-    UPRANKS = (3,5)
+    UPRANKS = (4,5)
 
 class SilenceShoe( Enhancer ):
     NAMEPAT = "Silent {1}"
