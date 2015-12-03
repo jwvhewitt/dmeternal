@@ -391,6 +391,10 @@ class BasicTechnicalAI( BasicAI ):
     """Basic AI with a high technique use chance- for archers + mages."""
     TECHNIQUE_CHANCE = 90
 
+class BruiserAI( BasicAI ):
+    """Basic AI with a low technique use chance, for primarily melee monsters."""
+    TECHNIQUE_CHANCE = 25
+
 class GhoulAI( AdvancedAI ):
     AVOID_FIELDS = False
     AVOID_THREAT = True

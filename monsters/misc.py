@@ -125,6 +125,50 @@ class CorpseEater( base.Monster ):
 #  ***   ENCOUNTER  LEVEL  6   ***
 #  *******************************
 
+class Griffin( base.Monster ):
+    name = "Griffin"    
+    statline = { stats.STRENGTH: 18, stats.TOUGHNESS: 16, stats.REFLEXES: 15, \
+        stats.INTELLIGENCE: 5, stats.PIETY: 13, stats.CHARISMA: 8,
+        stats.PHYSICAL_ATTACK: 5, stats.PHYSICAL_DEFENSE: 5, stats.MAGIC_DEFENSE: 5 }
+    SPRITENAME = "monster_default.png"
+    FRAME = 35
+    TEMPLATES = ()
+    MOVE_POINTS = 12
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.MAP_WILDERNESS, context.DES_AIR,
+     context.MTY_BEAST, context.GEN_NATURE )
+    ENC_LEVEL = 6
+    TREASURE = None
+    ATTACK = items.Attack( (2,6,0), element = stats.RESIST_SLASHING )
+    TECHNIQUES = ()
+    def init_monster( self ):
+        self.levels.append( base.Beast( 7, self ) )
+
+class Harpy( base.Monster ):
+    name = "Harpy"    
+    statline = { stats.STRENGTH: 10, stats.TOUGHNESS: 10, stats.REFLEXES: 15, \
+        stats.INTELLIGENCE: 7, stats.PIETY: 12, stats.CHARISMA: 17 }
+    SPRITENAME = "monster_default.png"
+    FRAME = 38
+    TEMPLATES = ()
+    MOVE_POINTS = 8
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.DES_LUNAR,
+     context.MTY_HUMANOID, context.GEN_CHAOS )
+    ENC_LEVEL = 6
+    TREASURE = treasuretype.Standard()
+    ATTACK = items.Attack( (2,4,0), element = stats.RESIST_SLASHING )
+    TECHNIQUES = (invocations.MPInvocation( "Sleep Song",
+        effects.TargetIsEnemy( on_true = (
+            effects.TargetIs( pat=effects.ANIMAL, anim=animobs.PurpleSparkle, on_true = (
+                effects.OpposedRoll( att_modifier=0, on_success = (
+                    effects.CauseSleep(),
+                )),)
+        ,) )), com_tar=targetarea.SelfCentered(radius=6), 
+        ai_tar=invocations.TargetMobileEnemy(min_distance=3), mp_cost=8 ),
+    )
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 7, self ) )
 
 
 #  *******************************

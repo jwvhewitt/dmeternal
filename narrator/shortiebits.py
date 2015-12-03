@@ -1026,33 +1026,39 @@ class DragonBoss( SDIPlot ):
     LABEL = "zSDI_BIGBOSS"
     active = True
     scope = "LOCALE"
-    NAME_PATTERNS = ("{0}'s Lair","{0}'s Sanctum")
+    NAME_PATTERNS = ("{0}'s Lair","{0}'s Den","{0}'s Cave")
     @classmethod
     def matches( self, pstate ):
         """Only appears at the higher levels."""
         return pstate.rank > 3
     def custom_init( self, nart ):
         """Create the final dungeon, boss encounter, and resolution."""
-        antagonist = self.elements.get( "ANTAGONIST" )
-        biome = self.elements.setdefault( "DUNGEON_ARCHITECTURE",
-          randmaps.architect.BuildingDungeon() )
-        myscene,mymapgen = randmaps.architect.design_scene( 30, 30,
-          randmaps.SubtleMonkeyTunnelScene, biome, setting=self.setting,
+        antagonist = self.elements.setdefault( "ANTAGONIST",
+          teams.AntagonistFaction(primary=context.GEN_DRAGON) )
+        # We really want this dragon's lair to be a cave. If the dungeon
+        # architecture is already a cave- great! Keep it. Otherwise, forget
+        # about it and generate a cave.
+        cdungeon = randmaps.architect.BuildingDungeon()
+        biome = self.elements.setdefault( "DUNGEON_ARCHITECTURE",cdungeon )
+        if biome.biome != context.HAB_CAVE:
+            biome = cdungeon
+        myscene,mymapgen = randmaps.architect.design_scene( min(30+self.rank,50),min(30+self.rank,50),
+          randmaps.CaveScene, biome, setting=self.setting,
           fac=antagonist)
-        mymapgen.GAPFILL = None
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
 
         anc_a,anc_b = random.choice( randmaps.anchors.OPPOSING_CARDINALS )
         team = teams.Team(default_reaction=-999, rank=self.rank, strength=200,
          habitat=myscene.get_encounter_request(), fac=antagonist, respawn=False )
-        goalroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=myscene,
+        goalroom = randmaps.rooms.FuzzyRoom( tags=(context.GOAL,), parent=myscene,
             anchor = anc_a )
         goalroom.contents.append( team )
         door2 = waypoints.GateDoor(anchor=anc_a)
         goalroom.contents.append(door2)
-        mychest = waypoints.LargeChest()
-        mychest.stock(self.rank+1)
-        goalroom.contents.append( mychest )
+        for t in range(2):
+            mychest = random.choice([waypoints.MediumChest,waypoints.LargeChest])()
+            mychest.stock(self.rank+1)
+            goalroom.contents.append( mychest )
 
         myhabitat = myscene.get_encounter_request()
         myhabitat[ context.MTY_DRAGON ] = True
@@ -1060,19 +1066,15 @@ class DragonBoss( SDIPlot ):
         btype = monsters.choose_monster_type(self.rank+2,self.rank+3,myhabitat)
         if btype:
             boss = monsters.generate_boss( btype, self.rank+3, team=team )
-
-            myitem = items.generate_special_item( self.rank+1 )
-            if myitem:
-                boss.contents.append( myitem )
             goalroom.contents.append( boss )
             self.register_element( "ENEMY", boss )
             team.boss = boss
             myscene.name = random.choice( self.NAME_PATTERNS ).format( boss )
             self.enemy_defeated = False
 
-        entranceroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=myscene,
+        entranceroom = randmaps.rooms.FuzzyRoom( tags=(context.GOAL,), parent=myscene,
             anchor = anc_b )
-        door1 = waypoints.GateDoor(anchor=anc_b)
+        door1 = waypoints.StairsUp(anchor=anc_b)
         entranceroom.contents.append(door1)
 
         # Save this component's data for the next component.
@@ -1094,14 +1096,14 @@ class DragonBoss( SDIPlot ):
         mygram = {
             "[achievement]": [ "slaying {}".format(self.elements["ENEMY"]),
                 ],
-            "[GO_QUEST]": ["Slay {}.".format(self.elements["ENEMY"]),
+            "[GO_QUEST]": ["Slay {} the {}.".format(self.elements["ENEMY"],self.elements["ENEMY"].monster_name),
                 ],
             "[location]": [str(self.elements["LOCALE"]),],
             "[SDI_BIGBOSS:name]": [str(self.elements["ENEMY"]),],
             "[SDI_BIGBOSS:type]": [self.elements["ENEMY"].monster_name,],
-            "[SUMMARY]": [ "{} is preparing for evil acts.".format(str(self.elements["ENEMY"])),
+            "[SUMMARY]": [ "{} commands the {} from its lair.".format(self.elements["ENEMY"],self.elements["ANTAGONIST"]),
                 ],
-            "[warning]":    ["{} is a {}".format(self.elements["ENEMY"],self.elements["ENEMY"].monster_name),
+            "[warning]":    ["{} is a powerful {}".format(self.elements["ENEMY"],self.elements["ENEMY"].monster_name),
                 ],
         }
         return mygram
@@ -1116,7 +1118,7 @@ class InstantBoss( SDIPlot ):
     @classmethod
     def matches( self, pstate ):
         """Only appears at the lower levels."""
-        return pstate.rank <= 3
+        return pstate.rank <= 5
     def custom_init( self, nart ):
         """Create the final dungeon, boss encounter, and resolution."""
         antagonist = self.elements.get( "ANTAGONIST" )

@@ -105,6 +105,15 @@ class TargetEnemyWithoutEnchantment( TargetEnemy ):
         else:
             return 0
 
+class TargetMobileEnemy( TargetEnemy ):
+    """Aim this invocation at an enemy who is not currently asleep or paralyzed."""
+    def get_targetability( self, camp, user, target ):
+        if (user.is_enemy( camp, target ) and target.is_alright() and 
+         camp.fight and camp.fight.cstat[target].can_act()):
+            return 1
+        else:
+            return 0
+
 class TargetEnemyWithoutField( TargetEnemy ):
     """Aim this invocation at an enemy without the requisite field."""
     def __init__( self, field_to_check, min_distance=0 ):
