@@ -11,6 +11,7 @@ import targetarea
 import aibrain
 import animals
 import treasuretype
+import abilities
 
 # Contains critters that don't quite fit in anywhere else.
 
@@ -121,9 +122,53 @@ class CorpseEater( base.Monster ):
 #  ***   ENCOUNTER  LEVEL  5   ***
 #  *******************************
 
+class Gargoyle( base.Monster ):
+    name = "Gargoyle"    
+    statline = { stats.STRENGTH: 15, stats.TOUGHNESS: 18, stats.REFLEXES: 14, \
+        stats.INTELLIGENCE: 6, stats.PIETY: 11, stats.CHARISMA: 7,
+        stats.RESIST_CRUSHING: 75, stats.RESIST_PIERCING: 75,
+        stats.RESIST_SLASHING: 75, stats.PHYSICAL_ATTACK: 10, stats.NATURAL_DEFENSE: 5 }
+    SPRITENAME = "monster_default.png"
+    FRAME = 22
+    TEMPLATES = (stats.EARTH,)
+    MOVE_POINTS = 16
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.MAP_DUNGEON, context.DES_EARTH )
+    ENC_LEVEL = 5
+    TREASURE = treasuretype.Standard()
+    ATTACK = items.Attack( (2,4,0), element = stats.RESIST_SLASHING )
+    TECHNIQUES = ()
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 4, self ) )
+
+
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  6   ***
 #  *******************************
+
+class Basilisk( base.Monster ):
+    name = "Basilisk"
+    statline = { stats.STRENGTH: 15, stats.TOUGHNESS: 15, stats.REFLEXES: 8, \
+        stats.INTELLIGENCE: 2, stats.PIETY: 12, stats.CHARISMA: 11 }
+    SPRITENAME = "monster_default.png"
+    FRAME = 39
+    TEMPLATES = (stats.REPTILE,)
+    MOVE_POINTS = 8
+    VOICE = None
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.MTY_BEAST )
+    ENC_LEVEL = 6
+    ATTACK = items.Attack( (1,8,0), element = stats.RESIST_PIERCING )
+    TECHNIQUES = ( invocations.MPInvocation( "Death Gaze",
+      effects.OpposedRoll( att_stat=stats.PIETY, att_modifier=-10, on_success = (
+        effects.InstaKill( anim=animobs.CriticalHit )
+      ,), on_failure = (
+        effects.NoEffect( anim=animobs.SmallBoom )
+      ,) ), com_tar=targetarea.SingleTarget(reach=4), shot_anim=animobs.PurpleVortex, ai_tar=invocations.TargetEnemy(), mp_cost=6
+    ), )
+    def init_monster( self ):
+        self.levels.append( base.Beast( 6, self ) )
+
 
 class Griffin( base.Monster ):
     name = "Griffin"    
@@ -152,6 +197,7 @@ class Harpy( base.Monster ):
     FRAME = 38
     TEMPLATES = ()
     MOVE_POINTS = 8
+    VOICE = dialogue.voice.GREEK
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.DES_LUNAR,
      context.MTY_HUMANOID, context.GEN_CHAOS )
@@ -183,6 +229,7 @@ class Lamia( base.Monster ):
     FRAME = 2
     TEMPLATES = ()
     MOVE_POINTS = 10
+    VOICE = dialogue.voice.GREEK
     HABITAT = ( context.HAB_EVERY, context.HAB_DESERT, context.SET_EVERY,
      context.DES_LUNAR,
      context.MTY_HUMANOID, context.MTY_BOSS )
@@ -205,14 +252,103 @@ class Lamia( base.Monster ):
     def init_monster( self ):
         self.levels.append( base.Humanoid( 8, self ) )
 
+class Manticore( base.Monster ):
+    name = "Manticore"    
+    statline = { stats.STRENGTH: 20, stats.TOUGHNESS: 19, stats.REFLEXES: 15, \
+        stats.INTELLIGENCE: 7, stats.PIETY: 12, stats.CHARISMA: 9 }
+    SPRITENAME = "monster_default.png"
+    FRAME = 26
+    TEMPLATES = ()
+    MOVE_POINTS = 12
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.MAP_WILDERNESS, context.MTY_BEAST, context.MTY_BOSS )
+    ENC_LEVEL = 7
+    COMBAT_AI = aibrain.ArcherAI()
+    TREASURE = treasuretype.Standard()
+    ATTACK = items.Attack( (2,4,0), element = stats.RESIST_PIERCING, extra_effect=abilities.POISON_ATTACK )
+    TECHNIQUES = (invocations.MPInvocation( "Tail Spikes",
+        effects.NoEffect( children=(
+          effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, att_modifier=5, on_success = (
+            effects.HealthDamage( (1,8,0), stat_bonus=stats.STRENGTH, element=stats.RESIST_PIERCING, anim=animobs.RedBoom ),
+          ), on_failure = (
+            effects.NoEffect( anim=animobs.SmallBoom ),
+          )),
+          effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, att_modifier=5, on_success = (
+            effects.HealthDamage( (1,8,0), stat_bonus=stats.STRENGTH, element=stats.RESIST_PIERCING, anim=animobs.RedBoom ),
+          ), on_failure = (
+            effects.NoEffect( anim=animobs.SmallBoom ),
+          ) ),
+          effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, att_modifier=5, on_success = (
+            effects.HealthDamage( (1,8,0), stat_bonus=stats.STRENGTH, element=stats.RESIST_PIERCING, anim=animobs.RedBoom ),
+          ), on_failure = (
+            effects.NoEffect( anim=animobs.SmallBoom ),
+          ) ),
+          effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, att_modifier=5, on_success = (
+            effects.HealthDamage( (1,8,0), stat_bonus=stats.STRENGTH, element=stats.RESIST_PIERCING, anim=animobs.RedBoom ),
+          ), on_failure = (
+            effects.NoEffect( anim=animobs.SmallBoom ),
+          ) ),
+        ),), mp_cost=10, com_tar=targetarea.SingleTarget(reach=9), shot_anim=animobs.GoldStone, ai_tar=invocations.TargetEnemy()
+        ),
+    )
+    def init_monster( self ):
+        self.levels.append( base.Beast( 6, self ) )
+
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  8   ***
 #  *******************************
 
+class Owlbear( base.Monster ):
+    name = "Owlbear"
+    # This owlbear is sized up by 6 HD, 2CR, 1 size category from
+    # the standard version because there are too many beastly monsters at
+    # CR4 and I wanted to spread them out a bit. So in D20 terms, this is
+    # a huge 11HD owlbear.
+    statline = { stats.STRENGTH: 29, stats.TOUGHNESS: 25, stats.REFLEXES: 10, \
+        stats.INTELLIGENCE: 2, stats.PIETY: 12, stats.CHARISMA: 10 }
+    SPRITENAME = "monster_default.png"
+    FRAME = 27
+    TEMPLATES = ()
+    MOVE_POINTS = 12
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.MTY_BEAST, context.GEN_NATURE )
+    ENC_LEVEL = 8
+    TREASURE = None
+    ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )
+    TECHNIQUES = ()
+    def init_monster( self ):
+        self.levels.append( base.Beast( 11, self ) )
+
+
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  9   ***
 #  *******************************
+
+class Medusa( base.Monster ):
+    name = "Medusa"
+    statline = { stats.STRENGTH: 10, stats.TOUGHNESS: 12, stats.REFLEXES: 15, \
+        stats.INTELLIGENCE: 12, stats.PIETY: 13, stats.CHARISMA: 15 }
+    SPRITENAME = "monster_default.png"
+    FRAME = 30
+    TEMPLATES = ()
+    MOVE_POINTS = 10
+    VOICE = dialogue.voice.GREEK
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.MTY_HUMANOID )
+    ENC_LEVEL = 9
+    COMBAT_AI = aibrain.ArcherAI(approach_allies=0,technique_chance=75)
+    ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING, extra_effect=abilities.POISON_ATTACK_2d6 )
+    TECHNIQUES = ( invocations.MPInvocation( "Death Gaze",
+      effects.OpposedRoll( att_stat=stats.PIETY, att_modifier=-10, on_success = (
+        effects.InstaKill( anim=animobs.CriticalHit )
+      ,), on_failure = (
+        effects.NoEffect( anim=animobs.SmallBoom )
+      ,) ), com_tar=targetarea.SingleTarget(reach=6), shot_anim=animobs.PurpleVortex, ai_tar=invocations.TargetEnemy(), mp_cost=6
+    ), abilities.LONGBOW )
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 6, self ) )
+
 
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  10   ***
@@ -227,6 +363,7 @@ class Sphinx( base.Monster ):
     FRAME = 37
     TEMPLATES = ()
     MOVE_POINTS = 12
+    VOICE = dialogue.voice.GREEK
     HABITAT = ( context.HAB_DESERT, context.SET_EVERY,
      context.MAP_WILDERNESS,
      context.DES_SOLAR,
@@ -280,6 +417,41 @@ class Sphinx( base.Monster ):
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  20   ***
 #  ********************************
+
+#  ********************************
+#  ***   ENCOUNTER  LEVEL  21   ***
+#  ********************************
+
+#  ********************************
+#  ***   ENCOUNTER  LEVEL  22   ***
+#  ********************************
+
+class Kaiju( base.Monster ):
+    name = "Kaiju"    
+    statline = { stats.STRENGTH: 45, stats.TOUGHNESS: 35, stats.REFLEXES: 16, \
+        stats.INTELLIGENCE: 3, stats.PIETY: 14, stats.CHARISMA: 14, stats.RESIST_ATOMIC: 50,
+        stats.RESIST_FIRE: 200, stats.RESIST_POISON: 200, stats.RESIST_LUNAR: 200 }
+    SPRITENAME = "monster_default.png"
+    FRAME = 14
+    TEMPLATES = ()
+    MOVE_POINTS = 8
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.MAP_WILDERNESS,
+     context.MTY_BEAST )
+    ENC_LEVEL = 22
+    COMBAT_AI = aibrain.BruiserAI()
+    TREASURE = None
+    ATTACK = items.Attack( (4,8,0), element = stats.RESIST_CRUSHING )
+    TECHNIQUES = ( invocations.MPInvocation( "Atomic Breath",
+      effects.OpposedRoll( att_stat=stats.REFLEXES, on_success = (
+        effects.HealthDamage( (10,6,0), stat_bonus=stats.TOUGHNESS, element=stats.RESIST_ATOMIC, anim=animobs.Nuclear )
+      ,), on_failure = (
+        effects.HealthDamage( (3,10,0), stat_bonus=None, element=stats.RESIST_ATOMIC, anim=animobs.Nuclear )
+      ,) ), com_tar=targetarea.Cone(reach=8), ai_tar=invocations.TargetEnemy(), mp_cost=60
+    ), )
+    def init_monster( self ):
+        self.levels.append( base.Beast( 48, self ) )
+        self.condition.append( enchantments.PermaRegeneration() )
 
 
 

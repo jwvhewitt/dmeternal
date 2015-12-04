@@ -216,10 +216,10 @@ class ArcherAI( object ):
     AVOID_THREAT = True
     DOES_SEARCH = True
     SEARCH_INT = 19
-    TECHNIQUE_CHANCE = 100
-    def __init__( self, avoid_enemies=0.1, approach_allies=0.1 ):
+    def __init__( self, avoid_enemies=0.1, approach_allies=0.1, technique_chance=100 ):
         self.avoid_enemies = avoid_enemies
         self.approach_allies = approach_allies
+        self.technique_chance = technique_chance
 
     def attack_from_here( self, explo, comba, chara, redraw ):
         candidates = list()
@@ -347,7 +347,7 @@ class ArcherAI( object ):
                         break
         return acted
     def act( self, explo, chara, redraw=None ):
-        if random.randint(1,100) <= self.TECHNIQUE_CHANCE:
+        if random.randint(1,100) <= self.technique_chance:
             acted = self.try_technique_use( explo, chara, redraw )
         else:
             acted = False

@@ -35,7 +35,7 @@ class ShortieStub( Plot ):
     SHORTIE_GRAMMAR = {
         # [ADVENTURE] is the top level token- it will expand into a number of
         # high level tokens. These eventually convert into subplot labels.
-        "[zADVENTURE]": [ "zSDI_BIGBOSS",
+        "[zADVENTURE]": [ "[ADVENTURE]",
             ],
         "[ADVENTURE]": [ "[IMPERILED_PLACE] [ENEMY_BASE] [ENEMY_GOAL]",
             ],
@@ -865,7 +865,7 @@ class GuardedFortress( SDIPlot ):
         # Create the exit... which in this case is the fortress inside the walls.
         exterior = randmaps.rooms.BuildingRoom( parent=fortress,
          tags=(context.CIVILIZED,) )
-        exterior.special_c[ "window" ] = maps.SMALL_WINDOW
+        exterior.special_c[ "window" ] = maps.CASTLE_WINDOW
         myexit = waypoints.GateDoor()
         myexit.mini_map_label = "Fortress"
         myexit.plot_locked = True
@@ -904,6 +904,70 @@ class GuardedFortress( SDIPlot ):
             self._door_locked = False
             explo.alert("With the guards defeated, you are free to enter the fortress.")
             explo.check_trigger( "WIN", self )
+
+class UnguardedFortress( SDIPlot ):
+    # A fortress entrance minus combat for low level adventurers.
+    LABEL = "SDI_ENEMY_FORT"
+    active = True
+    scope = "LOCALE"
+    NAME_PATTERNS = ("{0} Wilds","{0} Wilderness")
+    @classmethod
+    def matches( self, pstate ):
+        """Only appears at the lower to mid levels."""
+        return pstate.rank < 7
+    def custom_init( self, nart ):
+        # Create the scene for the fortress, and make sure there's an antagonist.
+        antagonist = self.elements.setdefault( "ANTAGONIST",teams.AntagonistFaction() )
+        biome = self.elements.setdefault( "BIOME", randmaps.architect.make_wilderness() )
+        archi = self.register_element( "DUNGEON_ARCHITECTURE",
+         randmaps.architect.BuildingDungeon(antagonist))
+        myscene,mymapgen = randmaps.architect.design_scene( 30+self.rank*5, 30+self.rank*5,
+          randmaps.ForestScene, biome, setting=self.setting,
+          fac=self.elements.get("ANTAGONIST"),secondary=archi)
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+        myscene.name = random.choice( self.NAME_PATTERNS ).format( namegen.random_style_name() )
+
+        # Create the fortress room.
+        clearing = randmaps.rooms.FuzzyRoom(width=15,height=15,parent=myscene)
+        fortress = randmaps.rooms.BuildingRoom( width=12,height=7,parent=clearing,
+         tags=(context.CIVILIZED,) )
+        fortress.special_c[ "window" ] = maps.CASTLE_WINDOW
+        myexit = waypoints.GateDoor()
+        myexit.mini_map_label = "Fortress"
+        fortress.special_c[ "door" ] = myexit
+
+        # Create the scene entrance
+        myroom = randmaps.rooms.FuzzyRoom( parent=myscene,
+            anchor=random.choice(randmaps.anchors.EDGES) )
+        myent = waypoints.RoadSignBack(anchor=randmaps.anchors.middle)
+        myroom.contents.append( myent )
+
+        # Save this component's data for the next component.
+        self.register_element( "IN_SCENE", myscene )
+        self.register_element( "IN_ENTRANCE", myent )
+        self.register_element( "OUT_SCENE", myscene )
+        self.register_element( "OUT_ENTRANCE", myexit )
+
+        return True
+    def get_sdi_grammar( self ):
+        """Return a dict of grammar related to this plot."""
+        mygram = {
+            "[achievement]": [ "locating the {} base".format(self.elements["ANTAGONIST"]),
+                ],
+            "[GO_QUEST]": ["Go to the {}; there you will find the {}.".format(self.elements["LOCALE"],self.elements["ANTAGONIST"]),
+                ],
+            "[location]": [str(self.elements["LOCALE"]),
+                ],
+            "[SDI_ENEMY_FORT:location]": [str(self.elements["LOCALE"]),
+                ],
+            "[SUMMARY]": [ "The {} base is in the {}.".format(self.elements["ANTAGONIST"],self.elements["LOCALE"]),
+                ],
+            "[warning]": [ "the {} is home to the {}".format(self.elements["LOCALE"],self.elements["ANTAGONIST"]),
+                ],
+        }
+        return mygram
+    def t_START( self, explo ):
+        explo.check_trigger( "WIN", self )
 
 
 # SDI_ENEMY_BARRACKS
@@ -1023,7 +1087,7 @@ class BasicBarracks( SDIPlot ):
 
 class DragonBoss( SDIPlot ):
     # A simple building level with a direct bossfight.
-    LABEL = "zSDI_BIGBOSS"
+    LABEL = "SDI_BIGBOSS"
     active = True
     scope = "LOCALE"
     NAME_PATTERNS = ("{0}'s Lair","{0}'s Den","{0}'s Cave")

@@ -145,6 +145,7 @@ class Centaur( base.Monster ):
     FRAME = 19
     TEMPLATES = ()
     MOVE_POINTS = 12
+    VOICE = dialogue.voice.GREEK
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.MAP_WILDERNESS,
      context.DES_SOLAR,
@@ -286,6 +287,7 @@ class CentaurWarrior( base.Monster ):
     FRAME = 20
     TEMPLATES = ()
     MOVE_POINTS = 12
+    VOICE = dialogue.voice.GREEK
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.MAP_WILDERNESS,
      context.DES_SOLAR,
@@ -347,6 +349,7 @@ class CentaurKnight( base.Monster ):
     FRAME = 4
     TEMPLATES = ()
     MOVE_POINTS = 12
+    VOICE = dialogue.voice.GREEK
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.MAP_WILDERNESS,
      context.DES_SOLAR,
@@ -408,6 +411,7 @@ class CentaurChampion( base.Monster ):
     FRAME = 9
     TEMPLATES = ()
     MOVE_POINTS = 10
+    VOICE = dialogue.voice.GREEK
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.MAP_WILDERNESS,
      context.DES_SOLAR,
@@ -449,6 +453,7 @@ class CentaurHero( base.Monster ):
     FRAME = 23
     TEMPLATES = ()
     MOVE_POINTS = 10
+    VOICE = dialogue.voice.GREEK
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.MAP_WILDERNESS,
      context.DES_SOLAR,
