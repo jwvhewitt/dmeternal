@@ -260,6 +260,10 @@ class DungeonEntrance( SpiralStairsUp ):
     TILE = maps.Tile( None, None, maps.DUNGEON_ENTRANCE )
     desc = "You stand before a dark passageway."
 
+class DownEntrance( SpiralStairsUp ):
+    TILE = maps.Tile( None, None, maps.DOWN_ENTRANCE )
+    desc = "You stand before a dark passageway."
+
 class PuzzleDoor( Waypoint ):
     TILE = maps.Tile( None, maps.CLOSED_DOOR, None )
     ATTACH_TO_WALL = True

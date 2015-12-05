@@ -16,7 +16,7 @@ FREEZE_FOE = Spell( "Freeze Foe",
     ,), on_failure =(
         effects.NoEffect( anim=animobs.SmallBoom )
     ,) ), rank=1, gems={WATER:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.BlueComet,
-    ai_tar=invocations.TargetEnemy() )
+    ai_tar=invocations.TargetMobileEnemy() )
 
 RESTORE_FLUIDITY = Spell( "Restore Fluidity",
     "This spell restores mobility to all allies within 6 tiles who have been paralyzed or sedated.",

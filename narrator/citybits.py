@@ -418,6 +418,13 @@ class VillageArmorShop( Plot ):
         self.add_sub_plot( nart, "CITY_ARMORSHOP" )
         return True
 
+class VillageMagicShop( Plot ):
+    # Just add an armor shop...
+    LABEL = "VILLAGE_RANDOMSHOP"
+    def custom_init( self, nart ):
+        self.add_sub_plot( nart, "CITY_LIBRARY" )
+        return True
+
 
 #  ***************************
 #  ***   CITY_ARMORSHOP   ***

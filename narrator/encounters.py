@@ -40,7 +40,7 @@ class EarthbindTester( monsters.base.Monster ):
 
 
 class TestEncounter( Plot ):
-    LABEL = "TEST_FEATURE"
+    LABEL = "zTEST_FEATURE"
     def custom_init( self, nart ):
         scene = self.elements.get("LOCALE")
         mygen = nart.get_map_generator( scene )
@@ -48,7 +48,7 @@ class TestEncounter( Plot ):
         myteam = teams.Team(default_reaction=-999, rank=self.rank, 
           strength=0, habitat=scene.get_encounter_request(), fac=scene.fac )
         room.contents.append( myteam )
-        monster = EarthbindTester( myteam )
+        monster = monsters.misc.Kaiju( myteam )
         room.contents.append( monster )
         monster = monsters.goblins.Goblin( myteam )
         room.contents.append( monster )

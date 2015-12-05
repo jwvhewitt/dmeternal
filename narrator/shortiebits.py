@@ -35,9 +35,17 @@ class ShortieStub( Plot ):
     SHORTIE_GRAMMAR = {
         # [ADVENTURE] is the top level token- it will expand into a number of
         # high level tokens. These eventually convert into subplot labels.
-        "[zADVENTURE]": [ "[ADVENTURE]",
+        "[zADVENTURE]": [ "zSDI_DUNGEON_LEVEL",
             ],
         "[ADVENTURE]": [ "[IMPERILED_PLACE] [ENEMY_BASE] [ENEMY_GOAL]",
+            "[DUNGEON_ENTRANCE] [DUNGEON_CHALLENGE] [DUNGEON_GOAL]"
+            ],
+        "[DUNGEON_CHALLENGE]": [ "SDI_DUNGEON_LEVEL",
+            ],
+        "[DUNGEON_ENTRANCE]": [ "SDI_VILLAGE SDI_DUNGEON_ENTRANCE",
+            "SDI_DUNGEON_ENTRANCE", "SDI_DANGEROUS_PATH SDI_DUNGEON_ENTRANCE"
+            ],
+        "[DUNGEON_GOAL]": [ "SDI_BIGBOSS",
             ],
         "[ENEMY_BASE]": [ "SDI_ENEMY_FORT SDI_ENEMY_BARRACKS",
             "SDI_DANGEROUS_PATH SDI_ENEMY_FORT",
@@ -155,6 +163,7 @@ class ShortieStub( Plot ):
             ],
         "[=INTRO]": [ "You have been sent to bring [+SDI_BIGBOSS:name] the [+SDI_BIGBOSS:type] to justice. So far you have tracked them to [=location].",
             "The [+SDI_VILLAGE] has called for a hero. [INTRO_PROBLEM]",
+            "You have come to [=location] for the purpose of [++achievement]. [INTRO_PROBLEM]"
             ],
         "[INTRO_PROBLEM]": [ "Travelers passing through [+SDI_AMBUSH:name] have gone missing.",
             "A [+SDI_BIGBOSS:type] named [+SDI_BIGBOSS:name] has been causing problems.",
@@ -314,6 +323,8 @@ class ShortWildernessPath( SDIPlot ):
                 ],
             "[GO_QUEST]": ["Travel to the {}.".format(self.elements["LOCALE"]),
                 ],
+            "[INTRO]": [ "You find yourselves completely lost in the {}. According to rumour, [+warning].".format(self.elements["LOCALE"]),
+                ],
             "[location]": [str(self.elements["LOCALE"]),
                 ],
             "[SDI_DANGEROUS_PATH:location]": [str(self.elements["LOCALE"]),
@@ -400,7 +411,7 @@ class BasicWildernessPath( SDIPlot ):
         return mygram
     def t_START( self, explo ):
         if self._do_message:
-            explo.alert("You will have to find your way through this wilderness to get where you're going.")
+            explo.alert("This wilderness area doesn't seem to be entirely uninhabited.")
             explo.check_trigger( "WIN", self )
             self._do_message = False
 
@@ -705,6 +716,360 @@ class ElementalShrine( SDIPlot ):
             explo.alert("The spirit has been calmed. [=SDI_DEFILED_PLACE:ending]")
             self._open_the_exit(explo)
 
+#  SDI_DUNGEON_ENTRANCE
+#   There's a dungeon entrance. The entrance will probably determine the
+#   architecture of the dungeon and the nature of its inhabitants.
+# Win Condition:
+#   Gain access to the dungeon. This may be as simple as showing up.
+# Grammar Tags:
+#   [SDI_DUNGEON_ENTRANCE:location]   The rough location of the dungeon
+#   [SDI_DUNGEON_ENTRANCE:name]       The name of the dungeon
+# To do:
+# - Tunnel Dungeon
+# - Building Dungeon
+
+class InhabitedTunnelsDungeon( SDIPlot ):
+    LABEL = "SDI_DUNGEON_ENTRANCE"
+    active = True
+    scope = "LOCALE"
+    NAME_PATTERNS = ("{0} Wilds","{0} Wilderness")
+    def custom_init( self, nart ):
+        # Create the scene where the ambush will happen- a wilderness area.
+        biome = self.elements.setdefault( "BIOME", randmaps.architect.make_wilderness() )
+        antagonist = self.elements.setdefault( "ANTAGONIST",
+          teams.AntagonistFaction(dungeon_type=["Tunnels","Catacombs"]) )
+        myscene,mymapgen = randmaps.architect.design_scene( min(32+self.rank*3,60), min(32+self.rank*3,60),
+          randmaps.ForestScene, biome, setting=self.setting)
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+        mymapgen.GAPFILL = randmaps.gapfiller.MonsterFiller(1,5,20)
+        myscene.name = random.choice( self.NAME_PATTERNS ).format( namegen.random_style_name() )
+
+        # Add the scene entrance.
+        anc_a,anc_b = random.choice(randmaps.anchors.OPPOSING_CARDINALS)
+        myroom = randmaps.rooms.FuzzyRoom( parent=myscene,anchor=anc_a )
+        myent = waypoints.RoadSignBack(anchor=randmaps.anchors.middle)
+        myroom.contents.append( myent )
+
+        # Create the antagonist encampment.
+        fortress = self.register_element( "_AMBUSHROOM",
+         randmaps.rooms.FuzzyRoom(anchor=anc_b), dident="LOCALE" )
+        team = self.register_element( "TEAM", teams.Team(default_reaction=-999, 
+         strength=150, habitat=myscene.get_encounter_request(), fac=antagonist,
+         rank=self.rank, respawn=False ) )
+        fortress.contents.append( team )
+        mycart = waypoints.Cart()
+        mycart.stock(self.rank)
+        fortress.contents.append(mycart)
+        fortress.contents.append(waypoints.Campsite())
+
+        # Register the cave stuff.
+        archi = self.register_element( "DUNGEON_ARCHITECTURE",
+         randmaps.architect.TunnelDungeon(antagonist) )
+        archi.name = antagonist.name
+
+        # Add a boss to guard the entrance.
+        myhabitat = myscene.get_encounter_request()
+        myhabitat[ context.MTY_HUMANOID ] = context.MAYBE
+        myhabitat[(context.MTY_LEADER,context.MTY_BOSS)] = True
+        antagonist.alter_monster_request( myhabitat )
+        btype = monsters.choose_monster_type(self.rank-1,self.rank+2,myhabitat)
+        if btype:
+            boss = monsters.generate_boss( btype, self.rank+1, team=team )
+            myitem = items.generate_special_item( self.rank )
+            if myitem:
+                boss.contents.append( myitem )
+            fortress.contents.append( boss )
+            team.boss = boss
+
+        # Create the exit... which in this case is the fortress entrance.
+        myexit = waypoints.DownEntrance()
+        myexit.mini_map_label = "Tunnel Entrance"
+        myexit.plot_locked = True
+        self._door_locked = True
+        fortress.contents.append( myexit )
+        fortress.special_c["door"] = myexit
+
+        # Add some extra pressure.
+        if random.randint(1,4) != 4:
+            self.add_sub_plot( nart, "ENCOUNTER" )
+        if random.randint(1,4) == 1:
+            self.add_sub_plot( nart, "SPECIAL_FEATURE" )
+        if random.randint(1,10) == 1:
+            self.add_sub_plot( nart, "SPECIAL_ENCOUNTER" )
+
+        # Save this component's data for the next component.
+        self.register_element( "IN_SCENE", myscene )
+        self.register_element( "IN_ENTRANCE", myent )
+        self.register_element( "OUT_SCENE", myscene )
+        self.register_element( "OUT_ENTRANCE", myexit )
+
+        return True
+    def get_sdi_grammar( self ):
+        """Return a dict of grammar related to this plot."""
+        mygram = {
+            "[achievement]": [ "entering the {}".format(self.elements["DUNGEON_ARCHITECTURE"].name),
+                ],
+            "[GO_QUEST]": ["Locate the {} in the {}.".format(self.elements["DUNGEON_ARCHITECTURE"].name,self.elements["LOCALE"]),
+                ],
+            "[location]": [str(self.elements["LOCALE"]),
+                ],
+            "[SDI_DUNGEON_ENTRANCE:location]": [str(self.elements["LOCALE"]),
+                ],
+            "[SDI_DUNGEON_ENTRANCE:name]": [self.elements["DUNGEON_ARCHITECTURE"].name,
+                ],
+            "[SUMMARY]": [ "The {} can be found in the {}.".format(self.elements["DUNGEON_ARCHITECTURE"].name,self.elements["LOCALE"]),
+                ],
+            "[warning]": [ "the {} are more than they appear".format(self.elements["DUNGEON_ARCHITECTURE"].name),
+                ],
+        }
+        return mygram
+    def OUT_ENTRANCE_menu( self, thingmenu ):
+        thingmenu.desc = "There are too many guards around for you to enter yet."
+    def t_COMBATOVER( self, explo ):
+        if self._door_locked and not self.elements["TEAM"].members_in_play( explo.scene ):
+            self.elements["OUT_ENTRANCE"].plot_locked = False
+            self._door_locked = False
+            explo.alert("With the guards defeated, you are free to enter the {}.".format(self.elements["DUNGEON_ARCHITECTURE"].name))
+            explo.check_trigger( "WIN", self )
+
+
+class RuinedFortressDungeon( SDIPlot ):
+    LABEL = "SDI_DUNGEON_ENTRANCE"
+    active = True
+    scope = "LOCALE"
+    NAME_PATTERNS = ("Ruins of {0} Fortress","Ruins of {0} Castle")
+    def custom_init( self, nart ):
+        antagonist = self.elements.get( "ANTAGONIST" )
+        biome = self.elements.setdefault( "BIOME", randmaps.architect.make_wilderness() )
+        archi = self.register_element( "DUNGEON_ARCHITECTURE",
+         randmaps.architect.TunnelDungeon(antagonist))
+        myscene,mymapgen = randmaps.architect.design_scene( 50, 50,
+          randmaps.ForestScene, biome, setting=self.setting,
+          fac=self.elements.get("ANTAGONIST"),secondary=archi)
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+        mymapgen.GAPFILL = randmaps.gapfiller.MonsterFiller(1,5,20)
+        archi.name = random.choice( self.NAME_PATTERNS ).format( namegen.random_style_name() )
+        myscene.name = "Outside the {}".format( archi.name )
+        myscene.desctags.append( context.MTY_UNDEAD )
+
+        # Create the fortress room and the guards.
+        fortress = randmaps.rooms.CastleRoom( parent=myscene,width=21,height=21,
+          tags=(context.GOAL,))
+        myhabitat = myscene.get_encounter_request()
+        myhabitat[context.MTY_UNDEAD] = True
+        team = self.register_element( "TEAM", teams.Team(default_reaction=-999, 
+         strength=150, habitat=myhabitat, rank=self.rank, respawn=False ) )
+        fortress.contents.append( team )
+        fortroom = randmaps.rooms.FuzzyRoom(parent=fortress)
+
+        # Create the scene entrance
+        myroom = randmaps.rooms.FuzzyRoom( parent=myscene,
+            anchor=random.choice(randmaps.anchors.EDGES) )
+        myent = waypoints.RoadSignBack(anchor=randmaps.anchors.middle)
+        myroom.contents.append( myent )
+
+        # Create the exit... which in this case is the fortress inside the walls.
+        exterior = randmaps.rooms.BuildingRoom( parent=fortress,
+         tags=(context.CIVILIZED,) )
+        exterior.special_c[ "window" ] = maps.CASTLE_WINDOW
+        myexit = waypoints.OpenGateDoor()
+        myexit.mini_map_label = "Ruins"
+        myexit.plot_locked = True
+        exterior.special_c[ "door" ] = myexit
+        self._door_locked = True
+
+        # Save this component's data for the next component.
+        self.register_element( "IN_SCENE", myscene )
+        self.register_element( "IN_ENTRANCE", myent )
+        self.register_element( "OUT_SCENE", myscene )
+        self.register_element( "OUT_ENTRANCE", myexit )
+
+        return True
+    def get_sdi_grammar( self ):
+        """Return a dict of grammar related to this plot."""
+        mygram = {
+            "[achievement]": [ "entering the {}".format(self.elements["DUNGEON_ARCHITECTURE"].name),
+                ],
+            "[GO_QUEST]": ["Locate the dungeon beneath the {}.".format(self.elements["DUNGEON_ARCHITECTURE"].name),
+                ],
+            "[location]": [str(self.elements["LOCALE"]),
+                ],
+            "[SDI_DUNGEON_ENTRANCE:location]": [str(self.elements["LOCALE"]),
+                ],
+            "[SDI_DUNGEON_ENTRANCE:name]": [self.elements["DUNGEON_ARCHITECTURE"].name,
+                ],
+            "[SUMMARY]": [ "There exists a dungeon beneath the {}.".format(self.elements["DUNGEON_ARCHITECTURE"].name),
+                ],
+            "[warning]": [ "the {} are now haunted".format(self.elements["DUNGEON_ARCHITECTURE"].name),
+                ],
+        }
+        return mygram
+    def OUT_ENTRANCE_menu( self, thingmenu ):
+        thingmenu.desc = "There are too many ghouls around for you to enter yet."
+    def t_COMBATOVER( self, explo ):
+        if self._door_locked and not self.elements["TEAM"].members_in_play( explo.scene ):
+            self.elements["OUT_ENTRANCE"].plot_locked = False
+            self._door_locked = False
+            explo.alert("With the restless dead dispatched, you are free to enter the ruins.")
+            explo.check_trigger( "WIN", self )
+
+
+class ThePitDungeon( SDIPlot ):
+    LABEL = "SDI_DUNGEON_ENTRANCE"
+    active = True
+    scope = "LOCALE"
+    NAME_PATTERNS = ("{0} Wilds","{0} Wilderness")
+    DNAME_PATTERNS = ("Pit of {0}","{0} Cavern")
+    def custom_init( self, nart ):
+        biome = self.elements.setdefault( "BIOME", randmaps.architect.make_wilderness() )
+        antagonist = self.elements.get( "ANTAGONIST" )
+        archi = self.register_element( "DUNGEON_ARCHITECTURE",
+         randmaps.architect.CavernDungeon(antagonist))
+        myscene,mymapgen = randmaps.architect.design_scene( 50, 50,
+          randmaps.ForestScene, biome, setting=self.setting,secondary=archi)
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+        mymapgen.GAPFILL = randmaps.gapfiller.MonsterFiller(1,5,20)
+        myscene.name = random.choice( self.NAME_PATTERNS ).format( namegen.random_style_name() )
+        archi.name = random.choice( self.DNAME_PATTERNS ).format( namegen.random_style_name() )
+
+        myroom = randmaps.rooms.FuzzyRoom( parent=myscene,
+            anchor=random.choice(randmaps.anchors.EDGES) )
+        myent = waypoints.RoadSignBack(anchor=randmaps.anchors.middle)
+        myroom.contents.append( myent )
+
+        # Create the exit room.
+        fortress = self.register_element( "_AMBUSHROOM",
+         randmaps.rooms.FuzzyRoom(tags=(context.GOAL,)), dident="LOCALE" )
+        team = self.register_element( "TEAM", teams.Team(default_reaction=-999, 
+         strength=0, rank=self.rank, respawn=False ) )
+
+        # Add a boss to guard the entrance.
+        myhabitat = myscene.get_encounter_request()
+        myhabitat[ context.MTY_BEAST ] = True
+        myhabitat[context.MTY_BOSS] = context.MAYBE
+        btype = monsters.choose_monster_type(self.rank,self.rank+2,myhabitat)
+        if btype:
+            boss = self.register_element("BOSS",monsters.generate_boss( btype, self.rank+2, team=team ))
+            fortress.contents.append( boss )
+
+        # Create the exit... which in this case is the fortress entrance.
+        myexit = waypoints.Pit()
+        myexit.mini_map_label = archi.name
+        myexit.plot_locked = True
+        self._door_locked = True
+        fortress.contents.append( myexit )
+
+        # Add some extra pressure.
+        if random.randint(1,4) != 4:
+            self.add_sub_plot( nart, "ENCOUNTER" )
+        if random.randint(1,4) == 1:
+            self.add_sub_plot( nart, "SPECIAL_FEATURE" )
+        if random.randint(1,10) == 1:
+            self.add_sub_plot( nart, "SPECIAL_ENCOUNTER" )
+
+        # Save this component's data for the next component.
+        self.register_element( "IN_SCENE", myscene )
+        self.register_element( "IN_ENTRANCE", myent )
+        self.register_element( "OUT_SCENE", myscene )
+        self.register_element( "OUT_ENTRANCE", myexit )
+
+        return btype
+    def get_sdi_grammar( self ):
+        """Return a dict of grammar related to this plot."""
+        mygram = {
+            "[achievement]": [ "defeating {}".format(self.elements["BOSS"]),
+                ],
+            "[GO_QUEST]": ["To enter the {} you must first defeat {}.".format(self.elements["DUNGEON_ARCHITECTURE"].name,self.elements["BOSS"]),
+                ],
+            "[location]": [str(self.elements["LOCALE"]),
+                ],
+            "[SDI_DUNGEON_ENTRANCE:location]": [str(self.elements["LOCALE"]),
+                ],
+            "[SDI_DUNGEON_ENTRANCE:name]": [self.elements["DUNGEON_ARCHITECTURE"].name,
+                ],
+            "[SUMMARY]": [ "The {} is guarded by {}.".format(self.elements["DUNGEON_ARCHITECTURE"].name,self.elements["BOSS"]),
+                ],
+            "[warning]": [ "{} attacks anyone who tries to enter the {}".format(self.elements["BOSS"],self.elements["DUNGEON_ARCHITECTURE"].name),
+                ],
+        }
+        return mygram
+    def OUT_ENTRANCE_menu( self, thingmenu ):
+        thingmenu.desc = "{} will not allow you to enter the pit just yet.".format(self.elements["BOSS"])
+    def t_COMBATOVER( self, explo ):
+        if self._door_locked and not self.elements["TEAM"].members_in_play( explo.scene ):
+            self.elements["OUT_ENTRANCE"].plot_locked = False
+            self._door_locked = False
+            explo.alert("With {} defeated, you are free to enter the {}.".format(self.elements["BOSS"],self.elements["DUNGEON_ARCHITECTURE"].name))
+            explo.check_trigger( "WIN", self )
+
+
+class BasicCaveDungeon( SDIPlot ):
+    LABEL = "SDI_DUNGEON_ENTRANCE"
+    active = True
+    scope = "LOCALE"
+    NAME_PATTERNS = ("{0} Wilds","{0} Wilderness")
+    DNAME_PATTERNS = ("Caves of {0}","{0} Cavern")
+    def custom_init( self, nart ):
+        # Create the scene where the ambush will happen- a wilderness area.
+        antagonist = self.elements.get( "ANTAGONIST" )
+        biome = self.elements.setdefault( "BIOME", randmaps.architect.make_wilderness() )
+        archi = self.register_element( "DUNGEON_ARCHITECTURE",
+         randmaps.architect.CavernDungeon(antagonist))
+        myscene,mymapgen = randmaps.architect.design_scene( min(20+self.rank*4,60), min(20+self.rank*4,60),
+          randmaps.ForestScene, biome, setting=self.setting,
+          fac=self.elements.get("ANTAGONIST"),secondary=archi)
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+        myscene.name = random.choice( self.NAME_PATTERNS ).format( namegen.random_style_name() )
+        archi.name = random.choice( self.DNAME_PATTERNS ).format( namegen.random_style_name() )
+
+        myroom = randmaps.rooms.FuzzyRoom( width=7,height=7,parent=myscene,
+            anchor=random.choice(randmaps.anchors.EDGES) )
+        myent = waypoints.RoadSignBack(anchor=randmaps.anchors.middle)
+        myroom.contents.append( myent )
+
+        # Create the fortress room.
+        fortress = self.register_element( "_AMBUSHROOM",
+         randmaps.rooms.MountainRoom(width=7,height=7,
+         tags=(context.GOAL,)), dident="LOCALE" )
+        myexit = waypoints.DungeonEntrance()
+        myexit.mini_map_label = archi.name
+        fortress.contents.append( myexit )
+        fortress.special_c["door"] = myexit
+
+        self._ready = True
+
+        # Save this component's data for the next component.
+        self.register_element( "IN_SCENE", myscene )
+        self.register_element( "IN_ENTRANCE", myent )
+        self.register_element( "OUT_SCENE", myscene )
+        self.register_element( "OUT_ENTRANCE", myexit )
+
+        return True
+    def get_sdi_grammar( self ):
+        """Return a dict of grammar related to this plot."""
+        mygram = {
+            "[achievement]": [ "locating the {}".format(self.elements["DUNGEON_ARCHITECTURE"].name),
+                ],
+            "[GO_QUEST]": ["Go to the {}, where you will find the {}.".format(self.elements["LOCALE"],self.elements["DUNGEON_ARCHITECTURE"].name),
+                ],
+            "[location]": [str(self.elements["LOCALE"]),
+                ],
+            "[SDI_DUNGEON_ENTRANCE:location]": [str(self.elements["LOCALE"]),
+                ],
+            "[SDI_DUNGEON_ENTRANCE:name]": [self.elements["DUNGEON_ARCHITECTURE"].name,
+                ],
+            "[SUMMARY]": [ "The {} is located in the {}.".format(self.elements["DUNGEON_ARCHITECTURE"].name,str(self.elements["LOCALE"])),
+                ],
+            "[warning]": [ "the {} is full of terrifying monsters".format(self.elements["DUNGEON_ARCHITECTURE"].name),
+                ],
+        }
+        return mygram
+    def t_START( self, explo ):
+        if self._ready:
+            explo.check_trigger( "WIN", self )
+            self._ready = False
+
+
 #  SDI_ENEMY_FORT
 #   There's an enemy fortress to discover in the wilderness, and you need to
 #   find a way in. In the simplest case this involves just fighting the guards
@@ -942,6 +1307,8 @@ class UnguardedFortress( SDIPlot ):
         myent = waypoints.RoadSignBack(anchor=randmaps.anchors.middle)
         myroom.contents.append( myent )
 
+        self._ready = True
+
         # Save this component's data for the next component.
         self.register_element( "IN_SCENE", myscene )
         self.register_element( "IN_ENTRANCE", myent )
@@ -967,7 +1334,9 @@ class UnguardedFortress( SDIPlot ):
         }
         return mygram
     def t_START( self, explo ):
-        explo.check_trigger( "WIN", self )
+        if self._ready:
+            explo.check_trigger( "WIN", self )
+            self._ready = False
 
 
 # SDI_ENEMY_BARRACKS
@@ -979,6 +1348,8 @@ class UnguardedFortress( SDIPlot ):
 # Grammar Tags:
 #   [SDI_ENEMY_BARRACKS:name]   The name of the base
 # To do:
+# - Monty Hall: Open doors, maybe find treasure, maybe find monsters
+# - Proving Ground: Includes one big room with a huge encounter
 #
 
 class BasicBarracks( SDIPlot ):
@@ -1065,6 +1436,20 @@ class BasicBarracks( SDIPlot ):
                 ],
         }
         return mygram
+
+# SDI_EVILPLAN
+#   You walk in on an evil plan that you obviously have to stop.
+# Win Condition:
+#   Foil the plan.
+# Grammar Tags:
+#   [SDI_EVILPLAN:location]    The place where it'll be carried out.
+#   [SDI_EVILPLAN:threat]     The nature of the plan.
+# To do:
+# - Human sacrifice
+# - Summon a monster/demon/deity
+# - Building catipults, etc, for invasion
+# - Building a construct
+
 
 
 # SDI_BLOCKED_GATE

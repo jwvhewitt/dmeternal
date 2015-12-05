@@ -51,6 +51,13 @@ class BeastlyMightEn( Enchantment ):
     def __init__( self ):
         super(BeastlyMightEn, self).__init__(statline=stats.StatMod({stats.STRENGTH:4,stats.TOUGHNESS:4,stats.PHYSICAL_ATTACK:5}),dispel=(COMBAT,MAGIC))
 
+class Bleeding( Enchantment ):
+    NAME = "Bleeding"
+    def __init__( self ):
+        super(Bleeding, self).__init__(dispel=(COMBAT,CURSE,DAILY))
+    FX = effects.HealthDamage( (3,4,0), stat_bonus=None, element=None, anim=animobs.BloodSplat )
+    MAX_USES = 5
+
 class BlessedWepEn( Enchantment ):
     NAME = "Blessed Weapon"
     def __init__( self ):
@@ -137,8 +144,17 @@ class PermaRegeneration( Enchantment ):
     def __init__( self ):
         super(PermaRegeneration, self).__init__(dispel=())
     FX = effects.TargetIsDamaged( on_true= (
-        effects.HealthRestore( dice=(1,4,0) )
+        effects.HealthRestore( dice=(1,6,0) )
     ,))
+
+class PermaMegaRegeneration( Enchantment ):
+    # Basically like PermaRegeneration, but moreso.
+    def __init__( self ):
+        super(PermaMegaRegeneration, self).__init__(dispel=())
+    FX = effects.TargetIsDamaged( on_true= (
+        effects.HealthRestore( dice=(2,6,0) )
+    ,))
+
 
 class PoisonClassic( Enchantment ):
     NAME = "Poisoned"

@@ -44,6 +44,34 @@ import enchantments
 #  ***   ENCOUNTER  LEVEL  8   ***
 #  *******************************
 
+class Belker( base.Monster ):
+    name = "Belker"
+    statline = { stats.STRENGTH: 14, stats.TOUGHNESS: 13, stats.REFLEXES: 21, \
+        stats.INTELLIGENCE: 6, stats.PIETY: 11, stats.CHARISMA: 11 }
+    SPRITENAME = "monster_e_air.png"
+    FRAME = 10
+    TEMPLATES = (stats.ELEMENTAL,stats.AIR,stats.INCORPOREAL)
+    MOVE_POINTS = 12
+    VOICE = None
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.DES_AIR, context.DES_LUNAR, context.MTY_ELEMENTAL )
+    ENC_LEVEL = 8
+    ATTACK = items.Attack( (2,4,0), element = stats.RESIST_WIND )
+    TECHNIQUES = ( invocations.MPInvocation( "Smoke Claw",
+        effects.OpposedRoll( att_stat=stats.STRENGTH, def_stat=stats.TOUGHNESS, on_success = (
+            effects.HealthDamage( (2,4,0), stat_bonus=stats.STRENGTH, element=stats.RESIST_WIND, anim=animobs.RedBoom ),
+            effects.TargetIs( effects.ALIVE, on_true=(
+                effects.HealthDamage( (3,4,0), stat_bonus=None, element=None, anim=animobs.BloodSplat ),
+                effects.Enchant( enchantments.Bleeding ),
+            )),
+        ), on_failure = (
+            effects.HealthDamage( (2,4,0), stat_bonus=None, element=stats.RESIST_WIND, anim=animobs.RedBoom )
+        ,) ), 
+        mp_cost=5, com_tar=targetarea.SingleTarget(reach=1), ai_tar=invocations.TargetEnemy() ),
+    )
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 8, self ) )
+
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  9   ***
 #  *******************************
@@ -70,7 +98,7 @@ class AirElemental( base.Monster ):
     TEMPLATES = (stats.ELEMENTAL,stats.AIR)
     MOVE_POINTS = 20
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
-     context.DES_AIR, context.SUMMON_ELEMENTAL )
+     context.DES_AIR, context.MTY_ELEMENTAL, context.SUMMON_ELEMENTAL )
     ENC_LEVEL = 12
     ATTACK = items.Attack( (1,10,0), element = stats.RESIST_SLASHING, extra_effect =
         effects.HealthDamage( (1,10,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_WIND, anim=animobs.Spiral )

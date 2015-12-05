@@ -12,6 +12,7 @@ import aibrain
 import animals
 import treasuretype
 import abilities
+import enchantments
 
 # Contains critters that don't quite fit in anywhere else.
 
@@ -344,10 +345,35 @@ class Medusa( base.Monster ):
         effects.InstaKill( anim=animobs.CriticalHit )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=6), shot_anim=animobs.PurpleVortex, ai_tar=invocations.TargetEnemy(), mp_cost=6
+      ,) ), com_tar=targetarea.SingleTarget(reach=6), shot_anim=animobs.PurpleVortex, ai_tar=invocations.TargetEnemy(), mp_cost=9
     ), abilities.LONGBOW )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 6, self ) )
+
+class Umbull( base.Monster ):
+    name = "Umbull"    
+    statline = { stats.STRENGTH: 23, stats.TOUGHNESS: 19, stats.REFLEXES: 13, \
+        stats.INTELLIGENCE: 9, stats.PIETY: 11, stats.CHARISMA: 13 }
+    SPRITENAME = "monster_default.png"
+    FRAME = 4
+    TEMPLATES = ()
+    MOVE_POINTS = 8
+    HABITAT = ( context.HAB_CAVE, context.SET_EVERY,
+     context.MAP_DUNGEON, context.DES_EARTH )
+    ENC_LEVEL = 9
+    COMBAT_AI = aibrain.BruiserAI()
+    TREASURE = treasuretype.Standard()
+    ATTACK = items.Attack( (3,6,0), element = stats.RESIST_SLASHING )
+    TECHNIQUES = (invocations.MPInvocation( "Freezing Gaze",
+        effects.OpposedRoll( att_modifier=20, on_success = (
+            effects.Paralyze( max_duration = 6 )
+        ,), on_failure =(
+            effects.NoEffect( anim=animobs.SmallBoom )
+        ,) ), com_tar=targetarea.SingleTarget(), shot_anim=animobs.PurpleVortex,
+        ai_tar=invocations.TargetMobileEnemy() ),
+    )
+    def init_monster( self ):
+        self.levels.append( base.Defender( 9, self ) )
 
 
 #  ********************************
@@ -381,6 +407,37 @@ class Sphinx( base.Monster ):
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  11   ***
 #  ********************************
+
+class Hydra( base.Monster ):
+    name = "Hydra"    
+    statline = { stats.STRENGTH: 21, stats.TOUGHNESS: 20, stats.REFLEXES: 12, \
+        stats.INTELLIGENCE: 3, stats.PIETY: 10, stats.CHARISMA: 9,
+        stats.PHYSICAL_ATTACK: 20 }
+    SPRITENAME = "monster_default.png"
+    FRAME = 3
+    TEMPLATES = (stats.REPTILE,stats.EARTH,)
+    MOVE_POINTS = 8
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.DES_EARTH, context.MTY_BOSS )
+    ENC_LEVEL = 11
+    VOICE = dialogue.voice.GREEK
+    COMBAT_AI = aibrain.BruiserAI()
+    TREASURE = treasuretype.Low()
+    ATTACK = items.Attack( (2,10,0), element = stats.RESIST_PIERCING )
+    TECHNIQUES = ( invocations.MPInvocation( "Poison Breath",
+      effects.OpposedRoll( def_stat=stats.TOUGHNESS, on_success = (
+        effects.HealthDamage( (3,6,0), stat_bonus=stats.TOUGHNESS, element=stats.RESIST_POISON, anim=animobs.PoisonCloud ),
+        effects.TargetIs( effects.ALIVE, on_true=( effects.OpposedRoll( att_stat=None, def_stat=stats.TOUGHNESS, on_success = (
+            effects.Enchant( enchantments.PoisonClassic )
+        ,) ), ))
+      ), on_failure = (
+        effects.HealthDamage( (2,6,0), stat_bonus=None, element=stats.RESIST_POISON, anim=animobs.PoisonCloud )
+      ,) ), com_tar=targetarea.Blast(radius=2), ai_tar=invocations.TargetEnemy(min_distance=3), mp_cost=20, shot_anim=animobs.GreenComet
+    ), )
+    def init_monster( self ):
+        self.levels.append( base.Terror( 10, self ) )
+        self.condition.append( enchantments.PermaMegaRegeneration() )
+
 
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  12   ***
@@ -439,6 +496,7 @@ class Kaiju( base.Monster ):
      context.MAP_WILDERNESS,
      context.MTY_BEAST )
     ENC_LEVEL = 22
+    VOICE = dialogue.voice.DRACONIAN
     COMBAT_AI = aibrain.BruiserAI()
     TREASURE = None
     ATTACK = items.Attack( (4,8,0), element = stats.RESIST_CRUSHING )
@@ -451,7 +509,7 @@ class Kaiju( base.Monster ):
     ), )
     def init_monster( self ):
         self.levels.append( base.Beast( 48, self ) )
-        self.condition.append( enchantments.PermaRegeneration() )
+        self.condition.append( enchantments.PermaMegaRegeneration() )
 
 
 
