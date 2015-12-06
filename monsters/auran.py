@@ -76,6 +76,24 @@ class Belker( base.Monster ):
 #  ***   ENCOUNTER  LEVEL  9   ***
 #  *******************************
 
+class InvisibleStalker( base.Monster ):
+    name = "Invisible Stalker"
+    statline = { stats.STRENGTH: 18, stats.TOUGHNESS: 14, stats.REFLEXES: 19, \
+        stats.INTELLIGENCE: 14, stats.PIETY: 15, stats.CHARISMA: 11,
+        stats.PHYSICAL_ATTACK: 5, stats.STEALTH: 50, stats.AWARENESS: 25 }
+    SPRITENAME = "monster_e_air.png"
+    FRAME = 7
+    TEMPLATES = (stats.ELEMENTAL,stats.AIR,stats.INCORPOREAL)
+    MOVE_POINTS = 10
+    VOICE = None
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.DES_AIR, context.MTY_ELEMENTAL )
+    ENC_LEVEL = 9
+    ATTACK = items.Attack( (2,6,0), element = stats.RESIST_WIND )
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 9, self ) )
+
+
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  10   ***
 #  ********************************

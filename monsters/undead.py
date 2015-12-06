@@ -494,6 +494,32 @@ class MummyPriest( base.Monster ):
 #  ***   ENCOUNTER  LEVEL  10   ***
 #  ********************************
 
+class Bodak( base.Monster ):
+    name = "Bodak"
+    statline = { stats.STRENGTH: 13, stats.TOUGHNESS: 12, stats.REFLEXES: 15, \
+        stats.INTELLIGENCE: 6, stats.PIETY: 12, stats.CHARISMA: 12,
+        stats.RESIST_ACID: 75, stats.RESIST_LIGHTNING: 155 }
+    SPRITENAME = "monster_undead.png"
+    FRAME = 0
+    TEMPLATES = (stats.UNDEAD,stats.DEMON)
+    MOVE_POINTS = 8
+    VOICE = None
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.MTY_UNDEAD, context.MTY_BOSS,
+     context.DES_LUNAR, context.GEN_UNDEAD )
+    ENC_LEVEL = 10
+    TREASURE = None
+    ATTACK = items.Attack( (1,8,0), element = stats.RESIST_CRUSHING)
+    TECHNIQUES = ( invocations.MPInvocation( "Death Gaze",
+      effects.OpposedRoll( att_stat=stats.CHARISMA, att_modifier=-10, on_success = (
+        effects.InstaKill( anim=animobs.CriticalHit )
+      ,), on_failure = (
+        effects.NoEffect( anim=animobs.SmallBoom )
+      ,) ), com_tar=targetarea.SingleTarget(reach=6), shot_anim=animobs.PurpleVortex, ai_tar=invocations.TargetEnemy(), mp_cost=10
+    ),)
+    def init_monster( self ):
+        self.levels.append( base.Terror( 9, self ) )
+
 
 class Fossil( base.Monster ):
     name = "Fossil"
@@ -528,7 +554,7 @@ class Fossil( base.Monster ):
     ), )
 
     def init_monster( self ):
-        self.levels.append( base.Beast( 10, self ) )
+        self.levels.append( base.Beast( 16, self ) )
 
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  11   ***

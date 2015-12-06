@@ -206,13 +206,13 @@ class Harpy( base.Monster ):
     TREASURE = treasuretype.Standard()
     ATTACK = items.Attack( (2,4,0), element = stats.RESIST_SLASHING )
     TECHNIQUES = (invocations.MPInvocation( "Sleep Song",
-        effects.TargetIsEnemy( on_true = (
-            effects.TargetIs( pat=effects.ANIMAL, anim=animobs.PurpleSparkle, on_true = (
+        effects.TargetIsEnemy( anim=animobs.SonicHit, on_true = (
+            effects.TargetIs( pat=effects.ANIMAL, on_true = (
                 effects.OpposedRoll( att_modifier=0, on_success = (
                     effects.CauseSleep(),
                 )),)
-        ,) )), com_tar=targetarea.SelfCentered(radius=6), 
-        ai_tar=invocations.TargetMobileEnemy(min_distance=3), mp_cost=8 ),
+        ,), )), com_tar=targetarea.SelfCentered(radius=6,delay_from=-1), 
+        ai_tar=invocations.TargetMobileEnemy(), mp_cost=8 ),
     )
     def init_monster( self ):
         self.levels.append( base.Humanoid( 7, self ) )
