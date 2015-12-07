@@ -5,6 +5,7 @@ import maps
 import prep
 import random
 import decor
+import namegen
 
 # An Architecture gear is used to automatically modify a scene/scenegen combo
 # to ensure a consistent environment across multiple subplots.
@@ -47,6 +48,7 @@ class Architecture( object ):
             scenegen.PREPARE = self.prepare or scenegen.PREPARE
 
 class Forest( Architecture ):
+    NAME_PATTERNS = ("{} Forest","{} Woods","{0} Wilds","{0} Wilderness")
     def __init__( self ):
         super(Forest, self).__init__(biome=context.HAB_FOREST,
           desctags=(context.MAP_WILDERNESS,),wall_filter=converter.ForestConverter(),
@@ -55,8 +57,10 @@ class Forest( Architecture ):
         self.sprites[maps.SPRITE_GROUND] = "terrain_ground_forest.png"
         #self.sprites[maps.SPRITE_FLOOR] = "terrain_floor_gravel.png"
         self.sprites[maps.SPRITE_CHEST] = "terrain_chest_wood.png"
+        self.name = random.choice( self.NAME_PATTERNS ).format( namegen.random_style_name() )
 
 class Desert( Architecture ):
+    NAME_PATTERNS = ("{} Desert","{} Badlands","{0} Wilds","{0} Wilderness")
     def __init__( self ):
         super(Desert, self).__init__(biome=context.HAB_DESERT,
           desctags=(context.MAP_WILDERNESS,),wall_filter=converter.DesertConverter(),
@@ -65,6 +69,7 @@ class Desert( Architecture ):
         self.sprites[maps.SPRITE_GROUND] = "terrain_ground_desert.png"
         #self.sprites[maps.SPRITE_FLOOR] = "terrain_floor_gravel.png"
         self.sprites[maps.SPRITE_CHEST] = "terrain_chest_wood.png"
+        self.name = random.choice( self.NAME_PATTERNS ).format( namegen.random_style_name() )
 
 class CavernDungeon( Architecture ):
     WALL_OPTIONS = ["terrain_wall_cave.png","terrain_wall_mine.png",
@@ -75,6 +80,8 @@ class CavernDungeon( Architecture ):
         context.GEN_KINGDOM: (decor.BarracksDec,{}),
         context.MTY_FIGHTER: (decor.BarracksDec,{}),
     }
+    NAME_PATTERNS = ( "Caverns of {0}", "Caves of {0}", "{0} Grotto", "{0} Chasm",
+        "{0} Cave", "Pit of {0}" )
     def __init__( self, fac=None ):
         super(CavernDungeon, self).__init__(biome=context.HAB_CAVE,
           desctags=[context.MAP_DUNGEON,context.MAP_GODOWN],
@@ -92,6 +99,7 @@ class CavernDungeon( Architecture ):
             elif fac.secondary in self.CUSTOM_DECOR_TYPES.keys():
                 a,b = self.CUSTOM_DECOR_TYPES[ fac.secondary ]
                 self.decorate = a(**b)
+        self.name = random.choice( self.NAME_PATTERNS ).format( namegen.random_style_name() )
 
 class BuildingDungeon( Architecture ):
     CUSTOM_DECOR_TYPES = {
@@ -103,6 +111,7 @@ class BuildingDungeon( Architecture ):
     WALL_OPTIONS = [ "terrain_wall_darkbrick.png","terrain_wall_darkstone.png",
         "terrain_wall_dungeon.png","terrain_wall_woodfort.png"
     ]
+    NAME_PATTERNS = ("{} Fortress","{} Castle")
     def __init__( self, fac=None ):
         super(BuildingDungeon, self).__init__(biome=context.HAB_BUILDING,
           desctags=[context.MAP_DUNGEON,context.MAP_GOUP,context.MTY_HUMANOID],
@@ -118,6 +127,7 @@ class BuildingDungeon( Architecture ):
             elif fac.secondary in self.CUSTOM_DECOR_TYPES.keys():
                 a,b = self.CUSTOM_DECOR_TYPES[ fac.secondary ]
                 self.decorate = a(**b)
+        self.name = random.choice( self.NAME_PATTERNS ).format( namegen.random_style_name() )
 
 class TunnelDungeon( Architecture ):
     CUSTOM_DECOR_TYPES = {
@@ -129,6 +139,7 @@ class TunnelDungeon( Architecture ):
     WALL_OPTIONS = [ "terrain_wall_darkbrick.png","terrain_wall_darkstone.png",
         "terrain_wall_dungeon.png","terrain_wall_rocks.png"
     ]
+    NAME_PATTERNS = ("{} Tunnels","{} Catacombs")
     def __init__( self, fac=None ):
         super(TunnelDungeon, self).__init__(biome=context.HAB_TUNNELS,
           desctags=[context.MAP_DUNGEON,context.MAP_GODOWN,],
@@ -144,6 +155,7 @@ class TunnelDungeon( Architecture ):
             elif fac.secondary in self.CUSTOM_DECOR_TYPES.keys():
                 a,b = self.CUSTOM_DECOR_TYPES[ fac.secondary ]
                 self.decorate = a(**b)
+        self.name = random.choice( self.NAME_PATTERNS ).format( namegen.random_style_name() )
 
 
 class Village( Architecture ):

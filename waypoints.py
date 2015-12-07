@@ -264,6 +264,14 @@ class DownEntrance( SpiralStairsUp ):
     TILE = maps.Tile( None, None, maps.DOWN_ENTRANCE )
     desc = "You stand before a dark passageway."
 
+class LockableDoor( Waypoint ):
+    TILE = maps.Tile( None, maps.CLOSED_DOOR, None )
+    ATTACH_TO_WALL = True
+    desc = "You stand before a door."
+    def unlocked_use( self, explo ):
+        self.scene.map[self.pos[0]][self.pos[1]].wall = maps.OPEN_DOOR
+        explo.alert( "You open the door." )
+
 class PuzzleDoor( Waypoint ):
     TILE = maps.Tile( None, maps.CLOSED_DOOR, None )
     ATTACH_TO_WALL = True

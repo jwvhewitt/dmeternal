@@ -11,7 +11,7 @@ import rooms
 
 class MonsterFiller( object ):
     """If this room has empty spots, add some monster zones."""
-    def __init__( self, min_mz=3, max_mz=10, spacing=10 ):
+    def __init__( self, min_mz=3, max_mz=10, spacing=16 ):
         self.min_mz = min_mz
         self.max_mz = max_mz
         self.spacing = spacing

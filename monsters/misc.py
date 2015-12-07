@@ -39,7 +39,7 @@ class EvilEye( base.Monster ):
     MOVE_POINTS = 6
     VOICE = None
     HABITAT = ( context.HAB_CAVE, context.HAB_TUNNELS, context.SET_EVERY,
-     context.DES_LUNAR,
+     context.DES_LUNAR, context.MTY_BOSS,
      context.MTY_BEAST, context.GEN_CHAOS )
     ENC_LEVEL = 3
     ATTACK = items.Attack( (2,4,0), element = stats.RESIST_LUNAR,
@@ -53,7 +53,8 @@ class EvilEye( base.Monster ):
         effects.Paralyze( max_duration = 3 )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=4), shot_anim=animobs.PurpleVortex, ai_tar=invocations.TargetEnemy(), mp_cost=3
+      ,) ), com_tar=targetarea.SingleTarget(reach=4), shot_anim=animobs.PurpleVortex,
+      ai_tar=invocations.TargetMobileEnemy(), mp_cost=3
     ), )
     def init_monster( self ):
         self.levels.append( base.Beast( 3, self ) )
@@ -73,7 +74,7 @@ class Cockatrice( base.Monster ):
     VOICE = None
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.SET_RENFAN,
      context.DES_AIR, context.DES_EARTH,
-     context.MTY_BEAST )
+     context.MTY_BEAST, context.MTY_BOSS )
     ENC_LEVEL = 4
     COMPANIONS = (animals.Chicken,)
     ATTACK = items.Attack( (1,6,0), element = stats.RESIST_PIERCING, skill_mod=stats.REFLEXES )
@@ -96,7 +97,7 @@ class CorpseEater( base.Monster ):
     TEMPLATES = (stats.BUG,)
     MOVE_POINTS = 8
     VOICE = None
-    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+    HABITAT = ( context.HAB_EVERY, context.HAB_TUNNELS, context.SET_EVERY,
      context.MAP_DUNGEON,
      context.DES_LUNAR,
      context.MTY_BEAST )
@@ -134,6 +135,7 @@ class Gargoyle( base.Monster ):
     TEMPLATES = (stats.EARTH,)
     MOVE_POINTS = 16
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.MTY_BOSS,
      context.MAP_DUNGEON, context.DES_EARTH )
     ENC_LEVEL = 5
     TREASURE = treasuretype.Standard()
@@ -157,7 +159,7 @@ class Basilisk( base.Monster ):
     MOVE_POINTS = 8
     VOICE = None
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
-     context.MTY_BEAST )
+     context.MTY_BEAST, context.MTY_BOSS )
     ENC_LEVEL = 6
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_PIERCING )
     TECHNIQUES = ( invocations.MPInvocation( "Death Gaze",
@@ -199,9 +201,9 @@ class Harpy( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 8
     VOICE = dialogue.voice.GREEK
-    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+    HABITAT = ( context.HAB_EVERY, context.HAB_CAVE, context.SET_EVERY,
      context.DES_LUNAR,
-     context.MTY_HUMANOID, context.GEN_CHAOS )
+     context.MTY_HUMANOID, context.MTY_BOSS, context.GEN_CHAOS )
     ENC_LEVEL = 6
     TREASURE = treasuretype.Standard()
     ATTACK = items.Attack( (2,4,0), element = stats.RESIST_SLASHING )
@@ -313,6 +315,7 @@ class Owlbear( base.Monster ):
     TEMPLATES = ()
     MOVE_POINTS = 12
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.MAP_WILDERNESS,
      context.MTY_BEAST, context.GEN_NATURE )
     ENC_LEVEL = 8
     TREASURE = None

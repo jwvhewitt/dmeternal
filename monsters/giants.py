@@ -250,8 +250,8 @@ class OgreMage( base.Monster ):
 
 class HillGiant( base.Monster ):
     name = "Hill Giant"
-    statline = { stats.STRENGTH: 23, stats.TOUGHNESS: 19, stats.REFLEXES: 12, \
-        stats.INTELLIGENCE: 10, stats.PIETY: 12, stats.CHARISMA: 12 }
+    statline = { stats.STRENGTH: 25, stats.TOUGHNESS: 19, stats.REFLEXES: 8, \
+        stats.INTELLIGENCE: 6, stats.PIETY: 10, stats.CHARISMA: 7 }
     SPRITENAME = "monster_giants.png"
     FRAME = 0
     TEMPLATES = ()
@@ -260,24 +260,24 @@ class HillGiant( base.Monster ):
      context.SET_EVERY,
      context.MAP_WILDERNESS,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GIANT )
-    ENC_LEVEL = 11
-    TREASURE = treasuretype.Low()
-    ATTACK = items.Attack( (3,6,0), element = stats.RESIST_CRUSHING )
+    ENC_LEVEL = 9
+    TREASURE = treasuretype.Standard()
+    ATTACK = items.Attack( (2,8,0), element = stats.RESIST_CRUSHING )
     TECHNIQUES = ( invocations.Invocation( "Rock",
       effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, on_success = (
-        effects.HealthDamage( (2,8,0), stat_bonus=None, element=stats.RESIST_CRUSHING, anim=animobs.RedBoom )
+        effects.HealthDamage( (2,6,0), stat_bonus=stats.STRENGTH, element=stats.RESIST_CRUSHING, anim=animobs.RedBoom )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
       ,) ), com_tar=targetarea.SingleTarget(reach=8), shot_anim=animobs.SlingStone, ai_tar=invocations.TargetEnemy()
     ), )
 
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 11, self ) )
+        self.levels.append( base.Humanoid( 12, self ) )
 
 class StoneGiant( base.Monster ):
     name = "Stone Giant"
-    statline = { stats.STRENGTH: 26, stats.TOUGHNESS: 27, stats.REFLEXES: 12, \
-        stats.INTELLIGENCE: 12, stats.PIETY: 16, stats.CHARISMA: 12, \
+    statline = { stats.STRENGTH: 27, stats.TOUGHNESS: 19, stats.REFLEXES: 15, \
+        stats.INTELLIGENCE: 10, stats.PIETY: 12, stats.CHARISMA: 11, \
         stats.RESIST_CRUSHING: 25, stats.RESIST_PIERCING: 25, stats.RESIST_SLASHING: 25 }
     SPRITENAME = "monster_giants.png"
     FRAME = 12
@@ -288,50 +288,50 @@ class StoneGiant( base.Monster ):
      context.MAP_DUNGEON,
      context.DES_EARTH,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GIANT )
-    ENC_LEVEL = 12
+    ENC_LEVEL = 10
     TREASURE = treasuretype.Standard()
     ATTACK = items.Attack( (2,8,0), element = stats.RESIST_CRUSHING )
     TECHNIQUES = ( invocations.Invocation( "Rock",
       effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, on_success = (
-        effects.HealthDamage( (2,8,0), stat_bonus=None, element=stats.RESIST_CRUSHING, anim=animobs.RedBoom )
+        effects.HealthDamage( (2,8,0), stat_bonus=stats.STRENGTH, element=stats.RESIST_CRUSHING, anim=animobs.RedBoom )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
       ,) ), com_tar=targetarea.SingleTarget(reach=9), shot_anim=animobs.SlingStone, ai_tar=invocations.TargetEnemy()
     ), )
 
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 12, self ) )
+        self.levels.append( base.Humanoid( 14, self ) )
 
 class FrostGiant( base.Monster ):
     name = "Frost Giant"
-    statline = { stats.STRENGTH: 29, stats.TOUGHNESS: 23, stats.REFLEXES: 14, \
-        stats.INTELLIGENCE: 12, stats.PIETY: 12, stats.CHARISMA: 14 }
+    statline = { stats.STRENGTH: 29, stats.TOUGHNESS: 21, stats.REFLEXES: 9, \
+        stats.INTELLIGENCE: 10, stats.PIETY: 14, stats.CHARISMA: 11 }
     SPRITENAME = "monster_giants.png"
     FRAME = 10
     TEMPLATES = (stats.ICE,)
-    MOVE_POINTS = 10
+    MOVE_POINTS = 12
     HABITAT = ( context.HAB_EVERY,
      context.SET_EVERY,
      context.DES_ICE,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GIANT )
-    ENC_LEVEL = 13
+    ENC_LEVEL = 11
     TREASURE = treasuretype.Standard()
     ATTACK = items.Attack( (3,6,0), element = stats.RESIST_SLASHING )
     TECHNIQUES = ( invocations.Invocation( "Rock",
       effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, on_success = (
-        effects.HealthDamage( (2,10,0), stat_bonus=None, element=stats.RESIST_CRUSHING, anim=animobs.RedBoom )
+        effects.HealthDamage( (2,6,0), stat_bonus=stats.STRENGTH, element=stats.RESIST_CRUSHING, anim=animobs.RedBoom )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
       ,) ), com_tar=targetarea.SingleTarget(reach=9), shot_anim=animobs.SlingStone, ai_tar=invocations.TargetEnemy()
     ), )
 
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 13, self ) )
+        self.levels.append( base.Humanoid( 14, self ) )
 
 class FireGiant( base.Monster ):
     name = "Fire Giant"
-    statline = { stats.STRENGTH: 32, stats.TOUGHNESS: 25, stats.REFLEXES: 12, \
-        stats.INTELLIGENCE: 14, stats.PIETY: 14, stats.CHARISMA: 12 }
+    statline = { stats.STRENGTH: 31, stats.TOUGHNESS: 21, stats.REFLEXES: 9, \
+        stats.INTELLIGENCE: 10, stats.PIETY: 14, stats.CHARISMA: 11 }
     SPRITENAME = "monster_giants.png"
     FRAME = 11
     TEMPLATES = (stats.FIRE,)
@@ -340,19 +340,45 @@ class FireGiant( base.Monster ):
      context.SET_EVERY,
      context.DES_FIRE,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GIANT )
-    ENC_LEVEL = 14
+    ENC_LEVEL = 12
     TREASURE = treasuretype.Standard()
-    ATTACK = items.Attack( (3,8,0), element = stats.RESIST_SLASHING )
+    ATTACK = items.Attack( (3,6,0), element = stats.RESIST_SLASHING )
     TECHNIQUES = ( invocations.Invocation( "Rock",
       effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, on_success = (
-        effects.HealthDamage( (2,10,0), stat_bonus=None, element=stats.RESIST_CRUSHING, anim=animobs.RedBoom )
+        effects.HealthDamage( (2,6,0), stat_bonus=stats.STRENGTH, element=stats.RESIST_CRUSHING, anim=animobs.RedBoom ),
+        effects.HealthDamage( (2,6,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.RedCloud )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
       ,) ), com_tar=targetarea.SingleTarget(reach=10), shot_anim=animobs.SlingStone, ai_tar=invocations.TargetEnemy()
     ), )
 
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 14, self ) )
+        self.levels.append( base.Humanoid( 15, self ) )
 
+class CloudGiant( base.Monster ):
+    name = "Cloud Giant"
+    statline = { stats.STRENGTH: 31, stats.TOUGHNESS: 21, stats.REFLEXES: 9, \
+        stats.INTELLIGENCE: 10, stats.PIETY: 14, stats.CHARISMA: 11 }
+    SPRITENAME = "monster_giants.png"
+    FRAME = 11
+    TEMPLATES = (stats.FIRE,)
+    MOVE_POINTS = 14
+    HABITAT = ( context.HAB_EVERY,
+     context.SET_EVERY,
+     context.DES_FIRE,
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.GEN_GIANT )
+    ENC_LEVEL = 13
+    TREASURE = treasuretype.HighItems()
+    ATTACK = items.Attack( (4,6,0), element = stats.RESIST_CRUSHING )
+    TECHNIQUES = ( invocations.Invocation( "Rock",
+      effects.PhysicalAttackRoll( att_stat=stats.REFLEXES, on_success = (
+        effects.HealthDamage( (2,8,0), stat_bonus=stats.STRENGTH, element=stats.RESIST_CRUSHING, anim=animobs.RedBoom ),
+      ), on_failure = (
+        effects.NoEffect( anim=animobs.SmallBoom )
+      ,) ), com_tar=targetarea.SingleTarget(reach=10), shot_anim=animobs.SlingStone, ai_tar=invocations.TargetEnemy()
+    ), )
+
+    def init_monster( self ):
+        self.levels.append( base.Humanoid( 15, self ) )
 
 

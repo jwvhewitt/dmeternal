@@ -229,7 +229,7 @@ class GiantFrog( base.Monster ):
     VOICE = None
     TREASURE = treasuretype.Swallowed()
     HABITAT = ( context.HAB_CAVE, context.SET_EVERY, context.DES_WATER,
-     context.MTY_BEAST, context.MTY_CREATURE,
+     context.MTY_BEAST, context.MTY_CREATURE, context.MTY_BOSS,
      context.GEN_NATURE )
     ENC_LEVEL = 3
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_PIERCING )
@@ -356,8 +356,8 @@ class GiantScorpion( base.Monster ):
     TEMPLATES = (stats.BUG,)
     MOVE_POINTS = 6
     VOICE = None
-    HABITAT = ( context.HAB_DESERT, context.HAB_CAVE, context.SET_EVERY,
-     context.DES_SOLAR,
+    HABITAT = ( context.HAB_DESERT, context.HAB_CAVE, context.HAB_TUNNELS, context.SET_EVERY,
+     context.DES_SOLAR, context.MTY_BOSS,
      context.MTY_BEAST, context.MTY_CREATURE )
     ENC_LEVEL = 3
     ATTACK = items.Attack( (1,4,0), element = stats.RESIST_PIERCING,

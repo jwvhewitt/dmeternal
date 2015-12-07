@@ -35,12 +35,14 @@ class ShortieStub( Plot ):
     SHORTIE_GRAMMAR = {
         # [ADVENTURE] is the top level token- it will expand into a number of
         # high level tokens. These eventually convert into subplot labels.
-        "[zADVENTURE]": [ "zSDI_DUNGEON_LEVEL",
+        "[zADVENTURE]": [ "[DUNGEON_ENTRANCE] [DUNGEON_CHALLENGE] [DUNGEON_GOAL]",
             ],
         "[ADVENTURE]": [ "[IMPERILED_PLACE] [ENEMY_BASE] [ENEMY_GOAL]",
             "[DUNGEON_ENTRANCE] [DUNGEON_CHALLENGE] [DUNGEON_GOAL]"
             ],
-        "[DUNGEON_CHALLENGE]": [ "SDI_DUNGEON_LEVEL",
+        "[DUNGEON_CHALLENGE]": [ "SDI_DUNGEON_LEVEL SDI_BLOCKED_PASSAGE",
+            "SDI_BLOCKED_PASSAGE SDI_DUNGEON_TERROR", "SDI_DUNGEON_LEVEL SDI_DUNGEON_TERROR",
+            "SDI_BLOCKED_PASSAGE SDI_DUNGEON_LEVEL",
             ],
         "[DUNGEON_ENTRANCE]": [ "SDI_VILLAGE SDI_DUNGEON_ENTRANCE",
             "SDI_DUNGEON_ENTRANCE", "SDI_DANGEROUS_PATH SDI_DUNGEON_ENTRANCE"
@@ -254,6 +256,76 @@ class SDIPlot( Plot ):
 #
 # 
 #
+
+# SDI_BLOCKED_PASSAGE
+#   You can progress no further in this dungeon until you do something.
+# Win Condition:
+#   Get to the end.
+# Grammar Tags:
+#   [SDI_BLOCKED_PASSAGE:location]    The name of the path.
+# To do:
+# - Secret door
+# - Puzzle door
+
+class BPDividedIslands( SDIPlot ):
+    # The first half of this dungeon is separated from the second half.
+    LABEL = "SDI_BLOCKED_PASSAGE"
+    active = True
+    scope = "LOCALE"
+    def custom_init( self, nart ):
+        antagonist = self.elements.get( "ANTAGONIST" )
+        biome = self.elements.setdefault( "DUNGEON_ARCHITECTURE",
+          randmaps.architect.TunnelDungeon(antagonist) )
+        myscene,mymapgen = randmaps.architect.design_scene( 75,75, randmaps.DividedIslandScene,
+          biome, setting=self.setting, fac=None)
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+        mymapgen.GAPFILL = randmaps.gapfiller.MonsterFiller(1,5,30)
+        myscene.name = biome.name
+
+        self.add_sub_plot( nart, "DIVIDED_ISLAND_COMPLICATION", ident="OPEN_DOOR" )
+
+        goalroom = mymapgen.DEFAULT_ROOM( tags=(context.GOAL,), parent=myscene )
+        door2 = waypoints.SpiralStairsDown()
+        goalroom.contents.append(door2)
+
+        entranceroom = mymapgen.DEFAULT_ROOM( tags=(context.ENTRANCE,), parent=myscene )
+        door1 = waypoints.SpiralStairsUp()
+        entranceroom.contents.append(door1)
+
+        for t in range( random.randint(1,3) ):
+            self.add_sub_plot( nart, "ENCOUNTER", PlotState().based_on( self ) )
+        if random.randint(1,3) == 1:
+            self.add_sub_plot( nart, "SPECIAL_FEATURE" )
+        if random.randint(1,3) != 1:
+            self.add_sub_plot( nart, "SPECIAL_ENCOUNTER" )
+        else:
+            self.add_sub_plot( nart, "ENCOUNTER", PlotState(elements={"ANTAGONIST":antagonist}).based_on( self ) )
+
+        # Save this component's data for the next component.
+        self.register_element( "IN_SCENE", myscene )
+        self.register_element( "IN_ENTRANCE", door1 )
+        self.register_element( "OUT_SCENE", myscene )
+        self.register_element( "OUT_ENTRANCE", door2 )
+
+        return True
+    def OPEN_DOOR_WIN( self, explo ):
+        explo.check_trigger( "WIN", self )
+    def get_sdi_grammar( self ):
+        """Return a dict of grammar related to this plot."""
+        mygram = {
+            "[achievement]": [ "passing through the {}".format(self.elements["LOCALE"]),
+                ],
+            "[GO_QUEST]": ["Find a way through the {}.".format(self.elements["LOCALE"]),
+                ],
+            "[location]": [str(self.elements["LOCALE"]),],
+            "[SDI_BLOCKED_PASSAGE:location]": [str(self.elements["LOCALE"]),],
+            "[SUMMARY]": [ "The passage through the {} is blocked.".format(self.elements["LOCALE"]),
+                ],
+            "[warning]":    ["there is no easy way through the {}".format(self.elements["LOCALE"]),
+                ],
+        }
+        return mygram
+
 
 # SDI_DANGEROUS_PATH
 #   You have to travel along this road, but it's dangerous.
@@ -728,7 +800,7 @@ class ElementalShrine( SDIPlot ):
 # - Tunnel Dungeon
 # - Building Dungeon
 
-class InhabitedTunnelsDungeon( SDIPlot ):
+class InhabitedTunnelsDungeonEntrance( SDIPlot ):
     LABEL = "SDI_DUNGEON_ENTRANCE"
     active = True
     scope = "LOCALE"
@@ -833,7 +905,7 @@ class InhabitedTunnelsDungeon( SDIPlot ):
             explo.check_trigger( "WIN", self )
 
 
-class RuinedFortressDungeon( SDIPlot ):
+class RuinedFortressDungeonEntrance( SDIPlot ):
     LABEL = "SDI_DUNGEON_ENTRANCE"
     active = True
     scope = "LOCALE"
@@ -914,7 +986,7 @@ class RuinedFortressDungeon( SDIPlot ):
             explo.check_trigger( "WIN", self )
 
 
-class ThePitDungeon( SDIPlot ):
+class ThePitDungeonEntrance( SDIPlot ):
     LABEL = "SDI_DUNGEON_ENTRANCE"
     active = True
     scope = "LOCALE"
@@ -1003,7 +1075,7 @@ class ThePitDungeon( SDIPlot ):
             explo.check_trigger( "WIN", self )
 
 
-class BasicCaveDungeon( SDIPlot ):
+class BasicCaveDungeonEntrance( SDIPlot ):
     LABEL = "SDI_DUNGEON_ENTRANCE"
     active = True
     scope = "LOCALE"
@@ -1068,6 +1140,360 @@ class BasicCaveDungeon( SDIPlot ):
         if self._ready:
             explo.check_trigger( "WIN", self )
             self._ready = False
+
+#  SDI_DUNGEON_LEVEL
+#   There's a dungeon level. Unlike a fortress or whatnot, this dungeon level
+#   is full of all kinds of monsters rather than a singular group.
+# Win Condition:
+#   Usually, just show up. Sometimes there may be an extra challenge.
+# Grammar Tags:
+#   [SDI_DUNGEON_LEVEL:name]       The name of the dungeon
+#   [SDI_DUNGEON_LEVEL:threat]     The dangerous thing about this dungeon
+# To do:
+# - Tunnel Dungeon
+# - Building Dungeon
+
+class BasicDungeonLevel( SDIPlot ):
+    # A simple dungeon level.
+    LABEL = "SDI_DUNGEON_LEVEL"
+    active = True
+    scope = "LOCALE"
+    def custom_init( self, nart ):
+        antagonist = self.elements.get( "ANTAGONIST" )
+        biome = self.elements.setdefault( "DUNGEON_ARCHITECTURE",
+          randmaps.architect.CavernDungeon(antagonist) )
+        myscene,mymapgen = randmaps.architect.design_scene( random.randint(50,65),
+          random.randint(50,65), randmaps.CaveScene,
+          biome, setting=self.setting, fac=None)
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+        mymapgen.GAPFILL = randmaps.gapfiller.MonsterFiller(1,5,20)
+        myscene.name = biome.name
+
+        # Determine room anchors.
+        anc_a,anc_b = random.choice(randmaps.anchors.OPPOSING_CARDINALS)
+
+        team = self.register_element( "TEAM", 
+         teams.Team(default_reaction=-999, rank=self.rank, strength=100,
+         habitat=myscene.get_encounter_request(), fac=antagonist,
+         respawn=False ))
+        goalroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=myscene,
+          anchor=anc_a )
+        goalroom.contents.append( team )
+        door2 = waypoints.GateDoor()
+        goalroom.contents.append(door2)
+        door2.plot_locked = True
+        door2.anchor = anc_a
+        self._door_locked = True
+        mychest = waypoints.MediumChest()
+        mychest.stock(self.rank)
+        goalroom.contents.append( mychest )
+
+        # 4-6 rooms, at least 2 of which are encounters and 1 of which is empty.
+        n = random.randint(1,3)
+        for t in range( n ):
+            self.add_sub_plot( nart, "ENCOUNTER", PlotState().based_on( self ) )
+        myscene.contents.append( mymapgen.DEFAULT_ROOM() )
+        if random.randint(1,3) == 1:
+            self.add_sub_plot( nart, "SPECIAL_FEATURE" )
+        else:
+            self.add_sub_plot( nart, "DUTILITY_ROOM", PlotState().based_on( self ) )
+        if random.randint(1,3) != 1:
+            self.add_sub_plot( nart, "SPECIAL_ENCOUNTER" )
+        else:
+            self.add_sub_plot( nart, "ENCOUNTER", PlotState(elements={"ANTAGONIST":antagonist}).based_on( self ) )
+
+        entranceroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=myscene,
+            anchor = anc_b )
+        door1 = waypoints.GateDoor()
+        door1.anchor = anc_b
+        entranceroom.contents.append(door1)
+
+        # Save this component's data for the next component.
+        self.register_element( "IN_SCENE", myscene )
+        self.register_element( "IN_ENTRANCE", door1 )
+        self.register_element( "OUT_SCENE", myscene )
+        self.register_element( "OUT_ENTRANCE", door2 )
+
+        return True
+    def OUT_ENTRANCE_menu( self, thingmenu ):
+        thingmenu.desc = "There are too many monsters around for you to enter yet."
+    def t_COMBATOVER( self, explo ):
+        if self._door_locked and not self.elements["TEAM"].members_in_play( explo.scene ):
+            self.elements["OUT_ENTRANCE"].plot_locked = False
+            self._door_locked = False
+            explo.alert("With the monsters defeated, you are free to pass this way.")
+            explo.check_trigger( "WIN", self )
+    def get_sdi_grammar( self ):
+        """Return a dict of grammar related to this plot."""
+        mygram = {
+            "[achievement]": [ "exploring the {}".format(self.elements["LOCALE"]),
+                ],
+            "[GO_QUEST]": ["Explore the {}.".format(self.elements["LOCALE"]),
+                ],
+            "[location]": [str(self.elements["LOCALE"]),],
+            "[SDI_DUNGEON_LEVEL:name]": [str(self.elements["LOCALE"]),],
+            "[SDI_DUNGEON_LEVEL:threat]": ["monsters",],
+            "[SUMMARY]": [ "The {} is a dangerous place.".format(self.elements["LOCALE"]),
+                ],
+            "[warning]":    ["few who enter the {} return alive".format(self.elements["LOCALE"]),
+                ],
+        }
+        return mygram
+
+class DungeonMonsterLevel( SDIPlot ):
+    # One big fight.
+    LABEL = "SDI_DUNGEON_LEVEL"
+    active = True
+    scope = "LOCALE"
+    def custom_init( self, nart ):
+        antagonist = self.elements.get( "ANTAGONIST" )
+        biome = self.elements.setdefault( "DUNGEON_ARCHITECTURE",
+          randmaps.architect.TunnelDungeon(antagonist) )
+        myscene,mymapgen = randmaps.architect.design_scene( random.randint(36,45),
+          random.randint(36,45), randmaps.RandomScene,
+          biome, setting=self.setting, fac=None)
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+        #mymapgen.GAPFILL = randmaps.gapfiller.MonsterFiller(1,5,20)
+        myscene.desctags.append( context.MTY_BEAST )
+        myscene.name = biome.name
+
+        # Determine room anchors.
+        anc_a,anc_b = random.choice(randmaps.anchors.OPPOSING_CARDINALS)
+
+        goalroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=myscene,
+          anchor=anc_a )
+        door2 = waypoints.GateDoor()
+        goalroom.contents.append(door2)
+        door2.anchor = anc_a
+
+        entranceroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=myscene,
+            anchor = anc_b )
+        door1 = waypoints.GateDoor()
+        door1.anchor = anc_b
+        entranceroom.contents.append(door1)
+
+        fightroom = mymapgen.DEFAULT_ROOM(anchor=randmaps.anchors.middle,parent=myscene)
+        fightroom.DECORATE = randmaps.decor.CarnageDec(floor_fill_factor=0.15)
+        myhabitat = myscene.get_encounter_request()
+        myhabitat[ context.MTY_BOSS ] = True
+        myhabitat[(context.MTY_BEAST,context.MTY_CONSTRUCT,context.MTY_DRAGON)] = context.MAYBE
+        btype = monsters.choose_monster_type(self.rank,self.rank+2,myhabitat)
+        self._ready = True
+        if btype:
+            team = self.register_element( "TEAM", teams.Team(default_reaction=-999, 
+             strength=160, rank=self.rank, habitat=myscene.get_encounter_request(), respawn=False ) )
+            boss = monsters.generate_boss( btype, self.rank+2, team=team )
+            fightroom.contents.append( boss )
+            fightroom.contents.append( team )
+            team.boss = boss
+            for t in range(random.randint(2,3)):
+                mychest = random.choice([waypoints.MediumChest,waypoints.SmallChest])()
+                mychest.stock(self.rank)
+                fightroom.contents.append( mychest )
+
+
+        # Save this component's data for the next component.
+        self.register_element( "IN_SCENE", myscene )
+        self.register_element( "IN_ENTRANCE", door1 )
+        self.register_element( "OUT_SCENE", myscene )
+        self.register_element( "OUT_ENTRANCE", door2 )
+
+        return btype
+
+    def get_sdi_grammar( self ):
+        """Return a dict of grammar related to this plot."""
+        mygram = {
+            "[achievement]": [ "exploring the {}".format(self.elements["LOCALE"]),
+                ],
+            "[GO_QUEST]": ["Explore the {}.".format(self.elements["LOCALE"]),
+                ],
+            "[location]": [str(self.elements["LOCALE"]),],
+            "[SDI_DUNGEON_LEVEL:name]": [str(self.elements["LOCALE"]),],
+            "[SDI_DUNGEON_LEVEL:threat]": ["monsters","beasts"],
+            "[SUMMARY]": [ "The {} is full of dangerous beasts.".format(self.elements["LOCALE"]),
+                ],
+            "[warning]":    ["few who enter the {} return alive".format(self.elements["LOCALE"]),
+                ],
+        }
+        return mygram
+    def t_COMBATOVER( self, explo ):
+        if self._ready and not self.elements["TEAM"].members_in_play( explo.scene ):
+            self._ready = False
+            explo.check_trigger( "WIN", self )
+
+
+class WildDungeonLevel( SDIPlot ):
+    # A simple dungeon level.
+    LABEL = "SDI_DUNGEON_LEVEL"
+    active = True
+    scope = "LOCALE"
+    def custom_init( self, nart ):
+        antagonist = self.elements.get( "ANTAGONIST" )
+        biome = self.elements.setdefault( "DUNGEON_ARCHITECTURE",
+          randmaps.architect.CavernDungeon(antagonist) )
+        myscene,mymapgen = randmaps.architect.design_scene( random.randint(50,65),
+          random.randint(50,65), randmaps.CaveScene,
+          biome, setting=self.setting, fac=None)
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+        mymapgen.GAPFILL = randmaps.gapfiller.MonsterFiller(1,5,20)
+        myscene.desctags.append( context.MTY_BEAST )
+        myscene.name = biome.name
+
+        # Determine room anchors.
+        anc_a,anc_b = random.choice(randmaps.anchors.OPPOSING_CARDINALS)
+
+        goalroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=myscene,
+          anchor=anc_a )
+        door2 = waypoints.GateDoor()
+        goalroom.contents.append(door2)
+        door2.anchor = anc_a
+        self._ready = True
+
+        if random.randint(1,2) == 1:
+            team = self.register_element( "TEAM", 
+             teams.Team(default_reaction=-999, rank=self.rank, strength=100,
+             habitat=myscene.get_encounter_request(), fac=antagonist,
+             respawn=False ))
+            goalroom.contents.append( team )
+
+        # 4-6 rooms, at least 2 of which are encounters and 1 of which is empty.
+        n = random.randint(1,3)
+        for t in range( n ):
+            self.add_sub_plot( nart, "ENCOUNTER", PlotState().based_on( self ) )
+        myscene.contents.append( mymapgen.DEFAULT_ROOM() )
+        if random.randint(1,3) == 1:
+            self.add_sub_plot( nart, "SPECIAL_FEATURE" )
+        else:
+            self.add_sub_plot( nart, "DUTILITY_ROOM", PlotState().based_on( self ) )
+        if random.randint(1,3) != 1:
+            self.add_sub_plot( nart, "SPECIAL_ENCOUNTER" )
+        else:
+            self.add_sub_plot( nart, "ENCOUNTER", PlotState(elements={"ANTAGONIST":antagonist}).based_on( self ) )
+
+        entranceroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=myscene,
+            anchor = anc_b )
+        door1 = waypoints.GateDoor()
+        door1.anchor = anc_b
+        entranceroom.contents.append(door1)
+
+        # Save this component's data for the next component.
+        self.register_element( "IN_SCENE", myscene )
+        self.register_element( "IN_ENTRANCE", door1 )
+        self.register_element( "OUT_SCENE", myscene )
+        self.register_element( "OUT_ENTRANCE", door2 )
+
+        return True
+    def t_START( self, explo ):
+        if self._ready:
+            self._ready = False
+            explo.alert("You hear a multitude of things scurrying in the distance.")
+            explo.check_trigger( "WIN", self )
+    def get_sdi_grammar( self ):
+        """Return a dict of grammar related to this plot."""
+        mygram = {
+            "[achievement]": [ "exploring the {}".format(self.elements["LOCALE"]),
+                ],
+            "[GO_QUEST]": ["Explore the {}.".format(self.elements["LOCALE"]),
+                ],
+            "[location]": [str(self.elements["LOCALE"]),],
+            "[SDI_DUNGEON_LEVEL:name]": [str(self.elements["LOCALE"]),],
+            "[SDI_DUNGEON_LEVEL:threat]": ["monsters","beasts"],
+            "[SUMMARY]": [ "The {} is full of dangerous beasts.".format(self.elements["LOCALE"]),
+                ],
+            "[warning]":    ["few who enter the {} return alive".format(self.elements["LOCALE"]),
+                ],
+        }
+        return mygram
+
+#  SDI_DUNGEON_TERROR
+#   This level is some kind of deathtrap. Maybe there's a puzzle involved, or
+#   maybe there's just an idiot ball. Either way, there is the distinct
+#   possibility that your party won't be getting out in one piece.
+# Win Condition:
+#   Usually, just survive.
+# Grammar Tags:
+#   [SDI_DUNGEON_TERROR:location]   The name of the dungeon
+#   [SDI_DUNGEON_TERROR:threat]     The dangerous thing about this dungeon
+# To do:
+# - Land of monster chests, aka the idiot ball special
+# - Monster nest
+# - Broken stairs
+# - Oubliette with puzzle exit
+
+class OneWayTripDungeon( SDIPlot ):
+    # A simple dungeon level.
+    LABEL = "SDI_DUNGEON_TERROR"
+    active = True
+    scope = "LOCALE"
+    def custom_init( self, nart ):
+        antagonist = self.elements.get( "ANTAGONIST" )
+        biome = self.elements.setdefault( "DUNGEON_ARCHITECTURE",
+          randmaps.architect.CavernDungeon(antagonist) )
+        myscene,mymapgen = randmaps.architect.design_scene( random.randint(50,65),
+          random.randint(50,65), randmaps.CaveScene,
+          biome, setting=self.setting, fac=None)
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+        mymapgen.GAPFILL = randmaps.gapfiller.MonsterFiller(1,5,20)
+        myscene.desctags.append( context.MTY_BEAST )
+        myscene.name = biome.name
+
+        granc = random.choice( randmaps.anchors.OPPOSING_CARDINALS )[0]
+        goalroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=myscene,
+          anchor=granc )
+        door2 = waypoints.GateDoor(anchor=granc)
+        goalroom.contents.append(door2)
+        self._ready = True
+
+        if random.randint(1,2) == 1:
+            team = self.register_element( "TEAM", 
+             teams.Team(default_reaction=-999, rank=self.rank, strength=100,
+             habitat=myscene.get_encounter_request(), fac=antagonist,
+             respawn=False ))
+            goalroom.contents.append( team )
+
+        # 4-6 rooms, at least 2 of which are encounters and 1 of which is empty.
+        n = random.randint(1,3)
+        for t in range( n ):
+            self.add_sub_plot( nart, "ENCOUNTER", PlotState().based_on( self ) )
+        myscene.contents.append( mymapgen.DEFAULT_ROOM() )
+        if random.randint(1,3) == 1:
+            self.add_sub_plot( nart, "SPECIAL_ENCOUNTER" )
+        else:
+            self.add_sub_plot( nart, "ENCOUNTER", PlotState(rank=self.rank+1).based_on( self ) )
+
+        entranceroom = mymapgen.DEFAULT_ROOM( tags=(context.ENTRANCE,), parent=myscene )
+        entranceroom.DECORATE = randmaps.decor.RockyDec()
+        door1 = waypoints.Waypoint(anchor=randmaps.anchors.middle)
+        entranceroom.contents.append(door1)
+
+        # Save this component's data for the next component.
+        self.register_element( "IN_SCENE", myscene )
+        self.register_element( "IN_ENTRANCE", door1 )
+        self.register_element( "OUT_SCENE", myscene )
+        self.register_element( "OUT_ENTRANCE", door2 )
+
+        return True
+    def t_START( self, explo ):
+        if self._ready:
+            self._ready = False
+            explo.alert("As you are walking to the next level, the stairs collapse beneath you! You land in a pile of rubble.")
+            explo.check_trigger( "WIN", self )
+    def get_sdi_grammar( self ):
+        """Return a dict of grammar related to this plot."""
+        mygram = {
+            "[achievement]": [ "surviving the {}".format(self.elements["LOCALE"]),
+                ],
+            "[GO_QUEST]": ["Journey through the {}.".format(self.elements["LOCALE"]),
+                ],
+            "[location]": [str(self.elements["LOCALE"]),],
+            "[SDI_DUNGEON_TERROR:location]": [str(self.elements["LOCALE"]),],
+            "[SDI_DUNGEON_TERROR:threat]": ["faulty architecture",],
+            "[SUMMARY]": [ "No-one has returned from the {}.".format(self.elements["LOCALE"]),
+                ],
+            "[warning]":    ["once you go too deep you will not be able to turn back".format(self.elements["LOCALE"]),
+                ],
+        }
+        return mygram
 
 
 #  SDI_ENEMY_FORT

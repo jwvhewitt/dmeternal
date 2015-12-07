@@ -194,11 +194,11 @@ def choose_monster_type( min_rank, max_rank, habitat=() ):
 def generate_boss( basemon, target_rank, team=None ):
     boss = basemon(team=team)
     if boss.ENC_LEVEL < target_rank:
-        boss.levels.append( base.Terror( target_rank-boss.ENC_LEVEL, boss ))
+        boss.levels.append( base.Terror( int((target_rank-boss.ENC_LEVEL)*1.5), boss ))
     boss.ENC_LEVEL = max(target_rank,boss.ENC_LEVEL)
     name = gen_monster_name( boss )
     boss.monster_name, boss.name = boss.name, name
-    for t in range( target_rank ):
+    for t in range( target_rank + 3 ):
         boss.statline[ random.choice( stats.PRIMARY_STATS ) ] += 1
     if hasattr( boss, "gold" ):
         gp = boss.gold

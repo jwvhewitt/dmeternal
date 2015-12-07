@@ -22,6 +22,7 @@ import randmaps
 class DIC_Barricade( Plot ):
     LABEL = "DIVIDED_ISLAND_COMPLICATION"
     UNIQUE = True
+    COMMON = True
     active = True
     scope = "LOCALE"
     @classmethod
@@ -63,6 +64,7 @@ class DIC_Barricade( Plot ):
     def _LEVER_USE( self, explo ):
         self._bridge_door.activate( explo )
         self.active = False
+        explo.check_trigger( "WIN", self )
 
 class DIC_YouShallNotPass( Plot ):
     LABEL = "DIVIDED_ISLAND_COMPLICATION"
@@ -85,7 +87,8 @@ class DIC_YouShallNotPass( Plot ):
         myhabitat=scene.get_encounter_request()
         myhabitat[ context.MTY_HUMANOID ] = context.PRESENT
         myhabitat[ context.MTY_FIGHTER ] = context.MAYBE
-        team = teams.Team(default_reaction=-999, rank=self.rank, strength=200, habitat=myhabitat, respawn=False )
+        team = self.register_element("TEAM",teams.Team(default_reaction=-999,
+         rank=self.rank, strength=200, habitat=myhabitat, respawn=False ))
 
         myhabitat[(context.MTY_HUMANOID,context.MTY_LEADER)] = True
         myhabitat[context.MTY_LEADER] = context.MAYBE
@@ -105,8 +108,66 @@ class DIC_YouShallNotPass( Plot ):
         bridge_room.contents.append( team )
         bridge_room.contents.append( boss )
 
-        return btype
+        self._ready = True
 
+        return btype
+    def t_COMBATOVER( self, explo ):
+        if self._ready and not self.elements["TEAM"].members_in_play( explo.scene ):
+            self._ready = False
+            explo.check_trigger( "WIN", self )
+
+class DIC_LockedDoor( Plot ):
+    LABEL = "DIVIDED_ISLAND_COMPLICATION"
+    UNIQUE = True
+    active = True
+    scope = "LOCALE"
+    @classmethod
+    def matches( self, pstate ):
+        """Requires the LOCALE to exist."""
+        return pstate.elements.get("LOCALE")
+    def custom_init( self, nart ):
+        scene = self.elements.get("LOCALE")
+        mygen = nart.get_map_generator( scene )
+
+        # Bridge room
+        bridge_room = randmaps.rooms.BottleneckRoom()
+        bridge_room.special_c[ "door" ] = self.register_element("_DOOR",waypoints.LockableDoor(plot_locked=True))
+        mygen.special_c[ "bridge" ] = bridge_room
+        self.register_element( "_BRIDGE_ROOM", bridge_room, dident="LOCALE" )
+
+        # Key room
+        key_room = mygen.DEFAULT_ROOM( tags = (context.ENTRANCE,) )
+        myteam = self.register_element("TEAM",teams.Team(default_reaction=-999,
+         rank=self.rank, strength=150, habitat=scene.get_encounter_request() ))
+        key_room.contents.append( myteam )
+        self.register_element( "_KEY_ROOM", key_room, dident="LOCALE" )
+        self._ready = True
+        npc = self.register_element( "NPC",monsters.generate_npc(team=myteam,
+          fac=scene.fac,rank=self.rank,upgrade=True),dident="_KEY_ROOM" )
+        myteam.boss = npc
+
+
+        # Post-bridge encounter
+        room = mygen.DEFAULT_ROOM()
+        mygen.special_c[ "after_bridge" ] = room
+        myhabitat=scene.get_encounter_request()
+        myhabitat[ context.MTY_HUMANOID ] = context.PRESENT
+        myhabitat[ context.MTY_FIGHTER ] = context.MAYBE
+        room.contents.append( teams.Team(default_reaction=-999, rank=self.rank, 
+          strength=150, habitat=myhabitat ) )
+        self.register_element( "_ROOM", room, dident="LOCALE" )
+
+        return True
+
+    def t_COMBATOVER( self, explo ):
+        if self._ready and not self.elements["TEAM"].members_in_play( explo.scene ):
+            self._ready = False
+            explo.check_trigger( "WIN", self )
+            explo.alert( "You find a key among {}'s items.".format(self.elements["NPC"]) )
+            self.elements["_DOOR"].plot_locked = False
+    def _DOOR_menu( self, thingmenu ):
+        if self._ready:
+            thingmenu.desc = "This door is locked and completely impassable."
 
 #  **************************
 #  ***   DUNGEON_ARMORY   ***

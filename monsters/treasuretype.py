@@ -52,11 +52,13 @@ class LowItems( Standard ):
     # Standard gold, but few items.
     SCALE = 1
     BASE_SWAG_CHANCE = 5
+    DEFAULT_SWAG = items.PREMIUM_TYPES + (None,)
 
 class HighItems( Standard ):
     # Standard gold, but lots of items.
     SCALE = 1
     BASE_SWAG_CHANCE = 30
+    DEFAULT_SWAG = items.PREMIUM_TYPES + (None,)
 
 class DragonHoard( Standard ):
     # Very high gold, not much chance of items, standard items list.
