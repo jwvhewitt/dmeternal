@@ -329,6 +329,33 @@ class Owlbear( base.Monster ):
 #  ***   ENCOUNTER  LEVEL  9   ***
 #  *******************************
 
+class Chimera( base.Monster ):
+    name = "Chimera"
+    # This is based on the version from the Pathfinder SRD rather than the
+    # regular SRD; the only difference is the beefed-up breath weapon.
+    statline = { stats.STRENGTH: 19, stats.TOUGHNESS: 17, stats.REFLEXES: 13, \
+        stats.INTELLIGENCE: 4, stats.PIETY: 13, stats.CHARISMA: 10,
+        stats.AWARENESS: 50 }
+    SPRITENAME = "monster_by_Joe.png"
+    FRAME = 0
+    TEMPLATES = ()
+    MOVE_POINTS = 12
+    VOICE = dialogue.voice.GREEK
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.DES_FIRE,
+     context.MTY_BEAST, context.GEN_CHAOS, context.MTY_BOSS )
+    ENC_LEVEL = 9
+    TREASURE = treasuretype.Standard()
+    ATTACK = items.Attack( (2,8,0), element = stats.RESIST_PIERCING )
+    TECHNIQUES = ( invocations.MPInvocation( "Fire Breath",
+      effects.OpposedRoll( att_stat=stats.REFLEXES, def_stat=stats.REFLEXES, on_success = (
+        effects.HealthDamage( (6,8,0), stat_bonus=stats.TOUGHNESS, element=stats.RESIST_FIRE, anim=animobs.RedCloud )
+      ,), on_failure = (
+        effects.HealthDamage( (3,8,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.RedCloud )
+      ,) ), com_tar=targetarea.Cone(reach=4), ai_tar=invocations.TargetEnemy(), mp_cost=16
+    ), )
+    def init_monster( self ):
+        self.levels.append( base.Terror( 9, self ) )
+
 class Medusa( base.Monster ):
     name = "Medusa"
     statline = { stats.STRENGTH: 10, stats.TOUGHNESS: 12, stats.REFLEXES: 15, \
