@@ -35,7 +35,7 @@ class ShortieStub( Plot ):
     SHORTIE_GRAMMAR = {
         # [ADVENTURE] is the top level token- it will expand into a number of
         # high level tokens. These eventually convert into subplot labels.
-        "[zADVENTURE]": [ "[DUNGEON_ENTRANCE] [DUNGEON_CHALLENGE] [DUNGEON_GOAL]",
+        "[zADVENTURE]": [ "[ADVENTURE]",
             ],
         "[ADVENTURE]": [ "[IMPERILED_PLACE] [ENEMY_BASE] [ENEMY_GOAL]",
             "[DUNGEON_ENTRANCE] [DUNGEON_CHALLENGE] [DUNGEON_GOAL]"
@@ -50,7 +50,9 @@ class ShortieStub( Plot ):
         "[DUNGEON_GOAL]": [ "SDI_BIGBOSS",
             ],
         "[ENEMY_BASE]": [ "SDI_ENEMY_FORT SDI_ENEMY_BARRACKS",
-            "SDI_DANGEROUS_PATH SDI_ENEMY_FORT",
+            "SDI_DANGEROUS_PATH SDI_ENEMY_FORT", "SDI_ENEMY_TERRITORY SDI_ENEMY_FORT",
+            "SDI_ENEMY_TERRITORY SDI_ENEMY_FORT SDI_ENEMY_BARRACKS",
+            "SDI_ENEMY_TERRITORY SDI_DUNGEON_ENTRANCE"
             ],
 
         "[ENEMY_GOAL]": [ "SDI_BIGBOSS",
@@ -1862,6 +1864,156 @@ class BasicBarracks( SDIPlot ):
                 ],
         }
         return mygram
+
+# SDI_ENEMY_TERRITORY
+#   You have to pass through an area controlled by enemies. Since enemies are
+#   a prerequisite, this component needs/generates an antagonist.
+# Win Condition:
+#   Get through it. Or just show up. Whatever.
+# Grammar Tags:
+#   [SDI_ENEMY_TERRITORY:name]   The name of the antagonist faction
+# To do:
+#
+
+class EasyScoutBattle( SDIPlot ):
+    LABEL = "SDI_ENEMY_TERRITORY"
+    active = True
+    scope = "LOCALE"
+    @classmethod
+    def matches( self, pstate ):
+        return pstate.rank <= 6
+    def custom_init( self, nart ):
+        # Create the scene where the ambush will happen- a wilderness area with
+        # a road.
+        biome = self.register_element( "BIOME", randmaps.architect.make_wilderness() )
+        antagonist = self.elements.setdefault( "ANTAGONIST", teams.AntagonistFaction() )
+        myscene,mymapgen = randmaps.architect.design_scene( 60, 60,
+          randmaps.WildernessPath, biome, setting=self.setting)
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+        myscene.name = biome.name
+
+        myroom = randmaps.rooms.FuzzyRoom( parent=myscene )
+        myent = waypoints.RoadSignBack(anchor=randmaps.anchors.middle)
+        myroom.contents.append( myent )
+        myroom.priority = 0
+
+        # Create the ambush room in the middle.
+        ambush_room = self.register_element( "_AMBUSHROOM",
+         randmaps.rooms.FuzzyRoom(), dident="LOCALE" )
+        ambush_room.priority = 50
+        team = self.register_element( "TEAM", teams.Team(default_reaction=-999, rank=self.rank, 
+         strength=100, habitat=myscene.get_encounter_request(), fac=antagonist ) )
+        ambush_room.contents.append( team )
+
+        self._ready = True
+
+        # Create the exit on the end.
+        last_room = randmaps.rooms.FuzzyRoom( parent=myscene )
+        myexit = waypoints.RoadSignForward(anchor=randmaps.anchors.middle)
+        last_room.contents.append( myexit )
+        last_room.priority = 100
+
+        # Save this component's data for the next component.
+        self.register_element( "IN_SCENE", myscene )
+        self.register_element( "IN_ENTRANCE", myent )
+        self.register_element( "OUT_SCENE", myscene )
+        self.register_element( "OUT_ENTRANCE", myexit )
+
+        return True
+    def t_COMBATOVER( self, explo ):
+        if self._ready and not self.elements["TEAM"].members_in_play( explo.scene ):
+            explo.alert("This was merely a scouting party; you should leave this place quickly before the {} discover where you are.".format(self.elements["ANTAGONIST"]))
+            explo.check_trigger( "WIN", self )
+            self._ready = False
+    def get_sdi_grammar( self ):
+        """Return a dict of grammar related to this plot."""
+        mygram = {
+            "[GO_QUEST]": ["Travel to the {}, and find out whether the {} have reached there yet.".format(self.elements["LOCALE"],self.elements["ANTAGONIST"]),
+                ],
+            "[INTRO]": [ "You accidentally wandered into {}, which recently came under the control of the {}.".format(self.elements["LOCALE"],self.elements["ANTAGONIST"]),
+                ],
+            "[location]": [str(self.elements["LOCALE"]),],
+            "[SDI_ENEMY_TERRITORY:name]": [ str(self.elements["ANTAGONIST"]),],
+            "[warning]": [  "the {} are planning to conquer this entire area".format(self.elements["ANTAGONIST"]),
+                ],
+            "[SUMMARY]": [ "The {} has been claimed by the {}.".format(self.elements["LOCALE"],self.elements["ANTAGONIST"]),
+                ],
+        }
+        return mygram
+
+
+class EnemyHasCheckpoint( SDIPlot ):
+    # One big fight.
+    LABEL = "SDI_ENEMY_TERRITORY"
+    active = True
+    scope = "LOCALE"
+    NAME_PATTERNS = ("{} Checkpoint","{} Territory")
+    def custom_init( self, nart ):
+        antagonist = self.elements.setdefault( "ANTAGONIST", teams.AntagonistFaction() )
+        biome = self.elements.setdefault( "BIOME", randmaps.architect.make_wilderness() )
+        archi = self.register_element( "DUNGEON_ARCHITECTURE",
+         randmaps.architect.BuildingDungeon(antagonist))
+        myscene,mymapgen = randmaps.architect.design_scene( 65,65,
+          randmaps.ForestScene, biome, setting=self.setting,
+          fac=antagonist,secondary=archi)
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+        myscene.name = random.choice( self.NAME_PATTERNS ).format( antagonist )
+        myscene.contents.append( randmaps.rooms.FuzzyRoom() )
+        myscene.contents.append( randmaps.rooms.FuzzyRoom() )
+        mymapgen.GAPFILL = None
+
+        # Determine room anchors.
+        anc_a,anc_b = random.choice(randmaps.anchors.OPPOSING_PAIRS)
+
+        goalroom = randmaps.rooms.FuzzyRoom( tags=(context.GOAL,), parent=myscene,
+          anchor=anc_a )
+        door2 = waypoints.RoadSignForward(anchor=randmaps.anchors.middle)
+        goalroom.contents.append(door2)
+
+        entranceroom = randmaps.rooms.FuzzyRoom( tags=(context.ENTRANCE,), parent=myscene,
+            anchor = anc_b )
+        door1 = waypoints.RoadSignBack(anchor=randmaps.anchors.middle)
+        entranceroom.contents.append(door1)
+
+        fightroom = mymapgen.DEFAULT_ROOM(anchor=randmaps.anchors.middle,parent=myscene)
+        self._ready = True
+        team = self.register_element( "TEAM", teams.Team(default_reaction=-999, 
+         strength=175, rank=self.rank, habitat=myscene.get_encounter_request(),
+         fac=antagonist, respawn=False ) )
+        boss = monsters.generate_npc( rank=self.rank+1, team=team, fac=antagonist, upgrade=True )
+        fightroom.contents.append( boss )
+        fightroom.contents.append( team )
+        team.boss = boss
+
+        for t in range( random.randint(1,3) ):
+            self.add_sub_plot( nart, "ENCOUNTER", PlotState().based_on( self ) )
+
+        # Save this component's data for the next component.
+        self.register_element( "IN_SCENE", myscene )
+        self.register_element( "IN_ENTRANCE", door1 )
+        self.register_element( "OUT_SCENE", myscene )
+        self.register_element( "OUT_ENTRANCE", door2 )
+
+        return True
+
+    def get_sdi_grammar( self ):
+        """Return a dict of grammar related to this plot."""
+        mygram = {
+            "[GO_QUEST]": ["Get through the {}.".format(self.elements["LOCALE"]),
+                ],
+            "[INTRO]": [ "This area has recently been claimed by the {}. [INTRO_PROBLEM]".format(self.elements["ANTAGONIST"]),
+                ],
+            "[location]": [str(self.elements["LOCALE"]),],
+            "[SDI_ENEMY_TERRITORY:name]": [str(self.elements["ANTAGONIST"]),],
+            "[SUMMARY]": [ "The {} have been stopping travelers who get too close to their territory.".format(self.elements["ANTAGONIST"]),
+                ],
+        }
+        return mygram
+    def t_COMBATOVER( self, explo ):
+        if self._ready and not self.elements["TEAM"].members_in_play( explo.scene ):
+            self._ready = False
+            explo.check_trigger( "WIN", self )
+
 
 # SDI_EVILPLAN
 #   You walk in on an evil plan that you obviously have to stop.

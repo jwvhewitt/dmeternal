@@ -89,11 +89,14 @@ class Attack( object ):
         if not self.damage_mod:
             it = ( it * 4 ) // 5
         # "extra_effect" is generally used for monster attacks, but if used for
-        # a PC weapon we'll guesstimate and double cost.
+        # a PC weapon we'll guesstimate.
         if self.extra_effect:
-            it = it * 2
+            it = int(it * 1.5)
         # Multiply by element cost.
-        it *= self.element.element_cost_mod
+        if self.element:
+            it *= self.element.element_cost_mod
+        else:
+            it *= 5
         return it
     def stat_desc( self ):
         """Return a string describing this attack."""
@@ -312,6 +315,9 @@ class ManaWeapon( Item ):
         it = int( it * self.itemtype.cost_adjust )
         if self.enhancement and include_enhancement:
             it += self.enhancement.cost()
+        if self.MP_COST > 1:
+            #it = it * ( self.MP_COST + 15 ) // ( 4 * self.MP_COST + 12 )
+            it = it * 2 // ( self.MP_COST + 1 )
         return it
     def stat_desc( self ):
         """Return descriptions of all stat modifiers provided."""
@@ -423,7 +429,7 @@ harvest( wands )
 # Test Items
 #for ic in ITEM_LIST:
 #    i = ic()
-#    if i.itemtype in (POTION,GEM ):
+#    if i.itemtype in (WAND,POTION,GEM ):
 #        print "{0}: {1}/{2}gp".format( i, i.min_rank(), i.cost() )
 
 import enhancers

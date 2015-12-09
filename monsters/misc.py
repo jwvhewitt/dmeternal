@@ -219,6 +219,24 @@ class Harpy( base.Monster ):
     def init_monster( self ):
         self.levels.append( base.Humanoid( 7, self ) )
 
+class Owlbear( base.Monster ):
+    name = "Owlbear"
+    statline = { stats.STRENGTH: 21, stats.TOUGHNESS: 21, stats.REFLEXES: 12, \
+        stats.INTELLIGENCE: 2, stats.PIETY: 12, stats.CHARISMA: 10 }
+    SPRITENAME = "monster_default.png"
+    FRAME = 27
+    TEMPLATES = ()
+    MOVE_POINTS = 10
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.MAP_WILDERNESS,
+     context.MTY_BEAST, context.GEN_NATURE )
+    ENC_LEVEL = 6
+    TREASURE = None
+    ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )
+    TECHNIQUES = ()
+    def init_monster( self ):
+        self.levels.append( base.Beast( 6, self ) )
+
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  7   ***
@@ -302,32 +320,31 @@ class Manticore( base.Monster ):
 #  ***   ENCOUNTER  LEVEL  8   ***
 #  *******************************
 
-class Owlbear( base.Monster ):
-    name = "Owlbear"
-    # This owlbear is sized up by 6 HD, 2CR, 1 size category from
-    # the standard version because there are too many beastly monsters at
-    # CR4 and I wanted to spread them out a bit. So in D20 terms, this is
-    # a huge 11HD owlbear.
-    statline = { stats.STRENGTH: 29, stats.TOUGHNESS: 25, stats.REFLEXES: 10, \
-        stats.INTELLIGENCE: 2, stats.PIETY: 12, stats.CHARISMA: 10 }
+# Megaraptor
+
+class Wyvern( base.Monster ):
+    name = "Wyvern"
+    statline = { stats.STRENGTH: 19, stats.TOUGHNESS: 15, stats.REFLEXES: 12, \
+        stats.INTELLIGENCE: 6, stats.PIETY: 12, stats.CHARISMA: 9 }
     SPRITENAME = "monster_default.png"
-    FRAME = 27
-    TEMPLATES = ()
-    MOVE_POINTS = 12
+    FRAME = 44
+    TEMPLATES = (stats.DRAGON,)
+    MOVE_POINTS = 10
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.MAP_WILDERNESS,
-     context.MTY_BEAST, context.GEN_NATURE )
+     context.MTY_BEAST, context.GEN_DRAGON )
     ENC_LEVEL = 8
-    TREASURE = None
-    ATTACK = items.Attack( (1,8,0), element = stats.RESIST_SLASHING )
+    TREASURE = treasuretype.Standard()
+    ATTACK = items.Attack( (2,6,0), element = stats.RESIST_PIERCING,
+        extra_effect=abilities.POISON_ATTACK_2d6 )
     TECHNIQUES = ()
     def init_monster( self ):
-        self.levels.append( base.Beast( 11, self ) )
-
+        self.levels.append( base.Terror( 8, self ) )
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  9   ***
 #  *******************************
+
 
 class Chimera( base.Monster ):
     name = "Chimera"

@@ -24,7 +24,7 @@ class PotionOfMana( Consumable ):
     mass_per_q = 4
     cost_per_q = 60
     tech = invocations.Invocation( "Recharge",
-        effects.ManaRestore( dice=(3,8,0) ),
+        effects.ManaRestore( dice=(5,6,0) ),
         com_tar=targetarea.SelfOnly(), exp_tar=targetarea.SelfOnly() )
 
 class PotionOfCurePoison( Consumable ):
