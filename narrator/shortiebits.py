@@ -47,7 +47,7 @@ class ShortieStub( Plot ):
         "[DUNGEON_ENTRANCE]": [ "SDI_VILLAGE SDI_DUNGEON_ENTRANCE",
             "SDI_DUNGEON_ENTRANCE", "SDI_DANGEROUS_PATH SDI_DUNGEON_ENTRANCE"
             ],
-        "[DUNGEON_GOAL]": [ "SDI_BIGBOSS",
+        "[DUNGEON_GOAL]": [ "SDI_BIGBOSS","SDI_BIGBEAST"
             ],
         "[ENEMY_BASE]": [ "SDI_ENEMY_FORT SDI_ENEMY_BARRACKS",
             "SDI_DANGEROUS_PATH SDI_ENEMY_FORT", "SDI_ENEMY_TERRITORY SDI_ENEMY_FORT",
@@ -132,7 +132,7 @@ class ShortieStub( Plot ):
         self._EXIT_menu( thingmenu )
     def use_exit( self, explo ):
         explo.alert( "[=CONCLUSION]" )
-        explo.give_gold_and_xp( self.rank*150+random.randint(1,200), (self.rank+1)*250 )
+        explo.give_gold_and_xp( self.rank*150+random.randint(1,200), self.rank*150 + 350 )
         self.end_adventure( explo.camp )
     def _conclusion_WIN( self, explo ):
         # The conclusion has been won. Activate the exit.
@@ -258,6 +258,101 @@ class SDIPlot( Plot ):
 #
 # 
 #
+
+# SDI_BIGBEAST
+#
+# Win Condition:
+#   Kill the boss, usually.
+# Grammar Tags:
+#   [SDI_BIGBEAST:name]   The name of the boss
+#   [SDI_BIGBEAST:type]   The type of the boss (optional)
+# To do:
+# - Mass of tiny bosses
+
+class BasicBigBeast( SDIPlot ):
+    # A simple building level with a direct bossfight.
+    LABEL = "SDI_BIGBEAST"
+    active = True
+    scope = "LOCALE"
+    NAME_PATTERNS = ("{0}'s Lair","{0}'s Den","{0}'s Cave")
+    def custom_init( self, nart ):
+        """Create the final dungeon, boss encounter, and resolution."""
+        antagonist = self.elements.get( "ANTAGONIST" )
+        # We really want this beast's lair to be a cave. If the dungeon
+        # architecture is already a cave- great! Keep it. Otherwise, forget
+        # about it and generate a cave.
+        cdungeon = randmaps.architect.CavernDungeon()
+        biome = self.elements.setdefault( "DUNGEON_ARCHITECTURE",cdungeon )
+        if biome.biome != context.HAB_CAVE:
+            biome = cdungeon
+        myscene,mymapgen = randmaps.architect.design_scene( min(30+self.rank,50),min(30+self.rank,50),
+          randmaps.CaveScene, biome, setting=self.setting,
+          fac=antagonist)
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+
+        anc_a,anc_b = random.choice( randmaps.anchors.OPPOSING_CARDINALS )
+        team = teams.Team(default_reaction=-999, rank=self.rank, strength=200,
+         habitat=myscene.get_encounter_request(), fac=antagonist, respawn=False )
+        goalroom = randmaps.rooms.FuzzyRoom( tags=(context.GOAL,), parent=myscene,
+            anchor = anc_a )
+        goalroom.contents.append( team )
+        door2 = waypoints.GateDoor(anchor=anc_a)
+        goalroom.contents.append(door2)
+        for t in range(2):
+            mychest = random.choice([waypoints.MediumChest,waypoints.LargeChest])()
+            mychest.stock(self.rank+1)
+            goalroom.contents.append( mychest )
+
+        myhabitat = myscene.get_encounter_request()
+        myhabitat[ context.MTY_BOSS ] = True
+        myhabitat[(context.MTY_BEAST,context.MTY_ELEMENTAL,context.MTY_CONSTRUCT)] = True
+        if antagonist:
+            antagonist.alter_monster_request( myhabitat, force_membership=False )
+        btype = monsters.choose_monster_type(self.rank+1,self.rank+3,myhabitat)
+        if btype:
+            boss = monsters.generate_boss( btype, self.rank+3, team=team )
+            goalroom.contents.append( boss )
+            self.register_element( "ENEMY", boss )
+            team.boss = boss
+            myscene.name = random.choice( self.NAME_PATTERNS ).format( boss )
+            self.enemy_defeated = False
+
+        entranceroom = randmaps.rooms.FuzzyRoom( tags=(context.GOAL,), parent=myscene,
+            anchor = anc_b )
+        door1 = waypoints.StairsUp(anchor=anc_b)
+        entranceroom.contents.append(door1)
+
+        # Save this component's data for the next component.
+        self.register_element( "IN_SCENE", myscene )
+        self.register_element( "IN_ENTRANCE", door1 )
+        self.register_element( "OUT_SCENE", myscene )
+        self.register_element( "OUT_ENTRANCE", door2 )
+
+        return btype
+
+    def ENEMY_DEATH( self, explo ):
+        self.enemy_defeated = True
+        explo.check_trigger( "WIN", self )
+    def t_COMBATOVER( self, explo ):
+        if self.enemy_defeated:
+            self.active = False
+    def get_sdi_grammar( self ):
+        """Return a dict of grammar related to this plot."""
+        mygram = {
+            "[achievement]": [ "slaying {}".format(self.elements["ENEMY"]),
+                ],
+            "[GO_QUEST]": ["Slay {} the {}.".format(self.elements["ENEMY"],self.elements["ENEMY"].monster_name),
+                ],
+            "[location]": [str(self.elements["LOCALE"]),],
+            "[SDI_BIGBEAST:name]": [str(self.elements["ENEMY"]),],
+            "[SDI_BIGBEAST:type]": [self.elements["ENEMY"].monster_name,],
+            "[SUMMARY]": [ "{} the {} .".format(self.elements["ENEMY"],self.elements["ENEMY"].monster_name),
+                ],
+            "[warning]":    ["{} is a powerful {}".format(self.elements["ENEMY"],self.elements["ENEMY"].monster_name),
+                ],
+        }
+        return mygram
+
 
 # SDI_BLOCKED_PASSAGE
 #   You can progress no further in this dungeon until you do something.
@@ -1885,7 +1980,7 @@ class EasyScoutBattle( SDIPlot ):
     def custom_init( self, nart ):
         # Create the scene where the ambush will happen- a wilderness area with
         # a road.
-        biome = self.register_element( "BIOME", randmaps.architect.make_wilderness() )
+        biome = self.elements.setdefault( "BIOME", randmaps.architect.make_wilderness() )
         antagonist = self.elements.setdefault( "ANTAGONIST", teams.AntagonistFaction() )
         myscene,mymapgen = randmaps.architect.design_scene( 60, 60,
           randmaps.WildernessPath, biome, setting=self.setting)
@@ -2065,7 +2160,7 @@ class DragonBoss( SDIPlot ):
         # We really want this dragon's lair to be a cave. If the dungeon
         # architecture is already a cave- great! Keep it. Otherwise, forget
         # about it and generate a cave.
-        cdungeon = randmaps.architect.BuildingDungeon()
+        cdungeon = randmaps.architect.CavernDungeon()
         biome = self.elements.setdefault( "DUNGEON_ARCHITECTURE",cdungeon )
         if biome.biome != context.HAB_CAVE:
             biome = cdungeon

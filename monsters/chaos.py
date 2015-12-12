@@ -94,9 +94,9 @@ class Hooligan( base.Monster ):
 
 class Heretic( base.Monster ):
     name = "Heretic"
-    statline = { stats.STRENGTH: 12, stats.TOUGHNESS: 10, stats.REFLEXES: 12, \
-        stats.INTELLIGENCE: 13, stats.PIETY: 13, stats.CHARISMA: 12, \
-        stats.PHYSICAL_DEFENSE: -10 }
+    statline = { stats.STRENGTH: 8, stats.TOUGHNESS: 10, stats.REFLEXES: 8, \
+        stats.INTELLIGENCE: 12, stats.PIETY: 9, stats.CHARISMA: 13, \
+        stats.PHYSICAL_DEFENSE: -20, stats.MAGIC_ATTACK: -10 }
     SPRITENAME = "monster_chaos.png"
     FRAME = 17
     TEMPLATES = ()
@@ -110,7 +110,7 @@ class Heretic( base.Monster ):
     TECHNIQUES = ( spells.firespells.IGNITE, spells.waterspells.FREEZE_FOE )
     ATTACK = items.Attack( (1,4,0), element = stats.RESIST_CRUSHING )
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 2, self ) )
+        self.levels.append( base.Humanoid( 3, self ) )
 
 class CultLeader( base.Monster ):
     name = "Cult Leader"
