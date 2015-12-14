@@ -48,9 +48,7 @@ class TestEncounter( Plot ):
         myteam = teams.Team(default_reaction=-999, rank=self.rank, 
           strength=0, habitat=scene.get_encounter_request(), fac=scene.fac )
         room.contents.append( myteam )
-        monster = monsters.auran.InvisibleStalker( myteam )
-        room.contents.append( monster )
-        monster = monsters.goblins.Goblin( myteam )
+        monster = monsters.ignan.Spark( myteam )
         room.contents.append( monster )
         room.contents.append( waypoints.HealingFountain() )
         mychest = waypoints.MediumChest()

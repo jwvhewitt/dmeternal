@@ -16,6 +16,7 @@ import pygwrap
 import effects
 import charsheet
 import charloader
+import context
 
 class PuzzleMenu( rpgmenu.Menu ):
     WIDTH = 350
@@ -42,6 +43,7 @@ class Waypoint( object ):
     ATTACH_TO_WALL = False
     name = "Waypoint"
     desc = ""
+    desctags = tuple()
     def __init__( self, scene=None, pos=(0,0), plot_locked=False, desc=None, anchor=None ):
         """Place this waypoint in a scene."""
         if scene:
@@ -91,6 +93,23 @@ class Waypoint( object ):
 class Anvil( Waypoint ):
     TILE = maps.Tile( None, None, maps.ANVIL )
     desc = "You stand before an anvil."
+    desctags = (context.DES_EARTH,)
+
+class Forge( Waypoint ):
+    TILE = maps.Tile( None, None, maps.FORGE )
+    desc = "You stand before a forge."
+    mini_map_label = "Forge"
+    desctags = (context.DES_FIRE,)
+    def cool_down( self ):
+        self.scene.map[self.pos[0]][self.pos[1]].decor = maps.COLDFORGE
+
+class SpiritJar( Waypoint ):
+    TILE = maps.Tile( None, None, maps.SPIRIT_JAR )
+    desc = "You stand before a spirit jar."
+    mini_map_label = "Spirit Jar"
+    desctags = (context.DES_LUNAR,)
+    def release_spirit( self ):
+        self.scene.map[self.pos[0]][self.pos[1]].decor = maps.EMPTY_SPIRIT_JAR
 
 class Bookshelf( Waypoint ):
     TILE = maps.Tile( None, None, maps.BOOKSHELF )
@@ -102,15 +121,18 @@ class Campsite( Waypoint ):
     TILE = maps.Tile( None, None, maps.CAULDRON )
     desc = "You stand before a fire."
     mini_map_label = "Campsite"
+    desctags = (context.DES_FIRE,context.DES_WATER)
 
 
 class Fountain( Waypoint ):
     TILE = maps.Tile( None, None, maps.FOUNTAIN )
     desc = "You stand before a fountain."
     mini_map_label = "Fountain"
+    desctags = (context.DES_WATER,)
 
 class HealingFountain( Fountain ):
     HEAL_FX = effects.HealthRestore( dice=(1,6,9999), stat_bonus=None )
+    desctags = (context.DES_WATER,context.DES_SOLAR)
     def unlocked_use( self, explo ):
         # Perform this waypoint's special action.
         targets = list()

@@ -55,7 +55,7 @@ class ShortieStub( Plot ):
             "SDI_ENEMY_TERRITORY SDI_DUNGEON_ENTRANCE"
             ],
 
-        "[ENEMY_GOAL]": [ "SDI_BIGBOSS",
+        "[ENEMY_GOAL]": [ "SDI_BIGBOSS","SDI_EVILPLAN"
             ],
 
         "[IMPERILED_PLACE]": [ "SDI_AMBUSH SDI_VILLAGE", "SDI_VILLAGE",
@@ -171,16 +171,25 @@ class ShortieStub( Plot ):
             ],
         "[INTRO_PROBLEM]": [ "Travelers passing through [+SDI_AMBUSH:name] have gone missing.",
             "A [+SDI_BIGBOSS:type] named [+SDI_BIGBOSS:name] has been causing problems.",
-            "[=SUMMARY]",
+            "[=SUMMARY]", "Someone [+villainous_act], and you intend to find out who."
             ],
         "[quest_giver]": [ "[-quest_giver]", "[=quest_giver]"
             ],
         "[RUMOUR]": [   "[rumourleadin] [warning].",
+            "[++SDI_BIGBOSS:name] [villainous_act].", 
+            "[rumourleadin] something [villainous_act]."
             ],
         "[SHORTIE_SUMMARY]": [ "You already know that [-warning].",
-            "[=SUMMARY]"
+            "[=SUMMARY]", "[+SDI_BIGBOSS:name] [villainous_act]."
+            "Something [villainous_act]."
             ],
-        "[SHORTIE_PROBLEM]": [ "[++SUMMARY]","[+SUMMARY]"
+        "[SHORTIE_PROBLEM]": [ "[++SUMMARY]","[+SUMMARY]",
+            "What if [+SDI_BIGBOSS:name] [+villainous_act]?",
+            ],
+        "[villainous_act]": [ "[-villainous_act]","[=villainous_act]"
+            ],
+        "[villainous_motive]": [ "[=villainous_motive]","[+villainous_motive]",
+            "[++villainous_motive]"
             ],
         "[warning]": [ "[+warning]","[=warning]",
             ],
@@ -254,6 +263,8 @@ class SDIPlot( Plot ):
 #           reward them afterward. Keep it current.
 #  [SUMMARY]    A summary of subplot's state, written from player-aligned
 #     perspective, in simple present tense.
+#  [villainous_act] Something villainous done by the antagonist, in simple past.
+#  [villainous_motive] Villainous motive, in "to infinitive" form.
 #  [warning]    A caution for the PC. Frequently encountered as a rumour.
 #
 # 
@@ -346,7 +357,12 @@ class BasicBigBeast( SDIPlot ):
             "[location]": [str(self.elements["LOCALE"]),],
             "[SDI_BIGBEAST:name]": [str(self.elements["ENEMY"]),],
             "[SDI_BIGBEAST:type]": [self.elements["ENEMY"].monster_name,],
-            "[SUMMARY]": [ "{} the {} .".format(self.elements["ENEMY"],self.elements["ENEMY"].monster_name),
+            "[SUMMARY]": [ "{} the {} [villainous_act].".format(self.elements["ENEMY"],self.elements["ENEMY"].monster_name),
+                "{} is a dangerous {}.".format(self.elements["ENEMY"],self.elements["ENEMY"].monster_name),
+                ],
+            "[villainous_act]": [ "sowed death and destruction",
+                ],
+            "[villainous_motive]": [ "to satisfy its hunger",
                 ],
             "[warning]":    ["{} is a powerful {}".format(self.elements["ENEMY"],self.elements["ENEMY"].monster_name),
                 ],
@@ -698,6 +714,10 @@ class GroveBattle( SDIPlot ):
             "[SDI_DEFILED_PLACE:location]": [ str(self.elements["LOCALE"]),],
             "[warning]": [  "not even the trees are safe",
                 ],
+            "[villainous_act]": [ "destroyed the sacred tree of {}".format(self.elements["LOCALE"]),
+                ],
+            "[villainous_motive]": [ "to drive out the druids",
+                ],
             "[SUMMARY]": [ "The sacred tree of {} has been destroyed by the {}.".format(self.elements["LOCALE"],self.elements["ANTAGONIST"]),
                 ],
         }
@@ -825,6 +845,8 @@ class ElementalShrine( SDIPlot ):
                 "Maybe you will discover who did this, and why, in [+location].",
                 ],
             "[SUMMARY]": [ "There has been a disturbance at the {}.".format(str(self.elements["LOCALE"])),
+                ],
+            "[villainous_act]": [ "defiled the {}".format(self.elements["LOCALE"]),
                 ],
             "[warning]": [ "the {} has been defiled".format(str(self.elements["LOCALE"])),
                 self.INTRO_PROBLEM[self._theme]
@@ -1068,6 +1090,8 @@ class RuinedFortressDungeonEntrance( SDIPlot ):
             "[SDI_DUNGEON_ENTRANCE:name]": [self.elements["DUNGEON_ARCHITECTURE"].name,
                 ],
             "[SUMMARY]": [ "There exists a dungeon beneath the {}.".format(self.elements["DUNGEON_ARCHITECTURE"].name),
+                ],
+            "[villainous_act]": [ "corrupted the {}".format(self.elements["DUNGEON_ARCHITECTURE"].name),
                 ],
             "[warning]": [ "the {} are now haunted".format(self.elements["DUNGEON_ARCHITECTURE"].name),
                 ],
@@ -1408,6 +1432,8 @@ class DungeonMonsterLevel( SDIPlot ):
             "[SDI_DUNGEON_LEVEL:name]": [str(self.elements["LOCALE"]),],
             "[SDI_DUNGEON_LEVEL:threat]": ["monsters","beasts"],
             "[SUMMARY]": [ "The {} is full of dangerous beasts.".format(self.elements["LOCALE"]),
+                ],
+            "[villainous_motive]": [ "to build an army of monsters",
                 ],
             "[warning]":    ["few who enter the {} return alive".format(self.elements["LOCALE"]),
                 ],
@@ -1780,6 +1806,8 @@ class GuardedFortress( SDIPlot ):
                 ],
             "[SUMMARY]": [ "There's an enemy base in the {}.".format(str(self.elements["LOCALE"])),
                 ],
+            "[villainous_motive]": [ "to conquer all of the free lands",
+                ],
             "[warning]": [ "the fortress in the {} is very well guarded".format(str(self.elements["LOCALE"])),
                 ],
         }
@@ -1955,6 +1983,8 @@ class BasicBarracks( SDIPlot ):
             "[SDI_ENEMY_BARRACKS:name]": [str(self.elements["LOCALE"]),],
             "[SUMMARY]": [ "The {} have many soldiers at their base.".format(str(self.elements["ANTAGONIST"])),
                 ],
+            "[villainous_motive]": [ "to build a powerful army",
+                ],
             "[warning]":    ["few who enter {} return alive".format(self.elements["LOCALE"]),
                 ],
         }
@@ -2120,9 +2150,108 @@ class EnemyHasCheckpoint( SDIPlot ):
 # To do:
 # - Human sacrifice
 # - Summon a monster/demon/deity
-# - Building catipults, etc, for invasion
 # - Building a construct
 
+class PlanningForWar( SDIPlot ):
+    # The enemies are building weapons for war. Destroy their factory.
+    LABEL = "SDI_EVILPLAN"
+    active = True
+    scope = "LOCALE"
+    NAME_PATTERNS = ("{0} Workshop","{0} Factorium")
+    def custom_init( self, nart ):
+        """Create the final dungeon, boss encounter, and resolution."""
+        antagonist = self.elements.setdefault( "ANTAGONIST",
+          teams.AntagonistFaction(primary=context.GEN_KINGDOM) )
+        biome = self.elements.setdefault( "DUNGEON_ARCHITECTURE",
+          randmaps.architect.BuildingDungeon() )
+        myscene,mymapgen = randmaps.architect.design_scene( 50, 50,
+          randmaps.SubtleMonkeyTunnelScene, biome, setting=self.setting,
+          fac=self.elements.get("ANTAGONIST"))
+        self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
+
+        team = self.register_element("_TEAM",teams.Team(default_reaction=-999, rank=self.rank, strength=200,
+         habitat=myscene.get_encounter_request(), fac=antagonist, respawn=False ))
+        goalroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=myscene )
+        goalroom.contents.append( team )
+        door2 = waypoints.GateDoor()
+        goalroom.contents.append(door2)
+        mychest = waypoints.LargeChest()
+        mychest.stock(self.rank+1)
+        goalroom.contents.append( mychest )
+
+        forge = self.register_element( "TARGET",
+          waypoints.Forge( desc="The {} are using this magical forge to contruct their weapons. It must be destroyed to stop their war machine.".format(antagonist),
+          plot_locked=True, anchor=randmaps.anchors.middle ))
+        goalroom.contents.append( forge )
+
+        if self.rank < random.randint(4,7):
+            brank = self.rank + 2
+        else:
+            brank = self.rank + 3
+        boss = monsters.generate_npc( rank=brank, team=team, fac=antagonist, upgrade=True )
+        goalroom.contents.append( boss )
+        self.register_element( "ENEMY", boss )
+        team.boss = boss
+        myscene.name = random.choice( self.NAME_PATTERNS ).format( antagonist )
+
+        self.add_sub_plot( nart, "ENCOUNTER" )
+        self.add_sub_plot( nart, "PB_DESTROY", ident="_DESTROY" )
+        self.enemy_ok = True
+        self.forge_destroyed = False
+        self.message_ready = True
+
+        entranceroom = randmaps.rooms.SharpRoom( tags=(context.GOAL,), parent=myscene,
+            anchor = random.choice((randmaps.anchors.southwest,randmaps.anchors.south,randmaps.anchors.southeast)) )
+        door1 = waypoints.GateDoor()
+        door1.anchor = randmaps.anchors.south
+        entranceroom.contents.append(door1)
+
+        # Save this component's data for the next component.
+        self.register_element( "IN_SCENE", myscene )
+        self.register_element( "IN_ENTRANCE", door1 )
+        self.register_element( "OUT_SCENE", myscene )
+        self.register_element( "OUT_ENTRANCE", door2 )
+
+        return True
+
+    def _DESTROY_WIN( self, explo ):
+        self.forge_destroyed = True
+        self.elements["TARGET"].desc = "This forge has been rendered unusable. The {} war machine has been stopped.".format(self.elements["ANTAGONIST"])
+        self.elements["TARGET"].cool_down()
+        if not self.enemy_ok:
+            explo.check_trigger( "WIN", self )
+    def t_START( self, explo ):
+        if self.message_ready:
+            explo.alert( "You smell burning coals and hear the sound of metal on metal. The {} are preparing for war.".format(self.elements["ANTAGONIST"]) )
+            self.message_ready = False
+    def t_COMBATOVER( self, explo ):
+        if self.enemy_ok and not self.elements["_TEAM"].members_in_play( explo.scene ):
+            self.enemy_ok = False
+            if self.forge_destroyed:
+                explo.check_trigger( "WIN", self )
+            else:
+                explo.alert("{} has been defeated, but you must destroy the forge to end the {} war machine.".format(self.elements["ENEMY"],self.elements["ANTAGONIST"]))
+    def get_sdi_grammar( self ):
+        """Return a dict of grammar related to this plot."""
+        mygram = {
+            "[achievement]": [ "stopping the {} war machine".format(self.elements["ANTAGONIST"]),
+                "destroying {}'s magical forge".format(self.elements["ENEMY"]),
+                ],
+            "[CONCLUSION]": [ "{} [villainous_act] [villainous_motive], but you put a stop to their [negative_adjective] plans. [END_SHORTIE]".format(self.elements["ENEMY"]),
+                "{}'s plan [villainous_motive] has been defeated. [END_SHORTIE]".format(self.elements["ENEMY"]),
+                "{} [villainous_act], but didn't count on you [-achievement]. [END_SHORTIE]".format(self.elements["ENEMY"]),
+                ],
+            "[GO_QUEST]": ["Locate the {} and put a halt to their weapon production.".format(self.elements["LOCALE"]),
+                ],
+            "[location]": [str(self.elements["LOCALE"]),],
+            "[SDI_EVILPLAN:location]": [str(self.elements["LOCALE"]),],
+            "[SDI_EVILPLAN:threat]": ["the {} are preparing for war".format(self.elements["ANTAGONIST"]),],
+            "[SUMMARY]": [ "{} the {} is forging magical weapons for the {}.".format(str(self.elements["ENEMY"]),self.elements["ENEMY"].mr_level.name,self.elements["ANTAGONIST"]),
+                ],
+            "[warning]":    ["{} will kill anyone that opposes {}".format(self.elements["ENEMY"],self.elements["ENEMY"].object_pronoun()),
+                ],
+        }
+        return mygram
 
 
 # SDI_BLOCKED_GATE
@@ -2218,12 +2347,20 @@ class DragonBoss( SDIPlot ):
         mygram = {
             "[achievement]": [ "slaying {}".format(self.elements["ENEMY"]),
                 ],
+            "[CONCLUSION]": [ "{} [villainous_act] [villainous_motive], but you put a stop to its evil plans. [END_SHORTIE]".format(self.elements["ENEMY"]),
+                "{}'s plan [villainous_motive] has been defeated. [END_SHORTIE]".format(self.elements["ENEMY"]),
+                "{} [villainous_act], but didn't count on you [-achievement]. [END_SHORTIE]".format(self.elements["ENEMY"]),
+                ],
             "[GO_QUEST]": ["Slay {} the {}.".format(self.elements["ENEMY"],self.elements["ENEMY"].monster_name),
                 ],
             "[location]": [str(self.elements["LOCALE"]),],
             "[SDI_BIGBOSS:name]": [str(self.elements["ENEMY"]),],
             "[SDI_BIGBOSS:type]": [self.elements["ENEMY"].monster_name,],
             "[SUMMARY]": [ "{} commands the {} from its lair.".format(self.elements["ENEMY"],self.elements["ANTAGONIST"]),
+                "{} [villainous_act].".format(self.elements["ENEMY"]),
+                "{} wants [villainous_motive].".format(self.elements["ENEMY"]),
+                ],
+            "[villainous_motive]": [ "to steal even more treasure",
                 ],
             "[warning]":    ["{} is a powerful {}".format(self.elements["ENEMY"],self.elements["ENEMY"].monster_name),
                 ],
@@ -2309,12 +2446,18 @@ class InstantBoss( SDIPlot ):
         mygram = {
             "[achievement]": [ "defeating {}".format(self.elements["ENEMY"]),
                 ],
+            "[CONCLUSION]": [ "{} [villainous_act] [villainous_motive], but you put a stop to their evil plans. [END_SHORTIE]".format(self.elements["ENEMY"]),
+                "{}'s plan [villainous_motive] has been defeated. [END_SHORTIE]".format(self.elements["ENEMY"]),
+                "{} [villainous_act], but didn't count on you [-achievement]. [END_SHORTIE]".format(self.elements["ENEMY"]),
+                ],
             "[GO_QUEST]": ["Defeat {}.".format(self.elements["ENEMY"]),
                 ],
             "[location]": [str(self.elements["LOCALE"]),],
             "[SDI_BIGBOSS:name]": [str(self.elements["ENEMY"]),],
             "[SDI_BIGBOSS:type]": [self.elements["ENEMY"].monster_name,],
             "[SUMMARY]": [ "{} is preparing for evil acts.".format(str(self.elements["ENEMY"])),
+                "{} [villainous_act].".format(self.elements["ENEMY"]),
+                "{} wants [villainous_motive].".format(self.elements["ENEMY"]),
                 ],
             "[warning]":    ["{} is a dangerous {}".format(self.elements["ENEMY"],self.elements["ENEMY"].monster_name),
                 ],
@@ -2395,12 +2538,18 @@ class BossInABox( SDIPlot ):
         mygram = {
             "[achievement]": [ "defeating {}".format(self.elements["ENEMY"]),
                 ],
+            "[CONCLUSION]": [ "{} [villainous_act] [villainous_motive], but you put a stop to their [negative_adjective] plans. [END_SHORTIE]".format(self.elements["ENEMY"]),
+                "{}'s plan [villainous_motive] has been defeated. [END_SHORTIE]".format(self.elements["ENEMY"]),
+                "{} [villainous_act], but didn't count on you [-achievement]. [END_SHORTIE]".format(self.elements["ENEMY"]),
+                ],
             "[GO_QUEST]": ["Defeat {}.".format(self.elements["ENEMY"]),
                 ],
             "[location]": [str(self.elements["LOCALE"]),],
             "[SDI_BIGBOSS:name]": [str(self.elements["ENEMY"]),],
             "[SDI_BIGBOSS:type]": [self.elements["ENEMY"].monster_name,],
             "[SUMMARY]": [ "{} is a [negative_adjective] {}.".format(str(self.elements["ENEMY"]),self.elements["ENEMY"].monster_name),
+                "{} [villainous_act].".format(self.elements["ENEMY"]),
+                "{} wants [villainous_motive].".format(self.elements["ENEMY"]),
                 ],
             "[warning]":    ["{} is a tough enemy".format(self.elements["ENEMY"]),
                 ],
@@ -2476,12 +2625,18 @@ class NPCBossInABox( SDIPlot ):
         mygram = {
             "[achievement]": [ "defeating {}".format(self.elements["ENEMY"]),
                 ],
+            "[CONCLUSION]": [ "{} [villainous_act] [villainous_motive], but you put a stop to their [negative_adjective] plans. [END_SHORTIE]".format(self.elements["ENEMY"]),
+                "{}'s plan [villainous_motive] has been defeated. [END_SHORTIE]".format(self.elements["ENEMY"]),
+                "{} [villainous_act], but didn't count on you [-achievement]. [END_SHORTIE]".format(self.elements["ENEMY"]),
+                ],
             "[GO_QUEST]": ["Defeat {}.".format(self.elements["ENEMY"]),
                 ],
             "[location]": [str(self.elements["LOCALE"]),],
             "[SDI_BIGBOSS:name]": [str(self.elements["ENEMY"]),],
             "[SDI_BIGBOSS:type]": [self.elements["ENEMY"].mr_level.name,],
             "[SUMMARY]": [ "{} is an evil {}.".format(str(self.elements["ENEMY"]),self.elements["ENEMY"].mr_level.name),
+                "{} [villainous_act].".format(self.elements["ENEMY"]),
+                "{} wants [villainous_motive].".format(self.elements["ENEMY"]),
                 ],
             "[warning]":    ["{} will kill anyone that opposes {}".format(self.elements["ENEMY"],self.elements["ENEMY"].object_pronoun()),
                 ],
@@ -2656,6 +2811,8 @@ class AmbushInterrupted( SDIPlot ):
             "[SDI_AMBUSH:name]": [ str(self.elements["LOCALE"]),],
             "[warning]": [  "danger awaits on the road ahead",
                 ],
+            "[villainous_act]": [ "attacked {} on the {}".format(self.elements["NPC"],self.elements["LOCALE"]),
+                ],
             "[SUMMARY]": [ "The {} has frequently been attacked by {}.".format(self.elements["LOCALE"],self.elements["ANTAGONIST"]),
                 ],
         }
@@ -2762,6 +2919,12 @@ class BoringVillage( SDIPlot ):
                 "The {} lives in fear of [+SDI_BIGBOSS:name].".format(self.elements["LOCALE"]),
                 "The {} is under attack by enemies who come from [+SDI_ENEMY_FORT:location].".format(self.elements["LOCALE"]),
                 ],
+            "[villainous_act]": [ "attacked the {}".format(self.elements["LOCALE"]),
+                ],
+            "[villainous_motive]": [ "to punish the {}".format(self.elements["LOCALE"]),
+                "to conquer the {}".format(self.elements["LOCALE"])
+                ],
+
         }
         if self._reward_given:
             mygram["[quest_giver]"] = [str(self.elements["NPC"]),]
@@ -2890,6 +3053,11 @@ class DwarfVillage( SDIPlot ):
             "[location]": [str(self.elements["LOCALE"]),
                 ],
             "[SUMMARY]": [ "The {} is in a dangerous place.".format(self.elements["LOCALE"]),
+                ],
+            "[villainous_act]": [ "forced the {} into hiding".format(self.elements["LOCALE"]),
+                ],
+            "[villainous_motive]": [ "to punish the {}".format(self.elements["LOCALE"]),
+                "to destroy the {}".format(self.elements["LOCALE"])
                 ],
             "[warning]": [ "you will be overcharged for everything in the {}".format(self.elements["LOCALE"]),
                 ],

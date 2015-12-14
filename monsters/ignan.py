@@ -12,6 +12,7 @@ import animals
 import enchantments
 import spells
 import treasuretype
+import abilities
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  1   ***
@@ -25,6 +26,32 @@ import treasuretype
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  3   ***
 #  *******************************
+
+class Spark( base.Monster ):
+    name = "Spark"
+    statline = { stats.STRENGTH: 13, stats.TOUGHNESS: 8, stats.REFLEXES: 14, \
+        stats.INTELLIGENCE: 12, stats.PIETY: 6, stats.CHARISMA: 14,
+        stats.RESIST_PIERCING: 50, stats.RESIST_CRUSHING: 50, stats.RESIST_SLASHING: 50 }
+    SPRITENAME = "monster_by_Joe.png"
+    FRAME = 4
+    TEMPLATES = (stats.ELEMENTAL,stats.FIRE)
+    MOVE_POINTS = 12
+    HABITAT = ( context.HAB_BUILDING, context.SET_EVERY, context.GEN_IGNAN,
+     context.DES_FIRE, context.DES_SOLAR, context.MTY_ELEMENTAL, context.MTY_CELESTIAL )
+    ENC_LEVEL = 3
+    COMBAT_AI = aibrain.ArcherAI(approach_allies=0,technique_chance=75)
+    ATTACK = items.Attack( (1,6,0), element = stats.RESIST_SOLAR,
+        hit_anim=animobs.OrangeExplosion, extra_effect=abilities.BURN_ATTACK )
+    TECHNIQUES = ( invocations.Invocation( "Fire Bolt", effects.OpposedRoll( att_modifier=10,
+        att_stat=stats.REFLEXES, def_stat=stats.REFLEXES, on_success = (
+            effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion )
+        ,), on_failure = (
+            effects.NoEffect( anim=animobs.SmallBoom )
+        ,) ), com_tar=targetarea.SingleTarget(reach=5),
+        shot_anim=animobs.FireBolt, ai_tar=invocations.TargetEnemy() ), )
+    def init_monster( self ):
+        self.levels.append( base.Spellcaster( 3, self ) )
+
 
 #  *******************************
 #  ***   ENCOUNTER  LEVEL  4   ***
@@ -55,7 +82,7 @@ class Salamander( base.Monster ):
     TEMPLATES = (stats.ELEMENTAL,stats.FIRE)
     MOVE_POINTS = 6
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
-     context.DES_FIRE, context.MTY_ELEMENTAL,
+     context.DES_FIRE, context.MTY_ELEMENTAL,context.GEN_IGNAN,
      context.MTY_HUMANOID, context.MTY_FIGHTER, context.MTY_BOSS )
     ENC_LEVEL = 8
     TREASURE = treasuretype.Standard()
@@ -88,7 +115,7 @@ class SalamanderLeader( base.Monster ):
     TEMPLATES = (stats.ELEMENTAL,stats.FIRE)
     MOVE_POINTS = 6
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
-     context.DES_FIRE, context.MTY_ELEMENTAL,
+     context.DES_FIRE, context.MTY_ELEMENTAL,context.GEN_IGNAN,
      context.MTY_HUMANOID, context.MTY_LEADER, context.MTY_BOSS )
     ENC_LEVEL = 11
     TREASURE = treasuretype.High()
@@ -115,7 +142,7 @@ class FireElemental( base.Monster ):
     FRAME = 0
     TEMPLATES = (stats.ELEMENTAL,stats.FIRE)
     MOVE_POINTS = 10
-    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,context.GEN_IGNAN,
      context.DES_FIRE, context.SUMMON_ELEMENTAL )
     ENC_LEVEL = 12
     ATTACK = items.Attack( (2,8,0), element = stats.RESIST_ATOMIC, extra_effect =

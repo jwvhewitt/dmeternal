@@ -139,7 +139,7 @@ MTY_BEAST, MTY_HUMANOID, MTY_FIGHTER, MTY_THIEF, MTY_PRIEST, MTY_MAGE, \
 #  itself. Also a monster can have more than one genus because in Python we
 #  believe in multiple inheritence.
 GEN_GIANT, GEN_GOBLIN, GEN_CHAOS, GEN_UNDEAD, GEN_NATURE, GEN_DRAGON, \
-    GEN_KINGDOM, GEN_TERRAN, GEN_FAERIE = range( 1400,1409 )
+    GEN_KINGDOM, GEN_TERRAN, GEN_FAERIE, GEN_IGNAN = range( 1400,1410 )
 
 # Summon Tags. Used to mark individual monsters for specific spells.
 SUMMON_FLAMINGSWORD, SUMMON_ELEMENTAL = range( 2000, 2002 )

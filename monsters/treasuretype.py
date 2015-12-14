@@ -1,5 +1,6 @@
 import random
 import items
+import inspect
 
 def gold_for_rank( rank, scale=1.0 ):
     total = 0
@@ -25,7 +26,7 @@ class Standard( object ):
         item_chance = self.swag_chance + mon.ENC_LEVEL * 2
         while random.randint(1,100) <= item_chance:
             itype = random.choice( self.swag )
-            if isinstance( itype, items.Item ):
+            if inspect.isclass( itype ) and issubclass( itype, items.Item ):
                 item = itype()
             else:
                 item = items.generate_special_item( mon.ENC_LEVEL + self.swag_quality, itype )

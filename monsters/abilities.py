@@ -36,6 +36,12 @@ COMPOSITEBOW = invocations.Invocation( "Arrow",
 
 # Extra Effects for attaching to attacks.
 
+BURN_ATTACK = effects.OpposedRoll( att_stat=None, def_stat=stats.REFLEXES, on_success = (
+            effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.RedCloud ),
+            effects.Enchant( enchantments.BurnLowEn )
+        ,) )
+
+
 POISON_ATTACK = effects.TargetIs( effects.ALIVE, on_true=( effects.OpposedRoll( att_stat=None, def_stat=stats.TOUGHNESS, on_success = (
             effects.HealthDamage( (1,4,0), stat_bonus=None, element=stats.RESIST_POISON, anim=animobs.PoisonCloud ),
             effects.Enchant( enchantments.PoisonClassic )
