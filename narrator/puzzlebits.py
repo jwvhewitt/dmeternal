@@ -145,6 +145,7 @@ class DESTROY_SpiritPower( Plot ):
 #  *******************
 #  ***   PB_OPEN   ***
 #  *******************
+# The following components aren't single-map compliant. Beware!
 
 class OPEN_HintAndSearch( Plot ):
     """The PC will learn there's a secret door in the waypoint, and can then search."""
