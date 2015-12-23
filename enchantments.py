@@ -139,6 +139,13 @@ class IronSkinEn( Enchantment ):
         super(IronSkinEn, self).__init__(statline=stats.StatMod({stats.RESIST_SLASHING:75,stats.RESIST_CRUSHING:75,stats.RESIST_PIERCING:75
             ,stats.PHYSICAL_DEFENSE:10,stats.NATURAL_DEFENSE:10,stats.MAGIC_DEFENSE:10}),dispel=(COMBAT,MAGIC))
 
+class ManaLeak( Enchantment ):
+    NAME = "Mana Leak"
+    def __init__( self ):
+        super(ManaLeak, self).__init__(dispel=(MAGIC,CURSE,DAILY))
+    FX = effects.ManaDamage( (2,6,0), stat_bonus=None, anim=animobs.PurpleExplosion )
+    MAX_USES = 10
+
 class PermaRegeneration( Enchantment ):
     # Basically like normal regeneration, but may not be dispelled.
     def __init__( self ):

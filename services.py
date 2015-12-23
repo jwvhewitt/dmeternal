@@ -677,6 +677,7 @@ class Temple( object ):
             pc = rpm.query()
             if pc:
                 if explo.camp.gold >= self.resurrection_cost( pc ):
+                    pos = self.get_return_pos( explo )
                     explo.camp.gold -= self.resurrection_cost( pc )
                     pc.hp_damage = 0
                     pc.mp_damage = 0
@@ -687,7 +688,6 @@ class Temple( object ):
                         explo.camp.graveyard.remove( pc )
                         explo.camp.party.append( pc )
                     if pc in explo.camp.party:
-                        pos = self.get_return_pos( explo )
                         pc.place( explo.scene, pos )
                     else:
                         explo.camp.graveyard.remove( pc )

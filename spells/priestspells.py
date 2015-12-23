@@ -147,7 +147,7 @@ JUSTICE = Spell( "Justice",
 
 DIVINE_AID = Spell( "Divine Aid",
     "A celestial being will answer your call to aid you in this combat.",
-    effects.CallMonster( {context.MTY_CELESTIAL: True, context.DES_SOLAR: context.MAYBE, context.DES_SOLAR: context.MAYBE}, 12, anim=animobs.YellowSparkle ),
+    effects.CallMonster( {context.MTY_CELESTIAL: True, context.DES_SOLAR: context.MAYBE, context.DES_WATER: context.MAYBE}, 12, anim=animobs.YellowSparkle ),
     rank=6, gems={WATER:2,SOLAR:2}, com_tar=targetarea.SingleTarget(reach=2), ai_tar=invocations.TargetEmptySpot(), mpfudge = 12 )
 
 
@@ -159,7 +159,7 @@ DIVINE_AID = Spell( "Divine Aid",
 
 DIVINE_WRATH = Spell( "Divine Wrath",
     "A powerful celestial being will answer your call to aid you in this combat.",
-    effects.CallMonster( {context.MTY_CELESTIAL: True, context.DES_SOLAR: context.MAYBE, context.DES_SOLAR: context.MAYBE}, 18, anim=animobs.YellowSparkle ),
+    effects.CallMonster( {context.MTY_CELESTIAL: True, context.DES_SOLAR: context.MAYBE, context.DES_WATER: context.MAYBE}, 18, anim=animobs.YellowSparkle ),
     rank=9, gems={WATER:3,SOLAR:3}, com_tar=targetarea.SingleTarget(reach=4), ai_tar=invocations.TargetEmptySpot(), mpfudge = 20 )
 
 

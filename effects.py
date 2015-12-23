@@ -524,16 +524,17 @@ class MagicMap( NoEffect ):
 
 
 ANIMAL = {stats.UNDEAD: False, stats.DEMON: False, stats.ELEMENTAL: False, \
-    stats.PLANT: False, stats.CONSTRUCT: False}
+    stats.PLANT: False, stats.CONSTRUCT: False, stats.CELESTIAL: False}
 ALIVE = {stats.UNDEAD: False, stats.DEMON: False, stats.ELEMENTAL: False, \
-    stats.CONSTRUCT: False}
+    stats.CONSTRUCT: False, stats.CELESTIAL: False}
 CAN_DROWN = {stats.UNDEAD: False, stats.DEMON: False, stats.ELEMENTAL: False, \
-    stats.PLANT: False, stats.CONSTRUCT: False, stats.WATER: False}
+    stats.PLANT: False, stats.CONSTRUCT: False, stats.WATER: False, 
+    stats.CELESTIAL: False}
 PLANT = {stats.PLANT: True }
 UNDEAD = {stats.UNDEAD: True }
 UNHOLY = {(stats.UNDEAD,stats.DEMON): True }
 CONSTRUCT = {(stats.CONSTRUCT,stats.BONE): True }
-OTHERWORLDLY = { (stats.UNDEAD,stats.DEMON,stats.ELEMENTAL): True }
+OTHERWORLDLY = { (stats.UNDEAD,stats.DEMON,stats.ELEMENTAL,stats.CELESTIAL): True }
 
 class TargetIs( NoEffect ):
     """An effect that branches depending on if target matches provided pattern."""

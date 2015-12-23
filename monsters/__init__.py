@@ -14,6 +14,7 @@ from dialogue import voice
 import animals
 import aquan
 import auran
+import celestial
 import chaos
 import constructs
 import draconic
@@ -38,6 +39,7 @@ def harvest( mod ):
 harvest( animals )
 harvest( aquan )
 harvest( auran )
+harvest( celestial )
 harvest( chaos )
 harvest( constructs )
 harvest( draconic )
