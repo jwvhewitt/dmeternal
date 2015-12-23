@@ -128,11 +128,11 @@ class Gargoyle( base.Monster ):
     name = "Gargoyle"    
     statline = { stats.STRENGTH: 15, stats.TOUGHNESS: 18, stats.REFLEXES: 14, \
         stats.INTELLIGENCE: 6, stats.PIETY: 11, stats.CHARISMA: 7,
-        stats.RESIST_CRUSHING: 75, stats.RESIST_PIERCING: 75,
-        stats.RESIST_SLASHING: 75, stats.PHYSICAL_ATTACK: 10, stats.NATURAL_DEFENSE: 5 }
+        stats.RESIST_CRUSHING: 50, stats.RESIST_PIERCING: 50,
+        stats.RESIST_SLASHING: 50, stats.PHYSICAL_ATTACK: 10, stats.NATURAL_DEFENSE: 5 }
     SPRITENAME = "monster_default.png"
     FRAME = 22
-    TEMPLATES = (stats.EARTH,)
+    TEMPLATES = (stats.EARTH,stats.ROCK)
     MOVE_POINTS = 16
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
      context.MTY_BOSS,
@@ -336,7 +336,7 @@ class Wyvern( base.Monster ):
     ENC_LEVEL = 8
     TREASURE = treasuretype.Standard()
     ATTACK = items.Attack( (2,6,0), element = stats.RESIST_PIERCING,
-        extra_effect=abilities.POISON_ATTACK_2d6 )
+        extra_effect=abilities.POISON_ATTACK_1d8 )
     TECHNIQUES = ()
     def init_monster( self ):
         self.levels.append( base.Terror( 8, self ) )
@@ -411,7 +411,7 @@ class Umbull( base.Monster ):
     COMBAT_AI = aibrain.BruiserAI()
     TREASURE = treasuretype.Standard()
     ATTACK = items.Attack( (3,6,0), element = stats.RESIST_SLASHING )
-    TECHNIQUES = (invocations.MPInvocation( "Freezing Gaze",
+    TECHNIQUES = (invocations.Invocation( "Freezing Gaze",
         effects.OpposedRoll( att_modifier=20, on_success = (
             effects.Paralyze( max_duration = 6 )
         ,), on_failure =(
@@ -450,6 +450,31 @@ class Sphinx( base.Monster ):
     def init_monster( self ):
         self.levels.append( base.Terror( 8, self ) )
 
+class Behir( base.Monster ):
+    name = "Behir"    
+    statline = { stats.STRENGTH: 26, stats.TOUGHNESS: 21, stats.REFLEXES: 13, \
+        stats.INTELLIGENCE: 7, stats.PIETY: 14, stats.CHARISMA: 12, \
+        stats.RESIST_LIGHTNING: 150, stats.AWARENESS: 50, stats.CRITICAL_HIT: 10 }
+    SPRITENAME = "monster_by_Joe.png"
+    FRAME = 5
+    TEMPLATES = ()
+    MOVE_POINTS = 12
+    HABITAT = ( context.HAB_EVERY, context.SET_EVERY,
+     context.MAP_DUNGEON,
+     context.DES_AIR,
+     context.MTY_BOSS )
+    ENC_LEVEL = 10
+    TREASURE = treasuretype.Swallowed(scale=1,swag_chance=20)
+    ATTACK = items.Attack( (2,4,0), element = stats.RESIST_PIERCING )
+    TECHNIQUES = ( invocations.MPInvocation( "Lightning Breath",
+      effects.OpposedRoll( att_stat=stats.REFLEXES, def_stat=stats.REFLEXES, on_success = (
+        effects.HealthDamage( (7,6,0), stat_bonus=None, element=stats.RESIST_LIGHTNING, anim=animobs.Spark )
+      ,), on_failure = (
+        effects.HealthDamage( (3,7,0), stat_bonus=None, element=stats.RESIST_LIGHTNING, anim=animobs.Spark )
+      ,) ), com_tar=targetarea.Line(reach=5), ai_tar=invocations.TargetEnemy(), mp_cost=30
+    ), )
+    def init_monster( self ):
+        self.levels.append( base.Terror( 9, self ) )
 
 #  ********************************
 #  ***   ENCOUNTER  LEVEL  11   ***
