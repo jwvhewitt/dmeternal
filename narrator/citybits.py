@@ -121,7 +121,7 @@ class MoriaVille( Plot ):
         self.add_sub_plot( nart, "CITY_ARMORSHOP",spstate=PlotState(rank=random.randint(3,5)).based_on(self))
         self.add_sub_plot( nart, "CITY_ADVGUILD" )
 
-        #self.add_sub_plot( nart, "TEST_FEATURE", necessary=False )
+        self.add_sub_plot( nart, "TEST_FEATURE",spstate=PlotState(elements={"LOCALE":castle}).based_on(self), necessary=False )
         return True
     def t_START( self, explo ):
         # Reveal everything the first time this city is entered.

@@ -11,6 +11,7 @@ import services
 import teams
 import characters
 import random
+import randmaps
 
 import stats
 import spells
@@ -43,12 +44,11 @@ class TestEncounter( Plot ):
     LABEL = "zTEST_FEATURE"
     def custom_init( self, nart ):
         scene = self.elements.get("LOCALE")
-        mygen = nart.get_map_generator( scene )
-        room = mygen.DEFAULT_ROOM()
+        room = randmaps.rooms.FuzzyRoom()
         myteam = teams.Team(default_reaction=-999, rank=self.rank, 
-          strength=0, habitat=scene.get_encounter_request(), fac=scene.fac )
+          strength=0, habitat=None )
         room.contents.append( myteam )
-        monster = monsters.ignan.Spark( myteam )
+        monster = monsters.misc.Behir( myteam )
         room.contents.append( monster )
         room.contents.append( waypoints.HealingFountain() )
         mychest = waypoints.MediumChest()
