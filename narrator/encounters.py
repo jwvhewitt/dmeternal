@@ -48,7 +48,7 @@ class TestEncounter( Plot ):
         myteam = teams.Team(default_reaction=-999, rank=self.rank, 
           strength=0, habitat=None )
         room.contents.append( myteam )
-        monster = monsters.misc.Behir( myteam )
+        monster = monsters.ignan.Azer( myteam )
         room.contents.append( monster )
         room.contents.append( waypoints.HealingFountain() )
         mychest = waypoints.MediumChest()
