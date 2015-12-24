@@ -177,7 +177,7 @@ class Griffin( base.Monster ):
     name = "Griffin"    
     statline = { stats.STRENGTH: 18, stats.TOUGHNESS: 16, stats.REFLEXES: 15, \
         stats.INTELLIGENCE: 5, stats.PIETY: 13, stats.CHARISMA: 8,
-        stats.PHYSICAL_ATTACK: 5, stats.PHYSICAL_DEFENSE: 5, stats.MAGIC_DEFENSE: 5 }
+        stats.PHYSICAL_ATTACK: 5, stats.NATURAL_DEFENSE: 5, stats.MAGIC_DEFENSE: 5 }
     SPRITENAME = "monster_default.png"
     FRAME = 35
     TEMPLATES = ()

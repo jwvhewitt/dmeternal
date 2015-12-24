@@ -72,7 +72,7 @@ class Hooligan( base.Monster ):
     name = "Hooligan"
     statline = { stats.STRENGTH: 12, stats.TOUGHNESS: 12, stats.REFLEXES: 12, \
         stats.INTELLIGENCE: 6, stats.PIETY: 10, stats.CHARISMA: 5, \
-        stats.PHYSICAL_DEFENSE: -5 }
+        stats.NATURAL_DEFENSE: -5 }
     SPRITENAME = "monster_chaos.png"
     FRAME = 14
     TEMPLATES = ()
@@ -96,7 +96,7 @@ class Heretic( base.Monster ):
     name = "Heretic"
     statline = { stats.STRENGTH: 8, stats.TOUGHNESS: 10, stats.REFLEXES: 8, \
         stats.INTELLIGENCE: 12, stats.PIETY: 9, stats.CHARISMA: 13, \
-        stats.PHYSICAL_DEFENSE: -20, stats.MAGIC_ATTACK: -10 }
+        stats.PHYSICAL_DEFENSE: -20, stats.NATURAL_DEFENSE: -20, stats.MAGIC_ATTACK: -10 }
     SPRITENAME = "monster_chaos.png"
     FRAME = 17
     TEMPLATES = ()

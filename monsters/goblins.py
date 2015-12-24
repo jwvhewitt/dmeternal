@@ -114,7 +114,7 @@ class GoblinWarrior( base.Monster ):
     name = "Goblin Warrior"
     statline = { stats.STRENGTH: 11, stats.TOUGHNESS: 8, stats.REFLEXES: 14, \
         stats.INTELLIGENCE: 8, stats.PIETY: 8, stats.CHARISMA: 6,
-        stats.PHYSICAL_ATTACK: 10, stats.PHYSICAL_DEFENSE: 10, stats.COUNTER_ATTACK: 15 }
+        stats.PHYSICAL_ATTACK: 10, stats.NATURAL_DEFENSE: 10, stats.COUNTER_ATTACK: 15 }
     SPRITENAME = "monster_goblins.png"
     FRAME = 3
     TEMPLATES = ()

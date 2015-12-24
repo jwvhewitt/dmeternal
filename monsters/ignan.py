@@ -61,19 +61,20 @@ class Azer( base.Monster ):
     name = "Azer"
     statline = { stats.STRENGTH: 13, stats.TOUGHNESS: 13, stats.REFLEXES: 13, \
         stats.INTELLIGENCE: 12, stats.PIETY: 12, stats.CHARISMA: 9,
-        stats.PHYSICAL_DEFENSE: 50, stats.MAGIC_DEFENSE: 20 }
+        stats.NATURAL_DEFENSE: 50, stats.MAGIC_DEFENSE: 20 }
     SPRITENAME = "monster_by_Joe.png"
     FRAME = 6
     TEMPLATES = (stats.FIRE,)
     MOVE_POINTS = 8
     HABITAT = ( context.HAB_EVERY, context.SET_EVERY, context.GEN_IGNAN,
-     context.DES_FIRE, context.DES_EARTH, context.MTY_HUMANOID, context.MTY_FIGHTER )
+     context.DES_FIRE, context.DES_EARTH,
+     context.MTY_HUMANOID, context.MTY_FIGHTER, context.MTY_LEADER )
     ENC_LEVEL = 4
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_CRUSHING,extra_effect =
         effects.HealthDamage( (1,3,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion)
     )
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 3, self ) )
+        self.levels.append( base.Humanoid( 2, self ) )
 
 
 
