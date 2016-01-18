@@ -992,7 +992,7 @@ class Character( stats.PhysicalThing ):
         """Return the total number of spell gems posessed."""
         sg = sum( sum( l.spell_gems.itervalues() ) for l in self.levels )
         if sg:
-            sg += ( self.get_stat( stats.INTELLIGENCE ) * self.rank() + 19 ) // 30
+            sg += ( self.get_stat( stats.INTELLIGENCE ) * self.rank() + 9 ) // 20
         return sg
 
     def spell_gems_of_color( self, sgcolor ):

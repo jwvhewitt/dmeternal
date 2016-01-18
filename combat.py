@@ -306,7 +306,7 @@ class Combat( object ):
 
     def attempt_holy_sign( self, explo, chara ):
         """Attempt to disrupt the undead creatures in the area."""
-        aoe = pfov.PointOfView(self.scene, chara.pos[0], chara.pos[1], 6).tiles
+        aoe = pfov.PointOfView(self.scene, chara.pos[0], chara.pos[1], 16).tiles
         explo.invoke_effect( HOLY_SIGN_EFFECT, chara, aoe, animobs.Marquee(chara.pos) )
         chara.holy_signs_used += 1
         self.end_turn( chara )

@@ -139,6 +139,16 @@ class Defender( characters.Level ):
     MP_DIE = 6
     XP_VALUE = 150
 
+class Undead( characters.Level ):
+    name = 'Undead'
+    desc = ''
+    statline = stats.StatMod( { stats.PHYSICAL_ATTACK: 3, stats.NATURAL_DEFENSE: 4,
+        stats.MAGIC_ATTACK: 4, stats.MAGIC_DEFENSE: 3, stats.AWARENESS: 3} )
+    HP_DIE = 12
+    MP_DIE = 8
+    XP_VALUE = 125
+    FULL_HP_AT_FIRST = False
+
 
 # Monster Monster Monster Monster Monster
 

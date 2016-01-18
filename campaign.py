@@ -44,6 +44,7 @@ import narrator
 
 class Campaign( object ):
     """A general holder for all the stuff that goes into a DME campaign."""
+    party_size = 4
     def __init__( self, name = "BobDwarf19", scene=None, entrance=None, xp_scale = 0.65 ):
         self.name = name
         self.party = list()
@@ -107,7 +108,7 @@ class Campaign( object ):
 
     def party_rank( self ):
         total = sum( pc.rank() for pc in self.party )
-        return total//len(self.party)
+        return total//self.party_size
 
     def party_spokesperson( self ):
         """Return the PC with the highest charisma."""

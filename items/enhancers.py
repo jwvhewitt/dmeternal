@@ -142,7 +142,7 @@ class MagicWeapon( Enhancer ):
     # The basic weapon enhancement.
     NAMEPAT = "{0} +{2}"
     PLUSRANK = 2
-    UPRANKS = (1,2,3,5)
+    UPRANKS = (1,2,3,4)
     BONUSES_PER_RANK = stats.StatMod({ stats.PHYSICAL_ATTACK: 5, stats.WEAPON_DAMAGE_BONUS: 1 })
     AFFECTS = (SWORD, AXE, MACE, DAGGER, STAFF, POLEARM, FARMTOOL, BOW, SLING, LANCE)
     TYPE = ET_PRIMARY
@@ -334,7 +334,8 @@ class Flaming( Enhancer ):
     ATTACK_ON_HIT = effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion )
     TYPE = ET_SECONDARY
     UPRANKS = (2,2)
-    UPGRADES = { 2: UpgradeTechnique( spells.firespells.PYROTECHNICS, "{0} It glows with magical fire that does an extra 1d6 damage, and allows use of the Pyrotechnics spell."),
+    UPGRADES = { 2: UpgradeTechnique( spells.firespells.PYROTECHNICS,
+             "{0} It glows with magical fire that does an extra 1d6 damage, and allows use of the Pyrotechnics spell."),
         3: UpgradeAttack( effects.HealthDamage( (1,6,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.OrangeExplosion,
              on_success=( effects.Enchant( enchantments.BurnLowEn ),) ),
             "{0} It glows with magical fire that burns continuously for 1d6 damage. It also allows use of the Pyrotechnics spell." )
@@ -492,7 +493,7 @@ class MagicArmor( Enhancer ):
     # The basic armor enhancement.
     NAMEPAT = "{0} +{2}"
     PLUSRANK = 2
-    UPRANKS = (2,3,4,5)
+    UPRANKS = (1,2,3,4)
     BONUSES_PER_RANK = stats.StatMod({ stats.PHYSICAL_DEFENSE: 5, stats.NATURAL_DEFENSE: 5,
         stats.RESIST_CRUSHING: 10, stats.RESIST_PIERCING: 10, stats.RESIST_SLASHING: 10 })
     AFFECTS = (CLOTHES, LIGHT_ARMOR, HEAVY_ARMOR )

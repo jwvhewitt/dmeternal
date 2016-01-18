@@ -939,8 +939,10 @@ class Explorer( object ):
         """Error with the map generator. Destroy all walls."""
         for x in range( self.scene.width ):
             for y in range( self.scene.height ):
-                if self.scene.map[x][y].wall == maps.BASIC_WALL:
-                    self.scene.map[x][y].wall = None
+                #if self.scene.map[x][y].wall == maps.BASIC_WALL:
+                #    self.scene.map[x][y].wall = None
+                if self.scene.map[x][y].floor == maps.WATER:
+                    self.scene.map[x][y].floor = maps.BASIC_FLOOR
 
     def give_gold_and_xp( self, gold, xp, looting_ok=False ):
         if xp or gold:

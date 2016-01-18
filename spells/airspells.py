@@ -65,6 +65,8 @@ DISPEL_MAGIC = Spell( "Dispel Magic",
     rank=4, gems={AIR:2}, com_tar=targetarea.Blast(radius=3),
     exp_tar=targetarea.Blast(radius=3) )
 
+    # Phantasmal Force?
+
 
 # CIRCLE FIVE
 

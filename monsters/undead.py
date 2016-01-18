@@ -140,7 +140,7 @@ class Zombie( base.Monster ):
     COMBAT_AI = aibrain.BrainDeadAI()
     ATTACK = items.Attack( (1,10,0), element = stats.RESIST_CRUSHING )
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 3, self ) )
+        self.levels.append( base.Undead( 3, self ) )
 
 class SkeletonWithMorningstar( base.Monster ):
     name = "Skeleton"
@@ -234,7 +234,7 @@ class Ghoul( base.Monster ):
         ,) )
      )
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 3, self ) )
+        self.levels.append( base.Undead( 3, self ) )
 
 class SkeletonFighter( base.Monster ):
     name = "Skeleton Fighter"
@@ -306,7 +306,7 @@ class PlagueZombie( base.Monster ):
         ,))
     )
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 6, self ) )
+        self.levels.append( base.Undead( 5, self ) )
 
 class Shade( base.Monster ):
     name = "Shade"
@@ -329,7 +329,7 @@ class Shade( base.Monster ):
         ,))
     )
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 5, self ) )
+        self.levels.append( base.Undead( 4, self ) )
 
 class SkeletonMage( base.Monster ):
     name = "Skeleton Mage"
@@ -385,9 +385,8 @@ class Mummy( base.Monster ):
 
 class Ghast( base.Monster ):
     name = "Ghast"
-    statline = { stats.STRENGTH: 15, stats.TOUGHNESS: 17, stats.REFLEXES: 10, \
-        stats.INTELLIGENCE: 11, stats.PIETY: 12, stats.CHARISMA: 4,
-        stats.PHYSICAL_ATTACK: 10 }
+    statline = { stats.STRENGTH: 17, stats.TOUGHNESS: 12, stats.REFLEXES: 17, \
+        stats.INTELLIGENCE: 13, stats.PIETY: 14, stats.CHARISMA: 16 }
     SPRITENAME = "monster_undead.png"
     FRAME = 40
     TEMPLATES = (stats.UNDEAD,stats.FLESHY)
@@ -406,7 +405,7 @@ class Ghast( base.Monster ):
         ,) )
      )
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 6, self ) )
+        self.levels.append( base.Undead( 6, self ) )
 
 class SkeletonHunter( base.Monster ):
     name = "Skeleton Hunter"
@@ -442,7 +441,7 @@ class SkeletonHunter( base.Monster ):
     ), )
 
     def init_monster( self ):
-        self.levels.append( base.Humanoid( 5, self ) )
+        self.levels.append( base.Undead( 6, self ) )
 
 
 #  *******************************
@@ -498,7 +497,7 @@ class Bodak( base.Monster ):
     name = "Bodak"
     statline = { stats.STRENGTH: 13, stats.TOUGHNESS: 12, stats.REFLEXES: 15, \
         stats.INTELLIGENCE: 6, stats.PIETY: 12, stats.CHARISMA: 12,
-        stats.RESIST_ACID: 75, stats.RESIST_LIGHTNING: 155 }
+        stats.RESIST_ACID: 75, stats.RESIST_LIGHTNING: 155, stats.RESIST_SOLAR: -200 }
     SPRITENAME = "monster_undead.png"
     FRAME = 0
     TEMPLATES = (stats.UNDEAD,stats.DEMON)
@@ -511,14 +510,14 @@ class Bodak( base.Monster ):
     TREASURE = None
     ATTACK = items.Attack( (1,8,0), element = stats.RESIST_CRUSHING)
     TECHNIQUES = ( invocations.MPInvocation( "Death Gaze",
-      effects.OpposedRoll( att_stat=stats.CHARISMA, att_modifier=-10, on_success = (
+      effects.OpposedRoll( att_stat=stats.CHARISMA, att_modifier=-25, on_success = (
         effects.InstaKill( anim=animobs.CriticalHit )
       ,), on_failure = (
         effects.NoEffect( anim=animobs.SmallBoom )
-      ,) ), com_tar=targetarea.SingleTarget(reach=6), shot_anim=animobs.PurpleVortex, ai_tar=invocations.TargetEnemy(), mp_cost=10
+      ,) ), com_tar=targetarea.SingleTarget(reach=6), shot_anim=animobs.PurpleVortex, ai_tar=invocations.TargetEnemy(), mp_cost=20
     ),)
     def init_monster( self ):
-        self.levels.append( base.Terror( 9, self ) )
+        self.levels.append( base.Undead( 9, self ) )
 
 
 class Fossil( base.Monster ):
