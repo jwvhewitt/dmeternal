@@ -153,7 +153,12 @@ DIVINE_AID = Spell( "Divine Aid",
 
 # CIRCLE SEVEN
 
+    # Word of Law (AS)
+    # Wall of Blades (AW)
+
 # CIRCLE EIGHT
+
+    # Antimagic Field (AS)
 
 # CIRCLE NINE
 

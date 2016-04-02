@@ -50,6 +50,7 @@ FIRE_SIGN = Spell( "Fire Sign",
         effects.Enchant( enchantments.FireSignEn, anim=None )
     ) ), rank=3, gems={AIR:1,FIRE:1}, com_tar=targetarea.SelfCentered(), ai_tar=invocations.TargetEnemy() )
 
+    # Slow (AL)
 
 # CIRCLE FOUR
 
@@ -64,11 +65,15 @@ INCINERATE = Spell( "Incinerate",
         effects.HealthDamage( (6,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.RedCloud ),
         effects.Enchant( enchantments.BurnLowEn )
     ), on_failure = (
-        effects.HealthDamage( (2,8,1), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.RedCloud ),
+        effects.HealthDamage( (6,6,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.RedCloud ),
     ) ), rank=4, gems={FIRE:1,LUNAR:1}, com_tar=targetarea.SingleTarget(), shot_anim=animobs.FireBolt, ai_tar=invocations.TargetEnemy() )
 
+    # Polymorph (AL)
 
 # CIRCLE FIVE
+
+    # Word of Pain (AL)
+    # Unstable Bolt (AF)
 
 # CIRCLE SIX
 
@@ -81,6 +86,8 @@ EXTERMINATE = Spell( "Exterminate",
         effects.HealthDamage( (1,12,0), stat_bonus=None, element=stats.RESIST_ACID, anim=animobs.GreenCloud ),
         effects.HealthDamage( (1,12,0), stat_bonus=None, element=stats.RESIST_POISON, anim=animobs.PoisonCloud )
     ) ), rank=6, gems={AIR:1,LUNAR:2}, com_tar=targetarea.Cone(), ai_tar=invocations.TargetEnemy() )
+
+    # Ball Lightning (AF)
 
 # CIRCLE SEVEN
 
@@ -99,6 +106,8 @@ FROSTFIRE = Spell( "Frostfire",
     ,) ), rank=7, gems={FIRE:2,LUNAR:3}, com_tar=targetarea.Blast(radius=3), shot_anim=animobs.BlueComet, 
     ai_tar=invocations.TargetEnemy(min_distance=4) )
 
+    # Reflect (AL)
+
 # CIRCLE EIGHT
 
 METEOR_STORM = Spell( "Meteor Storm",
@@ -114,7 +123,7 @@ METEOR_STORM = Spell( "Meteor Storm",
 
 # CIRCLE NINE
 
-
+    # Wish (AFL)
 
 
 

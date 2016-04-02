@@ -50,6 +50,7 @@ WITHER = Spell( "Wither",
         effects.StatDamage( stats.STRENGTH, amount=1 )
     ,) ), rank=3, gems={LUNAR:2}, com_tar=targetarea.SingleTarget(),ai_tar=invocations.TargetEnemy(),shot_anim=animobs.MysticBolt )
 
+    # Terror
 
 # CIRCLE 4
 
@@ -64,6 +65,7 @@ HELLBLAST = Spell( "Hellblast",
     ) ), rank=4, gems={LUNAR:2}, com_tar=targetarea.Cone(reach=8),
     ai_tar=invocations.TargetEnemy() )
 
+    # Confusion
 
 # CIRCLE 5
 
@@ -95,8 +97,10 @@ DEATH_RAY = Spell( "Death Ray",
 
 
 # CIRCLE 6
+    # Mayhem
 
 # CIRCLE 7
+    # Agonize
 
 # CIRCLE 8
 

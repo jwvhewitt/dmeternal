@@ -57,6 +57,7 @@ SHAPE_FLESH = Spell( "Shape Flesh",
     rank=3, gems={EARTH:2}, com_tar=targetarea.SingleTarget(reach=1),
     exp_tar=targetarea.SinglePartyMember(), mpfudge = -1 )
 
+    # Wall of Thorns
 
 # CIRCLE 4
 
@@ -75,6 +76,7 @@ POISON_WEAPON = Spell( "Poison Weapon",
     rank=5, gems={EARTH:2}, com_tar=targetarea.SingleTarget(),
     ai_tar=invocations.TargetAllyWithoutEnchantment(enchantments.PoisonWepEn), mpfudge=-2 )
 
+    # Wall of Stone
 
 # CIRCLE 6
 
@@ -91,6 +93,8 @@ CALL_EARTH_ELEMENTAL = Spell( "Call Earth Elemental",
 
 
 # CIRCLE 7
+
+    # Wall of Iron
 
 # CIRCLE 8
 

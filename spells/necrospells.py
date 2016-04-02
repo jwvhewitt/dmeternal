@@ -76,8 +76,13 @@ ICE_WEAPON = Spell( "Icy Weapon",
     rank=4, gems={LUNAR:1,WATER:1}, com_tar=targetarea.SinglePartyMember(),
     ai_tar=invocations.TargetAllyWithoutEnchantment(enchantments.FrostWepEn) )
 
+    # Miasma (EW)
+
 
 # CIRCLE FIVE
+
+    # Deadly Fog (EL)
+    # Control Undead (LW)
 
 # CIRCLE SIX
 
@@ -126,6 +131,9 @@ DEEP_DROWNING = Spell( "Deep Drowning",
 
 
 # CIRCLE EIGHT
+
+    # Energy Drain (LW)
+    # Oubliette (EL)
 
 # CIRCLE NINE
 

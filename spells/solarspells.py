@@ -86,6 +86,8 @@ MAXIMUM_CURE = Spell( "Maximum Cure",
     rank=6, gems={SOLAR:3}, com_tar=targetarea.SingleTarget(reach=1), ai_tar=invocations.TargetWoundedAlly(),
     exp_tar=targetarea.SinglePartyMember() )
 
+    # Death Ward
+
 # CIRCLE 7
 
 SUNBURST = Spell( "Sunburst",
@@ -112,6 +114,8 @@ RENEWAL = Spell( "Renewal",
     exp_tar=targetarea.SinglePartyMember() )
 
 # CIRCLE 8
+
+    # Resurrection
 
 # CIRCLE 9
 

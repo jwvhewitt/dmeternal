@@ -145,7 +145,7 @@ class Campaign( object ):
     def place_party( self ):
         """Stick the party close to the waypoint."""
         x0,y0 = self.entrance.pos
-        entry_points = list( pfov.AttackReach( self.scene, x0, y0, 3, True ).tiles )
+        entry_points = list( pfov.WalkReach( self.scene, x0, y0, 3, True ).tiles )
         for m in self.scene.contents:
             if self.scene.is_model(m) and m.pos in entry_points:
                 entry_points.remove( m.pos )

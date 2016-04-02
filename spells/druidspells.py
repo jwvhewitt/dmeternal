@@ -28,6 +28,9 @@ CALL_ANIMAL = Spell( "Call Animal",
     effects.CallMonster( {context.MTY_CREATURE: True, context.DES_EARTH: context.MAYBE, context.GEN_NATURE: context.MAYBE, context.DES_SOLAR: context.MAYBE}, 4, anim=animobs.OrangeSparkle ),
     rank=2, gems={EARTH:1,SOLAR:1}, com_tar=targetarea.SingleTarget(reach=2), ai_tar=invocations.TargetEmptySpot(), mpfudge = 4 )
 
+    # Tame Animal (FS)
+    # Wolf Form (EF)
+
 # CIRCLE THREE
 
 CALL_CREATURE = Spell( "Call Creature",
@@ -41,6 +44,7 @@ SLIMY_WEAPON = Spell( "Slimy Weapon",
     rank=3, gems={EARTH:1}, com_tar=targetarea.SingleTarget(),
     ai_tar=invocations.TargetAllyWithoutEnchantment(enchantments.AcidWepEn) )
 
+    # Firebird (FS)
 
 # CIRCLE FOUR
 
@@ -48,6 +52,9 @@ CALL_BEAST = Spell( "Call Beast",
     "This spell will summon a powerful creature to fight on your behaf.",
     effects.CallMonster( {context.MTY_CREATURE: True, context.DES_EARTH: context.MAYBE, context.GEN_NATURE: context.MAYBE, context.DES_SOLAR: context.MAYBE}, 8, anim=animobs.OrangeSparkle ),
     rank=4, gems={EARTH:2,SOLAR:1}, com_tar=targetarea.SingleTarget(reach=2), ai_tar=invocations.TargetEmptySpot(), mpfudge = 9 )
+
+    # Tame Plants (FS)
+    # Web (EF)
 
 # CIRCLE FIVE
 
@@ -86,6 +93,7 @@ CALL_BEHEMOTH = Spell( "Call Behemoth",
     effects.CallMonster( {context.MTY_CREATURE: True, context.DES_EARTH: context.MAYBE, context.GEN_NATURE: context.MAYBE, context.DES_SOLAR: context.MAYBE}, 12, anim=animobs.OrangeSparkle ),
     rank=6, gems={EARTH:2,SOLAR:2}, com_tar=targetarea.SingleTarget(reach=2), ai_tar=invocations.TargetEmptySpot(), mpfudge = 12 )
 
+    # Devouring Horde (EF)
 
 # CIRCLE SEVEN
 
@@ -94,6 +102,7 @@ CALL_COLOSSUS = Spell( "Call Colossus",
     effects.CallMonster( {context.MTY_CREATURE: True, context.DES_EARTH: context.MAYBE, context.GEN_NATURE: context.MAYBE, context.DES_SOLAR: context.MAYBE}, 14, anim=animobs.OrangeSparkle ),
     rank=7, gems={EARTH:2,SOLAR:2}, com_tar=targetarea.SingleTarget(reach=2), ai_tar=invocations.TargetEmptySpot(), mpfudge = 14 )
 
+    # Elemental Form (EF)
 
 # CIRCLE EIGHT
 
@@ -118,6 +127,8 @@ CALL_LEVIATHAN = Spell( "Call Leviathan",
     "This spell will summon a legendary monster to fight on your behaf.",
     effects.CallMonster( {context.MTY_CREATURE: True, context.DES_EARTH: context.MAYBE, context.GEN_NATURE: context.MAYBE, context.DES_SOLAR: context.MAYBE}, 18, anim=animobs.OrangeSparkle ),
     rank=9, gems={EARTH:3,SOLAR:3}, com_tar=targetarea.SingleTarget(reach=4), ai_tar=invocations.TargetEmptySpot(), mpfudge = 20 )
+
+    # Dragon Form (EF)
 
 
 

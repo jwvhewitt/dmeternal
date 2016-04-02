@@ -66,6 +66,7 @@ DISPEL_MAGIC = Spell( "Dispel Magic",
     exp_tar=targetarea.Blast(radius=3) )
 
     # Phantasmal Force?
+    # Identify
 
 
 # CIRCLE FIVE
@@ -79,6 +80,7 @@ TORNADO = Spell( "Tornado",
     ,) ), rank=5, gems={AIR:3}, com_tar=targetarea.Blast(radius=3), shot_anim=animobs.Whirlwind,
     ai_tar=invocations.TargetEnemy(min_distance=4) )
 
+    # Teleport
 
 # CIRCLE SIX
 
@@ -102,6 +104,7 @@ CALL_AIR_ELEMENTAL = Spell( "Call Air Elemental",
 
 # CIRCLE SEVEN
 
+    # Identify All
 
 
 # CIRCLE EIGHT
@@ -119,7 +122,7 @@ THUNDER_STORM = Spell( "Thunder Storm",
 
 # CIRCLE NINE
 
-
+    # Wall of Force
 
 
 

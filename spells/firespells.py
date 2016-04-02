@@ -44,6 +44,8 @@ IGNITE = Spell( "Ignite",
         effects.HealthDamage( (2,5,0), stat_bonus=stats.INTELLIGENCE, element=stats.RESIST_FIRE, anim=animobs.Ignite )
     ,) ), rank=2, gems={FIRE:1}, com_tar=targetarea.SingleTarget(reach=1),ai_tar=invocations.TargetEnemy(), mpfudge=-2 )
 
+    # Rush
+
 # CIRCLE 3
 
 EXPLOSION = Spell( "Explosion",
@@ -55,6 +57,8 @@ EXPLOSION = Spell( "Explosion",
     ,) ), rank=3, gems={FIRE:2}, com_tar=targetarea.Blast(radius=3), shot_anim=animobs.Fireball, 
     ai_tar=invocations.TargetEnemy(min_distance=4) )
 
+    # Fire Shield
+
 # CIRCLE 4
 
 PYROTECHNICS = Spell( "Pyrotechnics",
@@ -65,6 +69,7 @@ PYROTECHNICS = Spell( "Pyrotechnics",
         effects.HealthDamage( (1,12,0), stat_bonus=None, element=stats.RESIST_FIRE, anim=animobs.Ignite )
     ,) ), rank=4, gems={FIRE:3}, com_tar=targetarea.Line(), ai_tar=invocations.TargetEnemy() )
 
+    # Wall of Fire
 
 
 # CIRCLE 5
@@ -85,6 +90,7 @@ CALL_FIRE_ELEMENTAL = Spell( "Call Fire Elemental",
     effects.CallMonster( {context.DES_FIRE: True, context.SUMMON_ELEMENTAL: True }, 12, anim=animobs.RedSparkle ),
     rank=6, gems={FIRE:3}, com_tar=targetarea.SingleTarget(reach=5), ai_tar=invocations.TargetEmptySpot(), mpfudge = 12 )
 
+    # Quickness
 
 # CIRCLE SEVEN
 
@@ -98,6 +104,8 @@ DISINTEGRATION = Spell( "Disintegration",
 
 
 # CIRCLE EIGHT
+
+    # Army of Fire
 
 # CIRCLE NINE
 

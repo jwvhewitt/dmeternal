@@ -644,7 +644,7 @@ class Temple( object ):
         x0,y0 = explo.camp.first_living_pc().pos
         dist = 3
         while dist <= 12:
-            entry_points = pfov.AttackReach( explo.scene, x0, y0, dist, True ).tiles
+            entry_points = pfov.WalkReach( explo.scene, x0, y0, dist, True ).tiles
             for m in explo.scene.contents:
                 if explo.scene.is_model(m) and m.pos in entry_points:
                     entry_points.remove( m.pos )

@@ -364,6 +364,12 @@ class AttackReach( PointOfView ):
             if ( x != self.x or y != self.y ) and not self.scene.tile_blocks_walking(x,y):
                 self.tiles.add( ( x , y ) )
 
+class WalkReach( AttackReach ):
+    # This class constructs a placement radius.
+    def TileBlocked( self , x , y ):
+        return self.scene.tile_blocks_walking(x,y)
+
+
 class PCPointOfView( PointOfView ):
     # This class also constructs a field of vision, but automatically adds
     # the tiles it sees to the visible area of the map.
