@@ -170,7 +170,7 @@ class Menu( pygame.Rect ):
                     choice = self.quick_keys[ pc_input.key ]
                     no_choice_made = False
 
-            elif pc_input.type == pygame.MOUSEBUTTONDOWN and not mouse_button_down:
+            elif pc_input.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0] and not mouse_button_down:
                 # Mouse down does nothing but set the first mouse selection, and a
                 # counter telling that the button is down.
                 first_mouse_selection = self.get_mouseover_item( pc_input.pos )
