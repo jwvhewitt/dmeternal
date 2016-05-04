@@ -127,6 +127,13 @@ class Menu( pygame.Rect ):
                 self.render()
                 pygame.display.flip()
 
+                # Scroll the menu when the mouse is over the top or bottom.
+                pos = pygame.mouse.get_pos()
+                if ( pos[1] < self.top ) and ( pos[1] > self.top - 2 * MENUFONT.get_linesize() ) and ( pos[0] > self.left ) and ( pos[0] < self.right ) and ( self.top_item > 0 ):
+                    self.top_item += -1
+                elif ( pos[1] > self.bottom ) and ( pos[1] < self.bottom + 2 * MENUFONT.get_linesize() ) and ( pos[0] > self.left ) and ( pos[0] < self.right ) and ( self.top_item < len( self.items ) - menu_height ):
+                    self.top_item += 1
+
             elif pc_input.type == pygame.KEYDOWN:
                 # A key was pressed, oh happy day! See what key it was and act
                 # accordingly.
@@ -175,14 +182,6 @@ class Menu( pygame.Rect ):
             elif pc_input.type == pygame.MOUSEMOTION:
                 # Update the menu selection based on the mouse position.
                 pos = pygame.mouse.get_pos()
-                dy = pos[1] - first_mouse_y
-
-                if dy > 10 and self.top_item > 0:
-                    self.top_item += -1
-                    first_mouse_selection = None
-                elif dy < -10 and self.top_item < len( self.items ) - menu_height:
-                    self.top_item += 1
-                    first_mouse_selection = None
 
                 current_mouse_selection = self.get_mouseover_item( pos )
                 if current_mouse_selection != None:
