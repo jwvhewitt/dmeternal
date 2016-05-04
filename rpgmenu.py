@@ -127,22 +127,6 @@ class Menu( pygame.Rect ):
                 self.render()
                 pygame.display.flip()
 
-                # Also deal with mouse stuff then...
-                if mouse_button_down:
-                    pos = pygame.mouse.get_pos()
-                    dy = pos[1] - first_mouse_y
-
-                    if dy > 10 and self.top_item > 0:
-                        self.top_item += -1
-                        first_mouse_selection = None
-                    elif dy < -10 and self.top_item < len( self.items ) - menu_height:
-                        self.top_item += 1
-                        first_mouse_selection = None
-
-                    current_mouse_selection = self.get_mouseover_item( pos )
-                    if current_mouse_selection != None:
-                        self.selected_item = current_mouse_selection
-
             elif pc_input.type == pygame.KEYDOWN:
                 # A key was pressed, oh happy day! See what key it was and act
                 # accordingly.
@@ -188,6 +172,21 @@ class Menu( pygame.Rect ):
                     self.selected_item = current_mouse_selection
                     choice = self.items[ current_mouse_selection ].value
                     no_choice_made = False
+            elif pc_input.type == pygame.MOUSEMOTION:
+                # Update the menu selection based on the mouse position.
+                pos = pygame.mouse.get_pos()
+                dy = pos[1] - first_mouse_y
+
+                if dy > 10 and self.top_item > 0:
+                    self.top_item += -1
+                    first_mouse_selection = None
+                elif dy < -10 and self.top_item < len( self.items ) - menu_height:
+                    self.top_item += 1
+                    first_mouse_selection = None
+
+                current_mouse_selection = self.get_mouseover_item( pos )
+                if current_mouse_selection != None:
+                    self.selected_item = current_mouse_selection
 
             elif pc_input.type == pygame.QUIT:
                 no_choice_made = False
