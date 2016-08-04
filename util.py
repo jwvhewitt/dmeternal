@@ -38,11 +38,11 @@ def user_dir( fname=""):
 
 # Load the configuration file.
 config = ConfigParser.SafeConfigParser()
-config.readfp( open(data_dir("config_defaults.cfg")) )
+with open(data_dir("config_defaults.cfg")) as f:
+    config.readfp( f )
 if not config.read( [user_dir( "config.cfg" )] ):
-    f = open( user_dir( "config.cfg" ) , "wb" )
-    config.write( f )
-    f.close()
+    with open( user_dir( "config.cfg" ) , "wb" ) as f:
+        config.write( f )
 
 
 

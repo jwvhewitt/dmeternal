@@ -129,9 +129,8 @@ def load_campaign( screen ):
     cmd = rpm.query()
     if cmd:
         pygwrap.please_stand_by( screen, "Loading..." )
-        f = open( cmd, "rb" )
-        camp = cPickle.load( f )
-        f.close()
+        with open( cmd, "rb" ) as f:
+            camp = cPickle.load( f )
         if camp:
             camp.play( screen )
 

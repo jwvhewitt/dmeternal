@@ -9,9 +9,8 @@ def load_characters( party, screen, predraw=None, delete_file=True, max_party_si
     pc_list = []
     charsheets = dict()
     for fname in file_list:
-        f = open( fname, "rb" )
-        pc = cPickle.load( f )
-        f.close()
+        with open( fname, "rb" ) as f:
+            pc = cPickle.load( f )
         if pc:
             pc_list.append( pc )
             charsheets[ pc ] = charsheet.CharacterSheet( pc , screen=screen )

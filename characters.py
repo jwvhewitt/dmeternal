@@ -1036,13 +1036,11 @@ class Character( stats.PhysicalThing ):
         return ilist
 
     def save( self ):
-        f = open( util.user_dir( "c_{}.sav".format(self.name) ) , "wb" )
-        cPickle.dump( self , f, -1 )
-        f.close()
+        with open( util.user_dir( "c_{}.sav".format(self.name) ) , "wb" ) as f:
+            cPickle.dump( self , f, -1 )
     def backup( self ):
-        f = open( util.user_dir( "c_{}.backup".format(self.name) ) , "wb" )
-        cPickle.dump( self , f, -1 )
-        f.close()
+        with open( util.user_dir( "c_{}.backup".format(self.name) ) , "wb" ) as f:
+            cPickle.dump( self , f, -1 )
 
 
     def subject_pronoun( self ):

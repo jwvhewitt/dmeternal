@@ -131,9 +131,8 @@ class Campaign( object ):
     def save( self, screen=None ):
         if screen:
             pygwrap.please_stand_by( screen, "Saving..." )
-        f = open( util.user_dir( "rpg_" + self.name + ".sav" ) , "wb" )
-        cPickle.dump( self , f, -1 )
-        f.close()
+        with open( util.user_dir( "rpg_" + self.name + ".sav" ) , "wb" ) as f:
+            cPickle.dump( self , f, -1 )
 
     def activate_monster( self, mon ):
         """Prepare this monster for combat."""
@@ -256,9 +255,8 @@ def browse_pcs( screen ):
     pc_list = []
     charsheets = dict()
     for fname in file_list:
-        f = open( fname, "rb" )
-        pc = cPickle.load( f )
-        f.close()
+        with open( fname, "rb" ) as f:
+            pc = cPickle.load( f )
         if pc:
             pc_list.append( pc )
             charsheets[ pc ] = charsheet.CharacterSheet( pc , screen=screen )
@@ -320,20 +318,6 @@ class random_party( list ):
         for s in stats.PRIMARY_STATS:
             total += canpc.get_stat( s ) * ( 2 + canpc.mr_level.requirements.get( s, 0 ) )
         return total
-
-
-def fix_characters():
-    file_list = glob.glob( util.user_dir( "c_*.sav" ) )
-    for fname in file_list:
-        f = open( fname, "rb" )
-        pc = cPickle.load( f )
-        f.close()
-
-        pc.stat_damage = collections.defaultdict(int)
-
-        f = open( util.user_dir( "c_" + pc.name + ".sav" ) , "wb" )
-        cPickle.dump( pc , f, -1 )
-        f.close()
 
 
 

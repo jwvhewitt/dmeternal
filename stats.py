@@ -202,13 +202,11 @@ if __name__ == '__main__':
 
     print armor.cost()
 
-    f = open( "test.sav", "wb" )
-    pickle.dump( armor , f, -1 )
-    f.close()
+    with open( "test.sav", "wb" ) as f:
+        pickle.dump( armor , f, -1 )
 
-    f2 = open( "test.sav", "rb" )
-    a2 = pickle.load( f2 )
-    f2.close()
+    with open( "test.sav", "rb" ) as f2:
+        a2 = pickle.load( f2 )
 
     print a2.cost()
     print a2[ PHYSICAL_DEFENSE ]
