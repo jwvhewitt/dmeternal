@@ -30,9 +30,10 @@ file and the game will start. If not, try right clicking and select "open
 with Python".
 
 The first time it's run, the game will create a "dmeternal" folder in your
-home directory and place a configuration file there. This is where all of your
-characters and saved games are stored, in case you want to delete them or
-make backups. The configuration file can be edited in any text editor.
+home directory (or in "~/.config" on Linux) and place a configuration file
+there. This is where all of your characters and saved games are stored, in
+case you want to delete them or make backups. The configuration file can be
+edited in any text editor.
 
 In fact, the entire game can be edited in any text editor. Go ahead and look at
 how things work. Try adding your own items, monsters, spells, and whatnot.

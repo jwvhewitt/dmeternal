@@ -20,10 +20,14 @@
 #       
 # 
 import os
+import platform
 import ConfigParser
 
 
-USERDIR = os.path.expanduser( os.path.join( '~' , 'dmeternal' ) )
+if platform.system() == 'Linux':
+    USERDIR = os.path.expanduser( os.path.join( '~' , '.config' , 'dmeternal' ) )
+else:
+    USERDIR = os.path.expanduser( os.path.join( '~' , 'dmeternal' ) )
 if not os.path.exists( USERDIR ):
     os.mkdir( USERDIR )
 
