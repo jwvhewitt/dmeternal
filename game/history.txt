@@ -1,0 +1,3 @@
+- Menu position retained when selling items (services.py)
+- Started this history file
+

@@ -1,13 +1,22 @@
-from distutils.core import setup
+from setuptools import setup, find_packages
 
 
-setup(name='dmeternal',
-      version='0.4.0',
-      py_modules=['aibrain','aid','animobs','campaign','cfgtest','characters',
-        'chargen','charloader','charsheet','combat','container','context',
-        'cutscene','effects','enchantments','exploration','game','hotmaps',
-        'image','invocations','isosprite','maps','namegen','pathfinding',
-        'pfov','pygwrap','rpgmenu','services','stats','targetarea','teams',
-        'traps','util','waypoints','worlds'],
-      packages=['dialogue','items','monsters','narrator','randmaps','spells'],
+setup(  name='dmeternal',
+        version='0.5.0',
+        py_modules=['main',],
+        packages=find_packages(),
+        package_data={
+            '': ['*.txt','*.png','*.cfg','*.ttf'],
+            'game': ['data/*.txt','data/*.cfg','image/*.png','image/*.ttf',
+                'image/*.otf']
+        },
+        entry_points={
+            'gui_scripts': [
+                'dmeternal = main:play_the_game',
+            ]
+        },
+        install_requires= [
+            'Pygame',
+        ],
+
       )
