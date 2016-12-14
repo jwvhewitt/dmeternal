@@ -196,10 +196,13 @@ def make_wilderness():
     return random.choice(WILDERNESS_TYPES)()
 
 
-def design_scene( width,height,mapgen,primary,setting=None,fac=None,secondary=None):
-    """Return tuple of scene and scenegen for the requested stuff."""
-    myscene = maps.Scene( width, height, setting=setting, fac=fac)
-    mymapgen = mapgen( myscene )
+def design_scene( width,height,mapgenclass,primary,fac=None,secondary=None):
+    """Return tuple of scene and scenegen for the requested stuff.
+        primary = The primary architecture
+        secondary = The secondary architecture
+    """
+    myscene = maps.Scene( width, height, fac=fac)
+    mymapgen = mapgenclass( myscene )
     if secondary:
         secondary( myscene, mymapgen, False )
     primary( myscene, mymapgen, True )

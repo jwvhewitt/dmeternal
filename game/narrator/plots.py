@@ -8,32 +8,14 @@ class PlotError( Exception ):
     pass
 
 class Chapter( object ):
-    """ Contains basic information about this chapter."""
-    def __init__( self, num=1, start_rank=1, end_rank=5, world = None, follows=None ):
-        if follows:
-            num = follows.num + 1
-            start_rank = follows.end_rank+1
-            end_rank = start_rank + random.randint( 2,4 )
-            world = follows.world
-            self.active = False
-            self.prev = follows
-        else:
-            self.active = True
-            self.prev = None
-        self.num = num
-        self.start_rank = start_rank
-        self.end_rank = end_rank
+    """ A chapter links a group of plots to a root plot and/or a world."""
+    def __init__( self, root=None, world = None ):
+        self.root = root
         self.world = world
-    def activate( self ):
-        self.active = True
-        if self.prev:
-            self.prev.active = False
 
 class PlotState( object ):
     """For passing state information to subplots."""
-    def __init__( self, propp=0, setting=None, chapter=None, rank=None, elements=None ):
-        self.propp = propp
-        self.setting = setting
+    def __init__( self, chapter=None, rank=None, elements=None ):
         self.chapter = chapter
         self.rank = rank
         if elements:
@@ -41,8 +23,6 @@ class PlotState( object ):
         else:
             self.elements = dict()
     def based_on( self, oplot ):
-        self.propp = self.propp or oplot.propp
-        self.setting = self.setting or oplot.setting
         self.chapter = self.chapter or oplot.chapter
         self.rank = self.rank or oplot.rank
         # Only copy over the elements not marked as private.
@@ -68,16 +48,20 @@ class Plot( object ):
     LABEL = ""
     UNIQUE = False
     COMMON = False
-    propp = 0
-    setting = False
     chapter = None
     rank = 1
     active = False
 
     _used = 0
 
-    # Set scope to the scene identifier of the scene this plot's scripts are
-    # attached to, or True for this plot to have global scope.
+    # Scope determines from where the event scripts in this plot will be called.
+    # If scope is the element ID of a scene, then this plot's scripts will only
+    # be triggered from within that scene.
+    # If scope is True, then this plot is global, and its scripts will be
+    # triggered no matter where the party happens to be.
+    # If scope is None, then this plot will get thrown away after the narrative
+    # gets built and its scripts will never be called.
+    # Also note that self.active must be True for scripts to be triggered.
     scope = None
     def __init__( self, nart, pstate ):
         """Initialize + install this plot, or raise PlotError"""
@@ -85,8 +69,6 @@ class Plot( object ):
         # pstate = The current plot state
 
         # Inherit the plot state.
-        self.propp = self.propp or pstate.propp
-        self.setting = self.setting or pstate.setting
         self.chapter = pstate.chapter or self.chapter
         self.rank = pstate.rank or self.rank
         self.elements = pstate.elements.copy()
@@ -104,12 +86,6 @@ class Plot( object ):
         # If failure, delete currently added subplots + raise error.
         if not allok:
             self.fail(nart)
-
-    def random_rank_in_chapter( self ):
-        if self.chapter:
-            return random.randint( self.chapter.start_rank, max( self.chapter.end_rank, self.chapter.start_rank + 2 ) )
-        else:
-            return 1
 
     def fail( self, nart ):
         self.remove( nart )
@@ -138,14 +114,6 @@ class Plot( object ):
             nart.camp.scene = sp.elements.get( "LOCALE" )
             self.register_element( "LOCALE", sp.elements.get( "LOCALE" ) )
             nart.camp.entrance = sp.elements.get( "ENTRANCE" )
-        return sp
-
-    def add_resolution( self, nart, spbase, ident="next" ):
-        if self.rank >= nart.end_rank:
-            splabel = spbase + "_E"
-        else:
-            splabel = spbase + "_C"
-        sp = self.add_sub_plot( nart, splabel, PlotState(chapter=Chapter(follows=self.chapter)).based_on(self), ident=ident)
         return sp
 
     def move_element( self, ele, dest ):
@@ -218,8 +186,8 @@ class Plot( object ):
             self.container.remove( self )
 
         # Remove self from the uniques set, if necessary.
-        if nart and self.UNIQUE and self.__class__ in nart.uniques:
-            nart.uniques.remove( self.__class__ )
+        if nart and self.UNIQUE and self.__class__ in nart.camp.uniques:
+            nart.camp.uniques.remove( self.__class__ )
 
     def install( self, nart ):
         """Plot generation complete. Mesh plot with campaign."""
@@ -290,31 +258,6 @@ class Plot( object ):
     def get_dialogue_grammar( self, npc, explo ):
         """Return any grammar rules appropriate to this situation."""
         return None
-
-    def get_dungeon_levels( self, nart, dtype, start_rank, end_rank ):
-        # Constructs a list of dungeon levels.
-        levels = list()
-        pstate = PlotState( rank = start_rank, elements={"DUNGEON_TYPE":dtype} ).based_on( self )
-        for l in range( start_rank, end_rank+1 ):
-            sp = self.add_sub_plot( nart, "DUNGEON_LEVEL", pstate )
-            if sp:
-                pstate.rank = l+1
-                pstate.elements["DUNGEON_TYPE"] = sp.TAGS
-                dunglev = sp.elements[ "LOCALE" ]
-                levels.append( dunglev )
-        return levels
-
-    def install_dungeon( self, nart, levels, dest, dname ):
-        # Connect all the levels, and name them.
-        prev = dest
-        n = 1
-        for next in levels:
-            next.name = "{0}, Lvl{1}".format( dname, n )
-            next.dname = dname
-            n += 1
-            pstate = PlotState( rank = next.rank, elements={"PREV":prev,"NEXT":next} ).based_on( self )
-            sp = self.add_sub_plot( nart, "CONNECT", pstate )
-            prev = next
 
 
     @classmethod

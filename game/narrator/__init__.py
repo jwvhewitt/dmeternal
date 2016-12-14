@@ -6,15 +6,12 @@ import inspect
 from .. import worlds
 
 
-class Narrative( object ):
-    """The builder class which constructs a campaign."""
-    def __init__( self, camp, pstate, start_rank=1, end_rank=5, adv_type="ADVSTUB" ):
+class NarrativeRequest( object ):
+    """The builder class which constructs a story out of individual plots."""
+    def __init__( self, camp, pstate, adv_type="ADVSTUB" ):
         self.camp = camp
         self.generators = list()
         self.errors = list()
-        self.uniques = set()
-        self.start_rank = start_rank
-        self.end_rank = end_rank
         # Add the seed plot.
         self.story = self.generate_sub_plot( pstate, adv_type )
 
@@ -35,7 +32,7 @@ class Narrative( object ):
         candidates = list()
         for sp in PLOT_LIST[label]:
             if sp.matches( pstate ):
-                if not sp.UNIQUE or sp not in self.uniques:
+                if not sp.UNIQUE or sp not in self.camp.uniques:
                     candidates.append( sp )
         if candidates:
             cp = None
@@ -45,7 +42,7 @@ class Narrative( object ):
                 try:
                     cp = cpc(self,pstate)
                     if cpc.UNIQUE:
-                        self.uniques.add( cpc )
+                        self.camp.uniques.add( cpc )
                 except plots.PlotError:
                     cp = None
             if not cp:
@@ -55,6 +52,10 @@ class Narrative( object ):
             self.errors.append( "No plot found for {0}".format( label ) )
 
     def get_map_generator( self, gb ):
+        # I thought that generators should be changed to a dict, but then I
+        # noticed that the generator also gets recorded in a plot's move_records.
+        # So, changing it to a dict would require a workaround for that.
+        # For now I'm just going to leave this inefficiency in.
         mygen = None
         for mg in self.generators:
             if mg.gb == gb:

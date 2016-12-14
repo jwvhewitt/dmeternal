@@ -382,7 +382,7 @@ DEFAULT_SPRITES = { SPRITE_GROUND: "terrain_ground_forest.png", \
 
 class Scene( object ):
     DELTA8 = ( (-1,-1), (0,-1), (1,-1), (-1,0), (1,0), (-1,1), (0,1), (1,1) )
-    def __init__(self,width=128,height=128,sprites=None,biome=None,setting=None,fac=None,desctags=(),name=""):
+    def __init__(self,width=128,height=128,sprites=None,biome=None,fac=None,desctags=(),name=""):
         self.name = name
         self.width = width
         self.height = height
@@ -391,7 +391,6 @@ class Scene( object ):
         if sprites:
             self.sprites.update( sprites )
         self.biome=biome
-        self.setting=setting
         self.desctags = desctags
         self.fac = fac
         self.scripts = container.ContainerList()
@@ -421,13 +420,9 @@ class Scene( object ):
         req = dict()
         # Add biome.
         req[ (context.HAB_EVERY,self.biome or context.HAB_EVERY) ] = True
-        # Add setting.
-        req[ (context.SET_EVERY,self.setting or context.SET_EVERY) ] = True
         # Add optional descriptors.
         if self.biome:
             req[self.biome] = context.MAYBE
-        if self.setting:
-            req[self.setting] = context.MAYBE
         for t in self.desctags:
             req[t] = context.MAYBE
         if self.fac:

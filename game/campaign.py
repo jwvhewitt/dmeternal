@@ -59,6 +59,7 @@ class Campaign( object ):
         self.gold = 300
         self.day = 1
         self.xp_scale = xp_scale
+        self.uniques = set()
 
     def add_party( self, party ):
         """Add the party, give them random spells, fill the known spell list."""

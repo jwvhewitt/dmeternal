@@ -725,12 +725,22 @@ class Character( stats.PhysicalThing ):
     def roll_stats( self ):
         for stat in stats.PRIMARY_STATS:
             self.statline[ stat ] = 0
-            while self.statline[ stat ] < 5:
-                # Roll 4d6, throw away the smallest, and sum the rest.
-                rolls = [ random.randint( 1 , 6 ) for x in range( 4 ) ]
-                rolls.sort()
-                del rolls[0]
-                self.statline[ stat ] = sum( rolls )
+        #    while self.statline[ stat ] < 5:
+        #        # Roll 4d6, throw away the smallest, and sum the rest.
+        #        rolls = [ random.randint( 1 , 6 ) for x in range( 4 ) ]
+        #        rolls.sort()
+        #        del rolls[0]
+        #        self.statline[ stat ] = sum( rolls )
+        points = 13 * 6 + 3
+        eligible_stats = list(stats.PRIMARY_STATS)
+        while points > 0:
+            stat_to_improve = random.choice( eligible_stats )
+            if self.statline[ stat_to_improve ] > 15:
+                stat_to_improve = random.choice( eligible_stats )
+            self.statline[ stat_to_improve ] += 1
+            points -= 1
+            if self.statline[ stat_to_improve ] >= 18:
+                eligible_stats.remove( stat_to_improve )
 
     def advance( self, level_class ):
         """Give this character one level in the provided class, return improved stat."""

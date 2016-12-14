@@ -156,6 +156,14 @@ class NPCharacter( characters.Character ):
     """The only difference? NPCs don't get saving grace until -10HP."""
     def is_dead( self ):
         return not self.is_alright()
+    def roll_stats( self ):
+        # PCs get point-bought stats; NPCs get fully random stats.
+        for stat in stats.PRIMARY_STATS:
+            # Roll 4d6, throw away the smallest, and sum the rest.
+            rolls = [ random.randint( 1 , 6 ) for x in range( 4 ) ]
+            rolls.sort()
+            del rolls[0]
+            self.statline[ stat ] = sum( rolls )
     @property
     def ENC_LEVEL( self ):
         return self.rank()
