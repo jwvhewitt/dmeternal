@@ -1,0 +1,3 @@
+- Refactored teams as a property of maps rather than characters
+- Refactored narrator module for new style plots
+- Started this history file

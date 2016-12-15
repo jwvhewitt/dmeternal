@@ -8,7 +8,7 @@ from .. import worlds
 
 class NarrativeRequest( object ):
     """The builder class which constructs a story out of individual plots."""
-    def __init__( self, camp, pstate, adv_type="ADVSTUB" ):
+    def __init__( self, camp, pstate, adv_type="ADVENTURE_STUB" ):
         self.camp = camp
         self.generators = list()
         self.errors = list()
@@ -80,48 +80,48 @@ def harvest( mod ):
             UNSORTED_PLOT_LIST.append( o )
 
 import advstub
-import bardicbits
+#import bardicbits
 import citybits
-import citystories
-import complication
-import conclusion
-import connections
-import dungeonbits
-import dungeonlevel
-import encounters
-import getterbits
-import intros
-import puzzlebits
-import resolution
-import resources
-import rewards
-import shortiebits
-import sidestories
-import socialbits
-import specencounters
-import specfeatures
-import spoonybits
+#import citystories
+#import complication
+#import conclusion
+#import connections
+#import dungeonbits
+#import dungeonlevel
+#import encounters
+#import getterbits
+#import intros
+#import puzzlebits
+#import resolution
+#import resources
+#import rewards
+#import shortiebits
+#import sidestories
+#import socialbits
+#import specencounters
+#import specfeatures
+#import spoonybits
 harvest( advstub )
-harvest( bardicbits )
+#harvest( bardicbits )
 harvest( citybits )
-harvest( citystories )
-harvest( complication )
-harvest( conclusion )
-harvest( connections )
-harvest( dungeonbits )
-harvest( dungeonlevel )
-harvest( encounters )
-harvest( getterbits )
-harvest( intros )
-harvest( puzzlebits )
-harvest( resolution )
-harvest( resources )
-harvest( rewards )
-harvest( shortiebits )
-harvest( sidestories )
-harvest( socialbits )
-harvest( specencounters )
-harvest( specfeatures )
-harvest( spoonybits )
+#harvest( citystories )
+#harvest( complication )
+#harvest( conclusion )
+#harvest( connections )
+#harvest( dungeonbits )
+#harvest( dungeonlevel )
+#harvest( encounters )
+#harvest( getterbits )
+#harvest( intros )
+#harvest( puzzlebits )
+#harvest( resolution )
+#harvest( resources )
+#harvest( rewards )
+#harvest( shortiebits )
+#harvest( sidestories )
+#harvest( socialbits )
+#harvest( specencounters )
+#harvest( specfeatures )
+#harvest( spoonybits )
 
 

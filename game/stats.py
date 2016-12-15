@@ -12,11 +12,13 @@
 
 class PhysicalThing( object ):
     """A thing that can be placed on the map."""
-    def place( self, scene, pos=None ):
+    def place( self, scene, pos=None, team=None ):
         if hasattr( self, "container" ) and self.container:
             self.container.remove( self )
         scene.contents.append( self )
         self.pos = pos
+        if team:
+            scene.local_teams[self] = team
 
 class SingStat( object ):
     # A singleton stat class; use these objects as tokens for whatever.
@@ -101,9 +103,8 @@ PUBLIC_STATS =  PRIMARY_STATS + (PHYSICAL_ATTACK,PHYSICAL_DEFENSE,MAGIC_ATTACK,M
 
 
 # Gender tags
-FEMALE, MALE, NEUTER = range( 3 )
-# "NEUTER" is probably a bad word for this constant.
-GENDER = ( "Female", "Male", "Neither" )
+FEMALE, MALE, NONBINARY = range( 3 )
+GENDER = ( "Female", "Male", "Nonbinary" )
 SUBJECT_PRONOUN = ( "she", "he", "ze" )
 OBJECT_PRONOUN = ( "her", "him", "ze" )
 POSSESSIVE_PRONOUN = ( "her", "his", "ze" )

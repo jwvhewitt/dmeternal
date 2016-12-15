@@ -314,7 +314,7 @@ class Explorer( object ):
                 for y in range( pc.pos[1]-3, pc.pos[1]+4 ):
                     if self.scene.on_the_map(x,y) and not self.scene.map[x][y].blocks_walking() and not self.scene.get_character_at_spot((x,y)):
                         aoe.append( (x,y) )
-            team = teams.Team(default_reaction=-999,rank=(self.scene.rank + self.camp.party_rank() )//2, strength=random.randint(40,65), habitat=self.scene.get_encounter_request())
+            team = teams.Team(self.scene,default_reaction=-999,rank=(self.scene.rank + self.camp.party_rank() )//2, strength=random.randint(40,65), habitat=self.scene.get_encounter_request())
             mons = team.build_encounter( self.scene )
             for m in mons:
                 if aoe:
@@ -343,7 +343,7 @@ class Explorer( object ):
         if entry_points:
             # We have found a location. Proceed with cloning.
             nupos = random.choice( list( entry_points ) )
-            numon = target.__class__(team=target.team)
+            numon = target.__class__(team=self.scene.local_teams.get(target))
             hppool = target.current_hp()
             target.hp_damage = target.max_hp() - ( hppool + 1 ) // 2
             numon.hp_damage = numon.max_hp() - ( hppool + 1 ) // 2
@@ -787,8 +787,9 @@ class Explorer( object ):
                     nupos = ( m.pos[0] + rdel[0], m.pos[1] + rdel[1] )
 
                     if self.scene.on_the_map(nupos[0],nupos[1]) and not self.scene.map[nupos[0]][nupos[1]].blocks_walking() and not self.scene.get_character_at_spot(nupos):
-                        if m.team and m.team.home:
-                            if m.team.home.collidepoint( nupos ):
+                        mteam = self.scene.local_teams.get(m)
+                        if mteam and mteam.home:
+                            if mteam.home.collidepoint( nupos ):
                                 m.pos = nupos
                         else:
                             m.pos = nupos
@@ -798,7 +799,8 @@ class Explorer( object ):
                         m.hidden = True
 
                 # Next, check visibility to PC.
-                if m.team and m.team.on_guard() and m.pos in self.scene.in_sight:
+                mteam = self.scene.local_teams.get(m)
+                if mteam and mteam.on_guard() and m.pos in self.scene.in_sight:
                     pov = pfov.PointOfView( self.scene, m.pos[0], m.pos[1], 5 )
                     in_sight = False
                     for pc in self.camp.party:
@@ -818,7 +820,7 @@ class Explorer( object ):
                                 animobs.handle_anim_sequence( self.screen, self.view, anims )
                                 # Start by setting this team to hostile- just in case the player
                                 # exits the dialogue w/o making a truce.
-                                m.team.charm_roll = -999
+                                mteam.charm_roll = -999
                                 self.converse_with_model( m, dialogue.CUE_THREATEN )
 
     def check_trigger( self, trigger, thing=None ):
@@ -848,9 +850,10 @@ class Explorer( object ):
                     # Regenerate any damage suffered since last time.
                     m.hp_damage = 0
                     m.mp_damage = 0
-                    if m.team and m.team.home and not m.team.home.collidepoint( m.pos ):
+                    mteam = self.scene.local_teams.get(m)
+                    if mteam and mteam.home and not mteam.home.collidepoint( m.pos ):
                         # This monster is lost. Send it back home.
-                        m.pos = self.scene.find_entry_point_in_rect( m.team.home )
+                        m.pos = self.scene.find_entry_point_in_rect( mteam.home )
 
             # Check the monster zones. Restock random monsters.
             party_rank = self.camp.party_rank()
@@ -859,7 +862,7 @@ class Explorer( object ):
                 restock_chance = max( 10, ( restock_chance * 2 ) // ( 2 + party_rank - self.scene.rank ) )
             for mz in self.scene.monster_zones:
                 if self.scene.monster_zone_is_empty( mz ) and random.randint(1,100) <= restock_chance:
-                    NewTeam = teams.Team( default_reaction=characters.SAFELY_ENEMY, home=mz,
+                    NewTeam = teams.Team( self.scene, default_reaction=characters.SAFELY_ENEMY, home=mz,
                       rank=max( self.scene.rank, ( self.scene.rank + party_rank ) // 2 ),
                       strength=100, habitat=self.scene.get_encounter_request() )
                     mlist = NewTeam.build_encounter(self.scene)

@@ -102,7 +102,7 @@ class AlarmTrap( SingleTrap ):
                 req = explo.scene.get_encounter_request()
                 req[context.MTY_HUMANOID] = context.MAYBE
                 req[context.MTY_FIGHTER] = context.MAYBE
-                team = teams.Team(default_reaction=-999, rank=self.MIN_RANK-1, strength=75, habitat=req)
+                team = teams.Team(explo.scene,default_reaction=-999, rank=self.MIN_RANK-1, strength=75, habitat=req)
                 mons = team.build_encounter( explo.scene )
                 for m in mons:
                     if aoe:

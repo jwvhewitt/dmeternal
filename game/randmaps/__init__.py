@@ -71,9 +71,12 @@ class RandomScene( Room ):
         # Remove unimportant things from the contents.
         for t in self.gb.contents[:]:
             if not hasattr( t, "pos" ):
+                self.gb.contents.remove( t )
                 if isinstance( t, maps.Scene ):
                     t.parent_scene = self.gb
-                self.gb.contents.remove( t )
+                    self.gb.sub_scenes.append( t )
+                elif isinstance( t, Room ):
+                    self.gb.sub_scenes.append( t )
 
 class CaveScene( RandomScene ):
     GAPFILL = gapfiller.MonsterFiller()

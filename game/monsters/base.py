@@ -182,7 +182,8 @@ class Monster( NPCharacter ):
     def __init__( self, team = None ):
         statline = self.statline.copy()
         super(Monster, self).__init__( name=self.name, statline=statline )
-        self.team = team
+        if team:
+            team.apply_membership(self)
         self.techniques += self.TECHNIQUES
         if self.TREASURE:
             self.TREASURE( self )

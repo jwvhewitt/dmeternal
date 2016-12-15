@@ -288,8 +288,9 @@ class PolisFaction( Faction ):
 
 
 class Team( object ):
-    def __init__( self, default_reaction = 0, home=None, rank=1, strength=100,
+    def __init__( self, homescene, default_reaction = 0, home=None, rank=1, strength=100,
      habitat=None, respawn=True, fac=None, hodgepodge=False, boss=None ):
+        self.homescene = homescene
         self.default_reaction = default_reaction
         self.charm_roll = None
         self.home = home
@@ -300,6 +301,10 @@ class Team( object ):
         self.fac = fac
         self.hodgepodge = hodgepodge
         self.boss = boss
+
+    def apply_membership( self, new_recruit ):
+        if self.homescene:
+            self.homescene.local_teams[new_recruit] = self
 
     def check_reaction( self, camp ):
         if self.charm_roll:
@@ -422,7 +427,7 @@ class Team( object ):
         """Return list of team members on this map."""
         my_members = list()
         for m in gb.contents:
-            if isinstance( m , characters.Character ) and hasattr( m, "team" ) and m.team is self:
+            if isinstance( m , characters.Character ) and gb.local_teams.get(m) is self:
                 my_members.append( m )
         return my_members
 

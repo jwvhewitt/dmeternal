@@ -42,6 +42,11 @@ def all_contents( thing, check_subscenes=True ):
             if check_subscenes or not isinstance( t, maps.Scene ):
                 for tt in all_contents( t, check_subscenes ):
                     yield tt
+    if hasattr( thing, "sub_scenes" ):
+        for t in thing.sub_scenes:
+            if check_subscenes or not isinstance( t, maps.Scene ):
+                for tt in all_contents( t, check_subscenes ):
+                    yield tt
 
 class Plot( object ):
     """The building block of the adventure."""

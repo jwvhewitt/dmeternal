@@ -88,13 +88,15 @@ class Combat( object ):
         self.active.sort( key = characters.roll_initiative, reverse=True )
 
     def activate_monster( self, monster_zero ):
+        m0team = self.scene.local_teams.get(monster_zero)
         for m in self.scene.contents:
             if isinstance( m, characters.Character ) and m.is_alright() and m not in self.active:
+                myteam = self.scene.local_teams.get(m)
                 if m in self.camp.party:
                     self.active.append( m )
                 elif self.scene.distance( m.pos, monster_zero.pos ) < 5:
                     self.active.append( m )
-                elif m.team and m.team == monster_zero.team:
+                elif myteam and myteam == m0team:
                     self.active.append( m )
 
     def num_enemies( self ):
@@ -484,8 +486,9 @@ class Combat( object ):
                 if hasattr( m, "gold" ) and m.gold > 0:
                     gold += m.gold
                 # Killing faction members worsens faction score.
-                if m.team.fac:
-                    m.team.fac.reaction += -2
+                myteam = self.scene.local_teams.get(m)
+                if myteam and myteam.fac:
+                    myteam.fac.reaction += -2
         xp = int( xp * self.camp.xp_scale ) // self.camp.num_pcs()
         explo.give_gold_and_xp( gold, xp, True )
 

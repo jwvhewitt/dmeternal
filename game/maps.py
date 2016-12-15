@@ -380,6 +380,17 @@ DEFAULT_SPRITES = { SPRITE_GROUND: "terrain_ground_forest.png", \
     SPRITE_CHEST: "terrain_chest_wood.png", \
     SPRITE_SIGNS: "terrain_signs_default.png" }
 
+class TeamDictionary( weakref.WeakKeyDictionary ):
+    # It's like a regular WeakKeyDictionary but it pickles.
+    def __getstate__( self ):
+        state = dict()
+        for key,val in self.iteritems():
+            state[key] = val
+        return state
+    def __setstate__( self, state ):
+        self.__init__()
+        self.update( state )
+
 class Scene( object ):
     DELTA8 = ( (-1,-1), (0,-1), (1,-1), (-1,0), (1,0), (-1,1), (0,1), (1,1) )
     def __init__(self,width=128,height=128,sprites=None,biome=None,fac=None,desctags=(),name=""):
@@ -387,6 +398,8 @@ class Scene( object ):
         self.width = width
         self.height = height
         self.contents = container.ContainerList(owner=self)
+        self.sub_scenes = container.ContainerList(owner=self)
+        self.local_teams = TeamDictionary()
         self.sprites = DEFAULT_SPRITES.copy()
         if sprites:
             self.sprites.update( sprites )

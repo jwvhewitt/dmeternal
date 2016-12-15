@@ -151,7 +151,8 @@ def generate_npc( species=None, job=None, gender=None, rank=None, team=None, upg
 
     npc = base.NPCharacter( species=species(), gender=gender )
     npc.roll_stats()
-    npc.team = team
+    if team:
+        team.apply_membership(npc)
 
     if not job:
         choices = chargen.get_possible_levels( npc ) + chargen.get_possible_levels( npc, NPC_CLASSES )

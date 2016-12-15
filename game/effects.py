@@ -473,10 +473,7 @@ class CallMonster( NoEffect ):
         if not target and not camp.scene.map[pos[0]][pos[1]].blocks_walking():
             # This tile is clear. Feel free to add a creature here.
             mymon = camp.scene.choose_monster( self.max_level-1, self.max_level, self.habitat )
-            if originator:
-                myteam = originator.team
-            else:
-                myteam = None
+            myteam = camp.scene.local_teams.get(originator)
             if mymon:
                 mymon = mymon( team=myteam )
                 mymon.combat_only = True

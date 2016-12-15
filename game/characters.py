@@ -352,7 +352,7 @@ class SentientSpecies( object ):
     HAS_HAIR = True
     HAIRSTYLE = { stats.MALE: (0,1,3,4,5,6,7,9, 15,16,24,26,27,30,31,34,36,38,42,43,44,45,46,47,48,49,51,52,53), \
         stats.FEMALE: (1,2,3,5,8,9, 10,11,12,13, 14,15,17,18,19,20,21,22,23,25,26,28,29,31,32,33,34,35,36,37,38,39,40,41,42,43,45,46,47), \
-        stats.NEUTER: (0,1,2,3,4,5,6,7,8,9, 10,11,12,13, 14,15,16,17,18,19, 20,21,22,23,24,25,26,27,28,29, 30,31,32,33,34,35,36,37,38,39, 40,41,42,43,44,45,46,47,48,49, 51,52,53 ) }
+        stats.NONBINARY: (0,1,2,3,4,5,6,7,8,9, 10,11,12,13, 14,15,16,17,18,19, 20,21,22,23,24,25,26,27,28,29, 30,31,32,33,34,35,36,37,38,39, 40,41,42,43,44,45,46,47,48,49, 51,52,53 ) }
     skin_color = 0
     statline = {}
     slots = ( items.BACK, items.FEET, items.BODY, items.HANDS, items.HAND1, items.HAND2, items.HEAD )
@@ -365,7 +365,7 @@ class SentientSpecies( object ):
     def __init__( self ):
         self.skin_color = random.randint( 0 , self.NUM_COLORS - 1 )
 
-    def get_sprite( self , gender = stats.NEUTER ):
+    def get_sprite( self , gender = stats.NONBINARY ):
         """Return a tuple with the image, framenum for this species."""
         img = image.Image( self.sprite_name , 54 , 54 )
         return img, self.FIRST_IMAGE + self.skin_color + self.NUM_COLORS * min( gender , 1 )
@@ -400,7 +400,7 @@ class Dwarf( SentientSpecies ):
     VOICE = dialogue.voice.DWARVEN
     HAIRSTYLE = { stats.MALE: (0,1,3,4,5,6,7,9, 15,16,24,26,27,30,31,34,36,38,42,43,44,45,46,47,48,49,51,52,53), \
         stats.FEMALE: (1,2,3,5,8,9, 14,15,17,18,19,20,21,22,23,25,26,28,29,31,32,33,34,35,36,37,38,39,40,41,42,43,45,46,47,48,49), \
-        stats.NEUTER: (0,1,2,3,4,5,6,7,8,9, 10,11,12,13, 14,15,16,17,18,19, 20,21,22,23,24,25,26,27,28,29, 30,31,32,33,34,35,36,37,38,39, 40,41,42,43,44,45,46,47,48,49, 51,52,53 ) }
+        stats.NONBINARY: (0,1,2,3,4,5,6,7,8,9, 10,11,12,13, 14,15,16,17,18,19, 20,21,22,23,24,25,26,27,28,29, 30,31,32,33,34,35,36,37,38,39, 40,41,42,43,44,45,46,47,48,49, 51,52,53 ) }
     TAGS = (context.GEN_KINGDOM,context.GEN_TERRAN,context.DES_EARTH,)
 
 class Elf( SentientSpecies ):
@@ -413,7 +413,7 @@ class Elf( SentientSpecies ):
     VOICE = dialogue.voice.ELVEN
     HAIRSTYLE = { stats.MALE: (0,1,3,4,5,6,7,9, 10,11,12,13, 16,24,26,30,31,34,36,38,42,43,44,45,46,51,52,53), \
         stats.FEMALE: (1,2,3,5,8,9, 10,11,12,13, 14,17,18,19,20,21,22,23,25,26,28,29,31,32,33,34,35,36,37,38,39,40,41,42,43,45,46), \
-        stats.NEUTER: (0,1,2,3,4,5,6,7,8,9, 10,11,12,13, 14,16,17,18,19, 20,21,22,23,24,25,26,28,29, 30,31,32,33,34,35,36,37,38,39, 40,41,42,43,44,45,46, 51,52,53 ) }
+        stats.NONBINARY: (0,1,2,3,4,5,6,7,8,9, 10,11,12,13, 14,16,17,18,19, 20,21,22,23,24,25,26,28,29, 30,31,32,33,34,35,36,37,38,39, 40,41,42,43,44,45,46, 51,52,53 ) }
     TAGS = (context.GEN_KINGDOM,context.GEN_NATURE,context.GEN_FAERIE,)
 
 class Gnome( SentientSpecies ):
@@ -433,7 +433,7 @@ class Orc( SentientSpecies ):
     VOICE = dialogue.voice.ORCISH
     HAIRSTYLE = { stats.MALE: (0,1,3,4,5,6,7,9, 15,16,24,26,27,30,31,34,36,38,42,43,44,45,46,47,48,49,51,52,53), \
         stats.FEMALE: (1,2,3,5,8,9, 14,15,17,18,19,20,21,22,23,25,26,28,29,31,32,33,34,35,36,37,38,39,40,41,42,43,45,46,47), \
-        stats.NEUTER: (0,1,2,3,4,5,6,7,8,9, 10,11,12,13, 14,15,16,17,18,19, 20,21,22,23,24,25,26,27,28,29, 30,31,32,33,34,35,36,37,38,39, 40,41,42,43,44,45,46,47,48,49, 51,52,53 ) }
+        stats.NONBINARY: (0,1,2,3,4,5,6,7,8,9, 10,11,12,13, 14,15,16,17,18,19, 20,21,22,23,24,25,26,27,28,29, 30,31,32,33,34,35,36,37,38,39, 40,41,42,43,44,45,46,47,48,49, 51,52,53 ) }
     TAGS = (context.GEN_GOBLIN,context.MTY_FIGHTER)
 
 class Hurthling( SentientSpecies ):
@@ -528,7 +528,7 @@ class Character( stats.PhysicalThing ):
     holy_signs_used = 0
     COMBAT_AI = aibrain.BasicAI()
 
-    def __init__( self, name = "", species = None, gender = stats.NEUTER, statline=None ):
+    def __init__( self, name = "", species = None, gender = stats.NONBINARY, statline=None ):
         self.name = name
         if not statline:
             statline = dict()
@@ -781,7 +781,7 @@ class Character( stats.PhysicalThing ):
         return self.name
 
     def desc( self ):
-        if self.gender == stats.NEUTER:
+        if self.gender == stats.NONBINARY:
             return "L"+str( self.rank())+" "+str(self.species)+" "+str(self.mr_level)
         else:
             return "L"+str( self.rank())+" "+stats.GENDER[self.gender]+" "+str(self.species)+" "+str(self.mr_level)
@@ -801,12 +801,10 @@ class Character( stats.PhysicalThing ):
             myvoice.add( dialogue.voice.SMART )
         return myvoice
 
-    def get_reaction( self, camp=None ):
-        if self.team:
-            if camp:
-                return self.team.check_reaction( camp )
-            else:
-                return self.team.default_reaction
+    def get_reaction( self, camp ):
+        myteam = camp.scene.local_teams.get( self )
+        if myteam:
+            return myteam.check_reaction( camp )
         else:
             return 999
 
@@ -817,8 +815,11 @@ class Character( stats.PhysicalThing ):
             self.friendliness = it
         else:
             it = self.friendliness
-        if self.team and self.team.fac:
-            it += self.team.fac.reaction
+        myteam = camp.scene.local_teams.get(self)
+        if hasattr( self, "fac" ):
+            it += self.fac.reaction
+        elif myteam and myteam.fac:
+            it += myteam.fac.reaction
 
         # Modify friendliness by the npc's race and job.
         if self.species:

@@ -15,7 +15,7 @@ from .. import worlds
 
 #
 #   **********************
-#   ***   CITY_SCENE   ***
+#   ***   START_CITY   ***
 #   **********************
 #
 #  Create a new scene with a city in it. Register the following elements:
@@ -27,20 +27,20 @@ from .. import worlds
 #
 
 class CityOnEdgeOfCiv( Plot ):
-    LABEL = "CITY_SCENE"
+    LABEL = "START_CITY"
     def custom_init( self, nart ):
         """Create map, fill with city + services."""
         biome = self.elements.setdefault( "BIOME", randmaps.architect.make_wilderness() )
         archi = self.register_element( "ARCHITECTURE", randmaps.architect.Village(biome.biome))
         culture = self.elements.setdefault( "CULTURE", teams.PolisFaction() )
         myscene,mymapgen = randmaps.architect.design_scene( 90, 90,
-          randmaps.EdgeOfCivilization, biome,secondary=archi,setting=self.setting)
+          randmaps.EdgeOfCivilization, biome,secondary=archi)
         myscene.desctags.append( context.DES_CIVILIZED )
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
 
         castle = self.register_element( "CITY", randmaps.rooms.CastleRoom( width=35,height=35,tags=(context.CIVILIZED,context.ROOM_PUBLIC), parent=myscene ) )
         myroom = randmaps.rooms.FuzzyRoom( tags=(context.ENTRANCE,), parent=castle )
-        myteam = teams.Team( strength=0, default_reaction=characters.SAFELY_FRIENDLY)
+        myteam = teams.Team( myscene, strength=0, default_reaction=characters.SAFELY_FRIENDLY)
         castle.contents.append( myteam )
         myent = waypoints.Well()
         myroom.contents.append( myent )
@@ -49,19 +49,19 @@ class CityOnEdgeOfCiv( Plot ):
 
         self.register_element( "ENTRANCE", myent )
 
-        self.chapter.world.add_entrance( myscene, myscene.name, worlds.W_CITY, myent, True )
+        #self.chapter.world.add_entrance( myscene, myscene.name, worlds.W_CITY, myent, True )
 
-        self.add_sub_plot( nart, "CITY_GENERALSTORE" )
-        self.add_sub_plot( nart, "CITY_LIBRARY" )
-        self.add_sub_plot( nart, "CITY_INN" )
-        self.add_sub_plot( nart, "CITY_TEMPLE" )
-        self.add_sub_plot( nart, "CITY_EXTRASHOP" )
-        for t in range( random.randint(1,4) ):
-            self.add_sub_plot( nart, "ENCOUNTER" )
-        self.add_sub_plot( nart, "SPECIAL_FEATURE" )
-        self.add_sub_plot( nart, "TEST_FEATURE", necessary=False )
+        #self.add_sub_plot( nart, "CITY_GENERALSTORE" )
+        #self.add_sub_plot( nart, "CITY_LIBRARY" )
+        #self.add_sub_plot( nart, "CITY_INN" )
+        #self.add_sub_plot( nart, "CITY_TEMPLE" )
+        #self.add_sub_plot( nart, "CITY_EXTRASHOP" )
+        #for t in range( random.randint(1,4) ):
+        #    self.add_sub_plot( nart, "ENCOUNTER" )
+        #self.add_sub_plot( nart, "SPECIAL_FEATURE" )
+        #self.add_sub_plot( nart, "TEST_FEATURE", necessary=False )
 
-        self.add_sub_plot( nart, "CITY_STORY", PlotState(rank=self.random_rank_in_chapter()).based_on( self ) )
+        #self.add_sub_plot( nart, "CITY_STORY", PlotState(rank=self.random_rank_in_chapter()).based_on( self ) )
 
 
         return True
@@ -92,8 +92,7 @@ class MoriaVille( Plot ):
         culture = self.register_element( "CULTURE",
           teams.PolisFaction(dungeon_type=("Village","Hamlet","Town")) )
         myscene,mymapgen = randmaps.architect.design_scene( 50, 50,
-          randmaps.ForestScene, biome,fac=culture,secondary=archi,
-          setting=self.setting)
+          randmaps.ForestScene, biome,fac=culture,secondary=archi)
         myscene.desctags.append( context.DES_CIVILIZED )
         myscene.name = culture.name
         self.register_scene( nart, myscene, mymapgen, ident="LOCALE" )
@@ -102,7 +101,7 @@ class MoriaVille( Plot ):
          randmaps.rooms.VillageRoom( width=35,height=35,anchor=randmaps.anchors.middle,
          tags=(context.CIVILIZED,context.ROOM_PUBLIC), parent=myscene ) )
         myroom = randmaps.rooms.FuzzyRoom( tags=(context.ENTRANCE,), parent=castle )
-        myteam = teams.Team( strength=0, default_reaction=characters.SAFELY_FRIENDLY)
+        myteam = teams.Team( myscene, strength=0, default_reaction=characters.SAFELY_FRIENDLY)
         castle.contents.append( myteam )
         myent = waypoints.RoadSignToAdventure()
         myroom.contents.append( myent )
@@ -152,7 +151,7 @@ class GenerallyGeneralStore( Plot ):
         archi = self.elements.setdefault( "ARCHITECTURE", randmaps.architect.Village() )
         culture = self.elements.get("CULTURE")
         interior,igen = randmaps.architect.design_scene( 50, 50, randmaps.BuildingScene,
-            archi, setting=self.setting,fac=culture )
+            archi, fac=culture )
 
         gate_1 = waypoints.GateDoor()
         gate_2 = waypoints.GateDoor()
@@ -203,7 +202,7 @@ class GenericInn( Plot ):
         culture = self.elements.get("CULTURE")
         archi = self.elements.setdefault( "ARCHITECTURE", randmaps.architect.Village() )
         interior,igen = randmaps.architect.design_scene( 50, 50, randmaps.BuildingScene,
-            archi, setting=self.setting,fac=culture )
+            archi, fac=culture )
 
         gate_1 = waypoints.GateDoor()
         gate_2 = waypoints.GateDoor()
@@ -270,7 +269,7 @@ class GenericLibrary( Plot ):
         culture = self.elements.get("CULTURE")
         archi = self.elements.setdefault( "ARCHITECTURE", randmaps.architect.Village() )
         interior,igen = randmaps.architect.design_scene( 50, 50, randmaps.BuildingScene,
-            archi, setting=self.setting,fac=culture )
+            archi, fac=culture )
 
         interior.name = "{0} Library".format( locale )
         gate_1 = waypoints.GateDoor()
@@ -328,7 +327,7 @@ class GenericTemple( Plot ):
         culture = self.elements.get("CULTURE")
         archi = self.elements.setdefault( "ARCHITECTURE", randmaps.architect.Village() )
         interior,igen = randmaps.architect.design_scene( 50, 50, randmaps.BuildingScene,
-            archi, setting=self.setting,fac=culture )
+            archi, fac=culture )
         interior.sprites[maps.SPRITE_FLOOR] = "terrain_floor_bigtile.png"
         interior.sprites[maps.SPRITE_INTERIOR] = "terrain_int_temple.png"
         interior.name = "{0} Temple".format( locale )
@@ -445,7 +444,7 @@ class GenericArmorShop( Plot ):
         culture = self.elements.get("CULTURE")
         archi = self.elements.setdefault( "ARCHITECTURE", randmaps.architect.Village() )
         interior,igen = randmaps.architect.design_scene( 50, 50, randmaps.BuildingScene,
-            archi, setting=self.setting,fac=culture )
+            archi, fac=culture )
 
         gate_1 = waypoints.GateDoor()
         gate_2 = waypoints.GateDoor()
@@ -500,7 +499,7 @@ class GenericWeaponShop( Plot ):
         culture = self.elements.get("CULTURE")
         archi = self.elements.setdefault( "ARCHITECTURE", randmaps.architect.Village() )
         interior,igen = randmaps.architect.design_scene( 50, 50, randmaps.BuildingScene,
-            archi, setting=self.setting,fac=culture )
+            archi, fac=culture )
 
         gate_1 = waypoints.GateDoor()
         gate_2 = waypoints.GateDoor()
@@ -553,7 +552,7 @@ class TheAdventurersGuild( Plot ):
         culture = self.elements.get("CULTURE")
         archi = self.elements.setdefault( "ARCHITECTURE", randmaps.architect.Village() )
         interior,igen = randmaps.architect.design_scene( 50, 50, randmaps.BuildingScene,
-            archi, setting=self.setting,fac=culture )
+            archi, fac=culture )
         interior.sprites[maps.SPRITE_FLOOR] = "terrain_floor_diamond.png"
 
         gate_1 = waypoints.GateDoor()
